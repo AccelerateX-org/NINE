@@ -45,7 +45,7 @@
                     }
                     if (showSlot)
                     {
-                        var w = (int)(slot.ECTS / 30 * 100);
+                        var w = (int)(slot.ECTS / 32 * 100);
                         <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
                             <strong>@slot.Tag</strong>
                             <br />

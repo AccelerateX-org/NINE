@@ -10,7 +10,7 @@
             <div style="width: 100%">
                 @foreach (var slot in sec.Slots)
                 {
-                    var w = (int)(slot.ECTS / 30 * 100);
+                    var w = (int)(slot.ECTS / 32 * 100);
 
                     if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
                     {

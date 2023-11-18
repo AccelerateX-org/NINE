@@ -237,6 +237,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="opportunityId"></param>
         /// <param name="targetSubjectId"></param>
         /// <returns></returns>
+        /*
         public ActionResult MoveCourse2Subject(Guid opportunityId, Guid targetSubjectId)
         {
             var opportunity = Db.SubjectOpportunities.SingleOrDefault(x => x.Id == opportunityId);
@@ -250,6 +251,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { id = module.Id });
         }
+        */
 
         public ActionResult CreateExamination(Guid moduleId, Guid semId)
         {
@@ -968,10 +970,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == id);
             var module = subject.Module;
 
+            /*
             foreach (var opp in subject.Opportunities.ToList())
             {
                 Db.SubjectOpportunities.Remove(opp);
             }
+            */
 
             foreach (var accr in subject.Module.Accreditations.ToList())
             {
@@ -1122,6 +1126,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Teachings", new { moduleId = module.Id, semId = semester.Id });
         }
 
+        /*
         public ActionResult DeleteOpportunity(Guid id)
         {
             var teaching = Db.SubjectOpportunities.SingleOrDefault(x => x.Id == id);
@@ -1134,6 +1139,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Teachings", new { moduleId = module.Id, semId = semester.Id });
         }
+        */
+
 
         public ActionResult History(Guid id)
         {

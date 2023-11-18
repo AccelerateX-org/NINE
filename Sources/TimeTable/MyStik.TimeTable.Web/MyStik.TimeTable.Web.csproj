@@ -4693,6 +4693,7 @@
     <Content Include="Views\StudyPlan\Admin.cshtml" />
     <Content Include="Views\Students\CourseList.cshtml" />
     <Content Include="Views\Events\Organiser.cshtml" />
+    <Content Include="Views\Curriculum\CreateModule.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

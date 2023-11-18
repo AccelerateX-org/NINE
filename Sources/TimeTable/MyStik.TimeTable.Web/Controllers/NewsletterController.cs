@@ -125,6 +125,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            model.UseParticipients = true;
+            model.UseWaitingList = true;
+
             var m = new MailingController();
             m.ControllerContext = ControllerContext;
             return m.CustomOccurrenceMail(model);

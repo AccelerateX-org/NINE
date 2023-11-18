@@ -11,12 +11,33 @@
                 <li class="breadcrumb-item active" aria-current="page">Meine Module</li>
             </ol>
         </nav>
+    </div>>
+</div>
 
+<div class="row">
+    <div class="col-md-6">
         <div class="card">
             <div class="list-group">
                 @foreach (var module in Model)
                 {
-                    <a href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })" class="list-group-item list-group-item-action">@module.Name (@module.ShortName, @module.ModuleId)</a>
+                    <div class="list-group-item">
+                        <h5><a href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })">@module.Name</a></h5> 
+                        <p><a href="@Url.Action("Details", "Catalogs", new { id = module.Catalog.Id })">@module.Catalog.Name</a></p>
+                        @foreach (var subject in module.ModuleSubjects)
+                        {
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div>@subject.TeachingFormat.Tag</div>
+                                </div>
+                                <div class="col-md-8">
+                                    @foreach (var teaching in subject.Teachings)
+                                    {
+                                        <div><a href="@Url.Action("Details", "Course", new {id = teaching.Course.Id})"></a> @teaching.Course.Name</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
                 }
             </div>
         </div>

@@ -48,6 +48,9 @@ namespace MyStik.TimeTable.Web.Controllers
             // Prio 1; Member
             if (members.Any())
             {
+                return RedirectToAction("Index", "Dashboard");
+
+                /*
                 var adminMembers = members.Where(x =>
                     x.IsAdmin || x.IsAlumniAdmin || x.IsCourseAdmin || x.IsCurriculumAdmin || x.IsEventAdmin ||
                     x.IsExamAdmin || x.IsMemberAdmin || x.IsNewsAdmin || x.IsRoomAdmin || x.IsSemesterAdmin ||
@@ -77,14 +80,14 @@ namespace MyStik.TimeTable.Web.Controllers
                     // ohne
                     return RedirectToAction("Index", "Teaching");
                 }
-
+                */
 
             }
 
             // Prio 2; Student
             if (student != null)
             {
-                return RedirectToAction("Index", "Studies");
+                return RedirectToAction("Index", "Dashboard");
 
             }
 
@@ -93,7 +96,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (cand.Any())
             {
-                return RedirectToAction("Index", "Studies");
+                return RedirectToAction("Index", "Candidature");
             }
 
             // Prio 4: noch nichts

@@ -16,12 +16,17 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var member = GetMyMembership();
-
+            var user = GetCurrentUser();
 
             var model = Db.CurriculumModules.Where(x =>
                 x.ModuleResponsibilities.Any(m =>
-                    m.Member.Id == member.Id)).ToList();
+                    !string.IsNullOrEmpty(m.Member.UserId) && m.Member.UserId.Equals(user.Id))).ToList();
+
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
+
+            ViewBag.Semester = semester;
+            ViewBag.NextSemester = nextSemester;
 
             return View(model);
         }
@@ -235,7 +240,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.ModuleDescriptions.Remove(description);
             }
 
-
+            /*
             foreach (var subject in model.ModuleSubjects.ToList())
             {
                 foreach (var opportunity in subject.Opportunities.ToList())
@@ -244,6 +249,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
                 Db.ModuleCourses.Remove(subject);
             }
+            */
 
             foreach (var option in model.ExaminationOptions.ToList())
             {

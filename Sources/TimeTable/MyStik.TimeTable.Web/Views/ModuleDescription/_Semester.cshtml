@@ -152,7 +152,6 @@
 
                 @foreach (var subject in subjects)
                 {
-                    var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
 
                     <div class="list-group-item">
                         <div class="row">
@@ -167,14 +166,6 @@
                                 }
                             </div>
                             <div class="col-8">
-                                @foreach (var opportunity in opportunities)
-                                {
-                                    <div>
-                                        <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
-                                            @opportunity.Course.Name (@opportunity.Course.ShortName)
-                                        </a>
-                                    </div>
-                                }
                             </div>
                         </div>
                     </div>

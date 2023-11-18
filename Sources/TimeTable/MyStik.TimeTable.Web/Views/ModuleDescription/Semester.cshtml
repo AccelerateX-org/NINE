@@ -177,39 +177,6 @@
                                         @{
                                             var nTeachings = 0;
                                         }
-                                        @foreach (var subject in subjects)
-                                        {
-                                            var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-
-                                            if (opportunities.Any())
-                                            {
-                                                <div class="list-group-item">
-                                                    <div class="row">
-                                                        <div class="col-2">
-                                                            @if (subjects.Count > 1)
-                                                            {
-                                                                <div>@subject.Name (@subject.TeachingFormat.Tag)</div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div>@subject.TeachingFormat.Tag</div>
-                                                            }
-                                                        </div>
-                                                        <div class="col-10">
-                                                            @foreach (var opportunity in opportunities)
-                                                            {
-                                                                nTeachings++;
-                                                                <div>
-                                                                    <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
-                                                                        @opportunity.Course.Name (@opportunity.Course.ShortName)
-                                                                    </a>
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
                                         @foreach (var accr in accrs)
                                         {
                                             var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();

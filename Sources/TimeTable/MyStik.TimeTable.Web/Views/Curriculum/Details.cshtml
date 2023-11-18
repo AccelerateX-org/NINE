@@ -37,6 +37,7 @@
 <div class="col-12">
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">HM</a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Curriculum.Organiser.Id})">@Model.Curriculum.Organiser.ShortName</a></li>
@@ -100,26 +101,29 @@
                     }
                 </div>
             </div>
-            <div class="row">
-                <div class="col-4">
-                    @Model.NextSemester.Name
-                </div>
-                <div class="col-8">
-                    <div>
-                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
-                        <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
-                        <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
-                        @if (Model.Assessments.Any())
-                        {
-                            <div>
-                                <a href="@Url.Action("Index", "Assessment")">
-                                    Auswahlverfahren
-                                </a>
-                            </div>
-                        }
+            @if (Model.NextSemester != null)
+            {
+                <div class="row">
+                    <div class="col-4">
+                        @Model.NextSemester.Name
+                    </div>
+                    <div class="col-8">
+                        <div>
+                            <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
+                            <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
+                            <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
+                            @if (Model.Assessments.Any())
+                            {
+                                <div>
+                                    <a href="@Url.Action("Index", "Assessment")">
+                                        Auswahlverfahren
+                                    </a>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
             <div class="row">
                 <div class="col-4">
                     @Model.Semester.Name

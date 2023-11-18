@@ -22,7 +22,7 @@ namespace MyStik.TimeTable.Data
             //Courses = new List<Course>();
             //CapacityCourses = new List<CapacityCourse>();
             //Nexus = new HashSet<CourseModuleNexus>();
-            Opportunities = new HashSet<SubjectOpportunity>();
+            //Opportunities = new HashSet<SubjectOpportunity>();
         }
 
 
@@ -65,11 +65,12 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual CurriculumModule Module { get; set; }
 
-        
-        public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
+
+        //public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
+        public virtual ICollection<TeachingDescription> Teachings { get; set; }
     }
 
-
+    /*
     public class SubjectOpportunity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -84,6 +85,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual Course Course { get; set; }
     }
+    */
 
     public class TeachingFormat
     {

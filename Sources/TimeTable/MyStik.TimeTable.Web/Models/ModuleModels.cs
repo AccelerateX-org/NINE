@@ -81,6 +81,20 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<ActivityOrganiser> Organisers { get; set;}
 
+        public string Tag { get; set; }
+        public string Title { get; set; }
+
+        public double SWS { get; set; }
+
+        public Guid TeachingId { get; set; }
+        
+        public Guid ExaminationId { get; set; }
+
+        public Guid CatalogId { get; set; }
+        public Guid SlotId { get; set; }
+
+        public ICollection<Guid> DozIds { get; set; }
+
     }
 
 }

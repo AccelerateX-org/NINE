@@ -246,7 +246,7 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<CatalogResponsibility> CatalogResponsibilities { get; set; }
 
-        public DbSet<SubjectOpportunity> SubjectOpportunities { get; set; }
+        //public DbSet<SubjectOpportunity> SubjectOpportunities { get; set; }
 
         public DbSet<TeachingFormat> TeachingFormats { get; set; }
 

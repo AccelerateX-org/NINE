@@ -6,7 +6,9 @@
 
     var Db = new MyStik.TimeTable.Data.TimeTableDbContext();
     var courseService = new CourseService(Db);
+
 }
+
 
 <div class="row">
     <div class="col-12">
@@ -85,37 +87,6 @@
 
                                 <td>
                                     <a href="@Url.Action("DeleteTeaching", new {id = teaching.Id} )" class="btn btn-outline-danger"><i class="bi-trash"></i> löschen</a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    @foreach (var subject in Model.Module.ModuleSubjects)
-                    {
-                        foreach (var opp in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
-                        {
-                            var summary = courseService.GetCourseSummary(opp.Course);
-                            var linkName = summary.Course.ShortName ?? "Kein Kurzname";
-
-                            <tr>
-                                <td></td>
-                                <td>@opp.Subject.Name (@opp.Subject.TeachingFormat.Tag)</td>
-                                <td>
-                                    @Html.ActionLink(linkName, "Index", "Course", new { id = summary.Course.Id }, null)
-                                </td>
-                                <td>
-                                    @summary.Course.Name
-                                </td>
-                                <td>
-                                    @Html.GroupList(summary.Course.SemesterGroups, true)
-                                </td>
-                                <td>
-                                    @Html.RoomList(summary.Rooms)
-                                </td>
-                                <td>
-                                    @Html.LecturerList(summary.Lecturers)
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("DeleteOpportunity", new {id = opp.Id} )" class="btn btn-outline-danger"><i class="bi-trash"></i> löschen</a>
                                 </td>
                             </tr>
                         }

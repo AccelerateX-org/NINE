@@ -239,17 +239,40 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public int MinCapacity { get; set; }
+
+        public int MaxCapacity { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        ///  required
+        /// </summary>
         public virtual Semester Semester { get; set; }
 
+        /// <summary>
+        /// optional
+        /// </summary>
         public virtual ModuleSubject Subject { get; set; }
 
-
+        /// <summary>
+        /// required
+        /// </summary>
         public virtual Course Course { get; set; }
 
-
+        /// <summary>
+        /// deprectaed => will be replaced by Curriculum
+        /// </summary>
         public virtual ModuleAccreditation Accreditation { get; set; }
+
+        /// <summary>
+        /// required
+        /// </summary>
+        public virtual Curriculum Curriculum { get; set; } 
     }
 
 
@@ -269,6 +292,12 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual OrganiserMember Member { get; set; }
 
+        /// <summary>
+        /// true: Modulverantwortlich => darf Liste administrieren
+        /// false: lehrender => darf anbieten
+        /// </summary>
+        public bool IsHead { get; set; } = false;
+
     }
 
     public class CatalogResponsibility
@@ -284,6 +313,7 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual OrganiserMember Member { get; set; }
 
+        public bool IsHead { get; set; } = false;
     }
 
 }

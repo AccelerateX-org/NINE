@@ -1693,7 +1693,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
-
+        
         public ActionResult Opportunities(Guid id)
         {
             var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
@@ -1709,6 +1709,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Opportunities(CurriculumImportModel model)
         {
+            /*
             string tempFile = Path.GetTempFileName();
 
             // Speichern der Config-Dateien
@@ -1779,6 +1780,8 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             Db.SaveChanges();
+            */
+
 
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
@@ -2102,6 +2105,110 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+        public ActionResult CreateModule(Guid id)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
+
+            var model = new ModuleAssignViewModel
+            {
+                Slot = slot,
+                Organisers = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList(),
+                Tag = slot.Tag,
+                Title = slot.Name,
+                SlotId = slot.Id
+            };
+
+            ViewBag.TeachingFormats = Db.TeachingFormats.OrderBy(x => x.Tag)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.Tag,
+                    Value = x.Id.ToString()
+
+                });
+
+            ViewBag.ExaminationFormats = Db.ExaminationForms.OrderBy(x => x.ShortName)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.ShortName,
+                    Value = x.Id.ToString()
+
+                });
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateModule(ModuleAssignViewModel model)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == model.SlotId);
+            var tf = Db.TeachingFormats.SingleOrDefault(x => x.Id == model.TeachingId);
+            var ef = Db.ExaminationForms.SingleOrDefault(x => x.Id == model.ExaminationId);
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == model.CatalogId);
+
+            var module = new CurriculumModule
+            {
+                Name = model.Title,
+                Tag = model.Tag,
+                Catalog = catalog,
+            };
+
+            foreach (var dozId in model.DozIds)
+            {
+                var member = Db.Members.SingleOrDefault(x => x.Id == dozId);
+
+                if (member != null)
+                {
+                    var resp = new ModuleResponsibility
+                    {
+                        Module = module,
+                        Member = member
+                    };
+
+                    Db.ModuleResponsibilities.Add(resp);
+                }
+            }
+
+
+
+            var accr = new ModuleAccreditation
+            {
+                Module = module,
+                Slot = slot,
+            };
+
+            var subject = new ModuleSubject
+            {
+                Module = module,
+                TeachingFormat = tf,
+                SWS = model.SWS,
+                Tag = tf.Tag,
+                Name = tf.Name,
+            };
+
+            var exam = new ExaminationOption
+            {
+                Module = module,
+                Name = "Prüfungsform",
+            };
+
+            var fraction = new ExaminationFraction
+            {
+                ExaminationOption = exam,
+                Weight = 1,
+                Form = ef
+            };
+
+            Db.CurriculumModules.Add(module);
+            Db.Accreditations.Add(accr);
+            Db.ModuleCourses.Add(subject);
+            Db.ExaminationOptions.Add(exam);
+            Db.ExaminationFractions.Add(fraction);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Slot", new { id = model.SlotId });
+        }
 
 
         public ActionResult Students(Guid id)

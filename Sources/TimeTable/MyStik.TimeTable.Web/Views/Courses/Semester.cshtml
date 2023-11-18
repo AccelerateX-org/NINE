@@ -3,7 +3,7 @@
 @{
                 /**/
 
-                Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+                // Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
                 ViewBag.Title = "Lehrangebot";
                 var isAvailable = Model.Semester.Groups.Any(x => x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id && x.IsAvailable);
 }

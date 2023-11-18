@@ -1,0 +1,241 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleAssignViewModel
+@{
+    ViewBag.Title = "Modul anlegen";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Modul anlegen für Slot</h4>
+            </div>
+        @*
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi-save"></i>  Modul anlegen
+                    </a>
+                    <a href="@Url.Action("Slot", new {id=Model.Slot.Id})" class="btn btn-outline-secondary">
+                        <i class="bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            *@
+        <div class="card-body">
+            <div class="row">
+                <div class="col-5">
+                    <h5>In diesem Katalog soll Modul angelegt werden</h5>
+                    @Html.HiddenFor(m => m.SlotId)
+                    <div class="row">
+                        <div class="col-4">Veranstalter</div>
+                        <div class="col-8">
+                            <select class="form-select slot-option" id="sourceOrg" onchange="onSourceOrgChanged(this.value)">
+                                @foreach (var org in Model.Organisers)
+                                {
+                                    <option selected value="@org.Id">@org.Name (@org.Tag)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Katalog</div>
+                        <div class="col-8">
+                            <select class="form-select slot-option" id="CatalogId" name="CatalogId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Modul-Tag</div>
+                        <div class="col-8">
+                            @Html.EditorFor(m => m.Tag, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Modul-Titel</div>
+                        <div class="col-8">
+                            @Html.EditorFor(m => m.Title, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Lehrformat</div>
+                        <div class="col-8">
+                            @Html.DropDownListFor(m => m.TeachingId, (IEnumerable<SelectListItem>)ViewBag.TeachingFormats, new { @class = "form-select" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">SWS</div>
+                        <div class="col-8">
+                            @Html.EditorFor(m => m.SWS, new { htmlAttributes = new { @class = "form-control" }})
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Prüfungsform</div>
+                        <div class="col-8">
+                            @Html.DropDownListFor(m => m.ExaminationId, (IEnumerable<SelectListItem>)ViewBag.ExaminationFormats, new { @class = "form-select" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button class="btn btn-outline-primary" onclick="createModule()"><i class="bi-save"></i> Modul anlegen</button>
+                            <a href="@Url.Action("Slot", new {id=Model.Slot.Id})" class="btn btn-outline-secondary">
+                                <i class="bi-x"></i> Abbrechen
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-7">
+                    <h5>Lehrende, die das Modul anbieten (dürfen)</h5>
+                    <div id="DozTable">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Fakultät</th>
+                                <th>Name</th>
+                                <th>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                </th>
+                                <th>
+                                    <input type="text" class="form-control" id="DozId">
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+
+                            </thead>
+                            <tbody id="dozList"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            //var org = $("#targetOrg").val();
+            //onTargetOrgChanged(org);
+
+            var org = $("#sourceOrg").val();
+            onSourceOrgChanged(org);
+
+
+            $('#DozId').autocomplete({
+                source: function(request, response) {
+                    var org = $("#sourceOrg option:selected").val();
+
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            name: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data, function(item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name + " (" + item.shortname + ")",
+                                    value: item.name + " (" + item.shortname + ")"
+                                };
+                            }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) {
+
+                    var orgText = $("#sourceOrg option:selected").text();
+
+
+                    $("#dozList").append("<tr id=\""
+                        + ui.item.text + "\"><td>"
+                        + orgText + "</td><td>"
+                        + ui.item.value + "</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
+                        + ui.item.text + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
+                },
+            });
+
+        });
+
+
+        function onSourceOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCatalogs", "Catalogs")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#dozList").html("");
+                        $("#CatalogId").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function createModule() {
+
+            var SlotId = $("#SlotId option:selected").val();
+            var CatalogId = $("#CatalogId option:selected").val();
+            var TeachingId = $("#TeachingId option:selected").val();
+            var ExaminationId = $("#ExaminationId option:selected").val();
+            var Tag = $("#Tag").val();
+            var Title = $("#Title").val();
+            var SWS = $("#SWS").val();
+            var dozList = new Array();
+
+            var list = $("#DozTable > table > tbody > tr").get();
+            n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    dozList[i] = list[i].id;
+                }
+            }
+
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("CreateModule")',
+                    data: {
+                        SlotId: SlotId,
+                        CatalogId: CatalogId,
+                        TeachingId: TeachingId,
+                        ExaminationId: ExaminationId,
+                        Tag: Tag,
+                        Title: Title,
+                        SWS: SWS,
+                        DozIds: dozList,
+                },
+                    success: function (data, success, xhr) {
+                        window.location.replace(data);
+                }
+            });
+        }
+
+
+
+    </script>
+}

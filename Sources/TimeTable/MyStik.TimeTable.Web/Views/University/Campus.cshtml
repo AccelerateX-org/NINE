@@ -1,9 +1,13 @@
 ﻿
 @{
-    Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
+    // Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
     ViewBag.Title = "HM";
 }
 
+@if (ViewBag.UserRight != null && ViewBag.UserRight.IsInstitutionAdmin)
+{
+    <a href="@Url.Action("Index", "Institution")" class="card-link">Einstellungen</a>
+}
 
 
 <div class="row">
@@ -14,22 +18,26 @@
             <li class="breadcrumb-item active">HM</li>
         </ol>
     </nav>
-
+</div>
+<div class="row">
     <div class="col-md-4">
         <div class="card mb-3">
             <div class="card-header">
-                @*<div class="row row-cols-lg-auto g-3 align-items-center">*@
                 <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="card-title">Einrichtungen</h5>
+                    <h5 class="card-title">Aktivitäten</h5>
                 </div>
             </div>
+
             <div class="list-group">
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Faculties")">Fakultäten</a>
-                <div class="list-group-item disabled">Labore</div>
-                <div class="list-group-item disabled">Abteilungen</div>
-            </div>
-            <div class="card-body">
-                <a href="@Url.Action("Index", "Organiser")" class="card-link">Alle</a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
+                    <i class="bi-collection-play"></i> Vorlesungsverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Events")">
+                    <i class="bi-film"></i> Veranstaltungsverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")">
+                    <i class="bi-check-all"></i> Auswahlverfahren
+                </a>
             </div>
         </div>
     </div>
@@ -43,39 +51,41 @@
 
             <div class="list-group">
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula")">
-                    Studiengänge
+                    <i class="bi-award"></i> Studiengänge
                 </a>
+                @*
                 <div class="list-group-item disabled">
                     Zertifikate
                 </div>
                 <div class="list-group-item disabled">
                     Weiterbildung
                 </div>
+                    *@
             </div>
         </div>
     </div>
+
     <div class="col-md-4">
         <div class="card mb-3">
             <div class="card-header">
+                @*<div class="row row-cols-lg-auto g-3 align-items-center">*@
                 <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="card-title">Aktivitäten</h5>
+                    <h5 class="card-title">Einrichtungen</h5>
                 </div>
             </div>
-
             <div class="list-group">
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
-                    Vorlesungsverzeichnis
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Faculties")">
+                    <i class="bi-mortarboard"></i> Fakultäten
                 </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Events")">
-                    Veranstaltungsverzeichnis
-                </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")">
-                    Auswahlverfahren
-                </a>
+            @*
+                <div class="list-group-item disabled">Labore</div>
+                <div class="list-group-item disabled">Abteilungen</div>
+                *@
             </div>
         </div>
     </div>
 </div>
+@*
 <div class="row">
     <div class="col-md-4">
         <div class="card mb-3">
@@ -92,9 +102,6 @@
                 <div class="list-group-item disabled">
                     Gremien
                 </div>
-            </div>
-            <div class="card-body">
-                <a href="@Url.Action("Index", "Lecturer")" class="card-link">Suche</a>
             </div>
         </div>
     </div>
@@ -116,17 +123,10 @@
                     Newsletter
                 </div>
             </div>
-            <div class="card-body">
-                <a href="@Url.Action("Index", "Rooms")" class="card-link">Pläne</a>
-                @if (ViewBag.UserRight != null && ViewBag.UserRight.IsInstitutionAdmin)
-                {
-                    <a href="@Url.Action("Index", "Institution")" class="card-link">Einstellungen</a>
-                }
-            </div>
         </div>
     </div>
 </div>
-
+    *@
 
 
 

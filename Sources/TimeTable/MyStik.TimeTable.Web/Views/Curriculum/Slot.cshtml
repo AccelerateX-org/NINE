@@ -15,6 +15,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">@Model.AreaOption.Area.Curriculum.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Areas", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">Themenbereiche</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Area", "Curriculum", new {id=Model.AreaOption.Area.Id})">@Model.AreaOption.Area.Name (@Model.AreaOption.Area.Tag)</a></li>
@@ -61,24 +62,29 @@
                 {
                     <div class="list-group-item">
                         <div class="btn-group">
-                                <a href="@Url.Action("EditSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="bi-gear"></i> Ändern
+                                <a href="@Url.Action("CreateModule", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                    <i class="bi-plus"></i> Modul anlegen
                                 </a>
                                 <a href="@Url.Action("AssignModules", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                     <i class="bi-list-columns"></i> Module akkreditieren
                                 </a>
-                                @if (Model.ModuleAccreditations.Any())
-                                {
-                                    <div class="btn btn-outline-danger disabled">
-                                        <i class="bi-trash"></i> Slot löschen
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("DeleteSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
-                                        <i class="bi-trash"></i> Slot löschen
-                                    </a>
-                                }
+                        </div>
+                        <div class="btn-group">
+                            <a href="@Url.Action("EditSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-gear"></i> Slot ändern
+                            </a>
+                            @if (Model.ModuleAccreditations.Any())
+                            {
+                                <div class="btn btn-outline-danger disabled">
+                                    <i class="bi-trash"></i> Slot löschen
+                                </div>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("DeleteSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
+                                    <i class="bi-trash"></i> Slot löschen
+                                </a>
+                            }
                         </div>
                     </div>
                 }

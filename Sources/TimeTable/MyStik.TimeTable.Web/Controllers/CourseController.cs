@@ -503,6 +503,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            model.UseParticipients = true;
+            model.UseWaitingList = true;
 
             var m = new MailingController();
             m.ControllerContext = ControllerContext;
@@ -579,6 +581,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            model.UseParticipients = true;
+            model.UseWaitingList = true;
 
             var m = new MailingController();
             m.ControllerContext = ControllerContext;
@@ -650,6 +654,9 @@ namespace MyStik.TimeTable.Web.Controllers
                     return RedirectToAction(summary.Action, summary.Controller, new {id = summary.Id});
                 }
             }
+
+            model.UseParticipients = true;
+            model.UseWaitingList = true;
 
             var m = new MailingController();
             m.ControllerContext = ControllerContext;

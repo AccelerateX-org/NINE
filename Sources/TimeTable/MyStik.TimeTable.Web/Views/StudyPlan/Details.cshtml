@@ -58,22 +58,14 @@
                                 foreach (var accr in slot.ModuleAccreditations)
                                 {
                                     var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-                                    var nOpps = accr.Module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == Model.Semester.Id));
 
-                                    if (teachings.Any() || nOpps > 0)
+                                    if (teachings.Any())
                                     {
                                         <tr>
                                             <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
                                             <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
                                             <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
                                             <td>
-                                                @foreach (var subject in accr.Module.ModuleSubjects)
-                                                {
-                                                    foreach (var opportunity in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
-                                                    {
-                                                        <div><a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">@opportunity.Course.Name (@opportunity.Course.ShortName)</a></div>
-                                                    }
-                                                }
                                                 @foreach (var teaching in teachings)
                                                 {
                                                     var showGroups = teachings.Count > 1;
