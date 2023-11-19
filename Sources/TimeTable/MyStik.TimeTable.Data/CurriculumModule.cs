@@ -265,12 +265,12 @@ namespace MyStik.TimeTable.Data
         public virtual Course Course { get; set; }
 
         /// <summary>
-        /// deprectaed => will be replaced by Curriculum
+        /// optional: für Module, die akkreditiert sind
         /// </summary>
         public virtual ModuleAccreditation Accreditation { get; set; }
 
         /// <summary>
-        /// required
+        /// optional: für Module, die nicht akkreditiert sind
         /// </summary>
         public virtual Curriculum Curriculum { get; set; } 
     }

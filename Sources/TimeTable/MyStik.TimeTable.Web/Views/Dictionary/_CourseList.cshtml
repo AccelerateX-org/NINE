@@ -1,18 +1,35 @@
-﻿@model ICollection<MyStik.TimeTable.Data.Course>
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.CourseSummaryModel>
 
-<div class="list-group">
-    @foreach (var group in Model)
-    {
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = group.Id })">
-            <div class="card-title">@group.Name (@group.ShortName)
-                @if (group.LabelSet != null)
-                {
-                    foreach (var label in group.LabelSet.ItemLabels)
+@if (Model.Any())
+{
+    <div class="list-group">
+        @foreach (var summary in Model)
+        {
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
+                <div class="card-title">
+                    @summary.Course.Name (@summary.Course.ShortName)
+                    @if (summary.Course.LabelSet != null)
                     {
-                        <span class="badge bg-secondary">@label.Name</span>
+                        foreach (var label in summary.Course.LabelSet.ItemLabels)
+                        {
+                            <span class="badge bg-secondary">@label.Name</span>
+                        }
                     }
-                }
+                </div>
+                <div class="card-text">@Html.DateList(summary.Dates)</div>
+                <div class="card-text">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <div class="list-group">
+        <div class="list-group-item">
+            <div class="alert alert-danger">
+                <h5><i class="bi-exclamation-circle"></i> Keine Lehrveranstaltungen vorhanden</h5>
             </div>
-        </a>
-    }
-</div>
+        </div>
+    </div>
+}

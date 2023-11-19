@@ -60,7 +60,7 @@
                         <div class="row">
                             <div class="col-4"></div>
                             <div class="col-8">
-                                <a href="javascript:searchCourses()" class="btn btn-outline-primary"><i class="bi-search"></i> Lehrvanstaltungen suchen</a>
+                                <a href="javascript:searchCourses()" class="btn btn-outline-primary"><i class="bi-search"></i> Lehrveranstaltungen suchen</a>
                             </div>
                         </div>
                         <div class="row">
@@ -94,18 +94,18 @@
                                         iAccr++;
                                         if (iAccr == 1)
                                         {
-                                            <option selected value="@accr.Id">@accr.Slot.FullTag</option>
+                                            <option selected value="@accr.Id">@accr.Slot.AreaOption.Area.Curriculum.ShortName (@accr.Slot.FullTag)</option>
                                         }
                                         else
                                         {
-                                            <option value="@accr.Id">@accr.Slot.FullTag</option>
+                                            <option value="@accr.Id">@accr.Slot.AreaOption.Area.Curriculum.ShortName (@accr.Slot.FullTag)</option>
                                         }
                                     }
                                 </select>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">Lehrformen des Moduls</div>
+                            <div class="col-4">Fach</div>
                             <div class="col-8">
                                 <select class="form-select slot-option" id="targetSubject" onchange="onTargetSubjectChanged(this.value)">
                                     @foreach (var subject in Model.Module.ModuleSubjects)
@@ -113,11 +113,11 @@
                                         iSubject++;
                                         if (iSubject == 1)
                                         {
-                                            <option selected value="@subject.Id">@subject.TeachingFormat.Tag</option>
+                                            <option selected value="@subject.Id">@subject.Tag: @subject.Name (@subject.TeachingFormat.Tag)</option>
                                         }
                                         else
                                         {
-                                            <option value="@subject.Id">@subject.TeachingFormat.Tag</option>
+                                            <option value="@subject.Id">@subject.Tag: @subject.Name (@subject.TeachingFormat.Tag)</option>
                                         }
                                     }
                                 </select>

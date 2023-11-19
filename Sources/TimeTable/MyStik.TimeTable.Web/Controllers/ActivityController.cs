@@ -634,13 +634,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = GetUserRight(org);
 
-            ViewBag.Organiser = org;
-
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;
 
 
-            return View();
+            return View(org);
         }
 
         /// <summary>
@@ -649,33 +647,15 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="date"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult RoomPlan(string date)
+        public PartialViewResult RoomPlan(string date, Guid orgId)
         {
             //var day =  string.IsNullOrEmpty(date) ? DateTime.Today  : DateTime.ParseExact(date, "dd.MM.yyyy", null);
             var day = string.IsNullOrEmpty(date) ? DateTime.Today : DateTime.Parse(date);
             var nextDay = day.AddDays(1);
 
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(orgId);
 
             var model = new List<RoomActivityModel>();
-
-            // Alle Aktivitäten, die in Räumen des aktuellen
-            // Veranstalters stattfinden
-            /*
-            var allActivities = Db.ActivityDates.Where(x => 
-                x.Begin >= day && x.End < nextDay &&
-                x.Rooms.Any(r => r.Assignments.Any(a => a.Organiser.Id == org.Id))
-                ).ToList();
-
-            // oder
-            // Alle Räume, die durch Veranstaltungen belegt sind
-            var allRooms = Db.Rooms.Where(r =>
-                r.Assignments.Any(a => a.Organiser.Id == org.Id) &&
-                r.Dates.Any(x => x.Begin >= day && x.End < nextDay)
-                )
-                .OrderBy(r => r.Number)
-                .ToList();
-            */
 
             // Alle Räume des Veranstalters
             var allRooms = Db.Rooms.Where(r =>
@@ -700,9 +680,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Add(roomModel);
 
             }
-
-
-
 
             return PartialView("_RoomPlan", model);
         }

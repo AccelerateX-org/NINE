@@ -1,4 +1,5 @@
-﻿@{
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
     ViewBag.Title = "Tagesplan";
 }
 @section styles
@@ -14,27 +15,28 @@
         <div class="card">
             <div class="card-header">
                 <h4>
-                    Raumbelegungen @ViewBag.Organiser.ShortName
+                    Raumbelegungen @Model.ShortName
                     <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
                 </h4>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <div class="col-2">
-                        <label for="myDate">Datum</label>
-                        <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
-                    </div>
-                    <div class="col-2">
-                        @if (ViewBag.UserRight.IsRoomAdmin)
-                        {
-                            <a href="javascript:getRoomData();" class="btn btn-outline-primary">
-                                <i class="fa fa-download"></i> .csv Datei
-                            </a>
-                        }
+                    <div class="row">
+                        <div class="col-2">
+                            <label for="myDate">Datum</label>
+                            <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
+                        </div>
+                        <div class="col-2">
+                            @if (ViewBag.UserRight.IsRoomAdmin)
+                            {
+                                <a href="javascript:getRoomData();" class="btn btn-outline-primary">
+                                    <i class="fa fa-download"></i> .csv Datei
+                                </a>
+                            }
 
+                        </div>
                     </div>
                 </div>
-
             </div>
             <div id="roomPlan"></div>
         </div>
@@ -70,13 +72,15 @@
                     $("#loading").show();
 
                     var x = $('#myDate').val();
+                    var orgId = "@Model.Id.ToString()";
 
                     $.ajax(
                     {
                         type: "POST",
                         url: '@Url.Action("RoomPlan")',
                         data: {
-                            date: x
+                            date: x,
+                            orgId: orgId
                         },
                         success: function(data, success, xhr) {
                             $("#roomPlan").html(data);

@@ -190,7 +190,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid? optId, Guid labelId, int semNo)
+        public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid? optId, Guid? labelId, int semNo)
         {
             if (optId.HasValue && semNo > 0)
             {
@@ -204,33 +204,43 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 var labeledCourses = new List<Course>();
 
-                if (labelId == Guid.Empty)
+                if (labelId == null)
                 {
-                    // alle ohne Label
-                    var allCourses = courses.Where(x =>
-                        ((x.LabelSet == null) ||
-                         (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
-                    ).ToList();
-
-                    labeledCourses.AddRange(allCourses);
+                    labeledCourses.AddRange(courses);
                 }
                 else
                 {
-                    foreach (var course in courses)
+                    if (labelId == Guid.Empty)
                     {
-                        if (course.LabelSet == null ||
-                            !course.LabelSet.ItemLabels.Any() ||
-                            course.LabelSet.ItemLabels.Any(x => x.Id == labelId))
+                        // alle ohne Label
+                        var allCourses = courses.Where(x =>
+                            ((x.LabelSet == null) ||
+                             (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
+                        ).ToList();
+
+                        labeledCourses.AddRange(allCourses);
+                    }
+                    else
+                    {
+                        foreach (var course in courses)
                         {
-                            labeledCourses.Add(course);
+                            if (course.LabelSet == null ||
+                                !course.LabelSet.ItemLabels.Any() ||
+                                course.LabelSet.ItemLabels.Any(x => x.Id == labelId))
+                            {
+                                labeledCourses.Add(course);
+                            }
                         }
                     }
                 }
 
+                var cs = new CourseService();
+                var model = new List<CourseSummaryModel>();
 
-                var model = labeledCourses
-                    .OrderBy(g => g.ShortName)
-                    .ToList();
+                foreach (var labeledCourse in labeledCourses.OrderBy(g => g.ShortName))
+                {
+                    model.Add(cs.GetCourseSummary(labeledCourse));
+                }
 
                 return PartialView("_CourseList", model);
             }

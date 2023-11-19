@@ -4,11 +4,18 @@
 {
 
     <ul id="@ViewBag.ListName" class="list-group">
-        @foreach (var module in Model)
+        @foreach (var course in Model)
         {
-            <li id="@module.Id" class="list-group-item">
+            <li id="@course.Id" class="list-group-item">
                 <input class="form-check-input me-1" type="checkbox" value="">
-                <label class="form-check-label" for="@module.Id">@module.Name (@module.ShortName)</label>
+                <label class="form-check-label" for="@course.Id">@course.Name (@course.ShortName)</label>
+                @if (course.LabelSet != null)
+                {
+                    foreach (var label in course.LabelSet.ItemLabels)
+                    {
+                        <span class="badge bg-secondary">@label.Name</span>
+                    }
+                }
             </li>
         }
     </ul>
