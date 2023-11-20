@@ -1,7 +1,12 @@
-﻿@model MyStik.TimeTable.Web.Models.TeachingOverviewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.TeachingOverviewModel
 @{
-    // Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
-    ViewBag.Title = "Startseite";
+    ViewBag.Title = "Dashboard";
+
+    var db = new TimeTableDbContext();
+
+    var day = DateTime.Today.AddDays(-7);
+    var nAds = db.Advertisements.Count(x => x.Created >= day);
 }
 
 
@@ -227,7 +232,7 @@
                         <i class="bi-people"></i> Personen
                     </a>
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")">
-                        <i class="bi-tv"></i> Aushänge
+                        <i class="bi-tv"></i> Aushänge <span class="badge bg-primary">@nAds</span>
                     </a>
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Newsletter")">
                         <i class="bi-envelope-at"></i> Newsletter

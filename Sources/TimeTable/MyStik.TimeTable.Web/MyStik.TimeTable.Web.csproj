@@ -4694,6 +4694,7 @@
     <Content Include="Views\Students\CourseList.cshtml" />
     <Content Include="Views\Events\Organiser.cshtml" />
     <Content Include="Views\Curriculum\CreateModule.cshtml" />
+    <Content Include="Views\Notification\PersonalMessage.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4714,7 +4715,6 @@
     <Folder Include="Views\API2\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Mvg\" />
-    <Folder Include="Views\Notification\" />
     <Folder Include="Views\QuizGame\" />
     <Folder Include="Views\Site\" />
     <Folder Include="Views\Storage\" />

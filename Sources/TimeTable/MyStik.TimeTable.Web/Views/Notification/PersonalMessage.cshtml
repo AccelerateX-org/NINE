@@ -1,0 +1,61 @@
+﻿@model MyStik.TimeTable.Web.Controllers.NotificationModel
+@{
+    ViewBag.Title = "PersonalMessage";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm(null, null, FormMethod.Post))
+        {
+            <div class="card">
+                <div class="col-md-12 bg-secondary">
+                    Standardfelder
+                </div>
+                <div class="row">
+                    <div class="col-4">Titel</div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Titel" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Nachrcht</div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Message, new { @class = "form-control", placeholder = "Nachricht" })
+                    </div>
+                </div>
+                <div class="col-md-12 bg-secondary">
+                    Benutzerdefinierte Felder
+                </div>
+                <div class="row">
+                    <div class="col-4">Kategorie</div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Category, new { @class = "form-control", placeholder = "Kategorie" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Autor</div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Author, new { @class = "form-control", placeholder = "Name des Autors" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Dozent</div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Lecturer, new { @class = "form-control", placeholder = "Name des Dozenten" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Raum</div>
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Room, new { @class = "form-control", placeholder = "Raum" })
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-outline-primary"><i class="bi-send"></i> Nachricht an die eigenen Geräte senden</button>
+                <a class="btn btn-outline-secondary" href="@Url.Action("Index", "Dashboard")"><i class="bi-x"></i> Abbrechen</a>
+
+            </div>
+        }
+    </div>
+</div>
+

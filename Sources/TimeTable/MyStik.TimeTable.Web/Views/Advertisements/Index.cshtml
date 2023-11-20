@@ -10,170 +10,170 @@
     <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
+<div class="row">
+    <div class="col-12">
 
-
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-events">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Ausschreibungen der @ViewBag.Organiser.ShortName</h1>
-                </div>
-            </div>
-        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item active" aria-current="page">Aushänge</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
-@if (ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff)
-{
-    <div class="panel panel-default panel-menu">
-        <div class="panel-body">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <a href="@Url.Action("Create", "Advertisements", new {id = ViewBag.Organiser.Id})" class="btn btn-default">
-                                    <i class="fa fa-plus-circle"></i> Ausschreibung anlegen
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert alert-info">
-                <strong>Hinweise</strong>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Legende</h5>
                 <ul>
-                    <li>Über die Ausschreibungen sollen Studierende im Rahmen ihres Studiums unterstützt werden.</li>
-                    <li>Dabei steht auch der persönliche Kontakt im Vordergrund, d.h. wen sollen Studierende bei weiteren Fragen ansprechen.</li>
-                    <li>Für kommerzielle Angebote, z.B. Festanstellungen, bitte das offizielle <a href="https://jobs.hm.edu/" target="_blank">Jobportal der HM</a><i class="fa fa-external-link"></i> verwenden bzw. Unternehmen darauf hinweisen.</li>
+                    <li><i class="bi-wrench-adjustable"></i> praktisches Studiensemester</li>
+                    <li><i class="bi-mortarboard"></i> Abschlussarbeit</li>
+                    <li><i class="bi-globe"></i> Auslandsaufenthalt</li>
+                    <li><i class="bi-cash"></i> Stipendien</li>
+                    <li><i class="bi-trophy"></i> Studentische Wettbewerbe</li>
+                    <li><i class="bi-zoom-in"></i> SHKs & Tutortätigkeiten</li>
+                    <li><i class="bi-gear-fill"></i> Werkstudententätigkeiten</li>
                 </ul>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-bullhorn"></i> Aktuelle Ausschreibungen
-                    </h4>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <i class="fa fa-wrench"></i> praktisches Studiensemester
-                        </div>
-                        <div class="col-md-2">
-                            <i class="fa fa-graduation-cap"></i> Abschlussarbeit
-                        </div>
-                        <div class="col-md-2">
-                            <i class="fa fa-globe"></i> Auslandsaufenthalt
-                        </div>
-                        <div class="col-md-2">
-                            <i class="fa fa-money"></i> Stipendien
-                        </div>
-                        <div class="col-md-2">
-                            <i class="fa fa-trophy"></i> Studentische Wettbewerbe
-                        </div>
-                        <div class="col-md-2">
-                            <i class="fa fa-flask"></i> SHKs & Tutortätigkeiten
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <i class="fa fa-industry"></i> Werkstudententätigkeiten
-                        </div>
-                    </div>
-                </div>
-                <table id="tabAdv" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Titel</th>
-                            <th>Angelegt</th>
-                            <th>Ablauf</th>
-                            <th>Kontakt</th>
-                            <th>Bezug</th>
-                            <th>Info</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var adv in Model)
-                        {
-                            <tr>
-                                @if (string.IsNullOrEmpty(adv.Title))
-                                {
-                                    <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">(ohne Titel)</a></td>
-                                }
-                                else
-                                {
-                                    <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">@adv.Title</a></td>
-                                }
-                                <td>@adv.Created.ToShortDateString()</td>
-                                <td>@adv.VisibleUntil.ToShortDateString()</td>
-                                <td>@adv.Owner.FullName</td>
-                                <td>
-                                    @if (adv.ForInternship)
-                                    {
-                                        <i class="fa fa-wrench"></i>
-                                    }
-                                    @if (adv.ForThesis)
-                                    {
-                                        <i class="fa fa-graduation-cap"></i>
-                                    }
-                                    @if (adv.ForStayAbroad)
-                                    {
-                                        <i class="fa fa-globe"></i>
-                                    }
-                                    @if (adv.ForAdvancement)
-                                    {
-                                        <i class="fa fa-money"></i>
-                                    }
-                                    @if (adv.ForCompetition)
-                                    {
-                                        <i class="fa fa-trophy"></i>
-                                    }
-                                    @if (adv.ForTutor)
-                                    {
-                                        <i class="fa fa-flask"></i>
-                                    }
-                                    @if (adv.ForWorkingStudent)
-                                    {
-                                        <i class="fa fa-industry"></i>
-                                    }
-                                </td>
-                                <td>
-                                    @if (adv.Attachment != null)
-                                    {
-                                        <a href="@Url.Action("ShowFile", new {id = adv.Attachment.Id})" target="_blank"><i class="fa fa-file-pdf-o"></i> (@adv.Attachment.AccessCount)</a>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        @if (ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Hinweise</strong>
+                        <ul>
+                            <li>Über die Ausschreibungen sollen Studierende im Rahmen ihres Studiums unterstützt werden.</li>
+                            <li>Dabei steht auch der persönliche Kontakt im Vordergrund, d.h. wen sollen Studierende bei weiteren Fragen ansprechen.</li>
+                            <li>Für kommerzielle Angebote, z.B. Festanstellungen, bitte das offizielle <a href="https://jobs.hm.edu/" target="_blank">Jobportal der HM</a><i class="fa fa-external-link"></i> verwenden bzw. Unternehmen darauf hinweisen.</li>
+                        </ul>
+                    </div>
+                    <a href="@Url.Action("Create", "Advertisements", new { id = ViewBag.Organiser.Id })" class="btn btn-outline-primary">
+                        <i class="bi-plus"></i> Ausschreibung anlegen
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
 </div>
+
+<div class="row mt-1">
+    <div class="col-md-12">
+        <div class="card">
+            <table id="tabAdv" class="table">
+                <thead>
+                    <tr>
+                        <th><i class="bi-calendar-day"></i></th>
+                        <th><i class="bi-list-check"></i></th>
+                        <th><i class="bi-stars"></i></th>
+                        <th><i class="bi-file-pdf"></i></th>
+                        <th>Titel</th>
+                        <th>Kontakt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var adv in Model)
+                    {
+                        var nLevel = 0;
+                        <tr>
+                            <td>@adv.Created.ToShortDateString()</td>
+                            <td>
+                                @if (adv.ForInternship)
+                                {
+                                    nLevel += 1;
+                                    <i class="bi-wrench-adjustable"></i>
+                                }
+                                @if (adv.ForThesis)
+                                {
+                                    nLevel += 2;
+                                    <i class="bi-mortarboard"></i>
+                                }
+                                @if (adv.ForStayAbroad)
+                                {
+                                    nLevel += 4;
+                                    <i class="bi-globe"></i>
+                                }
+                                @if (adv.ForAdvancement)
+                                {
+                                    nLevel += 8;
+                                    <i class="bi-cash"></i>
+                                }
+                                @if (adv.ForCompetition)
+                                {
+                                    nLevel += 16;
+                                    <i class="bi-trophy"></i>
+                                }
+                                @if (adv.ForTutor)
+                                {
+                                    nLevel += 32;
+                                    <i class="bi-zoom-in"></i>
+                                }
+                                @if (adv.ForWorkingStudent)
+                                {
+                                    nLevel += 64;
+                                    <i class="bi-gear-fill"></i>
+                                }
+                                <span hidden="">@nLevel</span>
+                            </td>
+                            <td>
+                                @if (adv.Attachment != null)
+                                {
+
+                                    @adv.Attachment.AccessCount
+                                }
+                            </td>
+                            <td>
+                                @if (adv.Attachment != null)
+                                {
+                                    <a href="@Url.Action("ShowFile", new { id = adv.Attachment.Id })" target="_blank"><i class="bi-file-pdf"></i></a>
+                                }
+                            </td>
+
+                            @if (string.IsNullOrEmpty(adv.Title))
+                            {
+                                <td><a href="@Url.Action("Details", "Advertisements", new { id = adv.Id })">(ohne Titel)</a></td>
+                            }
+                            else
+                            {
+                                <td><a href="@Url.Action("Details", "Advertisements", new { id = adv.Id })">@adv.Title</a></td>
+                            }
+                            <td>@adv.Owner.FullName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
 
 @section scripts
 {
     <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript" "></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
+
+            $.fn.dataTable.moment('DD.MM.YYYY');
+
             var t = $('#tabAdv').DataTable({
                 "paging": false,
+                /*
                 "columnDefs": [{
                     "type": "de_date",
                     "targets": [1, 2]
                 }],
-                "order": [[0, 'asc']]
+                */
+                "order": [[0, 'desc']]
             });
         });
     </script>

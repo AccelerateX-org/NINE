@@ -9,16 +9,32 @@ using Newtonsoft.Json;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    public class NotificationModel
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string Url { get; set; }
+        public string Author { get; set; }
+        public string Category { get; set; }
+        public string Room { get; set; }
+        public string Lecturer { get; set; }
+    }
+
     public class NotificationController : BaseController
     {
-        // GET: Notification
-        public ActionResult SendMeANotofication()
+        public ActionResult PersonalMessage()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult PersonalMessage(NotificationModel model)
         {
             var user = GetCurrentUser();
 
-            var device = user.Devices.FirstOrDefault(x => x.Platform == DevicePlatform.PWA);
+            var devices = user.Devices.Where(x => x.Platform == DevicePlatform.PWA).ToList();
 
-            if (device != null)
+            foreach (var device in devices)
             {
                 var subscription = JsonConvert.DeserializeObject<PushSubscription>(device.DeviceName);
 
@@ -34,16 +50,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 var notification = new AngularPushNotification
                 {
-                    Title = "news from NINE",
-                    Body = $"from nine to fillter",
-                    // Icon = "Assets/icon-96x96.png" - so geht es nicht, andere Art des Pfads
+                    Title = model.Title, //"news from NINE",
+                    Body = model.Message, // $"from nine to fillter",
                     Data = new Dictionary<string, object>(),
                     Icon = "img.png"
                 };
 
-                notification.Data["url"] = "https://nine.hm.edu";
-                notification.Data["room"] = "R 2.089";
-                notification.Data["lecturer"] = "Hinz";
+                notification.Data["url"] = model.Url; //"https://nine.hm.edu";
+                notification.Data["room"] = model.Room; //"R 2.089";
+                notification.Data["lecturer"] = model.Lecturer; //"Hinz";
+                notification.Data["author"] = model.Author; //"Hinz";
+                notification.Data["category"] = model.Category; //"Hinz";
 
                 var pushNMessage = notification.ToPushMessage();
 
