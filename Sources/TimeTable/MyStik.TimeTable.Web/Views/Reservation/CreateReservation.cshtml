@@ -337,6 +337,7 @@
 
         $("#saveAll").click(function() {
 
+            var orgId = "@Model.OrganiserId.ToString()";
             var name = $("#Name").val();
             var desc = $("#Description").val();
             var newDate = $("#NewDate").val();
@@ -370,19 +371,20 @@
             {
                 type: "POST",
                 url: '@Url.Action("CreateReservation")',
-                data: {
-                    name: name,
-                    description: desc,
-                    NewDate: newDate,
-                    NewBegin: newBegin,
-                    NewEnd: newEnd,
-                    IsWeekly: isWeekly,
-                    IsDaily: isDaily,
-                    DailyEnd: dailyEnd,
-                    WeeklyEnd: weeklyEnd,
-                    RoomIds: roomList,
-                    DozIds: dozList
-                },
+                    data: {
+                        OrganiserId: orgId,
+                        name: name,
+                        description: desc,
+                        NewDate: newDate,
+                        NewBegin: newBegin,
+                        NewEnd: newEnd,
+                        IsWeekly: isWeekly,
+                        IsDaily: isDaily,
+                        DailyEnd: dailyEnd,
+                        WeeklyEnd: weeklyEnd,
+                        RoomIds: roomList,
+                        DozIds: dozList
+                    },
                 success: function(data, success, xhr) {
                     //if (data.result === 'Redirect')
                         window.location = data.url;

@@ -55,7 +55,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Reservations.Add(rm);
             }
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
@@ -125,7 +125,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public JsonResult CreateReservation(ReservationCreateModel model)
         {
             // Doppelungen von Namen pro Organiser vermeiden
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(model.OrganiserId);
 
             var reservation =
                 Db.Activities.OfType<Reservation>().SingleOrDefault(r => r.Organiser.Id == org.Id &&
