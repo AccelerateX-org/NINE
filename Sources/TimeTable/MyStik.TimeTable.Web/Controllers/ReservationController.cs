@@ -27,8 +27,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var reservationList = Db.Activities.OfType<Reservation>().Where(r => r.Organiser.Id == org.Id).ToList();
 
-            var courseService = new CourseService(Db);
-
             var model = new ReservationListViewModel();
             model.Organiser = org;
 

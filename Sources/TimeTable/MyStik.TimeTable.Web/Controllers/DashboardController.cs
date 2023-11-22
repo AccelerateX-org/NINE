@@ -27,7 +27,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var teachingService = new TeachingService(Db);
 
             var model = new TeachingOverviewModel();
-            var members = MemberService.GetFacultyMemberships(user.Id).ToList();
+            var members = MemberService.GetMemberships(user.Id).ToList();
             var student = GetCurrentStudent(user.Id);
 
             model.Members = members;

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using Lib.Net.Http.WebPush;
 using Lib.Net.Http.WebPush.Authentication;
@@ -18,13 +20,38 @@ namespace MyStik.TimeTable.Web.Controllers
         public string Category { get; set; }
         public string Room { get; set; }
         public string Lecturer { get; set; }
+
+        public string originDate { get; set; }
+
+        public string originTime { get; set; }
+
+        public string newDate { get; set; }
+
+        public string newTime { get; set; }
+        
+        public string changeDate { get; set; }
+
+        public string changeTime { get; set; }
     }
 
     public class NotificationController : BaseController
     {
         public ActionResult PersonalMessage()
         {
-            return View();
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+            var model = new NotificationModel()
+            {
+                originDate = DateTime.Now.ToShortDateString(),
+                newDate = DateTime.Now.ToShortDateString(),
+                changeDate = DateTime.Now.ToShortDateString(),
+                originTime = DateTime.Now.ToShortTimeString(),
+                newTime = DateTime.Now.ToShortTimeString(),
+                changeTime = DateTime.Now.ToShortTimeString(),
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -61,6 +88,23 @@ namespace MyStik.TimeTable.Web.Controllers
                 notification.Data["lecturer"] = model.Lecturer; //"Hinz";
                 notification.Data["author"] = model.Author; //"Hinz";
                 notification.Data["category"] = model.Category; //"Hinz";
+
+                var oDay = DateTime.Parse(model.originDate);
+                var oTime = DateTime.Parse(model.originTime);
+                var oDate = oDay.Add(oTime.TimeOfDay);
+                notification.Data["dateOrigin"] = oDate;
+
+                var nDay = DateTime.Parse(model.newDate);
+                var nTime = DateTime.Parse(model.newTime);
+                var nDate = nDay.Add(nTime.TimeOfDay);
+                notification.Data["dateChanged"] = nDate;
+
+                var cDay = DateTime.Parse(model.changeDate);
+                var cTime = DateTime.Parse(model.changeTime);
+                var cDate = cDay.Add(cTime.TimeOfDay);
+                notification.Data["dateSend"] = cDate;
+
+
 
                 var pushNMessage = notification.ToPushMessage();
 

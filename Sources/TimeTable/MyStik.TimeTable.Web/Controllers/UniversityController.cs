@@ -51,6 +51,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(orgs);
         }
 
+        public ActionResult Services()
+        {
+            var orgs = Db.Organisers
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return View(orgs);
+        }
 
         public ActionResult Curricula()
         {

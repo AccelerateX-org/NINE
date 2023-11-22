@@ -28,6 +28,12 @@
                                 <div><strong>@act.Date.Title</strong></div>
                                 <div>@act.Date.Occurrence.Information</div>
                             }
+                            else if (act.Date.Activity is Reservation)
+                            {
+                                <a href="@Url.Action("Details", "Reservation", new {id = act.Date.Activity.Id})">
+                                    @act.Date.Activity.Name
+                                </a>
+                            }
                             else
                             {
                                 <div>

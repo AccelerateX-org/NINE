@@ -598,6 +598,38 @@ namespace MyStik.TimeTable.Web.Controllers
                 agendaDay.Activities.Add(agendaActivity);
             }
 
+            // alle eigenen Reservierungen
+            var reservations =
+                Db.Activities.OfType<Reservation>()
+                    .Where(r => r.UserId.Equals(user.Id) && r.Dates.Any(d => d.Begin >= begin && d.End <= end ))
+                    .ToList();
+
+            foreach (var reservation in reservations)
+            {
+                var dates = reservation.Dates.Where(d => d.Begin >= begin && d.End <= end).ToList();
+                foreach (var date in dates)
+                {
+                    var agendaDay = model.Days.SingleOrDefault(d => d.Day.Date == date.Begin.Date);
+                    if (agendaDay == null)
+                    {
+                        agendaDay = new AgendaDayViewModel
+                        {
+                            Day = date.Begin.Date
+                        };
+                        model.Days.Add(agendaDay);
+                    }
+
+                    var agendaActivity = new AgendaActivityViewModel
+                    {
+                        Date = date
+                    };
+
+                    agendaDay.Activities.Add(agendaActivity);
+                }
+            }
+
+
+
 
 
 

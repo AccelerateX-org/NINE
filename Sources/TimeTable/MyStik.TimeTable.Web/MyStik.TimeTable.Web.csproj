@@ -4695,6 +4695,7 @@
     <Content Include="Views\Events\Organiser.cshtml" />
     <Content Include="Views\Curriculum\CreateModule.cshtml" />
     <Content Include="Views\Notification\PersonalMessage.cshtml" />
+    <Content Include="Views\University\Services.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
