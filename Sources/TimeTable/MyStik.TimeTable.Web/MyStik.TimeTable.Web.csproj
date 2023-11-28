@@ -746,6 +746,8 @@
     <Compile Include="Services\ActivityService.cs" />
     <Compile Include="Services\BaseMailService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\CalendarEventService.cs" />
+    <Compile Include="Services\CalendarService.cs" />
     <Compile Include="Services\ChangeService.cs" />
     <Compile Include="Services\CourseService.cs" />
     <Compile Include="Services\CurriculumService.cs" />

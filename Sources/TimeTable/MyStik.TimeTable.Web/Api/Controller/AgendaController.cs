@@ -13,6 +13,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// <summary>
     /// 
     /// </summary>
+    /*
     [System.Web.Http.RoutePrefix("api/v2/agenda")]
     public class AgendaController : ApiBaseController
     {
@@ -126,4 +127,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return model;
         }
     }
+    */
 }

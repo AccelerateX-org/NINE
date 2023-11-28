@@ -572,10 +572,13 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
+            var user = GetCurrentUser();
+
+            var calendarService = new CalendarService();
 
             return Json(
                 GetCalendarEvents(
-                    GetActivityPlan(User.Identity.Name, startDate, endDate),
+                    calendarService.GetActivityPlan(user, startDate, endDate),
                     false));
         }
 
@@ -1086,63 +1089,6 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
-        /// <returns></returns>
-        private IEnumerable<ActivityDateSummary>  GetActivityPlan(string userName, DateTime startDate, DateTime endDate)
-        {
-            var dateMap = new Dictionary<Guid, ActivityDateSummary>();
-
-            var db = new TimeTableDbContext();
-
-            var user = UserManager.FindByName(userName);
-
-            if (user != null)
-            {
-                // Was der User anbietet
-                // Termine als Host
-                var allMyDates = db.ActivityDates.Where(c =>
-                    c.Begin >= startDate && c.End <= endDate &&
-                    c.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id))).ToList();
-
-                foreach (var date in allMyDates)
-                {
-                    dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.Offer);
-                }
-
-                // 2. die gebuchten
-                var myOcs = db.Occurrences.Where(o => o.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
-
-                var ac = new ActivityService();
-
-                foreach (var occ in myOcs)
-                {
-                    var summary = ac.GetSummary(occ.Id);
-
-                    var dates = summary.GetDates(startDate, endDate);
-
-                    foreach (var date in dates)
-                    {
-                        if (!dateMap.ContainsKey(date.Id))
-                        {
-                            var dateSummary = new ActivityDateSummary(date, ActivityDateType.Subscription);
-                            if (summary is ActivitySlotSummary slotSummary)
-                            {
-                                dateSummary.Slot = slotSummary.Slot;
-                            }
-                            dateMap[date.Id] = dateSummary;
-
-                        }
-                    }
-                }
-            }
-
-            return dateMap.Values.ToList();
-        }
 
         /// <summary>
         /// 
@@ -1188,8 +1134,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 to = nextSemester.EndCourses;
             }
 
-
-            var dateList = GetActivityPlan(user.UserName, from, to);
+            var calendarService = new CalendarService();
+            var dateList = calendarService.GetActivityPlan(user, from, to);
 
             //var tz = "Europe/Berlin";
             var tz = "Europe/Berlin";

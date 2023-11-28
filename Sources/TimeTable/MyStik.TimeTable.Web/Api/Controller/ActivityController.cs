@@ -1,118 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
+using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    public class ActivityRequestModel
+    {
+        public Guid UserId { get; set; }
+
+        public string start { get; set; }
+            
+        public string end { get; set; }
+    }
+
     /// <summary>
     /// 
     /// </summary>
     [System.Web.Http.RoutePrefix("api/v2/activities")]
     public class ActivityController : ApiBaseController
     {
-        //VorlesungsAPI
+        private DateTime GetDateTime(string time)
+        {
+            var dt = DateTime.Parse(time);
+            return dt;
+        }
+
 
         /// <summary>
-        /// Abfrage des persönlichen Stundenplans für eine Woche
+        /// 
         /// </summary>
-        /// <param name="UserId">Die UserId des Accounts in der Datenbank</param>
-        /// <returns>Liste nach Wochentagen mit den persönlichen/gebuchten Kursterminen</returns>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [System.Web.Http.Route("")]
-        public PersonalPlanResponse GetPersonalDates(string UserId)
+        [HttpPost]
+        public IQueryable<CalendarEventModel> PersonalAgenda([FromBody] ActivityRequestModel model)
         {
-            //Da hier Abfrage der persönlichen Termine nur für kommende Woche, Festlegung der Variablen des Zeitraums
-            //Alle eigenen Termine von jetzt bis zur nächsten Woche
             var from = DateTime.Now;
             var until = from.AddDays(7);
 
-            var userService = new UserInfoService();
-            var user = userService.GetUser(UserId);
-            if (user != null  && user.UserName.Equals("demo@fillter.de"))
+            if (!string.IsNullOrEmpty(model.start) && !string.IsNullOrEmpty(model.end))
             {
-                // Demodaten
-                var dateList = new List<OwnDatesContract>();
-                var courseList = new List<DateContract>();
-                var roomList = new List<DateRoomContract>();
-                var lecturerList = new List<DateLecturerContract>();
-
-                var demoRoom = new DateRoomContract
-                {
-                    RoomId = Guid.NewGuid().ToString(),
-                    RoomNumber = "R 1.083"
-                };
-                roomList.Add(demoRoom);
-
-                var demoLecturer = new DateLecturerContract
-                {
-                    LecturerId = Guid.NewGuid().ToString(),
-                    LecturerName = "Demo Dozent"
-                };
-                lecturerList.Add(demoLecturer);
-
-                var demoCourse = new DateContract
-                {
-                    StartTime = "10:00",
-                    EndTime = "11:30",
-                    IsCanceled = false,
-                    Titel = "Demovorlesung",
-                    Rooms = roomList,
-                    Lecturers = lecturerList
-                };
-
-                courseList.Add(demoCourse);
-
-                var today = DateTime.Today;
-
-                var demoDate = new OwnDatesContract
-                {
-                    StatedDate = today.ToString("dd.MM.yyyy"),
-                    InfoString = null,
-                    Dates = courseList
-                };
-                dateList.Add(demoDate);
-
-                var date = today;
-                var endOfWeek = today.AddDays(7);
-                while (date <= endOfWeek)
-                {
-                    demoDate = new OwnDatesContract
-                    {
-                        StatedDate = date.ToString("dd.MM.yyyy"),
-                        InfoString = null,
-                        Dates = new List<DateContract>()
-                    };
-                    dateList.Add(demoDate);
-
-                    date = date.AddDays(1);
-                }
-
-
-                var demoResponse = new PersonalPlanResponse
-                {
-                    Courses = dateList,
-                };
-                //Rückgabe der Response
-                return demoResponse;
-
+                from = GetDateTime(model.start);
+                until = GetDateTime(model.end);
             }
 
-            //Initialisierung des ActivityInfoService
-            var activityService = new ActivityInfoService();
 
-            //Abfrage der persönlichen Termine mit Hilfe des ActivityInfoService und den Parametern
-            var activityList = activityService.GetPersonalDates(UserId, from, until);
+            var userService = new UserInfoService();
+            var user = userService.GetUser(model.UserId.ToString());
 
-            //Erstellen des Response mit Hilfe der activityList
-            var response = new PersonalPlanResponse
-            {
-                Courses = activityList,
-            };
-            //Rückgabe der Response
-            return response;
+            var calendarService = new CalendarService();
+            var calenderEventService = new CalendarEventService();
+
+            var activities = calendarService.GetActivityPlan(user, from, until);
+
+            var cal = calenderEventService.GetCalendarEvents(activities);
+
+            return cal.AsQueryable();
         }
+
 
         //Alle eigenen Termine in Zeitraum
         /// <summary>
@@ -122,6 +73,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <param name="From">Anfangsdatum  des Zeitraums im Format dd.MM.yyyy</param>
         /// <param name="Until">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
         /// <returns>Persönlichen Termine für jeden Tag im gewählten Zeitraum</returns>
+        /*
         [System.Web.Http.Route("span")]
         public PersonalPlanResponse GetPersonalDatesSpan(string UserId, string From, string Until)
         {
@@ -166,7 +118,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// Abfrage aller kommenden Events
         /// </summary>
         /// <returns>Liste aller zukünftigen Events</returns>
-        /*
         public EventInfoResponse GetAllEvents()
         {
             var eventService = new EventInfoService();
@@ -180,7 +131,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return response;
         }
-        */
 
         //Ein spezielles Event abrufen
         /// <summary>
@@ -203,15 +153,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return response;
         }
 
-
-        //TODO
-        //Einbuchen in Event
-        //Ausbuchen aus Event
-
-        //Newsletter APIs
-        //Abfragen der verfügbaren Newsletter
-        //Einbuchen von Newsletter
-        //Ausbuchen von Newsletter
+        */
 
     }
 }

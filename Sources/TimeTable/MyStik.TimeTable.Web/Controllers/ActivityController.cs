@@ -538,7 +538,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var dateDay = DateTime.Parse(day);
 
             var begin = dateDay;
-            var end = dateDay.AddDays(7);
+            var end = dateDay.AddDays(1);
 
             // Alle Dates bei denen der Benutzer als Dozent eingetragen ist
             var lectureDates =
@@ -627,9 +627,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     agendaDay.Activities.Add(agendaActivity);
                 }
             }
-
-
-
 
 
 
