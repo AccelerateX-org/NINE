@@ -49,6 +49,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = sem
             };
 
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

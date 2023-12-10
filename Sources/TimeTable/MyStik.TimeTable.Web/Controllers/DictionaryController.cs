@@ -74,6 +74,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
+            if (curr.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                curr.LabelSet = labelSet;
+
+                Db.ItemLabelSets.Add(labelSet);
+                Db.SaveChanges();
+            }
+
+
+
             var model = new SemesterActiveViewModel
             {
                 Semester = semester,
@@ -174,7 +185,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
             var allItemLabels = new List<ItemLabel>();
-            allItemLabels.AddRange(curr.Organiser.Institution.LabelSet.ItemLabels);
+            if (curr.Organiser.Institution != null)
+            {
+                allItemLabels.AddRange(curr.Organiser.Institution.LabelSet.ItemLabels);
+            }
+
             allItemLabels.AddRange(curr.Organiser.LabelSet.ItemLabels);
             allItemLabels.AddRange(curr.LabelSet.ItemLabels);
 
@@ -192,6 +207,10 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid? optId, Guid? labelId, int semNo)
         {
+            var cs = new CourseService();
+            var model = new List<CourseSummaryModel>();
+
+
             if (optId.HasValue && semNo > 0)
             {
                 // Alle LVs in dem Semester
@@ -234,9 +253,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
 
-                var cs = new CourseService();
-                var model = new List<CourseSummaryModel>();
-
                 foreach (var labeledCourse in labeledCourses.OrderBy(g => g.ShortName))
                 {
                     model.Add(cs.GetCourseSummary(labeledCourse));
@@ -267,7 +283,13 @@ namespace MyStik.TimeTable.Web.Controllers
                          (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
                     ).ToList();
 
-                    return PartialView("_CourseList", allCourses);
+                    foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
+                    {
+                        model.Add(cs.GetCourseSummary(labeledCourse));
+                    }
+
+
+                    return PartialView("_CourseList", model);
                 }
                 else
                 {
@@ -279,8 +301,12 @@ namespace MyStik.TimeTable.Web.Controllers
                          (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
                     ).ToList();
 
+                    foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
+                    {
+                        model.Add(cs.GetCourseSummary(labeledCourse));
+                    }
 
-                    return PartialView("_CourseList", allCourses);
+                    return PartialView("_CourseList", model);
                 }
 
             }
@@ -291,11 +317,14 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.LabelSet != null &&
                     x.LabelSet.ItemLabels.Any(l => l.Id == labelId)).ToList();
 
-                return PartialView("_CourseList", allCourses);
+                foreach (var labeledCourse in allCourses.OrderBy(g => g.ShortName))
+                {
+                    model.Add(cs.GetCourseSummary(labeledCourse));
+                }
+
+                return PartialView("_CourseList", model);
             }
-
         }
-
 
 
 
@@ -499,6 +528,43 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return View("GroupByTopic", model);
+        }
+
+        public ActionResult Label(Guid semId, Guid orgId, Guid labelId, Guid currId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var org = GetOrganiser(orgId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var courses = Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semester.Id &&
+                    x.Organiser.Id == org.Id &&
+                    x.LabelSet != null &&
+                    x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                .ToList();
+
+
+            var cs = new CourseService();
+            var courseSummaries = new List<CourseSummaryModel>();
+
+            foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
+            {
+                courseSummaries.Add(cs.GetCourseSummary(labeledCourse));
+            }
+
+
+            var model = new SemesterActiveViewModel
+            {
+                Curriculum = curr,
+                Semester = semester,
+                Organiser = org,
+                Courses = courseSummaries
+            };
+
+
+            return View(model);
         }
 
 

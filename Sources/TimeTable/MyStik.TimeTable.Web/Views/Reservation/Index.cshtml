@@ -22,17 +22,16 @@
 
     <div class="col-md-12">
         <div class="card">
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group" role="group">
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
-                        @if (ViewBag.UserRight.IsRoomAdmin)
-                        {
+            @if (ViewBag.UserRight.IsRoomAdmin)
+            {
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
                             <a href="@Url.Action("CreateReservation", new {id=Model.Organiser.Id})" class="btn btn-outline-primary"><i class="bi-folder-plus"></i> Neue Reservierung anlegen</a>
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
 
             <table id="tabReservation" class="table">
                 <thead>

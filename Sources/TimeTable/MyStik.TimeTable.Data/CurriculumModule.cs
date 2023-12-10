@@ -276,6 +276,41 @@ namespace MyStik.TimeTable.Data
     }
 
 
+    public class SubjectTeaching
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        /// <summary>
+        /// optional
+        /// </summary>
+        public virtual ModuleSubject Subject { get; set; }
+
+        /// <summary>
+        /// required
+        /// </summary>
+        public virtual Course Course { get; set; }
+    }
+
+
+    public class SlotExecution
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        /// <summary>
+        /// optional
+        /// </summary>
+        public virtual CurriculumSlot Slot { get; set; }
+
+        /// <summary>
+        /// required
+        /// </summary>
+        public virtual Course Course { get; set; }
+    }
+
 
 
 

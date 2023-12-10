@@ -171,6 +171,11 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Semester")]
         public Guid SemesterId { get; set; }
 
+
+
+        [Display(Name = "Abschnitt")]
+        public Guid SegmentId { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -237,6 +242,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ActivityOrganiser Organiser { get; set; }
+
+        public SemesterDate Segment { get; set; }
 
         /// <summary>
         /// 

@@ -1,0 +1,99 @@
+﻿@using System.Web.Mvc.Html
+@model MyStik.TimeTable.Web.Models.SemesterImportModel
+@{
+    ViewBag.Title = "Import Stundenplandaten";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Import von Stundenplandaten für @Model.Organiser.ShortName und Semester @Model.Semester.Name</h4>
+                <h5 class="card-title"><i class="bi-calendar"></i> Schritt 1 von 3: Angabe Zeitraum</h5>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("SelectFiles", null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.HiddenFor(m => m.SemesterId)
+                        @Html.HiddenFor(m => m.OrganiserId)
+                        @Html.HiddenFor(m => m.FormatId)
+
+                        <div class="row">
+                            <label class="col-sm-3 form-label">Import der Date für Semesterabschnitt</label>
+                            <div class="col-sm-3">
+                                @Html.DropDownListFor(m => m.SegmentId, (IEnumerable<SelectListItem>)ViewBag.Segements, new { @class = "form-select"}) 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi-chevron-right"></i> Weiter</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts {
+
+    @Scripts.Render("~/bundles/signalr")
+
+    <!--
+    Obwohl diese Datei so nicht existieren, wird das hier benötigt
+    Wahrscheinlich wird das erst zur Laufzeit erstellt
+    -->
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            var connection = $.connection.jsonImportHub;
+
+            connection.client.updateProgress = function (message, perc1) {
+
+                $("#pogresslabel").html("<p>" + message + "</p>");
+                $("#progressbar1").html(perc1 + "%");
+                $("#progressbar1").css("width", perc1 + "%");
+            };
+
+            $("#btnDelete").click(function () {
+                var semId = $("#SemesterId").val();
+                var orgId = "@Model.Organiser.Id";
+                var formatId = $("#FormatId").val();
+
+                connection.server.deleteSemester(semId, orgId, formatId).done(function () {
+                    //                    alert("habe fertig");
+                });
+            });
+
+
+            $.connection.hub.start();
+        })
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

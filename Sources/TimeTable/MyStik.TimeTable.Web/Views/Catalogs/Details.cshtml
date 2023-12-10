@@ -104,7 +104,9 @@
                 <tbody>
                     @foreach (var module in Model.Modules)
                     {
-                        var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
+                        var currs = module.Accreditations
+                            .Where(x => x.Slot != null)
+                            .Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
 
 
                         var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;

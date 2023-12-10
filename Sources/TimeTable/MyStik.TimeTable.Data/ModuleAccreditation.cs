@@ -4,6 +4,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    public class SubjectAccreditation
+    {
+        public SubjectAccreditation()
+        {
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual CurriculumSlot Slot { get; set; }
+
+        public virtual ModuleSubject Subject { get; set; }
+
+    }
+
+
     public class ModuleAccreditation
     {
         public ModuleAccreditation()
@@ -45,7 +62,7 @@ namespace MyStik.TimeTable.Data
         /// Aspekt "Prüfung"
         /// VERALTET
         /// </summary>
-        public virtual CurriculumCriteria Criteria { get; set; } 
+        public virtual CurriculumCriteria Criteria { get; set; }
 
         public virtual ItemLabelSet LabelSet { get; set; }
 
@@ -56,4 +73,5 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<TeachingDescription> TeachingDescriptions { get; set; } = new List<TeachingDescription>();
     }
+
 }

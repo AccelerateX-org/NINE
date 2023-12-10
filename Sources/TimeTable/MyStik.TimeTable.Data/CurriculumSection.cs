@@ -91,6 +91,9 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }
 
+        public virtual ICollection<SubjectAccreditation> SubjectAccreditations { get; set; }
+
+
         public string FullTag
         {
             get

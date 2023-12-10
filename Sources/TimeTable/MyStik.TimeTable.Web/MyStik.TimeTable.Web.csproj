@@ -542,10 +542,13 @@
     <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\ExamController.cs" />
+    <Compile Include="Controllers\ImportJsonController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
+    <Compile Include="Controllers\ImportCsvController.cs" />
     <Compile Include="Controllers\InstitutionController.cs" />
     <Compile Include="Controllers\InternshipAdminController.cs" />
     <Compile Include="Controllers\InternshipController.cs" />
+    <Compile Include="Controllers\LabelsController.cs" />
     <Compile Include="Controllers\LabelSetController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
@@ -582,7 +585,7 @@
     <Compile Include="Controllers\ThesisController.cs" />
     <Compile Include="Controllers\ThesisWorkflowController.cs" />
     <Compile Include="Controllers\UniversityController.cs" />
-    <Compile Include="Controllers\UntisController.cs" />
+    <Compile Include="Controllers\ImportUntisController.cs" />
     <Compile Include="Controllers\VirtualRoomController.cs" />
     <Compile Include="Controllers\_AlumniController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -627,6 +630,8 @@
     <Compile Include="Helpers\FakeView.cs" />
     <Compile Include="Helpers\HtmlHelper.cs" />
     <Compile Include="Hubs\FamosHub.cs" />
+    <Compile Include="Hubs\CsvImportHub.cs" />
+    <Compile Include="Hubs\ImportHub.cs" />
     <Compile Include="Hubs\MaterialExportHub.cs" />
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
@@ -3429,7 +3434,7 @@
     <Content Include="Areas\InfoScreen\Views\web.config" />
     <Content Include="Areas\InfoScreen\Views\_ViewStart.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\InfoScreen\Views\Home\Index.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\Index_old.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\_FreeRooms.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\_NextEvent.cshtml" />
     <Content Include="Areas\Fillter\Views\web.config" />
@@ -3596,6 +3601,7 @@
     <Content Include="Assets\libs\bootstrap-icons\package.json" />
     <Content Include="Assets\libs\bootstrap-icons\README.md" />
     <Content Include="Areas\Admin\Views\Repair\MigrateCurricula.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\Index.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -3780,8 +3786,6 @@
     <Content Include="Views\Occurrence\SubscriptionRules.cshtml" />
     <Content Include="Views\Students\CoursePlan.cshtml" />
     <Content Include="Views\Import\Index.cshtml" />
-    <Content Include="Views\Import\_StartService.cshtml" />
-    <Content Include="Views\Import\_ProgressService.cshtml" />
     <Content Include="Views\WPM\Index.cshtml" />
     <Content Include="Views\WPM\List.cshtml" />
     <Content Include="Views\WPM\Gamble.cshtml" />
@@ -3829,7 +3833,7 @@
     <Content Include="Views\Course\_DlgEditInformation.cshtml" />
     <Content Include="Views\Course\_DlgAddDate.cshtml" />
     <Content Include="Views\UserProfile\_SemesterState.cshtml" />
-    <Content Include="Views\Untis\_Index.cshtml" />
+    <Content Include="Views\ImportUntis\_Index.cshtml" />
     <Content Include="Views\Curriculum\List.cshtml" />
     <Content Include="Views\Course\_ParticipantTable.cshtml" />
     <Content Include="Views\Error\MissingCourse.cshtml" />
@@ -3889,7 +3893,7 @@
     <Content Include="Views\Dashboard\DashboardDefault.cshtml" />
     <Content Include="Views\Dashboard\DashboardSysAdmin.cshtml" />
     <Content Include="Views\Home\ThankYou.cshtml" />
-    <Content Include="Views\Untis\SelectFiles.cshtml" />
+    <Content Include="Views\ImportUntis\SelectFiles.cshtml" />
     <Content Include="Views\Curriculum\AddAlias.cshtml" />
     <Content Include="Views\Semester\_ImportState.cshtml" />
     <Content Include="Views\Lecturer\Calendar.cshtml" />
@@ -3939,9 +3943,9 @@
     <Content Include="Views\Print\OfficeHourDate.cshtml" />
     <Content Include="Views\Print\PersonalSchedule.cshtml" />
     <Content Include="Views\Print\RoomSchedule.cshtml" />
-    <Content Include="Views\Untis\Index.cshtml" />
-    <Content Include="Views\Untis\CheckDatabase.cshtml" />
-    <Content Include="Views\Untis\Upload.cshtml" />
+    <Content Include="Views\ImportUntis\Index.cshtml" />
+    <Content Include="Views\ImportUntis\CheckDatabase.cshtml" />
+    <Content Include="Views\ImportUntis\Upload.cshtml" />
     <Content Include="Views\Course\ChangeGroups.cshtml" />
     <Content Include="Views\Mail\_en_UserTemplate.cshtml" />
     <Content Include="Views\Mail\en_Invitation.html.cshtml" />
@@ -4047,9 +4051,6 @@
     <Content Include="Views\OrganiserMembers\Active.cshtml" />
     <Content Include="Views\Event\_EventTable.cshtml" />
     <Content Include="Views\Curriculum\Criterias.cshtml" />
-    <Content Include="Views\Import\Select.cshtml" />
-    <Content Include="Views\Import\SelectFiles.cshtml" />
-    <Content Include="Views\Import\Upload.cshtml" />
     <Content Include="Views\Emails\CustomBodyMail.cshtml" />
     <Content Include="Views\Emails\CustomBodyMail.Html.cshtml" />
     <Content Include="Views\Planer\_CourseList.cshtml" />
@@ -4420,8 +4421,6 @@
     <Content Include="Views\ThesisAdmin\Done.cshtml" />
     <Content Include="Views\Alumni\ThankYou.cshtml" />
     <Content Include="Views\Reservation\DeleteReservation.cshtml" />
-    <Content Include="Views\Import\ChangeDozIds.cshtml" />
-    <Content Include="Views\Import\DozIdReport.cshtml" />
     <Content Include="Views\ThesisAdmin\Marked.cshtml" />
     <Content Include="Views\ThesisAdmin\Delete.cshtml" />
     <Content Include="Views\Courses\AdminGroups.cshtml" />
@@ -4661,8 +4660,8 @@
     <Content Include="Views\ModuleDescription\History.cshtml" />
     <Content Include="Views\University\Faculty.cshtml" />
     <Content Include="Views\University\Faculties.cshtml" />
-    <Content Include="Views\Curriculum\EditLabel.cshtml" />
-    <Content Include="Views\Curriculum\AddLabel.cshtml" />
+    <Content Include="Views\Labels\EditLabel.cshtml" />
+    <Content Include="Views\Labels\AddLabel.cshtml" />
     <Content Include="Views\University\Curricula.cshtml" />
     <Content Include="Views\University\Degree.cshtml" />
     <Content Include="Views\Curriculum\CreateSlot.cshtml" />
@@ -4686,7 +4685,7 @@
     <Content Include="Views\Course\AdminNewLabels.cshtml" />
     <Content Include="Views\Course\EditLabel.cshtml" />
     <Content Include="Views\Curriculum\ImportLabelsSuccess.cshtml" />
-    <Content Include="Views\Curriculum\AllLabels.cshtml" />
+    <Content Include="Views\Labels\AllLabels.cshtml" />
     <Content Include="Views\Subscription\ChangeLabel.cshtml" />
     <Content Include="Views\Course\AdminNewDictionary.cshtml" />
     <Content Include="Views\Catalogs\PlanCatalog.cshtml" />
@@ -4698,6 +4697,27 @@
     <Content Include="Views\Curriculum\CreateModule.cshtml" />
     <Content Include="Views\Notification\PersonalMessage.cshtml" />
     <Content Include="Views\University\Services.cshtml" />
+    <Content Include="Views\Curriculum\AllSlots.cshtml" />
+    <Content Include="Views\Labels\Index.cshtml" />
+    <Content Include="Views\Dictionary\Label.cshtml" />
+    <Content Include="Views\Import\Delete.cshtml" />
+    <Content Include="Views\ImportCsv\Upload.cshtml" />
+    <Content Include="Views\ImportCsv\_ProgressService.cshtml" />
+    <Content Include="Views\ImportCsv\_StartService.cshtml" />
+    <Content Include="Views\ImportCsv\Index.cshtml" />
+    <Content Include="Views\ImportCsv\Reports.cshtml" />
+    <Content Include="Views\ImportCsv\Select.cshtml" />
+    <Content Include="Views\ImportCsv\SelectFiles.cshtml" />
+    <Content Include="Views\ImportJson\Upload.cshtml" />
+    <Content Include="Views\ImportJson\_ProgressService.cshtml" />
+    <Content Include="Views\ImportJson\_StartService.cshtml" />
+    <Content Include="Views\ImportJson\ChangeDozIds.cshtml" />
+    <Content Include="Views\ImportJson\Delete.cshtml" />
+    <Content Include="Views\ImportJson\DozIdReport.cshtml" />
+    <Content Include="Views\ImportJson\Index.cshtml" />
+    <Content Include="Views\ImportJson\Reports.cshtml" />
+    <Content Include="Views\ImportJson\Select.cshtml" />
+    <Content Include="Views\ImportJson\SelectFiles.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

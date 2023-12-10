@@ -14,65 +14,6 @@ namespace MyStik.TimeTable.Web.Hubs
     /// </summary>
     public class GpUntisHub : Hub
     {
-        /// <summary>
-        /// Löscht alle Kurse aus dem angegebenen Semester, die aus gpUntis importiert wurden
-        /// </summary>
-        /// <param name="semId"></param>
-        /// <param name="orgId"></param>
-        public void DeleteSemester(Guid semId, Guid orgId)
-        {
-            var db = new TimeTableDbContext();
-
-            var semService = new SemesterService();
-            var timeTableService = new TimeTableInfoService(db);
-
-            var msg = "Sammle Daten";
-            var perc1 = 0;
-
-            Clients.Caller.updateProgress(msg, perc1);
-
-            var semester = semService.GetSemester(semId);
-            if (semester == null)
-            {
-                msg = "Semester existiert nicht";
-                perc1 = 100;
-
-                Clients.Caller.updateProgress(msg, perc1);
-                return;
-            }
-
-            var courses = db.Activities.OfType<Course>().Where(c =>
-                c.Organiser.Id == orgId &&                                  // Veranstalter
-                (c.SemesterGroups.Any(g =>                                  // Mit Semestergruppe
-                    g.Semester.Id == semId &&
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId) ||
-                    !c.SemesterGroups.Any()                                 // oder ohne Zuordnung
-                ) &&
-                (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals("GPUNTIS")))    // aus GPUNTIS
-                .ToList();
-
-            msg = string.Format("Lösche {0} von {1} Kursen", courses.Count, courses.Count);
-            perc1 = 0;
-            Clients.Caller.updateProgress(msg, perc1);
-
-            var n = courses.Count;
-            var i = 0;
-            foreach (var course in courses)
-            {
-                i++;
-                msg = string.Format("Lösche {0}", course.Name);
-                perc1 = (i*100) / n;
-
-                Clients.Caller.updateProgress(msg, perc1);
-                
-                timeTableService.DeleteCourse(course.Id);
-            }
-
-
-            msg = "Alle Kurse gelöscht";
-            perc1 = 100;
-            Clients.Caller.updateProgress(msg, perc1);
-        }
 
         /// <summary>
         /// 

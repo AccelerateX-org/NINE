@@ -4,6 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    public enum SeatAllocationMethod
+    {
+        Nothing,
+        Manual,
+        Auto
+    }
+
     public class Occurrence
     {
         public Occurrence()
@@ -111,6 +118,13 @@ namespace MyStik.TimeTable.Data
         /// Zugang nur für Studierende der zugeordneten Fakultäten
         /// </summary>
         public bool IsCoterie { get; set; }
+
+        /// <summary>
+        /// greift nur bei Methdoe "Auto"
+        /// </summary>
+        public bool UseWaitingList { get; set; }
+
+        public SeatAllocationMethod AllocationMethod { get; set; }
 
         public virtual ICollection<OccurrenceSubscription> Subscriptions { get; set; }
 

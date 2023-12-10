@@ -28,33 +28,67 @@
     </nav>
 
     <div class="col-md-12">
-        <div class="card">
-            <div class="list-group">
-                @if (Model.Curriculum.Areas.Any())
-                {
-
-                    <a class="list-group-item list-group-item-action list-group-item-primary" href="@Url.Action("Planer", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">
-                        <h5>Planer (im Aufbau)</h5>
-                    </a>
-                }
-
-
-                @foreach (var group in Model.Curriculum.CurriculumGroups.OrderBy(x => x.Name))
-                {
-                    foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
-                    {
-                        if (capGroup.SemesterGroups.Any(x => x.Semester.Id == Model.Semester.Id))
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="list-group">
+                        <div class="list-group-item list-group-item-light">
+                            <h5>Nach Studienplan (im Aufbau)</h5>
+                        </div>
+                        @if (Model.Curriculum.Areas.Any())
                         {
-                            <a href="@Url.Action("Group", new { semId = Model.Semester.Id, groupId = capGroup.Id })" class="list-group-item list-group-item-action">
-                                <h5 class="list-group-item-heading">@capGroup.FullName</h5>
+
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Planer", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">
+                                <h5>Planer</h5>
                             </a>
                         }
-                    }
-                }
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="list-group">
+                        <div class="list-group-item list-group-item-light">
+                            <h5>Nach Semestergruppen (veraltet)</h5>
+                        </div>
+
+                        @foreach (var group in Model.Curriculum.CurriculumGroups.OrderBy(x => x.Name))
+                        {
+                            foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
+                            {
+                                if (capGroup.SemesterGroups.Any(x => x.Semester.Id == Model.Semester.Id))
+                                {
+                                    <a href="@Url.Action("Group", new { semId = Model.Semester.Id, groupId = capGroup.Id })" class="list-group-item list-group-item-action">
+                                        <h5>@capGroup.FullName</h5>
+                                    </a>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="list-group">
+                        <div class="list-group-item list-group-item-light">
+                            <h5>Nach Etiketten (Labels)</h5>
+                        </div>
+
+                        @foreach (var label in Model.Curriculum.LabelSet.ItemLabels)
+                        {
+                            <a href="@Url.Action("Label", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = Model.Curriculum.Id, labelId = label.Id})"  class="list-group-item list-group-item-action">
+                                <h5>@label.Name</h5>
+                            </a>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 @*
 @if (Model.Curriculum.Areas.Any())

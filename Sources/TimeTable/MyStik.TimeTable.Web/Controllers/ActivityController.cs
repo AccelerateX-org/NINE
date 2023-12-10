@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Web;
 using System.Web.Mvc;
 using log4net;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -567,6 +569,45 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // Alle Eintragungen
+            var myOcs = Db.Occurrences.Where(o => o.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+
+            var ac = new ActivityService();
+
+            foreach (var occ in myOcs)
+            {
+                var summary = ac.GetSummary(occ.Id);
+
+                var dates = summary.GetDates(begin, end);
+
+                foreach (var date in dates)
+                {
+                    var agendaDay = model.Days.SingleOrDefault(d => d.Day.Date == date.Begin.Date);
+                    if (agendaDay == null)
+                    {
+                        agendaDay = new AgendaDayViewModel
+                        {
+                            Day = date.Begin.Date
+                        };
+                        model.Days.Add(agendaDay);
+                    }
+
+                    if (agendaDay.Activities.All(x => x.Date.Id == date.Id))
+                    {
+                        var agendaActivity = new AgendaActivityViewModel
+                        {
+                            Date = date
+                        };
+
+                        // den slot prüfen
+                        agendaActivity.Slot =
+                            date.Slots.FirstOrDefault(
+                                x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+
+                        agendaDay.Activities.Add(agendaActivity);
+                    }
+                }
+            }
+            /*
             var subscriptions = 
             Db.ActivityDates.Where(d =>
                 (d.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
@@ -597,6 +638,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 agendaDay.Activities.Add(agendaActivity);
             }
+            */
 
             // alle eigenen Reservierungen
             var reservations =
@@ -994,22 +1036,18 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Today", nowPlaying);
         }
 
-        public PartialViewResult Programm(string date)
+        public PartialViewResult Programm(string date, Guid orgId)
         {
             var beginOfDay = string.IsNullOrEmpty(date) ? DateTime.Today : DateTime.ParseExact(date, "dd.MM.yyyy", null);
             var endOfDay = beginOfDay.AddDays(1);
 
-            var org = GetMyOrganisation();
+            var org = GetOrganiser(orgId);
 
             var nowPlaying = Db.ActivityDates.Where(d =>
-                    (d.Begin > beginOfDay && d.Begin < endOfDay) &&                             // alles an diesem Tag
-                    (d.Activity.SemesterGroups.Any(g =>                                         // alles was Zugehörigkeit zu einer Semestergruppe hat
-                        g.CapacityGroup != null &&
-                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) ||
-                        (d.Activity.Organiser.Id == org.Id)                                     // alle Raumreservierungen, Sprechstunden
-                    ))
+                        (d.Begin > beginOfDay && d.Begin < endOfDay) &&                         // alles an diesem Tag
+                        (d.Activity.Organiser.Id == org.Id)                                     // was zu dem Organiser gehört
+                    )
                 .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
-
 
 
             return PartialView("_Programm", nowPlaying);

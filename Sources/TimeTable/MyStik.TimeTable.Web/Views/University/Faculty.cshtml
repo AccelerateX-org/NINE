@@ -42,9 +42,10 @@
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
+                            <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Etiketten</a>
                         }
                         <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
-                        <a href="@Url.Action("Organiser", "Dictionary", new { orgId=Model.Id})"  class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
+                        <a href="@Url.Action("Organiser", "Dictionary", new { orgId=Model.Id})" class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
                         <a href="@Url.Action("Organiser", "Events", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungsverzeichnis</a>
 
                         @if (!isStudent)

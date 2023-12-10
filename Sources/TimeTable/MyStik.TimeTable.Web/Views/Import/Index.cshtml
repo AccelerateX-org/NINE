@@ -1,39 +1,104 @@
-﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
     ViewBag.Title = "Import";
+
+    var db = new TimeTableDbContext();
+    var nImportedCourses = db.Activities.OfType<Course>().Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && !string.IsNullOrEmpty(x.ExternalSource));
+    var nManualCourses = db.Activities.OfType<Course>().Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && string.IsNullOrEmpty(x.ExternalSource));
+    var sources = db.Activities.OfType<Course>().Where(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && !string.IsNullOrEmpty(x.ExternalSource)).Select(x => x.ExternalSource).Distinct().ToList();
 }
 
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h4>Import von Stundenplandaten für @Model.Organiser.ShortName</h4>
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <h5 class="mb-1">Untis</h5>
-                    <p class="mb-3">6 Textdateien aus Untis plus 3 individuell an die jeweilige Situation angepasste Konfigurationsdateien.</p>
-                    <form class="form-inline" action="@Url.Action("Index", "Untis")">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary"><i class="bi-upload"></i> Import starten</button>
-                    </form>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Datenimport</li>
+        </ol>
+    </nav>
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Einfacher Import</h5>
+                        <p>Für regelmäßig stattfindende Kurse. Einfache Tabelle (CSV mit ";" als Trennzeichen). Spalten (Reihenfolge beachten):</p>
+                        <ul>
+                            <li>*KursID (Kennzeichnung innerhalb der Planung)</li>
+                            <li>*Katalogsignatur bzw. Kurzbezeichnung</li>
+                            <li>*Titel</li>
+                            <li>Wochentag (MO, DI, etc.), Beginn, Ende (hh:mm)</li>
+                            <li>Dozent:in (Lehrendeneintrag)</li>
+                            <li>Raum (/)Raumnummer)</li>
+                            <li>Ebene für Etikett (Angabe von Institution, Einrichtung oder Studiengang)</li>
+                            <li>Etikett</li>
+                        </ul>
+                        <p>Felder mit (*) sind Pflichtfelder. Alle anderen optional. Alle Einträge werden als Zeichenketten gelesen, evtl. vorhandenen Anführungszeichen werden automatisch entfernt.</p>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <a href="@Url.Action("Select", "ImportCsv", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary">
+                                <i class="bi-upload"></i> Import starten
+                            </a>
+                        }
+                    </div>
                 </div>
-                <div class="list-group-item">
-                    <h5 class="mb-1">Allgemeine Schnittstelle</h5>
-                    <p class="mb-3">Eine Datei im JSON-Format.</p>
-                    <form class="form-inline" action="@Url.Action("Select")">
-                        <input type="text" name="format" value="JSON" hidden />
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary"><i class="bi-upload"></i> Import starten</button>
-                    </form>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Untis</h5>
+                        <p>Für regelmäßig stattfindende Kurse. Benötigt werden:</p>
+                        <ul>
+                            <li>6 Textdateien GPU001.txt bis GPU006.txt, jeweils mit ";" als Trennzeichen</li>
+                            <li>optional GPU016.txt</li>
+                            <li>Dateien zur Auflösung der Wochentage und Schulstunden</li>
+                            <li>Datei zur Übertragung der Klassen auf Labels</li>
+                        </ul>
+                    @if (ViewBag.UserRight.IsCurriculumAdmin)
+                    {
+
+                        <a href="@Url.Action("Index", "ImportUntis", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary">
+                            <i class="bi-upload"></i> Import starten
+                        </a>
+                    }
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Detailierter Import</h5>
+                        <p>Für Einzeltermine. (Format: JSON):</p>
+                    @if (ViewBag.UserRight.IsCurriculumAdmin)
+                    {
+                        <a href="@Url.Action("Select", "ImportJson", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary">
+                            <i class="bi-upload"></i> Import starten
+                        </a>
+                    }
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card border-danger">
+                    <div class="card-body">
+                        <h5 class="card-title">Bereinigen</h5>
+                        <p>Löschen von importierten Daten</p>
+                        <ul>
+                            <li>@nImportedCourses importierte Kurse aus @sources.Count() Quellen</li>
+                            <li>@nManualCourses manuell angelegte Kurse</li>
+                        </ul>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <a href="@Url.Action("Delete", "Import", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Importe löschen
+                            </a>
+                            <a href="@Url.Action("Reports", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary">
+                                <i class="bi-files"></i> Importberichte
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

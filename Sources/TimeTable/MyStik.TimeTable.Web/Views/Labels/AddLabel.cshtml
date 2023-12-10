@@ -7,12 +7,11 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4>Ettikett ändern</h4>
+                <h4>Neues Ettikett @Model.Curriculum.ShortName</h4>
             </div>
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.ItemLabel.Id)
                     @Html.HiddenFor(m => m.Curriculum.Id)
                     <div class="row">
                         <label for="Name" class="col-sm-2 col-form-label">Tag (muss innerhalb des Studiengangs eindeutig sein)</label>
@@ -35,7 +34,7 @@
                     <div class="row">
                         <div class="col-sm-10">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Speichern</button>
-                            <a href="@Url.Action("Labels",  new{id=Model.Curriculum.Id})" class="btn btn-outline-secondary">Abbrechen</a>
+                            <a href="@Url.Action("Index",  new{id=Model.Curriculum.Organiser.Id})" class="btn btn-outline-secondary">Abbrechen</a>
                         </div>
                     </div>
                 }

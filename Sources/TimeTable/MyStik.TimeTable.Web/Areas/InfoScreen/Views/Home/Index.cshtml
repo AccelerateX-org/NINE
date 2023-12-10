@@ -1,156 +1,80 @@
-﻿@{
-    ViewBag.Title = "NINE Infoscreen";
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "Index";
+
+    var db = new TimeTableDbContext();
+    var day = DateTime.Today;
+
+    var now = DateTime.Now;
+
+    var beginOfDay = now;
+    var endOfDay = now.AddMinutes(15);
+
+    var org = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("FK 09"));
+
+    var nowPlaying = db.ActivityDates.Where(d =>
+        (d.Begin <= beginOfDay && beginOfDay <= d.End) ||
+        (d.Begin > beginOfDay && d.Begin < endOfDay) &&                         // alles an diesem Tag
+        (d.Activity.Organiser.Id == org.Id)                                     // was zu dem Organiser gehört
+        )
+        .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+
+    if (!nowPlaying.Any())
+    {
+        endOfDay = beginOfDay.Date.AddDays(1);
+        nowPlaying = db.ActivityDates.Where(d =>
+            (d.Begin > beginOfDay && d.Begin < endOfDay) &&                         // alles an diesem Tag
+            (d.Activity.Organiser.Id == org.Id)                                     // was zu dem Organiser gehört
+            )
+            .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+    }
 }
 
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-6 col-md-offset-3">
-                                            <canvas id="clockid" class="CoolClock:swissRail:160:GMTOffset"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="leftInfoscreenPanel">
-                                <h2><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></h2>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-
-
-
-                <div class="col-md-8">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="rightInfoscreenPanel">
-                                <h2>Lade Infoscreen für @ViewBag.Location <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Aktuell läuft</h1>
             </div>
+            @if (nowPlaying.Any())
+            {
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Beginn</th>
+                            <th>Titel</th>
+                            <th>Lehrende</th>
+                            <th>Raum</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var date in nowPlaying)
+                        {
+                            if (date.Activity is Course || date.Activity is Event)
+                            {
+                                <tr>
+                                    <td>@date.Begin.ToShortTimeString()</td>
+                                    <td>@date.Activity.Name</td>
+                                    <td>@Html.LecturerList(date.Hosts, false, true)</td>
+                                    <td>@Html.RoomList(date.Rooms, false, false, true)</td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="card-body">
+                    <div class="alert alert-info">...nix</div>
+                </div>
+            }
         </div>
     </div>
 </div>
-
-
-
-
-
-@section scripts
-{
-    <script src="~/Assets/global/plugins/CoolClock-master/coolclock.js"></script>
-    <script src="~/Assets/global/plugins/CoolClock-master/moreskins.js"></script>
-
-    <script>
-
-        var playList = [
-            { "ID": "1", "Title": "NowPlaying" },
-            { "ID": "2", "Title": "WhatsNext" },
-            { "ID": "3", "Title": "FreeRooms" }
-        ];
-
-        var playListSize = playList.length;
-        var playListIndex = 1;
-
-
-        var playListLeft = [
-            { "ID": "1", "Title": "Mensa" },
-            { "ID": "2", "Title": "MVG" }
-        ];
-
-        var playListSizeLeft = playListLeft.length;
-        var playListIndexLeft = 1;
-
-
-
-        $(function () {
-            CoolClock.findAndCreateClocks();
-
-            /*
-            $.ajax({
-                url: '@Url.Action("LeftPanel")',
-                type: 'POST',
-                success: function(result) {
-                    $('#leftInfoscreenPanel').html(result);
-                }
-            });
-            */
-            
-            updateLeftPanel();
-            updateRightPanel();
-
-        });
-
-        function updateLeftPanel() {
-            setInterval(function () {
-
-
-                $.ajax({
-                    url: '@Url.Action("LeftPanel")',
-                    type: 'POST',
-                    data: {
-                        token: playListLeft[playListIndexLeft - 1].Title,
-                        location: "@ViewBag.Location"
-                    },
-                    success: function (result) {
-                        $('#leftInfoscreenPanel').html(result);
-
-                        playListIndexLeft++;
-                        if (playListIndexLeft > playListSizeLeft)
-                            playListIndexLeft = 1;
-                    }
-                });
-            }, 20000);
-        }
-
-        function updateRightPanel() {
-
-            setInterval(function () {
-
-                $.ajax({
-                    url: '@Url.Action("RightPanel")',
-                    type: 'POST',
-                    data: {
-                        token: playList[playListIndex-1].Title,
-                        location: "@ViewBag.Location"
-                    },
-                    success: function (result) {
-                        $('#rightInfoscreenPanel').html(result);
-
-                        playListIndex++;
-                        if (playListIndex > playListSize)
-                            playListIndex = 1;
-                    }
-                });
-
-
-            }, 20000);
-        }
-
-
-
-    </script>
-}
-
-
-
 
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using Ical.Net.DataTypes;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.IO;
@@ -20,10 +21,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(Guid id)
+        public ActionResult Index(Guid orgId, Guid semId)
         {
-            var organiser = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(id);
+            var organiser = GetOrganiser(orgId);
+            var semester = SemesterService.GetSemester(semId);
             if (organiser == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
@@ -38,180 +39,16 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Select(Guid id)
-        {
-            var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(id);
-
-            var model = new SemesterImportModel
-            {
-                Semester = semester,
-                Organiser = org,
-                SemesterId = semester.Id,
-                OrganiserId = org.Id,
-                Existing = GetCourseCount(org.Id, semester.Id, "JSON"),
-                FormatId = "JSON"
-            };
-
-
-            ViewBag.Semester = Db.Semesters.OrderByDescending(c => c.StartCourses).Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            });
-
-            return View(model);
-        }
 
         private int GetCourseCount(Guid orgId, Guid semId, string formatId)
         {
-            var nInSemester = 0;
-
-            if (formatId.Equals("CIE"))
+            if (string.IsNullOrEmpty(formatId))
             {
-                nInSemester = Db.Activities.OfType<Course>().Count(c =>
-                    c.SemesterGroups.Any(g => g.Semester.Id == semId) &&
-                    (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals(formatId)));
-            }
-            else
-            {
-                nInSemester = Db.Activities.OfType<Course>().Count(c =>
-                    c.Organiser.Id == orgId &&
-                    c.SemesterGroups.Any(g =>
-                        g.Semester.Id == semId &&
-                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId
-                    ) &&
-                    (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals(formatId)));
-
+                return Db.Activities.OfType<Course>().Count(x => x.Organiser.Id == orgId && x.Semester.Id == semId && !string.IsNullOrEmpty(x.ExternalSource));
             }
 
-
-
-
-            var nNoGroup = Db.Activities.Count(c =>
-                c.Organiser.Id == orgId &&
-                !string.IsNullOrEmpty(c.ExternalSource) &&
-                c.ExternalSource.Equals(formatId) &&
-                !c.SemesterGroups.Any());
-
-            return nInSemester; // + nNoGroup;
+            return Db.Activities.OfType<Course>().Count(x => x.Organiser.Id == orgId && x.Semester.Id == semId && x.ExternalSource.Equals(formatId));
         }
-
-        private string GetTempPath(Guid orgId, Guid semId)
-        {
-            string tempDir = Path.GetTempPath();
-
-            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
-            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
-
-            if (semester != null && org != null)
-            {
-                tempDir = Path.Combine(tempDir, semester.Name);
-                tempDir = Path.Combine(tempDir, org.ShortName);
-
-                if (!Directory.Exists(tempDir))
-                {
-                    Directory.CreateDirectory(tempDir);
-                }
-            }
-
-            return tempDir;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult SelectFiles(SemesterImportModel model)
-        {
-            // Die Dateien löschen
-            string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
-
-            Directory.Delete(tempDir, true);
-
-            var org = GetMyOrganisation();
-            model.Organiser = org;
-            model.Semester = SemesterService.GetSemester(model.SemesterId);
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult Upload(SemesterImportModel model)
-        {
-            string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
-
-            // Speichern der Config-Dateien
-            if (model.AttachmentDays != null)
-            {
-                model.AttachmentDays.SaveAs(Path.Combine(tempDir, "import.json"));
-            }
-
-            BaseImportContext ctx = null;
-            if (model.FormatId.Equals("CIE"))
-            {
-                // Dateien prüfen
-                var reader = new DataServices.IO.Cie.FileReader();
-                reader.ReadFiles(tempDir);
-                var importer = new DataServices.IO.Cie.SemesterImport(reader.Context, model.SemesterId);
-
-                // Die Fakultät muss existieren
-                importer.CheckFaculty();
-
-                // Räume sollten existieren => Warnung
-                // Zuordnungen zu Räumen sollten existieren => Warnung
-                importer.CheckRooms();
-
-                // Dozenten sollten existieren => Warnung
-                importer.CheckLecturers();
-
-                reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
-                    reader.Context.Model.Courses.Count, reader.Context.ValidCourses.Count), false);
-
-                ctx = reader.Context;
-            }
-            else
-            {
-                // Dateien prüfen
-                var reader = new DataServices.IO.Json.FileReader();
-                reader.ReadFiles(tempDir);
-                var importer = new DataServices.IO.Json.SemesterImport(reader.Context, model.SemesterId, model.OrganiserId);
-
-                // Die Fakultät muss existieren
-                importer.CheckFaculty();
-
-                // Räume sollten existieren => Warnung
-                // Zuordnungen zu Räumen sollten existieren => Warnung
-                importer.CheckRooms();
-
-                // Dozenten sollten existieren => Warnung
-                importer.CheckLecturers();
-
-                reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
-                    reader.Context.Model.Courses.Count, reader.Context.ValidCourses.Count), false);
-
-                ctx = reader.Context;
-            }
-
-            model.Context = ctx;
-            model.Organiser = GetMyOrganisation();
-            model.Semester = SemesterService.GetSemester(model.SemesterId);
-
-
-            return View(model);
-        }
-
 
         public ActionResult Reports(Guid orgId, Guid semId)
         {
@@ -240,11 +77,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(file, "text/html");
         }
 
-        public ActionResult ChangeDozIds()
-        {
 
-            var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(DateTime.Today);
+        public ActionResult Delete(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var semester = SemesterService.GetSemester(semId);
 
             var model = new SemesterImportModel
             {
@@ -252,37 +89,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
                 SemesterId = semester.Id,
                 OrganiserId = org.Id,
-                Existing = 0,
-                FormatId = "dozId"
+                Existing = GetCourseCount(org.Id, semester.Id, ""),
+                FormatId = "JSON"
             };
 
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
 
-        [HttpPost]
-        public ActionResult ChangeDozIds(SemesterImportModel model)
-        {
-            // den IMport mit Check durchführen
-            string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
-
-            // Speichern der Config-Dateien
-            if (model.AttachmentDays != null)
-            {
-                model.AttachmentDays.SaveAs(Path.Combine(tempDir, "dozId.csv"));
-            }
-
-            var org = GetOrganiser(model.OrganiserId);
-
-            var importService = new MemberUpdateService(org.ShortName);
-
-            importService.ReadFile(tempDir, "dozId.csv");
-
-            model.Context = importService.Context;
-
-
-            return View("DozIdReport", model); 
-        }
 
     }
 }

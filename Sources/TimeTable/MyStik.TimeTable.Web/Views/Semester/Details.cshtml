@@ -8,76 +8,77 @@
 
 
 <div class="row">
-<div class="col-12">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Semester", new {id=Model.Organiser.Id}))">Semesterplanung</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@Model.Semester.Name</li>
-        </ol>
-    </nav>
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Semester", new {id=Model.Organiser.Id})">Semesterplanung</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Semester.Name</li>
+            </ol>
+        </nav>
 
-    <div class="card">
-        <div class="card-header">
-            <h4>Semester @Model.Semester.Name für @Model.Organiser.ShortName</h4>
-            <p>@Model.Semester.StartCourses.ToShortDateString() - @Model.Semester.EndCourses.ToShortDateString()</p>
-        </div>
-        <div class="list-group">
-            @if (ViewBag.UserRight.IsOrgAdmin)
-            {
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a href="@Url.Action("CreateDate", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary"><i class="bi-plus"></i> Abschnitt hinzufügen</a>
-                        <a href="#" class="btn btn-outline-primary"><i class="bi-upload"></i> Daten importieren</a>
+        <div class="card">
+            <div class="card-header">
+                <h4>Semester @Model.Semester.Name für @Model.Organiser.ShortName</h4>
+                <p>@Model.Semester.StartCourses.ToShortDateString() - @Model.Semester.EndCourses.ToShortDateString()</p>
+            </div>
+            <div class="list-group">
+                @if (ViewBag.UserRight.IsOrgAdmin)
+                {
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a href="@Url.Action("CreateDate", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary"><i class="bi-plus"></i> Abschnitt hinzufügen</a>
+                            <a href="@Url.Action("Index", "Import", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary"><i class="bi-upload"></i> Daten importieren</a>
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Zeitraum</th>
-                    <th>Ebene</th>
-                    <th>Art</th>
-                    <th>Bezeichnung</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.Semester.Dates.OrderBy(x => x.From))
-            {
-                <tr>
-                    <td>@Html.TimeSpan(item)</td>
-                    @if (item.Organiser == null)
+                }
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Zeitraum</th>
+                        <th>Ebene</th>
+                        <th>Art</th>
+                        <th>Bezeichnung</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Semester.Dates.Where(x => x.Organiser == null || (x.Organiser.Id != null && x.Organiser.Id == Model.Organiser.Id)).OrderBy(x => x.From))
                     {
-                        <td>hochschulweit</td>
-                    }
-                    else
-                    {
-                        <td>fakultätsweit</td>
-                    }
-                    @if (item.HasCourses == false)
-                    {
-                        <td> <i>(Vorlesungsfrei)</i></td>
-                    }
-                    else
-                    {
-                        <td>mit Lehrveranstaltungen</td>
-                    }
-                    <td>@item.Description</td>
+                        <tr>
+                            <td>@Html.TimeSpan(item)</td>
+                            @if (item.Organiser == null)
+                            {
+                                <td>hochschulweit</td>
+                            }
+                            else
+                            {
+                                <td>fakultätsweit</td>
+                            }
+                            @if (item.HasCourses == false)
+                            {
+                                <td> <i>(Vorlesungsfrei)</i></td>
+                            }
+                            else
+                            {
+                                <td>mit Lehrveranstaltungen</td>
+                            }
+                            <td>@item.Description</td>
 
-                    <td>
-                        @if (item.Organiser != null && ViewBag.UserRight.IsOrgAdmin)
-                        {
-                            <a href="@Url.Action("EditDate", new { id = item.Id })" class="btn btn-outline-primary"><i class="bi-gear"></i> bearbeiten</a>
-                            <a href="@Url.Action("DeleteDate", new { id = item.Id })" class="btn btn-outline-danger"><i class="bi-trash"></i> löschen</a>
-                        }
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                            <td>
+                                @if (item.Organiser != null && ViewBag.UserRight.IsOrgAdmin)
+                                {
+                                    <a href="@Url.Action("EditDate", new { id = item.Id })" class="btn btn-outline-primary"><i class="bi-gear"></i> bearbeiten</a>
+                                    <a href="@Url.Action("DeleteDate", new { id = item.Id })" class="btn btn-outline-danger"><i class="bi-trash"></i> löschen</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

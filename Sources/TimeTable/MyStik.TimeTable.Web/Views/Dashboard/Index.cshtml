@@ -75,6 +75,9 @@
 </div>
 <div class="col-md-4">
     <div class="row">
+        <div id="refreshSemester">
+            <a class="btn btn-outline-primary" href="javascript:onSemesterChanged()"><i class="bi-recycle"></i> Refresh</a>
+        </div>
         <div id="placeholderSemester">
             <div class="card">
                 <div class="card-body">
@@ -94,9 +97,6 @@
         </div>
 
         <div id="cardSemester" class="col-md-12">
-            @*
-                @Html.Partial("_Semester", Model)
-            *@
         </div>
     </div>
 
@@ -275,7 +275,7 @@
                             Aufbau und Modulplan
                         </a>
                         <div class="list-group-item">
-                            Praktissemester
+                            Praxissemester
                         </div>
                         @if (Model.Thesis != null)
                         {
@@ -406,7 +406,13 @@
         });
 
         document.addEventListener('DOMContentLoaded', function () {
+            //$("#cardSemester").hide();
+            //$("#placeholderSemester").hide();
+            //$("#refreshSemester").hide();
             onSemesterChanged(null);
+
+            //$("#placeholderAgenda").hide();
+
         });
 
         function onDateChanged(value) {
@@ -434,6 +440,7 @@
         function onSemesterChanged(semId) {
             // es kommt der formatierte Text an
 
+            $("#refreshSemester").hide();
             $("#cardSemester").hide();
             $("#placeholderSemester").show();
 

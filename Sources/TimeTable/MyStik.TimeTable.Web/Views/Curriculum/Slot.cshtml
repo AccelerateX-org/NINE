@@ -62,12 +62,14 @@
                 {
                     <div class="list-group-item">
                         <div class="btn-group">
-                                <a href="@Url.Action("CreateModule", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="bi-plus"></i> Modul anlegen
-                                </a>
-                                <a href="@Url.Action("AssignModules", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="bi-list-columns"></i> Module akkreditieren
-                                </a>
+                        @*
+                            <a href="@Url.Action("CreateModule", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-plus"></i> Modul anlegen
+                            </a>
+                            *@
+                            <a href="@Url.Action("AssignModules", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-list-columns"></i> Module akkreditieren
+                            </a>
                         </div>
                         <div class="btn-group">
                             <a href="@Url.Action("EditSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">

@@ -99,13 +99,8 @@ namespace MyStik.TimeTable.Web.Models
         public string courseId { get; set; }
 
 
-//        public CalendarEventPropModel extendendProps { get; set; }
+        public Dictionary<string, string> extendendProps { get; set; }
         
-    }
-
-    public class CalendarEventPropModel
-    {
-
     }
 
     /// <summary>

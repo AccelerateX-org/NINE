@@ -64,7 +64,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Details(Guid id)
         {
             var model = Db.Activities.OfType<Reservation>().SingleOrDefault(x => x.Id == id);
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(model.Organiser);
 
             return View(model);
         }

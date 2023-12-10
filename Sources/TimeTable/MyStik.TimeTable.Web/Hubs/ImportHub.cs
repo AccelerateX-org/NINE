@@ -4,42 +4,76 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
 
 namespace MyStik.TimeTable.Web.Hubs
 {
     public class ImportHub : Hub
     {
-        public string msg = "Initializing and Preparing...";
-        public int count = 100;
- 
-        public void Hello()
+        /// <summary>
+        /// Löscht alle Kurse aus dem angegebenen Semester, die aus gpUntis importiert wurden
+        /// </summary>
+        /// <param name="semId"></param>
+        /// <param name="orgId"></param>
+        public void DeleteSemester(Guid semId, Guid orgId)
         {
-            for (int x = 0; x <= count; x++)
+            var db = new TimeTableDbContext();
+
+            var semService = new SemesterService();
+            var timeTableService = new TimeTableInfoService(db);
+
+            var msg = "Sammle Daten";
+            var perc1 = 0;
+
+            Clients.Caller.updateProgress(msg, perc1);
+
+            var org = db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            if (org == null)
             {
+                msg = "Einrichtung existiert nicht";
+                perc1 = 100;
 
-                // delay the process to see things clearly
-                Thread.Sleep(100);
+                Clients.Caller.updateProgress(msg, perc1);
+                return;
+            }
 
-                if (x == 20)
-                    msg = "Loading Application Settings...";
+            var semester = semService.GetSemester(semId);
+            if (semester == null)
+            {
+                msg = "Semester existiert nicht";
+                perc1 = 100;
 
-                else if (x == 40)
-                    msg = "Applying Application Settings...";
+                Clients.Caller.updateProgress(msg, perc1);
+                return;
+            }
 
-                else if (x == 60)
-                    msg = "Loading User Settings...";
+            var courses = db.Activities.OfType<Course>().Where(c =>
+                c.Organiser.Id == org.Id &&
+                c.Semester.Id == semester.Id &&
+                !string.IsNullOrEmpty(c.ExternalSource)).ToList();
 
-                else if (x == 80)
-                    msg = "Applying User Settings...";
+            msg = string.Format("Lösche {0} von {1} Kursen", courses.Count, courses.Count);
+            perc1 = 0;
+            Clients.Caller.updateProgress(msg, perc1);
 
-                else if (x == 100)
-                    msg = "Process Completed!...";
+            var n = courses.Count;
+            var i = 0;
+            foreach (var course in courses)
+            {
+                i++;
+                msg = string.Format("Lösche {0}", course.Name);
+                perc1 = (i * 100) / n;
 
-                // call client-side SendMethod method
-                Clients.Caller.hello(string.Format
-                        (msg + " {0}% of {1}%", x, count), x);
-            } 
+                Clients.Caller.updateProgress(msg, perc1);
 
+                timeTableService.DeleteCourse(course.Id);
+            }
+
+
+            msg = "Alle Kurse gelöscht";
+            perc1 = 100;
+            Clients.Caller.updateProgress(msg, perc1);
         }
     }
 }

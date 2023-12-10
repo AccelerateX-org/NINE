@@ -1,0 +1,19 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.ImportReportViewModel>
+@{
+    ViewBag.Title = "Reports";
+}
+
+<h2>Reports</h2>
+
+<table class="table table-condensed">
+    @foreach (var report in Model)
+    {
+        <tr>
+            <td>
+                <a href="@Url.Action("GetReport", new {id = report.Name})">@report.Name</a>
+            </td>
+        </tr>
+    }
+    
+</table>
+

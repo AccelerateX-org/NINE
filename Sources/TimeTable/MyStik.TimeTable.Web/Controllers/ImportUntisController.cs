@@ -12,16 +12,16 @@ namespace MyStik.TimeTable.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public class UntisController : BaseController
+    public class ImportUntisController : BaseController
     {
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(Guid id)
+        public ActionResult Index(Guid orgid, Guid semId)
         {
-            var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(id);
+            var org = GetOrganiser(orgid);
+            var semester = SemesterService.GetSemester(semId);
 
             var model = new SemesterImportModel
             {

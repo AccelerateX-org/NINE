@@ -34,8 +34,15 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Semestergruppen, die teilnehmen dürfen
+        /// deprecated
         /// </summary>
         public virtual ICollection<SemesterGroup> SemesterGroups { get; set; }
 
+        
+        public virtual Curriculum Curriculum { get; set; }
+
+        public int MinCapacity { get; set; }
+
+        public int MaxCapacity { get; set; }
     }
 }

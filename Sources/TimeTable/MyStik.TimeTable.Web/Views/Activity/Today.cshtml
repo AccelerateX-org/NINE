@@ -97,7 +97,8 @@
                                 type: "POST",
                                 url: '@Url.Action("Programm")',
                                 data: {
-                                    date: x
+                                    date: x,
+                                    orgId: "@ViewBag.Organiser.Id.ToString()"
                                 },
                                 success: function(data, success, xhr) {
                                     $("#roomPlan").html(data);

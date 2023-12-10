@@ -1,0 +1,437 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using log4net;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices.IO.Csv.Data;
+using static System.String;
+
+namespace MyStik.TimeTable.DataServices.IO.Csv
+{
+    internal class DateCone
+    {
+        internal DateTime Begin { get; set; }
+        internal DateTime End { get; set; }
+    }
+
+    public class SemesterImport
+    {
+        private ImportContext _import;
+
+        private TimeTableDbContext db;
+
+        private Guid _semId;
+        private Guid _orgId;
+        private Guid _segmentId;
+
+
+        private int _numRooms;
+        private int _numLecturers;
+
+        private Stopwatch sw = new Stopwatch();
+
+        private readonly ILog _Logger = LogManager.GetLogger("Import");
+
+
+        private ActivityOrganiser _organiser;
+        private Semester _semester;
+        private SemesterDate _segment;
+
+        private bool _isValid = true;
+
+        private StringBuilder _report = new StringBuilder();
+
+
+        public SemesterImport(ImportContext import, Guid semId, Guid orgId, Guid segmentId)
+        {
+            _import = import;
+            _semId = semId;
+            _orgId = orgId;
+            _segmentId = segmentId;
+
+            db = new TimeTableDbContext();
+
+            _report.AppendLine("<html>");
+            _report.AppendLine("<body>");
+        }
+
+
+        public void CheckFaculty()
+        {
+            _organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
+            _semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            _segment = db.SemesterDates.SingleOrDefault(s => s.Id == _segmentId);
+
+            if (!_isValid)
+                return;
+        }
+
+        public void CheckRooms()
+        {
+            if (!_isValid)
+                return;
+        }
+
+        public void CheckLecturers()
+        {
+            if (!_isValid)
+                return;
+        }
+
+        public string GetReport()
+        {
+            _report.AppendLine("</body>");
+            _report.AppendLine("</html>");
+
+            return _report.ToString();
+        }
+
+
+        public string ImportCourse(List<SimpleCourse> simpleCourseList)
+        {
+            string msg;
+
+            var referenceCourse = simpleCourseList.FirstOrDefault();
+            if (referenceCourse == null)
+            {
+                msg = $"Lehreranstaltung ohne Inhalt";
+                return msg;
+            }
+
+            var course = db.Activities.OfType<Course>().FirstOrDefault(x =>
+                x.ExternalSource.Equals("CSV") &&
+                x.ExternalId.Equals(referenceCourse.CourseId) &&
+                x.Organiser.Id == _organiser.Id &&
+                x.Semester.Id == _semester.Id &&
+                x.Segment.Id == _segment.Id);
+
+
+            _Logger.DebugFormat("Importiere Fach: {0}", referenceCourse.Title);
+            _report.AppendFormat("<h1>Erzeuge LV \"{0} ({1})\" - [{2}]</h1>", referenceCourse.Title, referenceCourse.SubjectId,
+                referenceCourse.CourseId);
+            _report.AppendLine();
+
+
+            var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
+            var sem = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            var segment = db.SemesterDates.SingleOrDefault(s => s.Id == _segmentId);
+
+
+            long msStart = sw.ElapsedMilliseconds;
+            if (course == null)
+            {
+                course = new Course
+                {
+                    ExternalSource = "CSV",
+                    ExternalId = referenceCourse.CourseId,
+                    Organiser = organiser,
+                    Semester = sem,
+                    Segment = segment,
+                    ShortName = referenceCourse.SubjectId,
+                    Name = referenceCourse.Title,
+                    Description = Empty,
+                    Occurrence = CreateDefaultOccurrence(),
+                    IsInternal = true,
+                    LabelSet = new ItemLabelSet()
+                };
+
+                // Kurs sofort speichern, damit die ID gesichert ist
+                db.Activities.Add(course);
+                db.SaveChanges();
+            }
+
+            long msEnd = sw.ElapsedMilliseconds;
+            _Logger.DebugFormat("Dauer: {0}ms", msEnd - msStart);
+            msStart = msEnd;
+
+            _report.AppendLine("<h2>Bezeichnungen</h2>");
+            _report.AppendLine("<table>");
+            _report.AppendFormat("<tr><td>Name</td><td>{0}</td></tr>", course.Name);
+            _report.AppendFormat("<tr><td>Kurzname</td><td>{0}</td></tr>", course.ShortName);
+            _report.AppendFormat("<tr><td>Beschreibung</td><td>{0}</td></tr>", course.Description);
+            _report.AppendLine("</table>");
+
+            // jetzt durch alle Einträge durchgehen
+            foreach (var simpleCourse in simpleCourseList)
+            {
+                // CourseId => brauche ich nicht prüfen, weil über den Referenzkurs gemacht
+                // SubjectID => Die Verbindung zu den Modulen
+                // TODO: Aufspaltung der SubjectID und Identifikation des Fachs
+                // Titel => wurde über Referenzkurs gemacht
+                // Terminliste
+                // TODO: Termine erzeugen
+                var dateList = GetDates(simpleCourse);
+                // Dozent anlegen
+                var lecturer = GetLecturer(db, simpleCourse.Lecturer);
+                // Raum anlegen
+                var room = GetRoom(db, simpleCourse.Room);
+
+                // Levelset suchen
+                // Suche den Studiengang
+                // Suche die Fakultät
+                // Suche die Institution
+                // Ausgangslage: die Eirichtung, die gerade importiert
+                // Annahme 1: es ist die Institution
+                ItemLabelSet labelSet = null;
+                var levelId = simpleCourse.LabelLevel;
+                if (!IsNullOrEmpty(levelId))
+                {
+                    if (organiser.Institution != null && levelId.ToUpper().Equals(organiser.Institution.Tag.ToUpper()))
+                    {
+                        labelSet = organiser.Institution.LabelSet;
+                    }
+                    else if (levelId.ToUpper().Equals(organiser.ShortName.ToUpper()))
+                    {
+                        labelSet = organiser.LabelSet;
+                    }
+                    else
+                    {
+                        var curr = organiser.Curricula.FirstOrDefault(x => x.ShortName.ToUpper().Equals(levelId));
+                        if (curr != null)
+                        {
+                            labelSet = curr.LabelSet;
+                        }
+                    }
+                }
+
+                // wenn kein Labelset identifiziert werden kann, dann wird das Label auch nicht importiert
+                // Label suchen ggf. anlegen
+                if (labelSet != null)
+                {
+                    var label = labelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(simpleCourse.Label));
+                    if (label == null)
+                    {
+                        label = new ItemLabel
+                        {
+                            Name = simpleCourse.Label,
+                            Description = Empty
+                        };
+
+                        labelSet.ItemLabels.Add(label);
+                        db.ItemLabels.Add(label);
+                        db.SaveChanges();
+                    }
+
+                    if (course.LabelSet == null)
+                    {
+                        var ls = new ItemLabelSet();
+                        course.LabelSet = ls;
+                        db.ItemLabelSets.Add(ls);
+                        db.SaveChanges();
+                    }
+
+                    course.LabelSet.ItemLabels.Add(label);
+                }
+
+                // Owner ergönzen
+                if (lecturer != null)
+                {
+                    var owner = course.Owners.FirstOrDefault(x => x.Member.Id == lecturer.Id);
+
+                    if (owner == null)
+                    {
+                        owner = new ActivityOwner
+                        {
+                            Activity = course,
+                            Member = lecturer,
+                            IsLocked = false
+                        };
+
+                        db.ActivityOwners.Add(owner);
+                        db.SaveChanges();
+                    }
+                }
+                
+
+
+                // jetzt die Termine anlegen
+                // jeden Termin im Kurs überprüfen, ob schon vorhanden
+                // wenn ja => dann nur DOzent und Raum ergänzen => falls nicht schon da
+                // wenn nein => dann Termin anlegen und Dozent und Raum ergänzen
+                foreach (var dateCone in dateList)
+                {
+                    var courseDate =
+                        course.Dates.FirstOrDefault(x => x.Begin == dateCone.Begin && x.End == dateCone.End);
+
+                    if (courseDate == null)
+                    {
+                        courseDate = new ActivityDate
+                        {
+                            Begin = dateCone.Begin,
+                            End = dateCone.End,
+                            Activity = course,
+                            Occurrence = CreateDefaultOccurrence(),
+                        };
+
+                        db.ActivityDates.Add(courseDate);
+                        course.Dates.Add(courseDate);
+                    }
+
+                    if (lecturer != null && courseDate.Hosts.All(x => x.Id != lecturer.Id))
+                    {
+                        courseDate.Hosts.Add(lecturer);
+                    }
+
+                    if (room != null && courseDate.Rooms.All(x => x.Id != room.Id))
+                    {
+                        courseDate.Rooms.Add(room);
+                    }
+                }
+
+            }
+
+            db.SaveChanges();
+
+            msEnd = sw.ElapsedMilliseconds;
+            _Logger.DebugFormat("Dauer {0}ms", msEnd - msStart);
+
+            msg = $"Kurs {course.ShortName} mit Terminen importiert";
+
+            return msg;
+        }
+
+        private OrganiserMember GetLecturer(TimeTableDbContext db, string lecturerId)
+        {
+            OrganiserMember lecturer = null;
+            if (IsNullOrEmpty(lecturerId)) return null;
+
+            lecturer = _organiser.Members.SingleOrDefault(l => l.ShortName.Equals(lecturerId));
+            if (lecturer != null) return lecturer;
+
+            lecturer = new OrganiserMember
+            {
+                ShortName = lecturerId,
+                Name = Empty,
+                Role = Empty,
+                Description = Empty
+            };
+            _organiser.Members.Add(lecturer);
+            db.Members.Add(lecturer);
+            db.SaveChanges();
+            _numLecturers++;
+            return lecturer;
+        }
+
+        private Room GetRoom(TimeTableDbContext db, string roomId)
+        {
+            Room room = null;
+            if (IsNullOrEmpty(roomId)) return null;
+
+            room = db.Rooms.SingleOrDefault(r => r.Number.Equals(roomId));
+            if (room == null)
+            {
+                room = new Room
+                {
+                    Number = roomId,
+                    Capacity = 0,
+                    Description = Empty,
+                    Owner = Empty,
+                };
+                db.Rooms.Add(room);
+                db.SaveChanges();
+
+                _numRooms++;
+            }
+
+            var assignment = db.RoomAssignments.SingleOrDefault(x =>
+                x.Room.Id == room.Id &&
+                x.Organiser.Id == _organiser.Id);
+            if (assignment == null)
+            {
+                assignment = new RoomAssignment
+                {
+                    Organiser = _organiser,
+                    InternalNeedConfirmation = false, // offen für interne
+                    ExternalNeedConfirmation = true // geschlossen für externe
+                };
+
+                room.Assignments.Add(assignment);
+                db.RoomAssignments.Add(assignment);
+                db.SaveChanges();
+            }
+
+            return room;
+        }
+
+        private List<DateCone> GetDates(SimpleCourse course)
+        {
+            var dateList = new List<DateCone>();
+
+            if (course.DayOfWeek == null || course.Begin == null || course.End == null)
+                return dateList;
+
+
+            // den wahren zeitraum bestimmen
+            // Hypothese: immer Vorlesungszeitraum des Semesters
+            var semesterAnfang = _segment.From;
+            var semesterEnde = _segment.To;
+
+
+            // Tag der ersten Veranstaltung nach Vorlesungsbeginn ermitteln
+            var semesterStartTag = (int)semesterAnfang.DayOfWeek;
+            var day = (int)course.DayOfWeek.Value;
+            int nDays = day - semesterStartTag;
+            if (nDays < 0)
+                nDays += 7;
+
+            DateTime occDate = semesterAnfang.AddDays(nDays);
+
+
+            //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+            int numOcc = 0;
+            while (occDate <= semesterEnde)
+            {
+                bool isVorlesung = true;
+                foreach (var sd in _semester.Dates)
+                {
+                    // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                    if (sd.From.Date <= occDate.Date &&
+                        occDate.Date <= sd.To.Date &&
+                        sd.HasCourses == false)
+                    {
+                        isVorlesung = false;
+                    }
+                }
+
+                if (isVorlesung)
+                {
+                    var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day, course.Begin.Value.Hour,
+                        course.Begin.Value.Minute, course.Begin.Value.Second);
+                    var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day, course.End.Value.Hour,
+                        course.End.Value.Minute, course.End.Value.Second);
+
+                    var occ = new DateCone
+                    {
+                        Begin = ocStart,
+                        End = ocEnd,
+                    };
+
+                    dateList.Add(occ);
+                    numOcc++;
+                }
+
+                occDate = occDate.AddDays(7);
+            }
+
+
+            return dateList;
+        }
+
+
+        private static Occurrence CreateDefaultOccurrence(int c=-1)
+        {
+            return new Occurrence
+            {
+                Capacity = c,
+                IsAvailable = false,
+                IsCanceled = false,
+                IsMoved = false,
+                FromIsRestricted = false,
+                UntilIsRestricted = false,
+                UseGroups = false,
+            };
+        }
+    }
+  }

@@ -96,6 +96,10 @@
     <Compile Include="IO\Cie\FileReader.cs" />
     <Compile Include="IO\Cie\ImportContext.cs" />
     <Compile Include="IO\Cie\SemesterImport.cs" />
+    <Compile Include="IO\Csv\Data\SimpleCourse.cs" />
+    <Compile Include="IO\Csv\FileReader.cs" />
+    <Compile Include="IO\Csv\ImportContext.cs" />
+    <Compile Include="IO\Csv\SemesterImport.cs" />
     <Compile Include="IO\GpUntis\Data\RaumBlockade.cs" />
     <Compile Include="IO\GpUntis\Data\Restriktion.cs" />
     <Compile Include="IO\MemberUpdateService.cs" />
@@ -164,6 +168,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

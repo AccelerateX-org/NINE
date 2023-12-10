@@ -253,6 +253,14 @@ namespace MyStik.TimeTable.Data
         public DbSet<ModuleDescription> ModuleDescriptions { get; set; }
 
 
+        public DbSet<SlotExecution> SlotExecutions { get; set; }
+
+        public DbSet<SubjectTeaching> SubjectTeachings { get; set; }
+
+        public DbSet<SubjectAccreditation> SubjectAccreditations { get; set; }
+
+
+
         public TimeTableDbContext() : base()
         {
         }

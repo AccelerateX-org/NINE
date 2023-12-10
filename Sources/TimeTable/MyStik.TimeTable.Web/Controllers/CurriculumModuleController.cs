@@ -188,6 +188,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Delete(Guid id)
         {
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            var catalog = model.Catalog;
 
             if (model.Accreditations.Any())
             {
@@ -279,12 +280,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 mapping.Module = null;
             }
 
-
             Db.CurriculumModules.Remove(model);
             Db.SaveChanges();
 
+            if (catalog != null)
+            {
+                return RedirectToAction("Details", "Catalogs", new {id=catalog.Id});
+            }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Catalogs");
         }
 
     }

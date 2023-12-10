@@ -24,11 +24,11 @@ namespace MyStik.TimeTable.Web.Services
 
             var courseSummaryService = new CourseService(_db);
 
+            // die ich halte
             var courses = 
                 _db.Activities.OfType<Course>()
                     .Where(x => x.Semester.Id == semester.Id &&
-                         (x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(user.Id))) ||
-                         x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))))
+                         (x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(user.Id)))))
                 .ToList();
 
             foreach (var course in courses)
@@ -39,6 +39,27 @@ namespace MyStik.TimeTable.Web.Services
                 
                 model.Courses.Add(summary);
             }
+
+            // wo ich eingeschrieben bin
+            courses =
+                _db.Activities.OfType<Course>()
+                    .Where(x => x.Semester.Id == semester.Id &&
+                                 x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                    .ToList();
+
+            foreach (var course in courses)
+            {
+                // doppelte raus
+                if (model.Courses.Any(x => x.Course.Id == course.Id)) continue;
+                
+                var summary = courseSummaryService.GetCourseSummary(course);
+
+                summary.Subscription =
+                    course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(user.Id));
+
+                model.Courses.Add(summary);
+            }
+
 
             var officeHours = _db.Activities.OfType<OfficeHour>().Where(x =>
                 x.Semester.Id == semester.Id && 
@@ -62,6 +83,7 @@ namespace MyStik.TimeTable.Web.Services
 
 
 
+            /*
             var modules = new List<CurriculumModule>();
             foreach (var member in members)
             {
@@ -70,7 +92,6 @@ namespace MyStik.TimeTable.Web.Services
                         m.Member.Id == member.Id)).ToList());
             }
 
-
             foreach (var module in modules)
             {
                 var mModel = new TeachingModuleSemesterModel
@@ -78,24 +99,9 @@ namespace MyStik.TimeTable.Web.Services
                     Module = module
                 };
 
-
-                /*
-                foreach (var moduleCourse in module.ModuleCourses)
-                {
-                    var semCourses =
-                        moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == semester.Id))
-                            .Select(x => x.Course).Distinct().ToList();
-
-                    foreach (var course in semCourses)
-                    {
-                        var summary = courseSummaryService.GetCourseSummary(course);
-                        mModel.Courses.Add(summary);
-                    }
-                }
-                */
-
                 model.Modules.Add(mModel);
             }
+            */
 
             return model;
         }

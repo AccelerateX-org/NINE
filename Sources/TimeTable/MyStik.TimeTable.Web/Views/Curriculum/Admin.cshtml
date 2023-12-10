@@ -45,21 +45,21 @@
                                 </div>
                                 <p class="mb-1">Bezeichnungen, Dauer Abschlussarbeit, Wird angeboten ja/nein</p>
                             </a>
-                            <a href="@Url.Action("Labels", "Curriculum", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                            <a href="@Url.Action("Labels", "Curriculum", new {id = Model.Id})" class="list-group-item list-group-item-action disabled" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Etiketten</h5>
                                 </div>
                                 <p class="mb-1">Aufkleber für Studiengruppen A, B, etc., Studienrichtungen, Sprache, Studienmodell usw.</p>
                             </a>
-                            <a href="@Url.Action("GroupList", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action list-group-item-warning" aria-current="true">
+                            <a href="@Url.Action("GroupList", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action list-group-item-warning disabled" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Studien- und Kapazitätsgruppen</h5>
                                 </div>
                                 <p class="mb-1">VERALTET: Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.csv" benötigt.</p>
                             </a>
-                            
+                            @*
                             <a href="@Url.Action("AllLabels")">Alle Labels</a>
-
+                                *@
                         </div>
                     </div>
                     <div class="col-md-3">

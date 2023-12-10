@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using MyStik.TimeTable.DataServices.IO.GpUntis.Data;
 
 namespace MyStik.TimeTable.Web.Services
 {
@@ -18,21 +19,11 @@ namespace MyStik.TimeTable.Web.Services
 
             foreach (var date in dates)
             {
-                    // Workaround für fullcalendar
-                    // wenn der Kalendereintrag ein zu geringe höhe hat,
-                    // dann wird statt des Endes der Titel angezeigt
-                    // Den Titel rendern wir selber, d.h. i.d.R. geben wir ihn nicht an!
-                    // file: fullcalendar.js line 3945
-                    /*
-                    var duration = date.Date.End - date.Date.Begin;
-                        if (duration.TotalMinutes <= 60)
-                            string title = null;
-                            title = date.Date.End.TimeOfDay.ToString(@"hh\:mm");
-                     */
+                CalendarEventModel ev = null;
 
                     if (date.Slot != null)
                     {
-                        events.Add(new CalendarEventModel
+                        ev = new CalendarEventModel
                         {
                             id = date.Date.Id.ToString(),
                             courseId = date.Activity.Id.ToString(),
@@ -44,11 +35,12 @@ namespace MyStik.TimeTable.Web.Services
                             backgroundColor = date.BackgroundColor,
                             borderColor = "#ff0000",
                             htmlContent = String.Empty,
-                        });
+                            extendendProps = new Dictionary<string, string>()
+                        };
                     }
                     else
                     {
-                        events.Add(new CalendarEventModel
+                        ev = new CalendarEventModel
                         {
                             id = date.Date.Id.ToString(),
                             courseId = date.Activity.Id.ToString(),
@@ -60,8 +52,24 @@ namespace MyStik.TimeTable.Web.Services
                             backgroundColor = date.BackgroundColor,
                             borderColor = "#000",
                             htmlContent = String.Empty,
-                        });
+                            extendendProps = new Dictionary<string, string>()
+                        };
                     }
+
+                    var doz = date.Date.Hosts.FirstOrDefault();
+
+                    if (doz != null)
+                    {
+                        ev.extendendProps["professor"] = doz.FullName;
+                    }
+
+                    var room = date.Date.Rooms.FirstOrDefault();
+                    if (room != null)
+                    {
+                        ev.extendendProps["raum"] =room.FullName;
+                    }
+
+                    events.Add(ev);
             }
 
 

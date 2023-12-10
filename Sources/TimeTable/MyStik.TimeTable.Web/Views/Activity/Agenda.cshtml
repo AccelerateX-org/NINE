@@ -2,12 +2,15 @@
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.AgendaViewModel
 
-@foreach (var day in Model.Days)
-{
-    <div class="list-group-item list-group-item-primary"><strong>@day.Title</strong></div>
 
-    if (day.Activities.Any())
+@if (Model.Days.Any())
+{
+    foreach (var day in Model.Days)
     {
+        <div class="list-group-item list-group-item-primary"><strong>@day.Title</strong></div>
+
+        if (day.Activities.Any())
+        {
             foreach (var act in day.Activities)
             {
                 <div class="list-group-item">
@@ -22,7 +25,7 @@
                             }
                             else if (act.Date.Activity is Course)
                             {
-                                <a href="@Url.Action("Details", "Course", new {id = act.Date.Activity.Id})">
+                                <a href="@Url.Action("Details", "Course", new { id = act.Date.Activity.Id })">
                                     @act.Date.Activity.Name
                                 </a>
                                 <div><strong>@act.Date.Title</strong></div>
@@ -30,7 +33,7 @@
                             }
                             else if (act.Date.Activity is Reservation)
                             {
-                                <a href="@Url.Action("Details", "Reservation", new {id = act.Date.Activity.Id})">
+                                <a href="@Url.Action("Details", "Reservation", new { id = act.Date.Activity.Id })">
                                     @act.Date.Activity.Name
                                 </a>
                             }
@@ -50,9 +53,14 @@
                     </div>
                 </div>
             }
+        }
+        else
+        {
+            <div class="list-group-item"><i>Keine Termine</i></div>
+        }
     }
-    else
-    {
-        <div class="list-group-item"><i>Keine Termine</i></div>    
-    }
+}
+else
+{
+    <div class="list-group-item"><i>Keine Termine</i></div>
 }

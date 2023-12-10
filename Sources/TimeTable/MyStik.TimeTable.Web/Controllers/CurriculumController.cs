@@ -1693,7 +1693,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
-        
+
         public ActionResult Opportunities(Guid id)
         {
             var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
@@ -2639,83 +2639,6 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult AddLabel(Guid currId)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-
-            var model = new ItemLabelEditModel()
-            {
-                Curriculum = curr,
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult AddLabel(ItemLabelEditModel model)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
-
-            var label = new ItemLabel();
-
-            label.Name = model.Name;
-            label.Description = model.Description;
-            label.HtmlColor = model.HtmlColor;
-            label.LabelSets.Add(curr.LabelSet);
-
-            curr.LabelSet.ItemLabels.Add(label);
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Labels", new { id = curr.Id });
-        }
-
-
-
-        public ActionResult EditLabel(Guid currId, Guid labelId)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
-
-            var model = new ItemLabelEditModel()
-            {
-                ItemLabel = label,
-                Curriculum = curr,
-                Name = label.Name,
-                Description = label.Description,
-                HtmlColor = label.HtmlColor
-
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult EditLabel(ItemLabelEditModel model)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
-            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == model.ItemLabel.Id);
-
-            label.Name = model.Name;
-            label.Description = model.Description;
-            label.HtmlColor = model.HtmlColor;
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Labels", new { id = curr.Id });
-        }
-
-        public ActionResult DeleteLabel(Guid currId, Guid labelId)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
-
-            Db.ItemLabels.Remove(label);
-            Db.SaveChanges();
-
-
-            return RedirectToAction("Labels", new { id = curr.Id });
-        }
 
 
         public ActionResult ImportLabels(Guid id)
@@ -2911,12 +2834,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new { id = id });
         }
         */
-        public ActionResult AllLabels()
-        {
-            var model = Db.ItemLabels.ToList();
-
-            return View(model);
-        }
 
         public ActionResult Rebook(Guid sourceId, Guid targetId)
         {
@@ -2939,6 +2856,16 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Destroy", new { id = sourceId });
+        }
+
+
+        public ActionResult AllSlots(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = Db.CurriculumSlots.Where(x => x.AreaOption.Area.Curriculum.Id == curr.Id).ToList();
+
+            return View(model);
         }
     }
 }

@@ -150,17 +150,13 @@ namespace MyStik.TimeTable.DataServices
                 _db.ActivityOwners.Remove(activityOwner);
             }
 
-            /*
-            if (activity is Course)
-            {
-                var course = activity as Course;
 
-                foreach (var nexus in course.Nexus.ToList())
-                {
-                    _db.CourseNexus.Remove(nexus);
-                }
+            var teachingDescriptions = _db.TeachingDescriptions.Where(x => x.Course.Id == activity.Id).ToList();
+            foreach (var teachingDescription in teachingDescriptions)
+            {
+                _db.TeachingDescriptions.Remove(teachingDescription);
             }
-            */
+
 
             _db.Activities.Remove(activity);
 
