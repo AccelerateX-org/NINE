@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -43,6 +44,63 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
             return View();
+        }
+
+        public ActionResult Allocation()
+        {
+            var from = DateTime.Today;
+            var to = from.AddDays(7);
+
+            var beginn = DateTime.Parse("08:00");
+            var end = DateTime.Parse("21:00");
+
+            var rooms = Db.Rooms.Where(x => x.Number.StartsWith("R")).Take(10).ToList();
+
+            var roomDict = new Dictionary<Room, List<ActivityDate>>();
+
+            foreach (var ro in rooms)
+            {
+                // Alle Termine in diesem Bereich
+                var dates = ro.Dates.Where(x => x.Beginn >= from && x.End <= to).ToList();
+                roomDict[ro] = dates;
+            }
+            
+            var t = beginn;
+
+            while (t <= end)
+            {
+                var t1 = t;
+                var t2 = t1.AddMinutes(60);
+
+                foreach (var r in rooms)
+                {
+                    /*
+                    var alloc = roomDict[r].Where(x => 
+                        !x.Occurrence.IsCancelled && 
+                        ((x.Begin.TimeOdDay <= t1.TimeOdDay && x.End.TimeOdDay >= t2.TimeOdDay) || 
+                        (x.Begin.TimeOdDay >= t1.TimeOdDay && x.End.TimeOdDay <= t2.TimeOdDay) || 
+                        (x.Begin.TimeOdDay <= t1.TimeOdDay && x.End.TimeOdDay <= t2.TimeOdDay) || 
+                        (x.Begin.TimeOdDay <= t2.TimeOdDay && x.End.TimeOdDay >= t2.TimeOdDay))
+
+                                                (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                        (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                        (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+
+
+                    ).ToList();
+                    if (alloc.Any())
+                    {
+                        // belegt
+                    }
+                    else
+                    {
+                        // frei
+                    }
+                    */
+                }
+
+                t = t.AddMinutes(60);
+            }
         }
     }
 }
