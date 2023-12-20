@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.ModuleSemesterView
 @{
@@ -7,6 +8,16 @@
 
     var subjects = Model.CurriculumModule.ModuleSubjects.ToList();
     var accrs = Model.CurriculumModule.Accreditations.ToList();
+
+    var tt = new List<TeachingDescription>();
+    foreach (var moduleAccreditation in accrs)
+    {
+        foreach (var teachingDescription in moduleAccreditation.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+        {
+            tt.Add(teachingDescription);
+        }
+    }
+    var teachings = tt.Distinct();
 
     var itsMe = false;
 
@@ -177,44 +188,38 @@
                                         @{
                                             var nTeachings = 0;
                                         }
-                                        @foreach (var accr in accrs)
+                                        @*foreach (var accr in accrs)
+        {
+            //var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+                                        *@
+                                        @foreach (var teaching in teachings)
                                         {
-                                            var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-
-                                            var showGroups = teachings.Count > 1;
-                                            foreach (var teaching in teachings)
-                                            {
-                                                nTeachings++;
-                                                <div class="list-group-item">
-                                                    <div class="row">
-                                                        <div class="col-2">
-                                                            <div>@teaching.Subject.TeachingFormat.Tag</div>
-                                                        </div>
-                                                        <div class="col-10">
-                                                            <div>
-                                                                <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
-                                                                    @teaching.Course.Name (@teaching.Course.ShortName)
-                                                                </a>
-                                                                @if (@showGroups)
-                                                                {
-                                                                    <div>
-                                                                        @Html.GroupList(teaching.Course.SemesterGroups, false, false)
-                                                                    </div>
-
-                                                                    if (teaching.Course.LabelSet != null)
+                                            nTeachings++;
+                                            <div class="list-group-item">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <div>@teaching.Subject.TeachingFormat.Tag</div>
+                                                    </div>
+                                                    <div class="col-10">
+                                                        <div>
+                                                            <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
+                                                                @teaching.Course.Name (@teaching.Course.ShortName)
+                                                            </a>
+                                                            @if (teaching.Course.LabelSet != null)
+                                                            {
+                                                                <div>
+                                                                    @foreach (var itemLabel in teaching.Course.LabelSet.ItemLabels)
                                                                     {
-                                                                        foreach (var itemLabel in teaching.Course.LabelSet.ItemLabels)
-                                                                        {
-                                                                            <div>@itemLabel.Name</div>
-                                                                        }
+                                                                        <span class="badge bg-secondary">@itemLabel.Name</span>
                                                                     }
-                                                                }
-                                                            </div>
+                                                                </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
-                                            }
+                                            </div>
                                         }
+                                        @*}*@
                                         @if (nTeachings == 0)
                                         {
                                             <div class="list-group-item">

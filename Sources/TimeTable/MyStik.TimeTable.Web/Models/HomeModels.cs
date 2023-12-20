@@ -83,7 +83,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<Event> Events { get; set; }
 
-
+        public ItemLabel Label { get; set; }
     }
 
     public class SemesterScheduleViewModel

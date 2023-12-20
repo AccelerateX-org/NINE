@@ -32,6 +32,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
+            if (curr.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                curr.LabelSet = labelSet;
+                Db.ItemLabelSets.Add(labelSet);
+                Db.SaveChanges();
+            }
+
             var model = new ItemLabelEditModel()
             {
                 Curriculum = curr,
@@ -65,6 +73,15 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            if (curr.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                curr.LabelSet = labelSet;
+                Db.ItemLabelSets.Add(labelSet);
+                Db.SaveChanges();
+            }
+
 
             var model = new ItemLabelEditModel()
             {

@@ -6,7 +6,7 @@
     var userInfoService = new UserInfoService();
     var totalByteCount = 0;
 
-    var isAdmin = ViewBag.UserRights.Member.IsAdmin;
+    var isAdmin = ViewBag.UserRight.Member.IsAdmin;
     var isCommittee = isAdmin || (ViewBag.Member != null);
     var hasChair = isAdmin || (ViewBag.Member != null && ViewBag.Member.HasChair);
 

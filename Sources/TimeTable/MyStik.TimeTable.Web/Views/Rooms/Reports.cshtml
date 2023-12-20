@@ -1,0 +1,28 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+@{
+    ViewBag.Title = "Reports";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Räume</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+

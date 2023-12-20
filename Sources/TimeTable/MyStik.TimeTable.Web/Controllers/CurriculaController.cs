@@ -55,7 +55,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org
             };
 
-            ViewBag.UserRights = GetUserRight(org);
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

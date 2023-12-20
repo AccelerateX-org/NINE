@@ -19,7 +19,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = Db.Organisers.Where(o => o.Members.Any()).OrderBy(s => s.Name).ToList();
 
-            ViewBag.UserRights = GetUserRight(org);
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
@@ -33,7 +33,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org
             };
 
-            ViewBag.UserRights = GetUserRight(org);
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

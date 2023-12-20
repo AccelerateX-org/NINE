@@ -23,7 +23,7 @@
 
 
     List<OrganiserMember> memberList = null;
-    if (ViewBag.UserRights.IsMemberAdmin || ViewBag.UserRights.IsOrgMember)
+    if (ViewBag.UserRight.IsMemberAdmin || ViewBag.UserRight.IsOrgMember)
     {
         memberList = Model.Organiser.Members
             .OrderBy(x => x.Name)
@@ -72,7 +72,7 @@
 
         <div class="card">
             <div class="card-body">
-                @if (ViewBag.UserRights.IsMemberAdmin)
+                @if (ViewBag.UserRight.IsMemberAdmin)
                 {
                     <a href="@Url.Action("CreateMember", "Organiser", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
                         <i class="fa fa-plus-circle"></i> Lehrenden anlegen
@@ -99,7 +99,7 @@
                                 <td>@member.FirstName</td>
                                 <td>@member.Title</td>
 
-                                @if (ViewBag.UserRights.IsMemberAdmin)
+                                @if (ViewBag.UserRight.IsMemberAdmin)
                                 {
                                     <td>
                                         <a href="@Url.Action("MemberAdmin", "Organiser", new { id = member.Id })">

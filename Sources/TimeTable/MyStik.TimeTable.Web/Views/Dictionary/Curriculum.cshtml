@@ -33,19 +33,36 @@
                 <div class="card">
                     <div class="list-group">
                         <div class="list-group-item list-group-item-light">
-                            <h5>Nach Studienplan (im Aufbau)</h5>
+                            <h4>Nach Studienplan</h4>
                         </div>
                         @if (Model.Curriculum.Areas.Any())
                         {
-
+                            <div class="list-group-item">
+                                Zugang bzw. Suche nach Anlage 1 der SPO des Studiengangs sowie der zugehörige Studienplan.
+                            </div>
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })">
+                                <h5>Aufbau Studiengang</h5>
+                            </a>
                             <a class="list-group-item list-group-item-action" href="@Url.Action("Planer", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">
-                                <h5>Planer</h5>
+                                <h5>Semesterplaner</h5>
                             </a>
                         }
+                        else
+                        {
+                            <div class="list-group-item">
+                                Für diesen Studiengang steht kein Studienplan zur Verfügung.
+                            </div>
+                        }
+                        <div class="list-group-item">
+                            <div class="alert alert-info">
+                                <strong>Achtung Experiment:</strong> Der Umfang an hier abrufbaren Daten hängt von der Bereitstellungen durch die jeweilige Fakultät ab. Die Datenqualität ist nicht einheitlich.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
             </div>
+        @*
             <div class="col-md-4">
                 <div class="card">
                     <div class="list-group">
@@ -68,20 +85,49 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            *@
+            <div class="col-md-8">
                 <div class="card">
                     <div class="list-group">
                         <div class="list-group-item list-group-item-light">
-                            <h5>Nach Etiketten (Labels)</h5>
+                            <h4>Nach Stundenplan</h4>
                         </div>
+                        <div class="list-group-item">
+                            Zugang und Suche nach den Kohorten des Studiengangs, z.B. Studiengruppen, Studienrichtungen und -schwerpukte oder semesterbezogen. 
+                        </div>
+                        <div class="list-group-item">
+                            <div class="row">
+                                @foreach (var label in Model.Curriculum.LabelSet.ItemLabels.OrderBy(x => x.Name))
+                                {
+                                    var nCourses = 0;
+                                    if (ViewBag.UserRight.IsCurriculumAdmin)
+                                    {
+                                        nCourses = db.Activities.OfType<Course>()
+                                            .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                                    }
+                                    else
+                                    {
+                                        nCourses = db.Activities.OfType<Course>()
+                                            .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && !x.IsProjected && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                                    }
 
-                        @foreach (var label in Model.Curriculum.LabelSet.ItemLabels)
-                        {
-                            <a href="@Url.Action("Label", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = Model.Curriculum.Id, labelId = label.Id})"  class="list-group-item list-group-item-action">
-                                <h5>@label.Name</h5>
-                            </a>
-                        }
-                    </div>
+                                    if (nCourses > 0)
+                                    {
+                                        <div class="col-2">
+                                            <a href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = Model.Curriculum.Id, labelId = label.Id })"
+                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <div class="fw-bold">@label.Name</div>
+                                                </div>
+                                                <span class="badge bg-primary rounded-pill">@nCourses</span>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+          </div>
                 </div>
             </div>
         </div>

@@ -307,7 +307,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult LookupDate()
+        public ActionResult LookupDate(Guid id)
         {
             var model = new RoomLookUpModel
             {

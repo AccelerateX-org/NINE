@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public class InfoAnnouncement
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,4 +29,5 @@ namespace MyStik.TimeTable.Data
 
         public virtual Infoscreen Infoscreen { get; set; }
     }
+    */
 }

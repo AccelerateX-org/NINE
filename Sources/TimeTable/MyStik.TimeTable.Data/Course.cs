@@ -50,11 +50,13 @@ namespace MyStik.TimeTable.Data
 
         //public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
 
+        /// <summary>
+        /// deprecated
+        /// </summary>
         public virtual ICollection<TeachingDescription> Teachings { get; set; }
 
         public virtual ICollection<SubjectTeaching> SubjectTeachings { get; set; }
 
-        public virtual ICollection<SlotExecution> SlotExecutions { get; set; }
 
     }
 }

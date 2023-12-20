@@ -54,38 +54,53 @@
 
     <div class="col-md-12">
         <div class="card">
+        @if (ViewBag.UserRight.IsRoomAdmin)
+        {
+
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Allocation")" class="btn btn-outline-primary">Allokation</a>
+                        <a href="@Url.Action("List", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-list"></i> Liste</a>
+                        <a href="@Url.Action("AddGroup", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-plus"></i> Neue Raumgruppe</a>
+                        <a href="@Url.Action("Labels", "Room", new { orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-qr-code"></i> Türschilder</a>
+                        <a href="@Url.Action("LookupDate", "Room", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-search"></i> Raumsuche</a>
+                    </div>
+                </div>
+            </div>
+                }
             <table class="table table-sm" id="tabRooms">
                 <thead>
-                    <tr>
-                        <th></th>
-                        <th>Nummer</th>
-                        <th>Bezeichnung</th>
-                        <th>Plätze</th>
-                        <th>Beschreibung</th>
-                        <th>Zuordnungen</th>
-                    </tr>
+                <tr>
+                    <th></th>
+                    <th>Nummer</th>
+                    <th>Bezeichnung</th>
+                    <th>Plätze</th>
+                    <th>Beschreibung</th>
+                    <th>Zuordnungen</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
-                    {
-                        <tr>
-                            <td></td>
-                            <td>
-                                <a href="@Url.Action("Details", "Room", new {id = room.Id})">
-                                    @room.Number
-                                </a>
-                            </td>
-                            <td>@room.Name</td>
-                            <td>@room.Capacity</td>
-                            <td>@room.Description</td>
-                            <td>
-                                @foreach (var assign in room.Assignments)
-                                {
-                                    <div>@Html.FacultyLabel(assign.Organiser) (@assign.InternalNeedConfirmation | @assign.ExternalNeedConfirmation)</div>
-                                }
-                            </td>
-                        </tr>
-                    }
+                @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
+                {
+                    <tr>
+                        <td></td>
+                        <td>
+                            <a href="@Url.Action("Details", "Room", new { id = room.Id })">
+                                @room.Number
+                            </a>
+                        </td>
+                        <td>@room.Name</td>
+                        <td>@room.Capacity</td>
+                        <td>@room.Description</td>
+                        <td>
+                            @foreach (var assign in room.Assignments)
+                            {
+                                <div>@Html.FacultyLabel(assign.Organiser)</div>
+                            }
+                        </td>
+                    </tr>
+                }
 
                 </tbody>
             </table>
@@ -93,7 +108,7 @@
 
 
             @*
-                @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsRoomAdmin)
+                @if (ViewBag.UserRight.User.MemberState == MemberState.Staff && ViewBag.UserRight.IsRoomAdmin)
                 {
                     <div class="list-group-item">
                         <div class="btn-group" role="group">

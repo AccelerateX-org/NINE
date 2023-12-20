@@ -158,6 +158,13 @@ namespace MyStik.TimeTable.DataServices
             }
 
 
+            var teachings = _db.SubjectTeachings.Where(x => x.Course.Id == activity.Id).ToList();
+            foreach (var teaching in teachings)
+            {
+                _db.SubjectTeachings.Remove(teaching);
+            }
+
+
             _db.Activities.Remove(activity);
 
             _db.SaveChanges();

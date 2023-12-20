@@ -566,6 +566,14 @@
     <Compile Include="Migrations\202312031145227_ModuleDescV10.designer.cs">
       <DependentUpon>202312031145227_ModuleDescV10.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202312161308565_RoomManagementV02.cs" />
+    <Compile Include="Migrations\202312161308565_RoomManagementV02.designer.cs">
+      <DependentUpon>202312161308565_RoomManagementV02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202312181621330_ModuleDescV11.cs" />
+    <Compile Include="Migrations\202312181621330_ModuleDescV11.designer.cs">
+      <DependentUpon>202312181621330_ModuleDescV11.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -902,6 +910,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202312031145227_ModuleDescV10.resx">
       <DependentUpon>202312031145227_ModuleDescV10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202312161308565_RoomManagementV02.resx">
+      <DependentUpon>202312161308565_RoomManagementV02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202312181621330_ModuleDescV11.resx">
+      <DependentUpon>202312181621330_ModuleDescV11.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

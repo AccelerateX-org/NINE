@@ -28,6 +28,7 @@
                     <div class="list-group-item">
                         <div class="btn-group" role="group">
                             <a href="@Url.Action("CreateReservation", new {id=Model.Organiser.Id})" class="btn btn-outline-primary"><i class="bi-folder-plus"></i> Neue Reservierung anlegen</a>
+                            <a href="@Url.Action("LookupDate", "Room", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-search"></i> Raumsuche</a>
                         </div>
                     </div>
                 </div>

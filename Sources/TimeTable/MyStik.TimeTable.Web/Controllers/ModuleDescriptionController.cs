@@ -89,6 +89,27 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_Semester", model);
         }
 
+        public ActionResult Latest(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
+
+            var descriptions = module.Descriptions
+                .Where(x => x.ChangeLog?.Approved != null).ToList();
+
+            if (!descriptions.Any())
+                return RedirectToAction("Details", new { id = id });
+                    
+            var description = descriptions.Where(x => x.Semester != null).OrderByDescending(x => x.Semester.StartCourses).FirstOrDefault();
+
+            if (description == null)
+                return RedirectToAction("Details", new { id = id });
+
+
+            return RedirectToAction("Semester", new {moduleId = id, semId = description.Semester.Id});
+        }
+
 
         public ActionResult Semester(Guid moduleId, Guid semId)
         {

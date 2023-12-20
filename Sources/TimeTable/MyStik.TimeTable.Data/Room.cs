@@ -13,6 +13,7 @@ namespace MyStik.TimeTable.Data
             Bookings = new HashSet<RoomBooking>();
             Ressources = new HashSet<BinaryStorage>();
             Equipments = new HashSet<RoomEquipment>();
+            RoomAllocations = new HashSet<RoomAllocation>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -76,6 +77,8 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<RoomEquipment> Equipments { get; set; }
 
         public virtual ICollection<RoomLayout> Layouts { get; set; }
+
+        public virtual ICollection<RoomAllocation> RoomAllocations { get; set; }
 
 
         public string FullName => string.IsNullOrEmpty(Name) ? Number : $"{Number} ({Name})";

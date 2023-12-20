@@ -1,7 +1,10 @@
-﻿@model MyStik.TimeTable.Data.CurriculumSlot
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.CurriculumSlot
 @{
     ViewBag.Title = "Slot";
 
+    var db = new TimeTableDbContext();
+    var tf = db.TeachingFormats.ToList();
 }
 
 @section styles
@@ -19,7 +22,7 @@
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">@Model.AreaOption.Area.Curriculum.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Areas", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">Themenbereiche</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Area", "Curriculum", new {id=Model.AreaOption.Area.Id})">@Model.AreaOption.Area.Name (@Model.AreaOption.Area.Tag)</a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Option", "Curriculum", new {id=Model.AreaOption.Id})">@Model.AreaOption.Area.Name (@Model.AreaOption.Tag)</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Option", "Curriculum", new {id=Model.AreaOption.Id})">@Model.AreaOption.Name (@Model.AreaOption.Tag)</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.Tag</li>
             </ol>
         </nav>
@@ -96,9 +99,12 @@
                     <table id="tabModules" class="table">
                         <thead>
                             <tr>
-                                <th>Katalog-ID</th>
-                                <th>Modul-ID</th>
-                                <th>Modul-Titel</th>
+                                <th>Id</th>
+                                <th>Titel</th>
+                                @foreach (var t in tf)
+                                {
+                                    <th>@t.Tag</th>
+                                }
                                 @if (ViewBag.UserRight.IsCurriculumAdmin)
                                 {
                                     <th></th>
@@ -109,9 +115,28 @@
                             @foreach (var module in Model.ModuleAccreditations)
                             {
                                 <tr>
-                                    <td>@module.Module.Catalog.Tag</td>
-                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">@module.Module.Tag</a></td>
-                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">@module.Module.Name</a></td>
+                                    <td>@module.Module.Tag</td>
+                                    <td><a href="@Url.Action("Latest", "ModuleDescription", new { id = module.Module.Id })">@module.Module.Name</a></td>
+                                    @foreach (var t in tf)
+                                    {
+                                        var subjects = module.Module.ModuleSubjects.Where(x => x.TeachingFormat.Id == t.Id).ToList();
+
+                                        if (subjects.Any())
+                                        {
+                                            if (subjects.Count == 1)
+                                            {
+                                                <td>@subjects.Sum(x => x.SWS)</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@subjects.Sum(x => x.SWS) SWS in @subjects.Count Fächern </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    }
                                     @if (ViewBag.UserRight.IsCurriculumAdmin)
                                     {
                                         <td>

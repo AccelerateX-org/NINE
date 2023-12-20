@@ -68,6 +68,10 @@ namespace MyStik.TimeTable.Data
 
         //public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
         public virtual ICollection<TeachingDescription> Teachings { get; set; }
+
+        public virtual ICollection<SubjectAccreditation> SubjectAccreditations { get; set; }
+
+        public virtual ICollection<SubjectTeaching> SubjectTeachings { get; set; }
     }
 
     /*

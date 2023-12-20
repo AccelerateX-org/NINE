@@ -1134,7 +1134,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Drawing(Guid id)
         {
             var org = GetMyOrganisation();
-            ViewBag.UserRights = GetUserRight(org);
+            ViewBag.UserRight = GetUserRight(org);
 
 
             var service1 = new CourseService(Db);

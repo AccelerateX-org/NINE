@@ -21,7 +21,7 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        @if (ViewBag.UserRight.IsInstitutionAdmin)
+                        @if (ViewBag.UserRight.IsInstitutionAdmin && Model.Institution != null)
                         {
                             <a href="@Url.Action("AddInstitutionLabel", new { instId = Model.Institution.Id })" class="btn btn-outline-primary disabled">
                                 <i class="bi-plus"></i> Neues Etikett (@Model.Institution.Tag)
@@ -66,7 +66,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var label in Model.Institution.LabelSet.ItemLabels)
+                @if (Model.Institution != null)
+                {
+                    foreach (var label in Model.Institution.LabelSet.ItemLabels)
                     {
                         <tr>
                             <td>@Model.Institution.Tag</td>
@@ -82,23 +84,26 @@
                             </td>
                         </tr>
                     }
-                    @foreach (var label in Model.LabelSet.ItemLabels)
-                    {
-                        <tr>
-                            <td>@Model.ShortName</td>
-                            <td>@label.Name</td>
-                            <td>@label.Description</td>
-                            <td>@label.HtmlColor</td>
-                            <td>
-                                @if (ViewBag.UserRight.IsOrgAdmin)
-                                {
-                                    <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
-                                    <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
-                                }
-                            </td>
-                        </tr>
-                    }
-                    @foreach (var curr in Model.Curricula)
+                }
+                @foreach (var label in Model.LabelSet.ItemLabels)
+                {
+                    <tr>
+                        <td>@Model.ShortName</td>
+                        <td>@label.Name</td>
+                        <td>@label.Description</td>
+                        <td>@label.HtmlColor</td>
+                        <td>
+                            @if (ViewBag.UserRight.IsOrgAdmin)
+                            {
+                                <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                            }
+                        </td>
+                    </tr>
+                }
+                @foreach (var curr in Model.Curricula)
+                {
+                    if (curr.LabelSet != null)
                     {
                         foreach (var label in curr.LabelSet.ItemLabels)
                         {
@@ -110,13 +115,14 @@
                                 <td>
                                     @if (ViewBag.UserRight.IsCurriculumAdmin)
                                     {
-                                        <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
-                                        <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                        <a href="@Url.Action("EditLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                        <a href="@Url.Action("DeleteLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
                                     }
                                 </td>
                             </tr>
                         }
                     }
+                }
                 </tbody>
             </table>
         </div>

@@ -92,6 +92,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Curriculum = curr
             };
 
+            ViewBag.UserRight = GetUserRight(curr.Organiser);
 
             return View(model);
         }
@@ -261,61 +262,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 return PartialView("_CourseList", model);
             }
 
-
+            // keine Option
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-            if (labelId == Guid.Empty)
-            {
-                // alle Kurse zu diesem Studiengang
-                var courses = Db.Activities.OfType<Course>().Where(x =>
-                        x.Semester.Id == semId &&
-                        x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId))
-                    .ToList();
-
-                if (courses.Any())
-                {
-                    // wen es welche gibt, dann
-                    // aus denen dann die ohne Labels filtern
-
-                    // alle ohne ein Label
-                    var allCourses = courses.Where(x =>
-                        ((x.LabelSet == null) ||
-                         (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
-                    ).ToList();
-
-                    foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
-                    {
-                        model.Add(cs.GetCourseSummary(labeledCourse));
-                    }
-
-
-                    return PartialView("_CourseList", model);
-                }
-                else
-                {
-                    // sonst: nimm alles was zum Org gehört => es gibt keine Zuordnung zu einem Studiengang, weder über Labelm noch Module
-
-                    var allCourses = Db.Activities.OfType<Course>().Where(x =>
-                        x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id &&
-                        ((x.LabelSet == null) ||
-                         (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
-                    ).ToList();
-
-                    foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
-                    {
-                        model.Add(cs.GetCourseSummary(labeledCourse));
-                    }
-
-                    return PartialView("_CourseList", model);
-                }
-
-            }
-            else
+            if (labelId == null)
             {
                 var allCourses = Db.Activities.OfType<Course>().Where(x =>
-                    x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id &&
-                    x.LabelSet != null &&
-                    x.LabelSet.ItemLabels.Any(l => l.Id == labelId)).ToList();
+                    x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id).ToList();
 
                 foreach (var labeledCourse in allCourses.OrderBy(g => g.ShortName))
                 {
@@ -323,6 +276,70 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 return PartialView("_CourseList", model);
+            }
+            else
+            {
+
+                if (labelId == Guid.Empty)
+                {
+                    // alle Kurse zu diesem Studiengang
+                    var courses = Db.Activities.OfType<Course>().Where(x =>
+                            x.Semester.Id == semId &&
+                            x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId))
+                        .ToList();
+
+                    if (courses.Any())
+                    {
+                        // wen es welche gibt, dann
+                        // aus denen dann die ohne Labels filtern
+
+                        // alle ohne ein Label
+                        var allCourses = courses.Where(x =>
+                            ((x.LabelSet == null) ||
+                             (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
+                        ).ToList();
+
+                        foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
+                        {
+                            model.Add(cs.GetCourseSummary(labeledCourse));
+                        }
+
+
+                        return PartialView("_CourseList", model);
+                    }
+                    else
+                    {
+                        // sonst: nimm alles was zum Org gehört => es gibt keine Zuordnung zu einem Studiengang, weder über Labelm noch Module
+
+                        var allCourses = Db.Activities.OfType<Course>().Where(x =>
+                            x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id &&
+                            ((x.LabelSet == null) ||
+                             (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
+                        ).ToList();
+
+                        foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
+                        {
+                            model.Add(cs.GetCourseSummary(labeledCourse));
+                        }
+
+                        return PartialView("_CourseList", model);
+                    }
+
+                }
+                else
+                {
+                    var allCourses = Db.Activities.OfType<Course>().Where(x =>
+                        x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id &&
+                        x.LabelSet != null &&
+                        x.LabelSet.ItemLabels.Any(l => l.Id == labelId)).ToList();
+
+                    foreach (var labeledCourse in allCourses.OrderBy(g => g.ShortName))
+                    {
+                        model.Add(cs.GetCourseSummary(labeledCourse));
+                    }
+
+                    return PartialView("_CourseList", model);
+                }
             }
         }
 
@@ -560,12 +577,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 Curriculum = curr,
                 Semester = semester,
                 Organiser = org,
+                Label = label,
                 Courses = courseSummaries
             };
 
 
             return View(model);
         }
+
 
 
         public ActionResult GroupList(Guid semId, Guid groupId)

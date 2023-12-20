@@ -5,6 +5,15 @@ using System.Text;
 
 namespace MyStik.TimeTable.Data
 {
+    public enum LectureRole
+    {
+        FullTime,       // Professor
+        Visiting,       // Lehrbeauftragter
+        Guest,          // Gast
+        Tutor,          // Student
+    }
+
+
     public class OrganiserMember
     {
         public OrganiserMember()
@@ -60,6 +69,8 @@ namespace MyStik.TimeTable.Data
         
         /// <summary>
         /// Disziplinarische Zuordnung
+        /// true: zugeordnet
+        /// false: importiert
         /// </summary>
         public bool IsDefault { get; set; }
 
@@ -89,6 +100,10 @@ namespace MyStik.TimeTable.Data
         /// false: wird in Listen nicht angezeigt
         /// </summary>
         public bool IsAssociated { get; set; }
+
+
+        public LectureRole LectureRole { get; set; }
+
 
         /// <summary>
         /// Generelle Anzeige des Titles

@@ -1,0 +1,102 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "Allocation";
+
+    var Db = new TimeTableDbContext();
+
+    var from = DateTime.Today;
+    var to = from.AddDays(7);
+
+    var begin = DateTime.Parse("08:00");
+    var end = DateTime.Parse("22:00");
+
+    var rooms = Db.Rooms.Where(x => x.Number.StartsWith("R 2.")).Take(10).ToList();
+
+    var roomDict = new Dictionary<Room, List<ActivityDate>>();
+
+    foreach (var ro in rooms)
+    {
+        // Alle Termine in diesem Bereich
+        var dates = ro.Dates.Where(x => x.Begin >= from && x.End <= to).ToList();
+        roomDict[ro] = dates;
+    }
+
+    var weekDays = new List<DayOfWeek>
+{
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday
+    };
+
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th>Uhrzeit</th>
+            @foreach (var r in rooms)
+            {
+                <th> @r.Number</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{
+
+            foreach (var weekDay in weekDays)
+            {
+                var t = begin;
+                var i = 0;
+
+                while (t < end)
+                {
+                    var t1 = t;
+                    var t2 = t1.AddMinutes(120);
+
+                    <tr>
+                        @if (i == 0)
+                        {
+                            <td rowspan="7">
+                                @weekDay
+                            </td>
+                        }
+                        <td>
+                            @Html.TimeSpan(t1, t2)
+                        </td>
+
+                        @foreach (var r in rooms)
+                        {
+                            var alloc = roomDict[r].Where(x =>
+                                x.Begin.DayOfWeek == weekDay &&
+                                ((x.End.TimeOfDay >= t1.TimeOfDay && x.End.TimeOfDay <= t2.TimeOfDay) ||
+                                 (x.Begin.TimeOfDay >= t1.TimeOfDay && x.Begin.TimeOfDay < t2.TimeOfDay) ||
+                                 (x.Begin.TimeOfDay <= t1.TimeOfDay && x.End.TimeOfDay >= t2.TimeOfDay))
+                                ).ToList();
+                            if (alloc.Any())
+                            {
+                                // belegt
+                                <td class="bg-primary"></td>
+                            }
+                            else
+                            {
+                                // frei
+                                <td></td>
+                            }
+                        }
+
+                        @{
+                            t = t.AddMinutes(120);
+                            i++;
+                        }
+
+                    </tr>
+                }
+
+            }
+
+        }
+    </tbody>
+</table>
+

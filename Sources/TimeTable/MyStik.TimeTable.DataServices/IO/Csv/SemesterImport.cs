@@ -118,6 +118,33 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             var sem = db.Semesters.SingleOrDefault(s => s.Id == _semId);
             var segment = db.SemesterDates.SingleOrDefault(s => s.Id == _segmentId);
 
+            var shortName = referenceCourse.SubjectId;
+            List<ModuleSubject> subjects = new List<ModuleSubject>();
+
+            // ggf mit Subject verbinden
+            if (shortName.Contains("::"))
+            {
+                var words = shortName.Split(':');
+
+                if (words.Length == 7)
+                {
+                    var orgTag = words[0];
+                    var catTag = words[2];
+                    var modTag = words[4];
+                    var subTag = words[6];
+
+                    shortName = $"{words[4]} ({words[6]})";
+
+                    subjects.AddRange(db.ModuleCourses.Where(x =>
+                        x.Module.Catalog != null &&
+                        x.Module.Catalog.Organiser.ShortName.Equals(orgTag) &&
+                        x.Module.Catalog.Tag.Equals(catTag) &&
+                        x.Module.Tag.Equals(modTag) &&
+                        x.Tag.Equals(subTag)
+                    ).ToList());
+                }
+            }
+
 
             long msStart = sw.ElapsedMilliseconds;
             if (course == null)
@@ -129,11 +156,12 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                     Organiser = organiser,
                     Semester = sem,
                     Segment = segment,
-                    ShortName = referenceCourse.SubjectId,
+                    ShortName = shortName,
                     Name = referenceCourse.Title,
                     Description = Empty,
                     Occurrence = CreateDefaultOccurrence(),
                     IsInternal = true,
+                    IsProjected = true,
                     LabelSet = new ItemLabelSet()
                 };
 
@@ -141,6 +169,33 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 db.Activities.Add(course);
                 db.SaveChanges();
             }
+
+            if (course.SubjectTeachings == null)
+            {
+                course.SubjectTeachings = new List<SubjectTeaching>();
+            }
+
+            foreach (var moduleSubject in subjects)
+            {
+                if (moduleSubject.SubjectTeachings == null)
+                {
+                    moduleSubject.SubjectTeachings = new List<SubjectTeaching>();
+                }
+
+                if (moduleSubject.SubjectTeachings.All(x => x.Course.Id != course.Id))
+                {
+                    var subjectTeaching = new SubjectTeaching
+                    {
+                        Course = course,
+                        Subject = moduleSubject
+                    };
+
+                    course.SubjectTeachings.Add(subjectTeaching);
+                    moduleSubject.SubjectTeachings.Add(subjectTeaching);
+                }
+            }
+
+            db.SaveChanges();
 
             long msEnd = sw.ElapsedMilliseconds;
             _Logger.DebugFormat("Dauer: {0}ms", msEnd - msStart);
@@ -157,11 +212,9 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             foreach (var simpleCourse in simpleCourseList)
             {
                 // CourseId => brauche ich nicht prüfen, weil über den Referenzkurs gemacht
-                // SubjectID => Die Verbindung zu den Modulen
-                // TODO: Aufspaltung der SubjectID und Identifikation des Fachs
+                // SubjectID => Die Verbindung zu den Modulen => wurde über Referenzkurs gemacht
                 // Titel => wurde über Referenzkurs gemacht
                 // Terminliste
-                // TODO: Termine erzeugen
                 var dateList = GetDates(simpleCourse);
                 // Dozent anlegen
                 var lecturer = GetLecturer(db, simpleCourse.Lecturer);

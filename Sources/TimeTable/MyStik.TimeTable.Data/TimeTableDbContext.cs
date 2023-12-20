@@ -17,6 +17,9 @@ namespace MyStik.TimeTable.Data
         public DbSet<RoomDesk> RoomDesks { get; set; }
         public DbSet<RoomSeat> RoomSeats { get; set; } 
 
+
+
+
         public DbSet<RoomSeatBooking> RoomSeatBookings { get; set; }
 
         public DbSet<Occurrence> Occurrences { get; set; }
@@ -38,6 +41,11 @@ namespace MyStik.TimeTable.Data
         public DbSet<RoomAssignment> RoomAssignments { get; set; }
 
         public DbSet<RoomBooking> RoomBookings { get; set; }
+
+        public DbSet<RoomAllocationGroup> RoomAllocationGroups { get; set; }
+
+        public DbSet<RoomAllocation> RoomAllocations { get; set; }
+
 
         public DbSet<BookingConfirmation> BookingConfirmations { get; set; }
         
@@ -102,10 +110,12 @@ namespace MyStik.TimeTable.Data
         public DbSet<NotificationState> NotificationStates { get; set; }
 
         public DbSet<Infoscreen> Infoscreens { get; set; }
+
+        public DbSet<InfoscreenPage> InfoscreenPagess { get; set; }
+
+        //public DbSet<InfoAnnouncement> Announcements { get; set; }
         
-        public DbSet<InfoAnnouncement> Announcements { get; set; }
-        
-        public DbSet<InfoText> InfoTexts { get; set; }
+        //public DbSet<InfoText> InfoTexts { get; set; }
 
         public DbSet<Level> Levels { get; set; }
 
@@ -251,9 +261,6 @@ namespace MyStik.TimeTable.Data
         public DbSet<TeachingFormat> TeachingFormats { get; set; }
 
         public DbSet<ModuleDescription> ModuleDescriptions { get; set; }
-
-
-        public DbSet<SlotExecution> SlotExecutions { get; set; }
 
         public DbSet<SubjectTeaching> SubjectTeachings { get; set; }
 

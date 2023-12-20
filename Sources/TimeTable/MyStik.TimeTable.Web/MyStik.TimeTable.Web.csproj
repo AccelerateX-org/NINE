@@ -4718,6 +4718,8 @@
     <Content Include="Views\ImportJson\Reports.cshtml" />
     <Content Include="Views\ImportJson\Select.cshtml" />
     <Content Include="Views\ImportJson\SelectFiles.cshtml" />
+    <Content Include="Views\Rooms\Allocation.cshtml" />
+    <Content Include="Views\Rooms\Reports.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -44,7 +44,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
 
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
             ViewBag.Member = member;
 
             return View(assessment);
@@ -69,7 +69,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Assessments = Db.Assessments.Where(x => x.Curriculum.Organiser.Id == org.Id).ToList()
             };
 
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
 
             return View(model);
         }
@@ -85,7 +85,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!(userRight.Member.IsAdmin || member != null))
                 return View("_NoAccess");
 
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
             ViewBag.Member = member;
 
             return View(assessment);
@@ -103,7 +103,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!(userRight.Member.IsAdmin || member != null))
                 return View("_NoAccess");
 
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
             ViewBag.Member = member;
 
             return View(candidate);
@@ -121,7 +121,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("_NoAccess");
 
             ViewBag.Assessments = Db.Assessments.ToList();
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
             ViewBag.Member = member;
 
             return View(candidate);
@@ -718,7 +718,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!userRight.Member.IsAdmin)
                 return View("_NoAccess");
 
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
             ViewBag.Member = member;
 
             return View(assessment);

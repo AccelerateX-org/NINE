@@ -293,7 +293,7 @@ namespace MyStik.TimeTable.Data
         public virtual Course Course { get; set; }
     }
 
-
+    /*
     public class SlotExecution
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -310,7 +310,7 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual Course Course { get; set; }
     }
-
+    */
 
 
 

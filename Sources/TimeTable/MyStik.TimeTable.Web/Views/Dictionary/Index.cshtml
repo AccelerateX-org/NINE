@@ -21,6 +21,7 @@
                 {
                     if (sem.Organisers.Any())
                     {
+                        @*
                         <a href="@Url.Action("Semester", new { semId = sem.Semester.Id })" class="list-group-item list-group-item-action">
                             <h5><strong>@sem.Semester.Name</strong></h5>
                             <p>
@@ -30,6 +31,16 @@
                                 }
                             </p>
                         </a>
+                            *@
+                    <div class="list-group-item">
+                        <h5><strong>@sem.Semester.Name</strong></h5>
+                        <div class="btn-group">
+                            @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
+                            {
+                                <a href="@Url.Action("Organiser", "Dictionary", new {semId=sem.Semester.Id, orgId=organiser.Id})" class="btn btn-outline-dark" style="background-color: @organiser.HtmlColor; color: white">@organiser.ShortName</a>
+                            }
+                        </div>
+                    </div>
                     }
                 }
             </div>

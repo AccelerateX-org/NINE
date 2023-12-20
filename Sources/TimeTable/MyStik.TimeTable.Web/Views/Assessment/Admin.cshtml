@@ -16,7 +16,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-center" href="@Url.Action("Index", "Dashboard")"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
                 </li>
-                @if (ViewBag.UserRights.Member.IsAdmin)
+                @if (ViewBag.UserRight.Member.IsAdmin)
                 {
                     <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("Create")"><i class="bi-folder-plus fa-fw"></i><br />Anlegen</a>

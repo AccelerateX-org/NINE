@@ -115,7 +115,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var member = committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
 
-            ViewBag.UserRights = GetUserRight();
+            ViewBag.UserRight = GetUserRight();
             ViewBag.Member = member;
 
 

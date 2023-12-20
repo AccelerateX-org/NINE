@@ -205,6 +205,12 @@
                         <i class="bi-lock"></i> Gesperrt - Aktuell können nur Administratoren und Besitzer Änderungen vornehmen.
                     </div>
                 }
+                @if (Model.Summary.Course.IsProjected)
+                {
+                    <div class="list-group-item list-group-item-info">
+                        <i class="bi-layer-backward"></i> Lehrveranstaltung im Planungsmodus. Studierende können den Kurs nicht sehen.
+                    </div>
+                }
             </div>
         </div>
         <div class="card">
@@ -349,6 +355,19 @@
                                     {
                                         <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.AreaOption.Area.Curriculum.Id })">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
                                     }
+                                }
+                            </div>
+                        }
+                        @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
+                        {
+                            <div>
+                                @if (Model.Summary.Course.Semester != null)
+                                {
+                                    <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">Modulbeschreibung</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">Modulbeschreibung</a>
                                 }
                             </div>
                         }
