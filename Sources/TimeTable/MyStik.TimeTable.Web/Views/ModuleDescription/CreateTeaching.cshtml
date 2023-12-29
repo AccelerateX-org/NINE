@@ -11,7 +11,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Neue lehrangebote anlegen</h4>
+                <h4>Neues Lehrangebot anglegen</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -86,25 +86,6 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">Zuordnung zu Curriculum (Slot)</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="targetAccr" onchange="onTargetAccrChanged(this.value)">
-                                    @foreach (var accr in Model.Module.Accreditations)
-                                    {
-                                        iAccr++;
-                                        if (iAccr == 1)
-                                        {
-                                            <option selected value="@accr.Id">@accr.Slot.AreaOption.Area.Curriculum.ShortName (@accr.Slot.FullTag)</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@accr.Id">@accr.Slot.AreaOption.Area.Curriculum.ShortName (@accr.Slot.FullTag)</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-4">Fach</div>
                             <div class="col-8">
                                 <select class="form-select slot-option" id="targetSubject" onchange="onTargetSubjectChanged(this.value)">
@@ -175,60 +156,12 @@
 
         }
 
-@*
-        function onSourceOrgChanged(value) {
-            var orgId = value;
-            $("#loading").show();
-
-            $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("GetCatalogs")',
-                    data: {
-                        orgId: orgId
-                    },
-                    success: function(data, success, xhr) {
-                        $("#sourceCat").html(data);
-                        $("#sourceCat").change();
-                        $("#loading").hide();
-                    }
-                });
-
-        }
-
-        function onSourceCatChanged(value) {
-
-            updateMoveState();
-            var catId = value;
-            $("#loading").show();
-
-            $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("GetModules")',
-                    data: {
-                        catId: catId,
-                        side: "source"
-                    },
-                    success: function(data, success, xhr) {
-                        $("#sourceModules").html(data);
-                        $("#loading").hide();
-                    }
-                });
-
-        }
-        *@
-
-        function onTargetAccrChanged(value) {
-            updateTeachingList();
-        }
 
         function onTargetSubjectChanged(value) {
             updateTeachingList();
         }
 
         function updateTeachingList() {
-            var accrId = $('#targetAccr').val();
             var subjectId = $('#targetSubject').val();
             var semId = '@Model.Semester.Id.ToString()';
 
@@ -239,9 +172,8 @@
                     type: "POST",
                     url: '@Url.Action("LoadTeachings")',
                     data: {
-                        accrId: accrId,
                         subjectId: subjectId,
-                        semId: semId,
+                        semId: semId
                     },
                     success: function(data, success, xhr) {
                         $("#targetModules").html(data);
@@ -281,7 +213,6 @@
         }
 
         function saveChanges() {
-            var accrId = $('#targetAccr').val();
             var subjectId = $('#targetSubject').val();
             var semId2 = '@Model.Semester.Id.ToString()';
 
@@ -306,7 +237,6 @@
                         type: "POST",
                         url: '@Url.Action("CreateTeachings")',
                         data: {
-                            accrId: accrId,
                             subjectId: subjectId,
                             semId: semId2,
                             courseIds: moduleIdList

@@ -557,7 +557,6 @@
     <Compile Include="Controllers\MailControllerThesis.cs" />
     <Compile Include="Controllers\MailControllerAccount.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
-    <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Controllers\ModuleDescriptionController.cs" />
     <Compile Include="Controllers\NoticeBoardController.cs" />
@@ -4023,7 +4022,6 @@
     <Content Include="Views\CurriculumCriteria\Edit.cshtml" />
     <Content Include="Views\CurriculumCriteria\Index.cshtml" />
     <Content Include="Views\Curricula\SelectModule.cshtml" />
-    <Content Include="Views\Curricula\LinkModule.cshtml" />
     <Content Include="Views\Curricula\Criteria.cshtml" />
     <Content Include="Views\Planer\Courses.cshtml" />
     <Content Include="Views\ThesisAnnouncements\Create.cshtml" />
@@ -4223,11 +4221,6 @@
     <Content Include="Views\Mail\ThesisConditionCheckResponseEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisionRequestEMail.html.cshtml" />
     <Content Include="Views\Mail\_AnonymousTemplate.cshtml" />
-    <Content Include="Views\ModuleAccreditation\Create.cshtml" />
-    <Content Include="Views\ModuleAccreditation\Delete.cshtml" />
-    <Content Include="Views\ModuleAccreditation\Details.cshtml" />
-    <Content Include="Views\ModuleAccreditation\Edit.cshtml" />
-    <Content Include="Views\ModuleAccreditation\Index.cshtml" />
     <Content Include="Views\Module\CreateFromCourse.cshtml" />
     <Content Include="Views\Module\Disclaimer.cshtml" />
     <Content Include="Views\Module\SelectForCourse.cshtml" />
@@ -4720,6 +4713,11 @@
     <Content Include="Views\ImportJson\SelectFiles.cshtml" />
     <Content Include="Views\Rooms\Allocation.cshtml" />
     <Content Include="Views\Rooms\Reports.cshtml" />
+    <Content Include="Views\Course\AdminNewSubjects.cshtml" />
+    <Content Include="Views\Course\CreateTeaching.cshtml" />
+    <Content Include="Views\Catalogs\_ModuleSelectList.cshtml" />
+    <Content Include="Views\Catalogs\_SubjectSelectList.cshtml" />
+    <Content Include="Views\Catalogs\_SubjectListGroup.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

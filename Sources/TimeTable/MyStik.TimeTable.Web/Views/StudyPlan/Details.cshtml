@@ -44,7 +44,7 @@
                     <tr>
                         <th>Slot</th>
                         <th>Modul</th>
-                        <th>Modultitel</th>
+                        <th>Fach</th>
                         <th>Lehrveranstaltungen</th>
                     </tr>
                 </thead>
@@ -55,25 +55,25 @@
                         {
                             foreach (var slot in option.Slots)
                             {
-                                foreach (var accr in slot.ModuleAccreditations)
+                                foreach (var subjectAccreditation in slot.SubjectAccreditations)
                                 {
-                                    var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+                                    var teachings = subjectAccreditation.Subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
 
                                     if (teachings.Any())
                                     {
                                         <tr>
                                             <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
-                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
-                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Name</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Name</a></td>
                                             <td>
                                                 @foreach (var teaching in teachings)
                                                 {
                                                     var showGroups = teachings.Count > 1;
                                                     <div>
                                                         <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a>
-                                                        @if (showGroups)
+                                                        @foreach (var label in teaching.Course.LabelSet.ItemLabels.ToList())
                                                         {
-                                                            @Html.GroupList(teaching.Course.SemesterGroups, false, false)
+                                                            <span class="badge bg-secondary">@label.Name</span>
                                                         }
                                                     </div>
                                                 }
@@ -84,12 +84,50 @@
                                     {
                                         <tr>
                                             <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
-                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
-                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Name</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Name</a></td>
                                             <td>wird nicht angeboten</td>
                                         </tr>
                                     }
                                 }
+
+                                @*
+                    foreach (var accr in slot.ModuleAccreditations)
+                    {
+                        var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+
+                        if (teachings.Any())
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                <td>
+                                    @foreach (var teaching in teachings)
+                                    {
+                                        var showGroups = teachings.Count > 1;
+                                        <div>
+                                            <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a>
+                                            @if (showGroups)
+                                            {
+                                                @Html.GroupList(teaching.Course.SemesterGroups, false, false)
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                <td>wird nicht angeboten</td>
+                            </tr>
+                        }
+                    }
+                                *@
                             }
                         }
                     }

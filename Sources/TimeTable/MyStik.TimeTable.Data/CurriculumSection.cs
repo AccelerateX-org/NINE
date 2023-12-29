@@ -36,7 +36,7 @@ namespace MyStik.TimeTable.Data
     {
         public CurriculumSlot()
         {
-            ModuleAccreditations = new HashSet<ModuleAccreditation>();
+            //ModuleAccreditations = new HashSet<ModuleAccreditation>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -89,7 +89,7 @@ namespace MyStik.TimeTable.Data
         public virtual AreaOption AreaOption { get; set; }
 
 
-        public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }
+        //public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }
 
 
         public virtual ICollection<SubjectAccreditation> SubjectAccreditations { get; set; }

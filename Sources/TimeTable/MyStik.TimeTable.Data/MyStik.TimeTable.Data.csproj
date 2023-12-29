@@ -574,6 +574,10 @@
     <Compile Include="Migrations\202312181621330_ModuleDescV11.designer.cs">
       <DependentUpon>202312181621330_ModuleDescV11.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202312291132373_ModuleDescV12.cs" />
+    <Compile Include="Migrations\202312291132373_ModuleDescV12.designer.cs">
+      <DependentUpon>202312291132373_ModuleDescV12.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -916,6 +920,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202312181621330_ModuleDescV11.resx">
       <DependentUpon>202312181621330_ModuleDescV11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202312291132373_ModuleDescV12.resx">
+      <DependentUpon>202312291132373_ModuleDescV12.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

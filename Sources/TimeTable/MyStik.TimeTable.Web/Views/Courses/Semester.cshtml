@@ -43,19 +43,13 @@
             <div class="card-header">
                 <div class="alert alert-info">
                     <div class="row">
-                        <div class="col-md-4">
-                            <ul>
-                                <li><i class="bi-door-open text-success"></i>: Semestergruppen für Studierende sichtbar</li>
-                                <li><i class="bi-door-closed text-danger"></i>: Semestergruppen für Studierende verborgen</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <ul>
                                 <li><i class="bi-unlock text-success"></i>: Lehrende können Änderungen vornehmen</li>
                                 <li><i class="bi-lock text-danger"></i>: Lehrende können keine Änderungen vornehmen</li>
                             </ul>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <ul>
                                 <li><i class="bi-pen-fill text-success"></i>: Studierende können sich eintragen</li>
                                 <li><i class="bi-pen-fill text-danger"></i>: Studierende können sich nicht eintragen</li>
@@ -80,8 +74,7 @@
                         <th>Status</th>
                         <th>Kurzname</th>
                         <th>Titel</th>
-                        <th>Gruppe(n)</th>
-                        <th>Label</th>
+                        <th>Etiketten / Kohorten</th>
                         <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
                     </tr>
@@ -92,14 +85,6 @@
                         var linkName = c.Course.ShortName ?? "Kein Kurzname";
                         <tr>
                             <td>
-                                @if (c.Course.SemesterGroups.Any(x => x.IsAvailable))
-                                {
-                                    <i class="bi-door-open text-success"></i>
-                                }
-                                else
-                                {
-                                    <i class="bi-door-closed text-danger"></i>
-                                }
                                 @if (c.Course.IsInternal)
                                 {
                                     <i class="bi-lock text-danger"></i>
@@ -122,9 +107,6 @@
                             </td>
                             <td>
                                 @c.Course.Name
-                            </td>
-                            <td>
-                                @Html.GroupList(c.Course.SemesterGroups, true)
                             </td>
                             <td>
                                 @if (c.Course.LabelSet != null)

@@ -1,0 +1,159 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseLabelViewModel
+@{
+    ViewBag.Title = "Modul auswählen";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Lehrveranstaltung mit Fach verknüpfen</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi-save"></i>  Änderungen übernehmen
+                    </a>
+                    <a href="@Url.Action("Details", new {id=Model.Course.Id})" class="btn btn-outline-secondary">
+                        <i class="bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <h5>Auswahl des Modulkatalogs</h5>
+                        <div class="row">
+                            <div class="col-4">Einrichtung</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="sourceOrg" onchange="onSourceOrgChanged(this.value)">
+                                    @foreach (var org in Model.Organisers)
+                                    {
+                                        <option selected value="@org.Id">@org.Name (@org.Tag)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Katalog</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="sourceCat" onchange="onSourceCatChanged(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Modul</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="sourceModules" onchange="onSourceModuleChanged(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Fach</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="sourceSubjects">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            var org = $("#sourceOrg").val();
+            onSourceOrgChanged(org);
+        });
+
+
+        function onSourceOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCatalogs", "Catalogs")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceCat").html(data);
+                        $("#sourceCat").change();
+                        $("#loading").hide();
+                    }
+                });
+        }
+
+        function onSourceCatChanged(value) {
+
+            var catId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetModulesSelect", "Catalogs")',
+                    data: {
+                        catId: catId,
+                        side: "source"
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceModules").html(data);
+                        $("#sourceModules").change();
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onSourceModuleChanged(value) {
+
+            var moduleId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetSubjectsSelect", "Catalogs")',
+                    data: {
+                        moduleId: moduleId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceSubjects").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function saveChanges() {
+
+            var subjectId = $("#sourceSubjects").val();
+            var courseId = "@Model.Course.Id.ToString()";
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CreateTeaching")',
+                    data: {
+                        courseId: courseId,
+                        subjectId: subjectId
+                    },
+                    success: function(data, success, xhr) {
+                        window.location.replace("@Url.Action("AdminNewSubjects", new { id = Model.Course.Id })");
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
+    </script>
+}

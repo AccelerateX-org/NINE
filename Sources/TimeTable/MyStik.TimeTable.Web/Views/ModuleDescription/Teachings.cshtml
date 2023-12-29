@@ -48,26 +48,24 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Modul-Slot</th>
                         <th>Lehrformat</th>
                         <th>Kurzname</th>
                         <th>Titel</th>
-                        <th>Gruppe(n)</th>
+                        <th>Etiketten(n)</th>
                         <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var accr in Model.Module.Accreditations)
+                    @foreach (var subject in Model.Module.ModuleSubjects)
                     {
-                        foreach (var teaching in accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+                        foreach (var teaching in subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id))
                         {
                             var summary = courseService.GetCourseSummary(teaching.Course);
                             var linkName = summary.Course.ShortName ?? "Kein Kurzname";
 
                             <tr>
-                                <td>@accr.Slot.FullTag</td>
                                 <td>@teaching.Subject.Name (@teaching.Subject.TeachingFormat.Tag)</td>
                                 <td>
                                     @Html.ActionLink(linkName, "Index", "Course", new { id = summary.Course.Id }, null)
@@ -76,7 +74,10 @@
                                     @summary.Course.Name
                                 </td>
                                 <td>
-                                    @Html.GroupList(summary.Course.SemesterGroups, true)
+                                    @foreach (var label in teaching.Course.LabelSet.ItemLabels.ToList())
+                                    {
+                                        <span class="badge bg-secondary">@label.Name</span>
+                                    }
                                 </td>
                                 <td>
                                     @Html.RoomList(summary.Rooms)

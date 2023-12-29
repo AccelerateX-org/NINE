@@ -78,7 +78,7 @@
                             <a href="@Url.Action("EditSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-gear"></i> Slot ändern
                             </a>
-                            @if (Model.ModuleAccreditations.Any())
+                            @if (Model.SubjectAccreditations.Any())
                             {
                                 <div class="btn btn-outline-danger disabled">
                                     <i class="bi-trash"></i> Slot löschen
@@ -112,14 +112,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var module in Model.ModuleAccreditations)
+                            @foreach (var module in Model.SubjectAccreditations)
                             {
                                 <tr>
-                                    <td>@module.Module.Tag</td>
-                                    <td><a href="@Url.Action("Latest", "ModuleDescription", new { id = module.Module.Id })">@module.Module.Name</a></td>
+                                    <td>@module.Subject.Module.Tag</td>
+                                    <td><a href="@Url.Action("Latest", "ModuleDescription", new { id = module.Subject.Module.Id })">@module.Subject.Module.Name</a></td>
                                     @foreach (var t in tf)
                                     {
-                                        var subjects = module.Module.ModuleSubjects.Where(x => x.TeachingFormat.Id == t.Id).ToList();
+                                        var subjects = module.Subject.Module.ModuleSubjects.Where(x => x.TeachingFormat.Id == t.Id).ToList();
 
                                         if (subjects.Any())
                                         {

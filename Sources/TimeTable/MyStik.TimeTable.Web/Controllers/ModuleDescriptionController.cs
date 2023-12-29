@@ -66,7 +66,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // die aktuell veröffentlichten Prüfungsangebote
             var exams = new List<ExaminationDescription>();
 
-            foreach (var accr in module.Accreditations)
+            foreach (var accr in module.ExaminationOptions)
             {
                 var subExams = accr.ExaminationDescriptions
                     .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
@@ -127,7 +127,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // die aktuell veröffentlichten Prüfungsangebote
             var exams = new List<ExaminationDescription>();
 
-            foreach (var accr in module.Accreditations)
+            foreach (var accr in module.ExaminationOptions)
             {
                 var subExams = accr.ExaminationDescriptions
                     .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.IsVisible)
@@ -284,22 +284,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.moduleId = module.Id;
             model.semesterId = semester.Id;
-            if (module.Accreditations.Any())
-            {
-                var accr = module.Accreditations.First();
-                model.accredidationId = accr.Id;
-
-                if (accr.Slot.CurriculumSection != null)
-                {
-                    model.orgId = accr.Slot.CurriculumSection.Curriculum.Organiser.Id;
-                }
-                else
-                {
-                    model.orgId = accr.Slot.AreaOption.Area.Curriculum.Organiser.Id;
-                }
-
-                model.Accreditation = accr;
-            }
+            model.orgId = module.Catalog.Organiser.Id;
 
             model.Module = module;
             model.Semester = semester;
@@ -321,7 +306,6 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
-            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.semesterId);
             var examOption = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.examOptId);
             var firstMember = Db.Members.SingleOrDefault(x => x.Id == model.firstMemberId);
@@ -339,7 +323,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var examDesc = new ExaminationDescription
             {
                 Semester = semester,
-                Accreditation = accr,
                 ChangeLog = changeLog,
                 ExaminationOption = examOption,
                 FirstExminer = firstMember,
@@ -348,7 +331,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Utilities = model.Utilities
             };
 
-            accr.ExaminationDescriptions.Add(examDesc);
+
+            //accr.ExaminationDescriptions.Add(examDesc);
 
             Db.ExaminationDescriptions.Add(examDesc);
             Db.SaveChanges();
@@ -361,16 +345,16 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
             var semester = examDesc.Semester;
-            var module = examDesc.Accreditation.Module;
-            var accr = examDesc.Accreditation;
+            var module = examDesc.ExaminationOption.Module;
+            //var accr = examDesc.Accreditation;
 
             var model = new ExaminationEditModel();
 
             model.examinationId = examDesc.Id;
             model.moduleId = module.Id;
             model.semesterId = examDesc.Semester.Id;
-            model.accredidationId = examDesc.Accreditation.Id;
-
+            //model.accredidationId = examDesc.Accreditation.Id;
+            /*
             if (examDesc.Accreditation.Slot.CurriculumSection != null)
             {
                 model.orgId = examDesc.Accreditation.Slot.CurriculumSection.Curriculum.Organiser.Id;
@@ -378,14 +362,16 @@ namespace MyStik.TimeTable.Web.Controllers
             else
             {
                 model.orgId = examDesc.Accreditation.Slot.AreaOption.Area.Curriculum.Organiser.Id;
-            }
+            }*/
+
+            model.orgId = module.Catalog.Organiser.Id;
 
             model.firstMemberId = examDesc.FirstExminer?.Id ?? Guid.Empty;
             model.secondMemberId = examDesc.SecondExaminer?.Id ?? Guid.Empty;
             model.Conditions = examDesc.Conditions;
             model.Utilities = examDesc.Utilities;
 
-            model.Accreditation = accr;
+            //model.Accreditation = accr;
             model.Module = module;
             model.Semester = semester;
             model.FirstMember = examDesc.FirstExminer;
@@ -411,7 +397,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == model.examinationId);
 
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
-            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
+            //var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.semesterId);
 
             var examOption = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.examOptId);
@@ -451,7 +437,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
 
-            var module = examDesc.Accreditation.Module;
+            var module = examDesc.ExaminationOption.Module;
             var semester = examDesc.Semester;
 
             if (examDesc.ChangeLog != null)
@@ -572,7 +558,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Exams", new { moduleId = desc.Accreditation.Module.Id, semId = desc.Semester.Id });
+            return RedirectToAction("Exams", new { moduleId = desc.ExaminationOption.Module.Id, semId = desc.Semester.Id });
         }
 
 
@@ -586,7 +572,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Exams", new { moduleId = desc.Accreditation.Module.Id, semId = desc.Semester.Id });
+            return RedirectToAction("Exams", new { moduleId = desc.ExaminationOption.Module.Id, semId = desc.Semester.Id });
         }
 
 
@@ -600,7 +586,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Exams", new { moduleId = desc.Accreditation.Module.Id, semId = desc.Semester.Id });
+            return RedirectToAction("Exams", new { moduleId = desc.ExaminationOption.Module.Id, semId = desc.Semester.Id });
         }
 
 
@@ -703,7 +689,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // die aktuell veröffentlichten Prüfungsangebote
             var exams = new List<ExaminationDescription>();
 
-            foreach (var accr in module.Accreditations)
+            foreach (var accr in module.ExaminationOptions)
             {
                 var subExams = accr.ExaminationDescriptions
                     .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null)
@@ -991,19 +977,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == id);
             var module = subject.Module;
 
-            /*
-            foreach (var opp in subject.Opportunities.ToList())
-            {
-                Db.SubjectOpportunities.Remove(opp);
-            }
-            */
 
-            foreach (var accr in subject.Module.Accreditations.ToList())
+            foreach (var accr in subject.SubjectAccreditations.ToList())
             {
-                foreach (var teaching in accr.TeachingDescriptions.ToList())
-                {
-                    Db.TeachingDescriptions.Remove(teaching);
-                }
+                Db.SubjectAccreditations.Remove(accr);
             }
 
             Db.ModuleCourses.Remove(subject);
@@ -1082,15 +1059,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public PartialViewResult LoadTeachings(Guid accrId, Guid subjectId, Guid semId)
+        public PartialViewResult LoadTeachings(Guid subjectId, Guid semId)
         {
-            var semester = SemesterService.GetSemester(semId);
-            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
+            var semester = SemesterService.GetSemester(semId); 
             var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == subjectId);
 
-            var teachings = Db.TeachingDescriptions.Where(x =>
-                x.Accreditation.Id == accr.Id &&
-                x.Semester.Id == semester.Id &&
+            var teachings = subject.SubjectTeachings.Where(x =>
+                x.Course.Semester.Id == semester.Id &&
                 x.Subject.Id == subject.Id).ToList();
 
             ViewBag.ListName = "targetModuleList";
@@ -1098,10 +1073,9 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult CreateTeachings(Guid accrId, Guid subjectId, Guid semId, Guid[] courseIds)
+        public PartialViewResult CreateTeachings(Guid subjectId, Guid semId, Guid[] courseIds)
         {
             var semester = SemesterService.GetSemester(semId);
-            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
             var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == subjectId);
 
             foreach (var courseId in courseIds)
@@ -1110,23 +1084,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (course == null) continue;
 
-                var teaching = Db.TeachingDescriptions.FirstOrDefault(x =>
-                    x.Accreditation.Id == accr.Id &&
-                    x.Semester.Id == semester.Id &&
+                var teaching = Db.SubjectTeachings.FirstOrDefault(x =>
                     x.Subject.Id == subject.Id &&
                     x.Course.Id == course.Id);
 
                 if (teaching != null) continue;
                 
-                teaching = new TeachingDescription
+                teaching = new SubjectTeaching
                 {
-                    Accreditation = accr,
-                    Semester = semester,
                     Subject = subject,
                     Course = course
                 };
 
-                Db.TeachingDescriptions.Add(teaching);
+                Db.SubjectTeachings.Add(teaching);
             }
 
             Db.SaveChanges();
@@ -1136,12 +1106,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult DeleteTeaching(Guid id)
         {
-            var teaching = Db.TeachingDescriptions.SingleOrDefault(x => x.Id == id);
+            var teaching = Db.SubjectTeachings.SingleOrDefault(x => x.Id == id);
 
-            var module = teaching.Accreditation.Module;
-            var semester = teaching.Semester;
+            var module = teaching.Subject.Module;
+            var semester = teaching.Course.Semester;
 
-            Db.TeachingDescriptions.Remove((teaching));
+            Db.SubjectTeachings.Remove(teaching);
             Db.SaveChanges();
 
             return RedirectToAction("Teachings", new { moduleId = module.Id, semId = semester.Id });
@@ -1175,6 +1145,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /*
         public ActionResult Repair(Guid id)
         {
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
@@ -1198,6 +1169,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { id = id });
         }
-
+        */
     }
-    }
+}

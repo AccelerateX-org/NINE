@@ -39,7 +39,14 @@ namespace MyStik.TimeTable.Web.Models
 
         public string Applicableness { get; set; }
 
+        public int SWS { get; set; }
+
+        public Guid TeachingFormatId { get; set; }
+
+        public Guid ExamFormatId { get; set; }
+
     }
+
 
 
     public class ModuleSemesterCoursesModel

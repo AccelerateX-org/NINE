@@ -15,161 +15,6 @@
     </style>
 }
 
-@*
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h4>@Model.Summary.Course.Name (@Model.Summary.Course.ShortName)</h4>
-                @foreach (var opp in Model.Summary.Course.Opportunities)
-                {
-                    <div>
-                        Modul: <a href="@Url.Action("Details", "ModuleDescription", new {id = opp.Subject.Module.Id})">@opp.Subject.Module.Name</a>
-
-                        @foreach (var acc in opp.Subject.Module.Accreditations)
-                        {
-                            if (acc.Slot.CurriculumSection != null)
-                            {
-                                <span> | <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
-                            }
-                            else
-                            {
-                                <span> | <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
-                            }
-                        }
-                    </div>
-                }
-                @foreach (var teaching in Model.Summary.Course.Teachings)
-                {
-                    <div>
-                        Modul:
-                        @if (Model.Summary.Course.Semester != null)
-                        {
-                            <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">@teaching.Subject.Module.Name</a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("Details", "ModuleDescription", new { id = teaching.Subject.Module.Id })">@teaching.Subject.Module.Name</a>
-                        }
-
-                        @foreach (var acc in teaching.Subject.Module.Accreditations)
-                        {
-                            if (acc.Slot.CurriculumSection != null)
-                            {
-                                <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.CurriculumSection.Curriculum.Id })">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
-                            }
-                            else
-                            {
-                                <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.AreaOption.Area.Curriculum.Id })">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
-                            }
-                        }
-                    </div>
-                }
-            </div>
-            <div class="list-group">
-                @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
-                {
-
-                    @Html.Partial("_CourseSummarySubscription", Model.Summary)
-                    if (Model.Summary.Course.IsInternal)
-                    {
-                        <div class="list-group-item list-group-item-info">
-                            <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
-                        </div>
-                    }
-
-                    <div class="list-group-item">
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary">
-                                <i class="bi-envelope"></i> Mail senden
-                            </a>
-                            <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-download"></i> Listen</a>
-                            <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-calendar"></i> Termine</a>
-                            <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-person"></i> Teilnehmende</a>
-                            @if (Model.Summary.Course.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
-                            {
-                                <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-pen"></i> Beschreibung</a>
-                                <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-book"></i> Semestergruppen</a>
-                                <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-tag"></i> Themengebiet ("Modul")</a>
-                                <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-exclamation-circle"></i> Zugangsbeschränkungen, Platzkontigente</a>
-                            }
-
-                            @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
-                            {
-                                <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-pen"></i> Beschreibung</a>
-                                <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-book"></i> Semestergruppen</a>
-                                <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-tag"></i> Themengebiet ("Modul")</a>
-                                <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-exclamation-circle"></i> Zugangsbeschränkungen, Platzkontigente</a>
-                                if (Model.Summary.Course.Occurrence.IsAvailable)
-                                {
-                                    <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-lock"></i> Eintragung für Studierende sperren</a>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Eintragung für Studierende ermöglichen</a>
-                                }
-                                if (ViewBag.UserRight.IsCourseAdmin)
-                                {
-                                    if (Model.Summary.Course.IsInternal)
-                                    {
-                                        <a href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Änderungen durch Lehrende erlauben</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-lock"></i> Änderungen durch Lehrende sperren</a>
-                                    }
-                                }
-                            }
-
-                            @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
-                            {
-                                <a href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-person-bounding-box"></i> Besitzer
-                                </a>
-                                <a href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})" class="btn btn-danger">
-                                    <i class="bi-trash"></i> Löschen
-                                </a>
-                            }
-
-
-                        </div>
-                    </div>
-                }
-
-            </div>
-            <div>
-                <nav>
-                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Zusammenfassung</button>
-                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Beschreibung</button>
-                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Termine</button>
-                    </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                        @Html.Partial("_CourseSummaryHead", Model.Summary)
-                        @Html.Partial("_CourseSummaryCapacity", Model.Summary)
-                        @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
-                        {
-                            @Html.Partial("_CourseSummaryBooking", Model)
-                        }
-
-                    </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                        @Html.Partial("_CourseSummaryDescription", Model.Summary)
-                    </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                        @Html.Partial("_CourseSummaryDates", Model.Summary)
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-*@
-
-
 <div class="row">
 <div class="col-md-12">
 <nav aria-label="breadcrumb">
@@ -228,19 +73,16 @@
                     <i class="bi-gear"></i> Allgemeine Angaben
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-collection-play"></i> Zuordnung Vorlesungsverzeichnis
+                    <i class="bi-collection-play"></i> Semester
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-tags"></i> Labels
+                    <i class="bi-tags"></i> Etiketten / Kohorten
                 </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-book"></i> Semestergruppen (veraltet)
-                </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-tag"></i> Themengebiet (veraltet)
+                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Summary.Course.Id})">
+                    <i class="bi-book"></i> Modul / Fach
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-pencil-square"></i> Platzvergabe
+                    <i class="bi-pencil-square"></i> Kontingente
                 </a>
                 @if (Model.Summary.Course.Occurrence.IsAvailable)
                 {
@@ -317,7 +159,14 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mb-1">
-                        <strong>@Model.Summary.Course.Name</strong>
+                        <strong>@Model.Summary.Course.ShortName: @Model.Summary.Course.Name</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Etiketten / Kohorten
+                    </div>
+                    <div class="col-8">
                         @if (Model.Summary.Course.LabelSet != null)
                         {
                             foreach (var label in Model.Summary.Course.LabelSet.ItemLabels)
@@ -325,39 +174,13 @@
                                 <span class="badge bg-secondary">@label.Name</span>
                             }
                         }
-
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-4">
-                        Inhalt
+                        Modulbeschreibung
                     </div>
                     <div class="col-8">
-                        @foreach (var teaching in Model.Summary.Course.Teachings)
-                        {
-                            <div>
-                                @if (Model.Summary.Course.Semester != null)
-                                {
-                                    <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">Modulbeschreibung</a>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("Details", "ModuleDescription", new { id = teaching.Subject.Module.Id })">Modulbeschreibung</a>
-                                }
-
-                                @foreach (var acc in teaching.Subject.Module.Accreditations)
-                                {
-                                    if (acc.Slot.CurriculumSection != null)
-                                    {
-                                        <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.CurriculumSection.Curriculum.Id })">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
-                                    }
-                                    else
-                                    {
-                                        <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.AreaOption.Area.Curriculum.Id })">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
-                                    }
-                                }
-                            </div>
-                        }
                         @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
                         {
                             <div>
@@ -371,6 +194,13 @@
                                 }
                             </div>
                         }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Inhaltsbeschreibung
+                    </div>
+                    <div class="col-8">
                         <div>
                             <a href="#cardDetails">Details zur Lehrveranstaltung</a>
                         </div>

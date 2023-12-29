@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace MyStik.TimeTable.Data
@@ -67,17 +68,17 @@ namespace MyStik.TimeTable.Data
 
         public virtual CurriculumModule Module { get; set; }
 
+        public virtual ICollection<ExaminationDescription> ExaminationDescriptions { get; set; } = new List<ExaminationDescription>();
+
+
         public string FullName
         {
             get
             {
                 var sb = new StringBuilder();
                 sb.AppendFormat("{0}: ", Name);
-                
-                foreach(var fraction in Fractions)
-                { 
-                    sb.AppendFormat("{0} {1:P0}. ", fraction.Form.ShortName, fraction.Weight);
-                }
+
+                sb.Append(OptionName);
 
                 return sb.ToString();
             }
@@ -89,9 +90,23 @@ namespace MyStik.TimeTable.Data
             {
                 var sb = new StringBuilder();
 
-                foreach (var fraction in Fractions)
+                if (Fractions.Count == 1)
                 {
-                    sb.AppendFormat("{0} {1:P0}. ", fraction.Form.ShortName, fraction.Weight);
+                    sb.AppendFormat("{0}", Fractions.First().Form.ShortName);
+                }
+                else
+                {
+                    foreach (var fraction in Fractions)
+                    {
+                        if (Fractions != Fractions.Last())
+                        {
+                            sb.AppendFormat("{0} {1:P0} und ", fraction.Form.ShortName, fraction.Weight);
+                        }
+                        else
+                        {
+                            sb.AppendFormat("{0} {1:P0}.", fraction.Form.ShortName, fraction.Weight);
+                        }
+                    }
                 }
 
                 return sb.ToString();

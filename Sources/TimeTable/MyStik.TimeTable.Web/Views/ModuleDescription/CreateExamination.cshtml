@@ -20,7 +20,7 @@
                 {
                     @Html.HiddenFor(m => m.moduleId)
                     @Html.HiddenFor(m => m.semesterId)
-                    @Html.HiddenFor(m => m.accredidationId)
+                    // @Html.HiddenFor(m => m.accredidationId)
                     @Html.HiddenFor(m => m.firstMemberId)
                     @Html.HiddenFor(m => m.secondMemberId)
                     <div class="row">
@@ -29,6 +29,7 @@
                             <input class="form-control" type="text" value="@Model.Semester.Name" aria-label="Semester" readonly>
                         </div>
                     </div>
+                    @*
                     <div class="row mb-1">
                         <div class="col-4">Bezug zu Curriculum</div>
                         <div class="col-8">
@@ -42,6 +43,7 @@
                             }
                         </div>
                     </div>
+                        *@
                     <div class="row mb-1">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">

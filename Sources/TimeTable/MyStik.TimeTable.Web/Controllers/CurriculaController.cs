@@ -920,71 +920,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="moduleId"></param>
-        /// <param name="critId"></param>
-        /// <returns></returns>
-        public ActionResult AccreditateModule(Guid moduleId, Guid critId)
-        {
-            //var crit = Db.Criterias.SingleOrDefault(x => x.Id == critId);
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-
-            var accr = new ModuleAccreditation
-            {
-                //Criteria = crit,
-                Module = module
-            };
-
-            Db.Accreditations.Add(accr);
-            Db.SaveChanges();
 
 
-            return RedirectToAction("Details", new {id = critId });
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /*
-        public ActionResult Criteria(Guid id)
-        {
-            var model = Db.Criterias.SingleOrDefault(x => x.Id == id);
-
-            return View(model);
-        }
-        */
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="accrId"></param>
-        /// <returns></returns>
-        public ActionResult LinkModule(Guid accrId)
-        {
-            var model = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
-
-            return View(model);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="accrId"></param>
-        /// <param name="groupId"></param>
-        /// <returns></returns>
-        public ActionResult LinkGroup(Guid accrId, Guid groupId)
-        {
-            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
-            var group = Db.CurriculumGroups.SingleOrDefault(x => x.Id == groupId);
-
-
-            return RedirectToAction("Details", new {id = group.Curriculum.Id});
-        }
 
 
         /// <summary>

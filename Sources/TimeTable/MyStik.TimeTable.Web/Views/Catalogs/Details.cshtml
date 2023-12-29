@@ -104,9 +104,7 @@
                 <tbody>
                     @foreach (var module in Model.Modules)
                     {
-                        var currs = module.Accreditations
-                            .Where(x => x.Slot != null)
-                            .Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
+                        var nAccr = module.ModuleSubjects.Count(x => x.SubjectAccreditations.Any());
 
 
                         var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
@@ -131,12 +129,15 @@
                             {
                                 <td>vakant</td>
                             }
-                            @if (currs.Any())
+                            @if (nAccr > 0)
                             {
                                 <td>
-                                    @foreach (var curr in currs)
+                                    @foreach (var subject in module.ModuleSubjects)
                                     {
-                                        <div>@curr.ShortName</div>
+                                        foreach (var subjectAccreditation in subject.SubjectAccreditations)
+                                        {
+                                            <div>@subjectAccreditation.Slot.AreaOption.Area.Curriculum.ShortName</div>
+                                        }
                                     }
                                 </td>
                             }

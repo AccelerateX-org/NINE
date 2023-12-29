@@ -151,10 +151,10 @@ namespace MyStik.TimeTable.DataServices
             }
 
 
-            var teachingDescriptions = _db.TeachingDescriptions.Where(x => x.Course.Id == activity.Id).ToList();
+            var teachingDescriptions = _db.SubjectTeachings.Where(x => x.Course.Id == activity.Id).ToList();
             foreach (var teachingDescription in teachingDescriptions)
             {
-                _db.TeachingDescriptions.Remove(teachingDescription);
+                _db.SubjectTeachings.Remove(teachingDescription);
             }
 
 

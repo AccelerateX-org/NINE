@@ -44,6 +44,24 @@
                         </div>
                     </div>
                     <div class="row">
+                        <label for="TeachingFormatId" class="col-sm-2 col-form-label">Lehrform</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(model => model.TeachingFormatId, (IEnumerable<SelectListItem>)ViewBag.TeachingFormats, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="SWS" class="col-sm-2 col-form-label">SWS</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.SWS, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="ExamFormatId" class="col-sm-2 col-form-label">Prüfungsform</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(model => model.ExamFormatId, (IEnumerable<SelectListItem>)ViewBag.ExamFormats, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-10">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Anlegen</button>
                             <a href="@Url.Action("Details", "Catalogs", new{id=Model.catalogId})" class="btn btn-outline-secondary">Abbrechen</a>

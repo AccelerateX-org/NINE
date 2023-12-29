@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public Guid examinationId { get; set; }
 
-        public Guid accredidationId { get; set; }
+        //public Guid accredidationId { get; set; }
 
         public Guid semesterId { get; set; }
 
@@ -33,7 +33,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public CurriculumModule Module { get; set; }
 
-        public ModuleAccreditation Accreditation { get; set; }
+        //public ModuleAccreditation Accreditation { get; set; }
 
         public OrganiserMember FirstMember { get; set; }
 

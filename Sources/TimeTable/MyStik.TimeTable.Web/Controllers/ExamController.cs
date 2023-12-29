@@ -26,18 +26,21 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
             var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-            var modules = Db.CurriculumModules.Where(x =>
-                x.Accreditations.Any(c =>
+            /*
+            var subjects = Db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
                     c.Slot != null &&
                     c.Slot.AreaOption != null &&
                     c.Slot.AreaOption.Area.Curriculum.Id == currId)).ToList();
 
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
+            */
 
             var model = new StudyPlanViewModel
             {
                 Curriculum = curriculum,
                 Semester = semester,
-                Modules = modules
+                //Modules = modules
             };
 
             // hier muss überprüft werden, ob der aktuelle Benutzer

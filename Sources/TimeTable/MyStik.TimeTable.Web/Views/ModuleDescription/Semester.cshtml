@@ -4,8 +4,7 @@
 @model MyStik.TimeTable.Web.Models.ModuleSemesterView
 @{
     ViewBag.Title = "Details";
-
-
+    @*
     var subjects = Model.CurriculumModule.ModuleSubjects.ToList();
     var accrs = Model.CurriculumModule.Accreditations.ToList();
 
@@ -18,7 +17,7 @@
         }
     }
     var teachings = tt.Distinct();
-
+*@
     var itsMe = false;
 
     if (ViewBag.UserRight.User != null)
@@ -46,6 +45,11 @@
     var isEditable = dateOffset.Days < 28;
 
     var userService = new UserInfoService();
+
+    if (Request.IsLocal)
+    {
+        isEditable = true;
+    }
 
 }
 
@@ -185,48 +189,36 @@
                                         <h5 class="card-title">Lehrangebote</h5>
                                     </div>
                                     <div class="list-group">
-                                        @{
-                                            var nTeachings = 0;
-                                        }
-                                        @*foreach (var accr in accrs)
-        {
-            //var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-                                        *@
-                                        @foreach (var teaching in teachings)
+                                        @foreach (var subject in Model.CurriculumModule.ModuleSubjects)
                                         {
-                                            nTeachings++;
+                                            var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
                                             <div class="list-group-item">
-                                                <div class="row">
-                                                    <div class="col-2">
-                                                        <div>@teaching.Subject.TeachingFormat.Tag</div>
-                                                    </div>
-                                                    <div class="col-10">
-                                                        <div>
-                                                            <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
-                                                                @teaching.Course.Name (@teaching.Course.ShortName)
-                                                            </a>
-                                                            @if (teaching.Course.LabelSet != null)
-                                                            {
-                                                                <div>
-                                                                    @foreach (var itemLabel in teaching.Course.LabelSet.ItemLabels)
-                                                                    {
-                                                                        <span class="badge bg-secondary">@itemLabel.Name</span>
-                                                                    }
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
+                                                <div>
+                                                    <strong>@subject.Name (@subject.Tag) | @subject.SWS SWS | @subject.TeachingFormat.Tag</strong>
                                                 </div>
+                                                @if (teachings.Any())
+                                                {
+                                                    <ul>
+                                                        @foreach (var teaching in teachings)
+                                                        {
+                                                            <li>
+                                                                <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
+                                                                    @teaching.Course.Name (@teaching.Course.ShortName)
+                                                                </a>
+                                                                @foreach (var item in teaching.Course.LabelSet.ItemLabels.ToList())
+                                                                {
+                                                                    <span class="badge bg-secondary">@item.Name</span>
+                                                                }
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                                else
+                                                {
+                                                    <div><i>wird nicht angeboten</i></div>
+                                                }
                                             </div>
                                         }
-                                        @*}*@
-                                        @if (nTeachings == 0)
-                                        {
-                                            <div class="list-group-item">
-                                                <div>Es liegen keine Lehrangebote für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
-                                            </div>
-                                        }
-
                                     </div>
                                     <div class="card-body">
                                         @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)

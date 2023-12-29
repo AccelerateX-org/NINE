@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -30,6 +31,45 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_LabelListGroup", model);
         }
 
-        
+
+        [HttpPost]
+        public PartialViewResult GetLabelListCurriculum(Guid currId)
+        {
+            var labels = new List<ItemLabel>();
+            if (currId != Guid.Empty)
+            {
+                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+                if (curr != null && curr.LabelSet != null)
+                {
+                    labels.AddRange(curr.LabelSet.ItemLabels);
+
+                    var org = curr.Organiser;
+
+                    if (org != null && org.LabelSet != null)
+                    {
+                        labels.AddRange(org.LabelSet.ItemLabels);
+
+                        var inst = org.Institution;
+
+                        if (inst != null && inst.LabelSet != null)
+                        {
+                            labels.AddRange(inst.LabelSet.ItemLabels);
+                        }
+
+                    }
+                }
+            }
+
+            var model = labels
+                .OrderBy(g => g.Name)
+                .ToList();
+
+            ViewBag.ListName = currId.ToString();
+
+            return PartialView("_LabelListGroup", model);
+        }
+
+
     }
 }

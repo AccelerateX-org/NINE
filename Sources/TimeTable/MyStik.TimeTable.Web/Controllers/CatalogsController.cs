@@ -499,6 +499,32 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
+        public PartialViewResult GetModulesSelect(Guid catId)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+
+            var model = catalog.Modules
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            return PartialView("_ModuleSelectList", model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult GetSubjectsSelect(Guid moduleId)
+        {
+            var catalog = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+
+            var model = catalog.ModuleSubjects
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            return PartialView("_SubjectSelectList", model);
+        }
+
+
+        [HttpPost]
         public PartialViewResult GetModules(Guid catId, string side)
         {
             var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
@@ -511,6 +537,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_ModuleListGroup", model);
         }
+
+        [HttpPost]
+        public PartialViewResult GetSubjects(Guid catId, string side)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+
+            var model = catalog.Modules
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            ViewBag.ListName = side + "ModuleList";
+
+            return PartialView("_SubjectListGroup", model);
+        }
+
 
         [HttpPost]
         public ActionResult MoveModulesSave(Guid catId, Guid[] moduleIds)
@@ -546,6 +587,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Catalog = catalog;
 
             var currList = new List<Curriculum>();
+            /*
             foreach (var module in catalog.Modules)
             {
                 var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
@@ -559,7 +601,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
             }
-
+            */
             model.Curriculum = currList.FirstOrDefault();
 
             var semesterList = new List<Semester>();
@@ -583,6 +625,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Catalog = catalog;
 
             var currList = new List<Curriculum>();
+            /*
             foreach (var module in catalog.Modules)
             {
                 var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
@@ -596,6 +639,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
             }
+            */
 
             model.Curriculum = currList.FirstOrDefault();
 

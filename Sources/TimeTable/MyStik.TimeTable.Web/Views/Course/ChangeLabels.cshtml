@@ -22,16 +22,22 @@
                 <div class="row">
                     <div class="col-5">
                         <h5>Aus diesem Katalogen kommen die Labels</h5>
+
                         <div class="row">
-                            <div class="col-4">Ebene</div>
+                            <div class="col-4">Einrichtung</div>
                             <div class="col-8">
-                                <select id="selectLabelSet" class="form-select slot-option" id="sourceInst" onchange="onSourceLabelSetChanged(this.value)">
-                                    <option selected value="@Model.Course.Organiser.Institution.LabelSet.Id">Hochschulweit (@Model.Course.Organiser.Institution.Tag)</option>
-                                    <option value="@Model.Course.Organiser.LabelSet.Id">Fakultätsweit (@Model.Course.Organiser.ShortName)</option>
-                                    @foreach (var curr in Model.Curricula)
+                                <select id="selectOrg" class="form-select slot-option" onchange="onOrgChanged(this.value)">
+                                    @foreach (var org in Model.Organisers)
                                     {
-                                        <option value="@curr.LabelSet.Id">Studiengang (@curr.ShortName)</option>
+                                        <option value="@org.Id">@org.ShortName</option>
                                     }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Studiengang</div>
+                            <div class="col-8">
+                                <select id="selectCurr" class="form-select slot-option" onchange="onCurrChanged(this.value)">
                                 </select>
                             </div>
                         </div>
@@ -82,21 +88,40 @@
     <script>
         $(function() {
             $("#loading").hide();
-            var org = $("#selectLabelSet").val();
-            onSourceLabelSetChanged(org);
+            var org = $("#selectOrg").val();
+            onOrgChanged(org);
         });
 
-
-        function onSourceLabelSetChanged(value) {
-            var setId = value;
+        function onOrgChanged(value) {
+            var orgId = value;
             $("#loading").show();
 
             $.ajax(
                 {
                     type: "POST",
-                    url: '@Url.Action("GetLabelList", "LabelSet")',
+                    url: '@Url.Action("CurriculaList2", "Curriculum")',
                     data: {
-                        setId: setId
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectCurr").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
+        function onCurrChanged(value) {
+            var currId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabelListCurriculum", "LabelSet")',
+                    data: {
+                        currId: currId
                     },
                     success: function(data, success, xhr) {
                         $("#sourceLabelList").html(data);
@@ -105,7 +130,7 @@
                 });
 
         }
-        
+
         function updateMoveState() {
             var sourceCat = $('#sourceCat').val();
             var targetCat = $('#targetCat').val();

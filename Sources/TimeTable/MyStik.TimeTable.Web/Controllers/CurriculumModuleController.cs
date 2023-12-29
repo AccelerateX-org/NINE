@@ -48,6 +48,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CurriculumModuleCreateModel();
             model.catalogId = catalogId;
+            model.SWS = 4;
+
+
+            ViewBag.TeachingFormats = Db.TeachingFormats.OrderBy(x => x.Tag).Select(c => new SelectListItem
+            {
+                Text = c.Tag,
+                Value = c.Id.ToString(),
+            });
+
+
+            ViewBag.ExamFormats = Db.ExaminationForms.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
 
             return View(model);
         }
@@ -56,14 +72,17 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Create(CurriculumModuleCreateModel model)
         {
-            var member = GetMyMembership();
-
             var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == model.catalogId);
 
-            var isDuplicate = catalog.Modules.Any(x => x.Tag.Equals(model.Tag) && x.Id != model.moduleId);
+            var member = GetMyMembership(catalog.Organiser.Id);
+
+            var isDuplicate = catalog.Modules.Any(x => x.Tag.Equals(model.Tag.Trim()));
 
             if (!isDuplicate)
             {
+                var teachingFormat = Db.TeachingFormats.SingleOrDefault(x => x.Id == model.TeachingFormatId);
+                var examFormat = Db.ExaminationForms.SingleOrDefault(x => x.Id == model.ExamFormatId);
+
                 var module = new CurriculumModule
                 {
                     Name = model.Name,
@@ -71,8 +90,42 @@ namespace MyStik.TimeTable.Web.Controllers
                     Tag = model.Tag,
                     Applicableness = model.Applicableness,
                     Prerequisites = model.Prequisites,
-                    Catalog = catalog
+                    Catalog = catalog,
+                    ModuleSubjects = new List<ModuleSubject>(),
+                    ExaminationOptions = new List<ExaminationOption>()
                 };
+
+                var subject = new ModuleSubject
+                {
+                    Name = "Lehrveranstaltung",
+                    Tag = "LV",
+                    TeachingFormat = teachingFormat,
+                    SWS = model.SWS,
+                    Module = module
+                };
+
+                module.ModuleSubjects.Add(subject);
+                Db.ModuleCourses.Add(subject);
+
+                var examOption = new ExaminationOption
+                {
+                    Name = "Option A",
+                    Module = module,
+                    Fractions = new List<ExaminationFraction>()
+                };
+
+                var examFraction = new ExaminationFraction
+                {
+                    ExaminationOption = examOption,
+                    Form = examFormat,
+                    Weight = 1.0,
+                };
+
+                examOption.Fractions.Add(examFraction);
+                Db.ExaminationFractions.Add(examFraction);
+
+                module.ExaminationOptions.Add(examOption);
+                Db.ExaminationOptions.Add(examOption);
 
                 var resp = new ModuleResponsibility { Member = member, Module = module };
 
@@ -190,6 +243,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
             var catalog = model.Catalog;
 
+            /*
             if (model.Accreditations.Any())
             {
                 // so lange es noch Akkreditierungen hat die Struktur nicht löschen
@@ -232,6 +286,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
                 return RedirectToAction("Admin", new { id = id });
             }
+            */
 
             // so lange es nich Hostorie gibt zuerst diese löschen
             foreach (var description in model.Descriptions.ToList())

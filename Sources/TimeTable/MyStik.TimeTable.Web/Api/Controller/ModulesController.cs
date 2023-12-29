@@ -71,30 +71,32 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     }
                 }
 
-
-                foreach (var accreditation in curriculumModule.Accreditations)
+                foreach (var subject in curriculumModule.ModuleSubjects)
                 {
-                    try
+                    foreach (var accreditation in subject.SubjectAccreditations)
                     {
-                        if (accreditation.Slot != null && accreditation.Slot.AreaOption != null &&
-                            accreditation.Slot.AreaOption.Area != null &&
-                            accreditation.Slot.AreaOption.Area.Curriculum != null &&
-                            accreditation.Slot.AreaOption.Area.Curriculum.Organiser != null)
+                        try
                         {
-                            var acc = new ModuleAccreditionDto
+                            if (accreditation.Slot != null && accreditation.Slot.AreaOption != null &&
+                                accreditation.Slot.AreaOption.Area != null &&
+                                accreditation.Slot.AreaOption.Area.Curriculum != null &&
+                                accreditation.Slot.AreaOption.Area.Curriculum.Organiser != null)
                             {
-                                Curriculum = accreditation.Slot.AreaOption.Area.Curriculum.Name,
-                                Faculty = accreditation.Slot.AreaOption.Area.Curriculum.Organiser.ShortName,
-                                Slot = accreditation.Slot.FullTag,
-                                Ects = accreditation.Slot.ECTS
-                            };
+                                var acc = new ModuleAccreditionDto
+                                {
+                                    Curriculum = accreditation.Slot.AreaOption.Area.Curriculum.Name,
+                                    Faculty = accreditation.Slot.AreaOption.Area.Curriculum.Organiser.ShortName,
+                                    Slot = accreditation.Slot.FullTag,
+                                    Ects = accreditation.Slot.ECTS
+                                };
 
-                            dto.Accreditions.Add(acc);
+                                dto.Accreditions.Add(acc);
+                            }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        // ignored
+                        catch (Exception e)
+                        {
+                            // ignored
+                        }
                     }
                 }
 

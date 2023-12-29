@@ -35,12 +35,13 @@ namespace MyStik.TimeTable.Web.Jobs
             var semester = db.Semesters.SingleOrDefault(x => x.Id == jobDescription.SemesterId);
             var member = db.Members.SingleOrDefault(x => x.Id == jobDescription.MemberId);
 
-            var modules = db.CurriculumModules.Where(x =>
-                x.Accreditations.Any(c =>
+            var subjects = db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
                     c.Slot != null &&
                     c.Slot.AreaOption != null &&
                     c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
 
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
 
             var model = new StudyPlanViewModel
             {

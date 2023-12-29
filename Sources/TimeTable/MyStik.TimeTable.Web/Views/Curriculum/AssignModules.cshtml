@@ -6,7 +6,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Akkreditierung von Modulen für Slot</h4>
+                <h4>Akkreditierung von Fächern für Slot</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -23,12 +23,12 @@
                     <div class="col-5">
                         <h5>Aus diesem Katalog soll Modul akkreditiert werden</h5>
                         <div class="row">
-                            <div class="col-4">Veranstalter</div>
+                            <div class="col-4">Einrichtung</div>
                             <div class="col-8">
                                 <select class="form-select slot-option" id="sourceOrg" onchange="onSourceOrgChanged(this.value)">
                                     @foreach (var org in Model.Organisers)
                                     {
-                                        <option selected value="@org.Id">@org.Name (@org.Tag)</option>
+                                        <option selected value="@org.Id">@org.Name (@org.ShortName)</option>
                                     }
                                 </select>
                             </div>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">Module</div>
+                            <div class="col-4">Fächer</div>
                             <div class="col-8">
                                 <div id="sourceModules"></div>
                             </div>
@@ -72,14 +72,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">Module</div>
+                            <div class="col-4">Fächer</div>
                             <div class="col-8">
                                 <ul id="targetModuleList" class="list-group">
-                                    @foreach (var module in Model.Slot.ModuleAccreditations)
+                                    @foreach (var module in Model.Slot.SubjectAccreditations)
                                     {
-                                        <li id="@module.Module.Id" class="list-group-item">
+                                        <li id="@module.Subject.Id" class="list-group-item">
                                             <input class="form-check-input me-1" type="checkbox" value="">
-                                            <label class="form-check-label" for="@module.Module.Id">@module.Module.Tag</label>
+                                            <label class="form-check-label" for="@module.Subject.Id">@module.Subject.Module.Tag: @module.Subject.Module.Name (@module.Subject.Tag)</label>
                                         </li>
                                     }
                                 </ul>
@@ -135,7 +135,7 @@
             $.ajax(
                 {
                     type: "POST",
-                    url: '@Url.Action("GetModules", "Catalogs")',
+                    url: '@Url.Action("GetSubjects", "Catalogs")',
                     data: {
                         catId: catId,
                         side: "source"

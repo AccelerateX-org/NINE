@@ -20,7 +20,7 @@ namespace MyStik.TimeTable.Data
 
     }
 
-
+    /*
     public class ModuleAccreditation
     {
         public ModuleAccreditation()
@@ -73,5 +73,5 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<TeachingDescription> TeachingDescriptions { get; set; } = new List<TeachingDescription>();
     }
-
+    */
 }

@@ -161,9 +161,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Alle LVs in dem Semester
                 var labels = Db.Activities.OfType<Course>().Where(x => 
                         x.Semester.Id == semId && 
-                        x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
-                                                                           t.Accreditation.Slot.AreaOption.Id == optId &&
-                                                                           t.Accreditation.Slot.Semester == semNo))
+                        x.SubjectTeachings.Any(s => s.Subject.SubjectAccreditations.Any(
+                            t => t.Slot.AreaOption.Area.Curriculum.Id == currId &&
+                                                                           t.Slot.AreaOption.Id == optId &&
+                                                                           t.Slot.Semester == semNo)))
                     .Select(c => c.LabelSet).ToList();
 
                 var itemLabels = new List<ItemLabel>();
@@ -217,9 +218,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Alle LVs in dem Semester
                 var courses = Db.Activities.OfType<Course>().Where(x => 
                         x.Semester.Id == semId &&
-                        x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
-                                             t.Accreditation.Slot.AreaOption.Id == optId &&
-                                             t.Accreditation.Slot.Semester == semNo))
+                        x.SubjectTeachings.Any(s => s.Subject.SubjectAccreditations.Any(
+                            t => t.Slot.AreaOption.Area.Curriculum.Id == currId &&
+                                             t.Slot.AreaOption.Id == optId &&
+                                             t.Slot.Semester == semNo)))
                     .ToList();
 
                 var labeledCourses = new List<Course>();
@@ -285,7 +287,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     // alle Kurse zu diesem Studiengang
                     var courses = Db.Activities.OfType<Course>().Where(x =>
                             x.Semester.Id == semId &&
-                            x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId))
+                            x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.AreaOption.Area.Curriculum.Id == currId)))
                         .ToList();
 
                     if (courses.Any())

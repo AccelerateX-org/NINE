@@ -9,6 +9,7 @@ namespace MyStik.TimeTable.Data
     /// Es unterteilt das Modul in einzelne Anforderungen
     /// welche jedes für sich ECTS bringt
     /// </summary>
+    /*
     public class CurriculumCriteria
     {
         public CurriculumCriteria()
@@ -93,5 +94,5 @@ namespace MyStik.TimeTable.Data
         //public virtual ICollection<CriteriaRule> Rules { get; set; } 
 
     }
-
+    */
 }

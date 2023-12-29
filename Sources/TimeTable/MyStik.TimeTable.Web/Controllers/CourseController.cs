@@ -3673,40 +3673,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
 
-            // ermittle alle Studiengänge zu dieser LV
-            var curricula = new List<Curriculum>();
-            var teachings = Db.TeachingDescriptions.Where(x => x.Course.Id == course.Id).ToList();
-            if (teachings.Any())
-            {
-                var modules = teachings.Select(x => x.Subject.Module).Distinct().ToList();
-                foreach (var module in modules)
-                {
-                    curricula.AddRange(module.Accreditations.Select(accreditation => accreditation.Slot.AreaOption.Area.Curriculum));
-                }
-
-                curricula = curricula.Distinct().ToList();
-            }
-            else
-            {
-                curricula.AddRange(course.Organiser.Curricula.ToList());
-            }
-
-            var anyChange = false;
-            foreach (var curriculum in curricula.Where(curriculum => curriculum.LabelSet == null))
-            {
-                curriculum.LabelSet = new ItemLabelSet();
-                anyChange = true;
-            }
-
-            if (anyChange)
-            {
-                Db.SaveChanges();
-            }
-
             var model = new CourseLabelViewModel()
             {
                 Course = course,
-                Curricula = curricula
+                Organisers = Db.Organisers.Where(x => x.LabelSet != null).OrderBy(x => x.ShortName).ToList()
             };
 
             return View(model);
@@ -3731,6 +3701,62 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return null;
         }
+
+        public ActionResult AdminNewSubjects(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+
+
+
+            return View(course);
+        }
+
+        public ActionResult CreateTeaching(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+            var orgs = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList();
+
+            var model = new CourseLabelViewModel()
+            {
+                Course = course,
+                Organisers = orgs
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateTeaching(Guid courseId, Guid subjectId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+
+            var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == subjectId);
+
+            if (course != null && subject != null)
+            {
+                var teaching = course.SubjectTeachings.FirstOrDefault(x =>
+                    x.Subject.Id == subjectId);
+
+                if (teaching == null)
+                {
+                    teaching = new SubjectTeaching
+                    {
+                        Course = course,
+                        Subject = subject,
+                    };
+
+                    Db.SubjectTeachings.Add(teaching);
+                    Db.SaveChanges();
+                }
+            }
+
+
+            return null;
+        }
+
+
 
         public ActionResult AdminNewDictionary(Guid id)
         {

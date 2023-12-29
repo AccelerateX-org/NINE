@@ -149,16 +149,16 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<Building> Buildings { get; set; }
 
-        public DbSet<CurriculumCriteria> Criterias { get; set; }
+        //public DbSet<CurriculumCriteria> Criterias { get; set; }
 
-        public DbSet<ModuleAccreditation> Accreditations { get; set; }
+        //public DbSet<ModuleAccreditation> Accreditations { get; set; }
 
         public DbSet<ExaminationDescription> ExaminationDescriptions { get; set; }
 
         public DbSet<Examiner> Examiners { get; set; }
 
 
-        public DbSet<TeachingDescription> TeachingDescriptions { get; set; }
+        //public DbSet<TeachingDescription> TeachingDescriptions { get; set; }
 
         public DbSet<ThesisAnnouncement> ThesisAnnouncements { get; set; }
 

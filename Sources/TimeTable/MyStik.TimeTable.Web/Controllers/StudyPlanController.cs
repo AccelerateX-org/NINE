@@ -69,67 +69,6 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult AutoLink(Guid currId, Guid semId)
-        {
-            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
-            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-
-            foreach(var area in curriculum.Areas)
-            {
-                foreach (var option in area.Options)
-                {
-                    foreach (var slot in option.Slots)
-                    {
-                        foreach (var accr in slot.ModuleAccreditations)
-                        {
-                            // es geht nur noch auf die Teachings
-                            var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == semester.Id).ToList();
-                            //var nOpps = accr.Module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == semester.Id));
-
-                            var courses = Db.Activities.OfType<Course>().Where(x => x.Semester.Id == semester.Id && x.Organiser.Id == curriculum.Organiser.Id && x.ShortName.StartsWith(accr.Module.Tag)).ToList();
-
-                            // gehe jeden gefunden Kurs durch und baue ein teaching, wenn es das noch nicht gibt
-                            foreach (var course in courses)
-                            {
-                                var teaching = teachings.FirstOrDefault(x => x.Course.Id == course.Id);
-
-                                if (teaching == null)
-                                {
-                                    // neues teaching bauen und das richtige Fach suchen
-                                    var subject = accr.Module?.ModuleSubjects?.FirstOrDefault(x => !string.IsNullOrEmpty(x.Tag) && x.Tag.Equals(course.ShortName));
-
-                                    if (subject == null)
-                                    {
-                                        subject = accr.Module.ModuleSubjects.FirstOrDefault();
-                                    }
-
-                                    // nur anlegen, wenn subject vorhanden ist
-                                    if (subject != null)
-                                    {
-                                        teaching = new TeachingDescription
-                                        {
-                                            Accreditation = accr,
-                                            Course = course,
-                                            Semester = semester,
-                                            Subject = subject,
-                                        };
-
-                                        Db.TeachingDescriptions.Add(teaching);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Details", new { currId = currId, semId = semId });
-        }
-
-
 
         public ActionResult Publish(Guid currId, Guid semId)
         {
@@ -156,11 +95,13 @@ namespace MyStik.TimeTable.Web.Controllers
             // alle Module veröffentlichen
             var nextSemester = SemesterService.GetNextSemester(semester);
 
-            var modules = Db.CurriculumModules.Where(x =>
-                x.Accreditations.Any(c =>
+            var subjects = Db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
                     c.Slot != null &&
                     c.Slot.AreaOption != null &&
                     c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
+
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
 
             foreach (var module in modules)
             {
@@ -210,7 +151,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         }
                     }
                 }
-                foreach (var accr in module.Accreditations.Where(x => x.Slot.AreaOption.Area.Curriculum.Id == curr.Id).ToList())
+                foreach (var accr in module.ExaminationOptions.ToList())
                 {
                     foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id).ToList())
                     {
@@ -240,7 +181,6 @@ namespace MyStik.TimeTable.Web.Controllers
                             {
                                 var nextExam = new ExaminationDescription
                                 {
-                                    Accreditation = accr,
                                     Semester = nextSemester,
                                     FirstExminer = exam.FirstExminer,
                                     SecondExaminer = exam.SecondExaminer,
@@ -355,11 +295,13 @@ namespace MyStik.TimeTable.Web.Controllers
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
 
-            var modules = Db.CurriculumModules.Where(x =>
-                x.Accreditations.Any(c =>
+            var subjects = Db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
                     c.Slot != null &&
                     c.Slot.AreaOption != null &&
                     c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
+
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
 
             foreach (var module in modules)
             {
@@ -373,10 +315,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     d.ChangeLog.IsVisible = true;
                 }
 
-                var accrs = module.Accreditations.Where(x => x.Slot.AreaOption.Area.Curriculum.Id == curr.Id)
-                    .ToList();
-
-                foreach (var accr in accrs)
+                foreach (var accr in module.ExaminationOptions)
                 {
                     var exams = accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).ToList();
                     foreach (var exam in exams)

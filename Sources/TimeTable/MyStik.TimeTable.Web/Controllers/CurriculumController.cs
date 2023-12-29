@@ -1398,6 +1398,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+        /*
 
         public ActionResult ImportMoveAccr(Guid id)
         {
@@ -1483,25 +1484,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
+        */
 
         public ActionResult DeleteSlot(Guid id)
         {
             var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
             var option = slot.AreaOption;
 
-            foreach (var accreditation in slot.ModuleAccreditations.ToList())
+            foreach (var accreditation in slot.SubjectAccreditations.ToList())
             {
-                foreach (var exam in accreditation.ExaminationDescriptions.ToList())
-                {
-                    Db.ExaminationDescriptions.Remove(exam);
-                }
-
-                foreach (var teaching in accreditation.TeachingDescriptions.ToList())
-                {
-                    Db.TeachingDescriptions.Remove(teaching);
-                }
-
-                Db.Accreditations.Remove(accreditation);
+                Db.SubjectAccreditations.Remove(accreditation);
             }
 
 
@@ -1564,9 +1556,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 foreach (var slot in section.Slots.ToList())
                 {
-                    foreach (var accreditation in slot.ModuleAccreditations.ToList())
+                    foreach (var accreditation in slot.SubjectAccreditations.ToList())
                     {
-                        Db.Accreditations.Remove(accreditation);
+                        Db.SubjectAccreditations.Remove(accreditation);
                     }
 
                     Db.CurriculumSlots.Remove(slot);
@@ -1581,19 +1573,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     foreach (var slot in option.Slots.ToList())
                     {
-                        foreach (var accreditation in slot.ModuleAccreditations.ToList())
+                        foreach (var accreditation in slot.SubjectAccreditations.ToList())
                         {
-                            foreach (var exam in accreditation.ExaminationDescriptions.ToList())
-                            {
-                                Db.ExaminationDescriptions.Remove(exam);
-                            }
-
-                            foreach (var teaching in accreditation.TeachingDescriptions.ToList())
-                            {
-                                Db.TeachingDescriptions.Remove(teaching);
-                            }
-
-                            Db.Accreditations.Remove(accreditation);
+                            Db.SubjectAccreditations.Remove(accreditation);
                         }
 
                         Db.CurriculumSlots.Remove(slot);
@@ -1674,7 +1656,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 );
 
                 if (module == null) continue;
-
+                /*
                 var moduleAccredition = slot.ModuleAccreditations.FirstOrDefault(x => x.Module.Id == module.Id);
 
                 if (moduleAccredition == null)
@@ -1686,9 +1668,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     };
                     Db.Accreditations.Add(moduleAccredition);
                 }
+                */
             }
 
-            Db.SaveChanges();
+            //Db.SaveChanges();
 
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
@@ -2078,24 +2061,25 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
 
-            foreach (var moduleId in moduleIds)
+            // das sind jetzt die subject ids !!!!
+            foreach (var subjectId in moduleIds)
             {
-                var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+                var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == subjectId);
 
-                if (slot == null || module == null) continue;
+                if (slot == null || subject == null) continue;
 
-                bool isModulePresent = slot.ModuleAccreditations.Any(x => x.Module.Id == module.Id);
+                bool isSubjectPresent = slot.SubjectAccreditations.Any(x => x.Subject.Id == subject.Id);
 
-                if (isModulePresent) continue;
+                if (isSubjectPresent) continue;
 
-                var accr = new ModuleAccreditation
+                var accr = new SubjectAccreditation
                 {
-                    Module = module,
+                    Subject = subject,
                     Slot = slot
 
                 };
 
-                Db.Accreditations.Add(accr);
+                Db.SubjectAccreditations.Add(accr);
             }
 
             Db.SaveChanges();
@@ -2169,14 +2153,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
-
-
-            var accr = new ModuleAccreditation
-            {
-                Module = module,
-                Slot = slot,
-            };
-
             var subject = new ModuleSubject
             {
                 Module = module,
@@ -2185,6 +2161,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 Tag = tf.Tag,
                 Name = tf.Name,
             };
+
+            var accr = new SubjectAccreditation()
+            {
+                Subject = subject,
+                Slot = slot,
+            };
+
 
             var exam = new ExaminationOption
             {
@@ -2200,7 +2183,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             Db.CurriculumModules.Add(module);
-            Db.Accreditations.Add(accr);
+            Db.SubjectAccreditations.Add(accr);
             Db.ModuleCourses.Add(subject);
             Db.ExaminationOptions.Add(exam);
             Db.ExaminationFractions.Add(fraction);
@@ -2329,6 +2312,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var labels = new List<ItemLabel>();
+            /*
             foreach (var accreditation in slot.ModuleAccreditations)
             {
                 if (accreditation.LabelSet != null && accreditation.LabelSet.ItemLabels.Any())
@@ -2342,7 +2326,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
             }
-
+            */
 
             ViewBag.FilterLabel = labels.FirstOrDefault(x => x.Name.Equals(label));
 
@@ -2616,10 +2600,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult DeleteAccredition(Guid id)
         {
-            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+            var accr = Db.SubjectAccreditations.SingleOrDefault(x => x.Id == id);
 
             var slot = accr.Slot;
 
+            /*
             foreach (var exam in accr.ExaminationDescriptions.ToList())
             {
                 Db.ExaminationDescriptions.Remove(exam);
@@ -2629,8 +2614,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Db.TeachingDescriptions.Remove(teaching);
             }
+            */
 
-            Db.Accreditations.Remove(accr);
+            Db.SubjectAccreditations.Remove(accr);
 
             Db.SaveChanges();
 

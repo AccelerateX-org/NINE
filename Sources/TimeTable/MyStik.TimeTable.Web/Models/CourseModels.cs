@@ -1160,5 +1160,7 @@ namespace MyStik.TimeTable.Web.Models
         public Course Course { get; set; }
 
         public List<Curriculum> Curricula { get; set;}
+
+        public List<ActivityOrganiser> Organisers { get; set; }
     }
 }

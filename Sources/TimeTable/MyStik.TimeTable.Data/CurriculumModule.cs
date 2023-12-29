@@ -38,7 +38,7 @@ namespace MyStik.TimeTable.Data
         public CurriculumModule ()
         {
             ModuleSubjects = new HashSet<ModuleSubject>();
-            Accreditations = new HashSet<ModuleAccreditation>();
+            //Accreditations = new HashSet<ModuleAccreditation>();
             Descriptions = new HashSet<ModuleDescription>();
             ExaminationOptions = new List<ExaminationOption>();
             ModuleResponsibilities = new List<ModuleResponsibility>();
@@ -109,7 +109,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Alle Akkreditierungen des Moduls
         /// </summary>
-        public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
+        //public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
 
         public virtual ICollection<ModuleDescription> Descriptions { get; set; }
 
@@ -223,7 +223,7 @@ namespace MyStik.TimeTable.Data
         public virtual OrganiserMember SecondExaminer { get; set; }
 
         
-        public virtual ModuleAccreditation Accreditation { get; set; }
+        //public virtual ModuleAccreditation Accreditation { get; set; }
 
         public virtual ICollection<Examiner> Examiners { get; set; }
     }
@@ -234,6 +234,7 @@ namespace MyStik.TimeTable.Data
     /// <summary>
     /// Das Lehrangebot
     /// </summary>
+    /*
     public class TeachingDescription
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -274,7 +275,7 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual Curriculum Curriculum { get; set; } 
     }
-
+    */
 
     public class SubjectTeaching
     {

@@ -50,7 +50,7 @@
 
                             var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
 
-                            var numOldAccs = module.Accreditations.Count(x => x.Slot.CurriculumSection != null);
+                            var numOldAccs = module.Accreditations.Count(x => x.Slot == null || x.Slot.CurriculumSection != null);
                             var bg = string.Empty;
                             if (numOldAccs > 0)
                             {
@@ -94,7 +94,14 @@
                                 <td>
                                     @foreach (var accreditation in module.Accreditations)
                                     {
-                                        <div>@accreditation.Slot.Tag</div>
+                                        if (accreditation.Slot != null)
+                                        {
+                                            <div>@accreditation.Slot.Tag</div>
+                                        }
+                                        else
+                                        {
+                                            <div>KEIN SLOT</div>
+                                        }
                                     }
                                 </td>
                             </tr>

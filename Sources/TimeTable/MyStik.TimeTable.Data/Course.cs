@@ -53,7 +53,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// deprecated
         /// </summary>
-        public virtual ICollection<TeachingDescription> Teachings { get; set; }
+        //public virtual ICollection<TeachingDescription> Teachings { get; set; }
 
         public virtual ICollection<SubjectTeaching> SubjectTeachings { get; set; }
 

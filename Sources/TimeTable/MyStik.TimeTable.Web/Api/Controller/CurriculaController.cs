@@ -135,13 +135,13 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     modules = new List<ModuleDto>()
                 };
 
-                foreach (var accreditation in slot.ModuleAccreditations)
+                foreach (var accreditation in slot.SubjectAccreditations)
                 {
                     var moduleDto = new ModuleDto
                     {
-                        Id = accreditation.Module.Id,
-                        Name = accreditation.Module.Name,
-                        Tag = accreditation.Module.FullTag
+                        Id = accreditation.Subject.Id,
+                        Name = accreditation.Subject.Name,
+                        Tag = accreditation.Subject.Tag
                     };
 
                     slotDto.modules.Add(moduleDto);
