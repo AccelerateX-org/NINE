@@ -20,6 +20,10 @@
     <script>
         $(document).ready(function () {
             var t = $('#tabStudents').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel'
+                ],
                 "paging": false
             });
         });
@@ -40,7 +44,6 @@
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
                         <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
-                        <a href="@Url.Action("RawData", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-download"></i> Rohdaten</a>
                     </div>
                 </div>
                 <div class="list-group-item">
@@ -49,7 +52,7 @@
                 </div>
 
             </div>
-            <table id="tabStudents" class="table table-condensed">
+            <table id="tabStudents" class="table">
                 <thead>
                     <tr>
                         <th rowspan="2">Name</th>

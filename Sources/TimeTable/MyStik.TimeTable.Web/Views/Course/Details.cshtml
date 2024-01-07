@@ -82,7 +82,7 @@
                     <i class="bi-book"></i> Modul / Fach
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-pencil-square"></i> Kontingente
+                    <i class="bi-pencil-square"></i> Platzkontingente
                 </a>
                 @if (Model.Summary.Course.Occurrence.IsAvailable)
                 {
@@ -253,57 +253,14 @@
                 </div>
                 <div class="row">
                     <div class="col-4">
-                        Zugangsbeschränkungen
+                        Platzkontingente
                     </div>
                     <div class="col-8">
-                        @if (Model.Summary.Course.Occurrence.HasHomeBias)
+                        @if (Model.Summary.Course.Occurrence.SeatQuotas.Any())
                         {
-                            if (Model.Summary.Course.Occurrence.IsCoterie)
+                            foreach (var quota in Model.Summary.Course.Occurrence.SeatQuotas)
                             {
-                                <div>Nur Studierende der angegebenen Studiengänge können sich eintragen</div>
-                                <div>@Html.GroupList(Model.Summary.Course.Occurrence, showLinks: false)</div>
-                            }
-                            else
-                            {
-                                <div>Studierende der angegebenen Studiengänge werden bevorzugt. Studierende anderer Studiengänge landen automatisch auf der Warteliste</div>
-                            }
-                        }
-                        else
-                        {
-                            <div>Studierende aller Studiengänge können sich eintragen</div>
-                        }
-                        @if (Model.Summary.Course.Occurrence.Capacity < 0)
-                        {
-                            if (Model.Summary.Course.Occurrence.UseGroups)
-                            {
-                                <div> Platzkontingent getrennt nach Studiengängen</div>
-                                foreach (var ocg in Model.Summary.Course.Occurrence.Groups)
-                                {
-                                    <div>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</div>
-                                }
-                            }
-                            else
-                            {
-                                <div>keine Platzbeschränkungen</div>
-                            }
-                            if (Model.Summary.Lottery != null)
-                            {
-                                <div>Platzvergabe über das Wahlverfahren "@Model.Summary.Lottery.Name"</div>
-                            }
-                        }
-                        else
-                        {
-                            if (Model.Summary.Course.Occurrence.UseGroups)
-                            {
-                                <div> Platzkontingent getrennt nach Studiengängen</div>
-                                foreach (var ocg in Model.Summary.Course.Occurrence.Groups)
-                                {
-                                    <div>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</div>
-                                }
-                            }
-                            else
-                            {
-                                <div> Platzkontingent studiengangsübergreifend: @Model.Summary.Course.Occurrence.Capacity Plätze</div>
+                                <div>@quota.Summary</div>
                             }
                             if (Model.Summary.Lottery != null)
                             {
@@ -313,8 +270,12 @@
                             }
                             else
                             {
-                                <div>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen</div>
+                                <div>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen.</div>
                             }
+                        }
+                        else
+                        {
+                            <div>Offene Veranstaltung ohne Kontingente</div>
                         }
                     </div>
                 </div>

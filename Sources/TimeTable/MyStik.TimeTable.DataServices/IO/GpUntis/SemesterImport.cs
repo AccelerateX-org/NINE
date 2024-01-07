@@ -97,7 +97,19 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             _Logger.DebugFormat("Dauer: {0}ms", msEnd - msStart);
             msStart = msEnd;
 
+            // jetzt neu => aus der Gruppe wird das Etikett
+            foreach (var g in kurs.Gruppen)
+            {
+                var labels = InitLabel(db, g.GruppenID);
+                foreach (var label in labels)
+                {
+                    course.LabelSet.ItemLabels.Add(label);
+                }
+            }
+
+            // Veraltet => keine Semestergruppen mehr
             // Alle Gruppen durchgehen, die im gpUntis zugeordnet wurden
+            /*
             foreach (var g in kurs.Gruppen)
             {
                 // diesen Semestergruppen soll der Kurs zugeordnet werden
@@ -133,7 +145,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             {
                 _Logger.ErrorFormat("Kurs {0} ohne Gruppe", kurs);
             }
-
+            */
 
             if (semester != null)
             {
@@ -438,123 +450,60 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
         }
 
 
-
-
-        /*
-        private List<SemesterGroup> InitSemesterGroups(TimeTableDbContext db, string gruppenId)
+        private List<ItemLabel> InitLabel(TimeTableDbContext db, string gruppenId)
         {
             var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
             var org = db.Organisers.SingleOrDefault(x => x.Id == _orgId);
 
             // Annahme, die Semestergruppen existieren!
-            var semGroupList = new List<SemesterGroup>();
-            
-            // Annahme, die Semestergruppen existieren nicht alle und müssen ggf. angelegt werden
+            var labelList = new List<ItemLabel>();
 
-            // damit man nach den Alias namen in Abhängigkeit der Studiengänge / Fakultät suchen kann
-            // so müssen die Namen derzeit auf globale Ebene eindeutig sein
-            var aliasList = db.GroupAliases.Where(g => g.Name.ToUpper().Equals(gruppenId.ToUpper())
-                && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == _orgId).ToList();
+            // suche alle aktuellen Zuordnungen zu dieser gruppenID
+            var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(gruppenId));
 
-            // falls leer, jetzt in Zuordnungen nachsehen
-            if (!aliasList.Any())
+            foreach (var zuordnung in zuordnungen)
             {
-                var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(gruppenId));
-
-                foreach (var zuordnung in zuordnungen)
+                // Studiengang finden
+                var curr = db.Curricula.SingleOrDefault(x =>
+                    x.ShortName.Equals(zuordnung.Studiengang) &&
+                    x.Organiser.Id == org.Id);
+                if (curr == null)
                 {
-                    // Studiengang finden
-                    var curr = db.Curricula.SingleOrDefault(x =>
-                        x.ShortName.Equals(zuordnung.Studiengang) &&
-                        x.Organiser.Id == org.Id);
-                    if (curr == null)
+                    curr = new TimeTable.Data.Curriculum
                     {
-                        curr = new TimeTable.Data.Curriculum
-                        {
-                            Organiser = org,
-                            ShortName = zuordnung.Studiengang,
-                            Name = zuordnung.Studiengang
-                        };
-                        db.Curricula.Add(curr);
-                    }
-
-                    var sg = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Studiengruppe));
-                    if (sg == null)
-                    {
-                        sg = new CurriculumGroup
-                        {
-                            Name = zuordnung.Studiengruppe,
-                            IsSubscribable = true,
-                            Curriculum = curr
-                        };
-                        db.CurriculumGroups.Add(sg);
-                        curr.CurriculumGroups.Add(sg);
-                    }
-
-                    var cg = string.IsNullOrEmpty(zuordnung.Kapazitätsgruppe) ?
-                        sg.CapacityGroups.SingleOrDefault(x => string.IsNullOrEmpty(x.Name)) :
-                        sg.CapacityGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Kapazitätsgruppe));
-                    if (cg == null)
-                    {
-                        cg = new CapacityGroup
-                        {
-                            InSS = true,
-                            InWS = true,
-                            Name = zuordnung.Kapazitätsgruppe,
-                            CurriculumGroup = sg
-                        };
-                        db.CapacityGroups.Add(cg);
-                        sg.CapacityGroups.Add(cg);
-                    }
-
-                    var al = cg.Aliases.SingleOrDefault(x => x.Name.Equals(zuordnung.Alias));
-                    if (al == null)
-                    {
-                        al = new GroupAlias
-                        {
-                            Name = zuordnung.Alias,
-                            CapacityGroup = cg
-                        };
-                        db.GroupAliases.Add(al);
-                        cg.Aliases.Add(al);
-                    }
-
-                    aliasList.Add(al);
-                }
-                db.SaveChanges();
-            }
-
-
-            foreach (var groupAlias in aliasList)
-            {
-                // zugehörige Kapazitätsgruppe
-                var capGroup = groupAlias.CapacityGroup;
-
-                // im semester suchen
-                var semGroup = semester.Groups.SingleOrDefault(g => g.CapacityGroup.Id == capGroup.Id);
-
-                if (semGroup == null)
-                {
-                    // semestergruppe gibt es nicht => auf jeden Fall anlegen
-                    semGroup = new SemesterGroup
-                    {
-                        CapacityGroup = capGroup,
-                        Semester = semester,
+                        Organiser = org,
+                        ShortName = zuordnung.Studiengang,
+                        Name = zuordnung.Studiengang
                     };
-
-                    _Logger.InfoFormat("Semestergruppe {0} angelegt {1}", semGroup.FullName, gruppenId);
-
-                    capGroup.SemesterGroups.Add(semGroup);
-                    db.SemesterGroups.Add(semGroup);
-                    db.SaveChanges();
+                    db.Curricula.Add(curr);
                 }
 
-                semGroupList.Add(semGroup);
+                // jetzt das Label im Studiengang finden
+                var labelName = zuordnung.LabelName;
+                var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
+
+                if (label == null)
+                {
+                    label = db.ItemLabels.SingleOrDefault(x => x.Name.Equals(labelName));
+
+                    if (label == null)
+                    {
+                        label = new ItemLabel
+                        {
+                            Name = labelName
+                        };
+                        db.ItemLabels.Add(label);
+                    }
+                    curr.LabelSet.ItemLabels.Add(label);
+                }
+                labelList.Add(label);
             }
 
-            return semGroupList;
+            db.SaveChanges();
+
+            return labelList;
         }
-        */
+
 
 
 

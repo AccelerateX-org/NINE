@@ -1,0 +1,147 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseLabelViewModel
+@{
+    ViewBag.Title = "Platzkontingent";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neues Platzkontingent anlegen</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi-save"></i>  Speichern
+                    </a>
+                    <a href="@Url.Action("AdminNewRules", new {id=Model.Course.Id})" class="btn btn-outline-secondary">
+                        <i class="bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <div class="row">
+                            <div class="col-4">Einrichtung</div>
+                            <div class="col-8">
+                                <select id="selectOrg" class="form-select slot-option" onchange="onOrgChanged(this.value)">
+                                    @foreach (var org in Model.Organisers)
+                                    {
+                                        <option value="@org.Id">@org.ShortName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Studiengang</div>
+                            <div class="col-8">
+                                <select id="selectCurr" class="form-select slot-option" onchange="onCurrChanged(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Anzahl Plätze</div>
+                            <div class="col-8">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input class="form-check-input mt-0" type="radio" id="optCapaUnrestricted" name="optCapa" value="0" aria-label="Radio button for following text input" checked>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Text input with radio button" value="unbegrenzt" disabled>
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input class="form-check-input mt-0" type="radio" id="optCapaRestricted" name="optCapa" value="1" aria-label="Radio button for following text input">
+                                    </div>
+                                    <input type="text" class="form-control" id="capa" aria-label="Text input with radio button">
+                                    <div> Plätze</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            var org = $("#selectOrg").val();
+            onOrgChanged(org);
+        });
+
+        function onOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CurriculaList2", "Curriculum")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectCurr").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
+        function onCurrChanged(value) {
+            var currId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabelListCurriculum", "LabelSet")',
+                    data: {
+                        currId: currId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceLabelList").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
+        function saveChanges() {
+            // Zielkatalog
+            var courseId = "@Model.Course.Id.ToString()";
+            var currId = $("#selectCurr").val();
+            var capa = -1; // unbegrenzt
+            var optCapa = $("input[type='radio'][name='optCapa']:checked").val();
+            if (optCapa == 1) {
+                capa = $("#capa").val();
+            }
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("AddQuota")',
+                    data: {
+                        courseId: courseId,
+                        currId: currId,
+                        capa: capa
+                    },
+                    success: function(data, success, xhr) {
+                        window.location.replace("@Url.Action("AdminNewRules", new { id = Model.Course.Id })");
+                        $("#loading").hide();
+                    }
+                });
+
+
+
+        }
+
+
+    </script>
+}

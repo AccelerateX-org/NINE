@@ -45,6 +45,9 @@ namespace MyStik.TimeTable.DataServices
 
         public Semester GetNextSemester(Semester semester)
         {
+            if (semester == null)
+                return null;
+
             var today = semester.StartCourses;
 
             var sem = _db.Semesters.Where(s => s.StartCourses > today).OrderBy(s => s.StartCourses).FirstOrDefault();

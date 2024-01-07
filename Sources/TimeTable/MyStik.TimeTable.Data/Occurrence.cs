@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace MyStik.TimeTable.Data
 {
@@ -131,5 +132,59 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<OccurrenceGroup> Groups { get; set; }
 
         public virtual ICollection<Lottery> Lotteries { get; set; }
+
+        public virtual ICollection<SeatQuota> SeatQuotas { get; set; } = new HashSet<SeatQuota>();
+    }
+
+    public class SeatQuota
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Zuordnung zur Occurrence
+        /// </summary>
+        public virtual Occurrence Occurrence { get; set; }
+
+        public int MinCapacity { get; set; } = 0;
+        public int MaxCapacity { get; set; } = int.MaxValue;
+
+        public virtual Curriculum Curriculum { get; set; }
+
+        /// <summary>
+        /// Und Verknüpfung
+        /// </summary>
+        public virtual ItemLabelSet ItemLabelSet { get; set; }
+
+        public string Description { get; set; }
+
+        public string Summary
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                if (Curriculum != null)
+                {
+                    sb.AppendFormat("{0}: ", Curriculum.ShortName);
+                }
+                else
+                {
+                    sb.Append("Alle Studiengänge: ");
+                }
+
+                if (MaxCapacity == int.MaxValue)
+                {
+                    sb.Append("unbegrenzt");
+                }
+                else
+                {
+                    sb.AppendFormat("{0} Plätze", MaxCapacity);
+                }
+
+
+                return sb.ToString();
+            }
+        }
     }
 }

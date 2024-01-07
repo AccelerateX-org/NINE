@@ -3945,7 +3945,6 @@
     <Content Include="Views\ImportUntis\Index.cshtml" />
     <Content Include="Views\ImportUntis\CheckDatabase.cshtml" />
     <Content Include="Views\ImportUntis\Upload.cshtml" />
-    <Content Include="Views\Course\ChangeGroups.cshtml" />
     <Content Include="Views\Mail\_en_UserTemplate.cshtml" />
     <Content Include="Views\Mail\en_Invitation.html.cshtml" />
     <Content Include="Views\Students\SendInvitationsError.cshtml" />
@@ -4117,7 +4116,6 @@
     <Content Include="Views\Course\AdminNewModule.cshtml" />
     <Content Include="Views\Course\AdminNewParticipients.cshtml" />
     <Content Include="Views\Course\AdminNewRules.cshtml" />
-    <Content Include="Views\Course\ChangeTopics.cshtml" />
     <Content Include="Views\Course\Download.cshtml" />
     <Content Include="Views\Course\Owners.cshtml" />
     <Content Include="Views\Course\SubscriptionList.cshtml" />
@@ -4718,6 +4716,8 @@
     <Content Include="Views\Catalogs\_ModuleSelectList.cshtml" />
     <Content Include="Views\Catalogs\_SubjectSelectList.cshtml" />
     <Content Include="Views\Catalogs\_SubjectListGroup.cshtml" />
+    <Content Include="Views\Catalogs\CreateCourseFromSubject.cshtml" />
+    <Content Include="Views\Course\AddQuota.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

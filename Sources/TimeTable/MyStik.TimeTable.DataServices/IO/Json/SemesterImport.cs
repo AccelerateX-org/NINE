@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using log4net;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices.IO.GpUntis.Data;
 using MyStik.TimeTable.DataServices.IO.Json.Data;
 
 namespace MyStik.TimeTable.DataServices.IO.Json
@@ -159,8 +160,55 @@ namespace MyStik.TimeTable.DataServices.IO.Json
             _report.AppendFormat("<tr><td>Beschreibung</td><td>{0}</td></tr>", course.Description);
             _report.AppendLine("</table>");
 
+            // aus den Gruppen nur nch die Labels bauen
+            foreach (var scheduleGroup in scheduleCourse.Groups)
+            {
+                // Fakultät ermitteln
+                var org = db.Organisers.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.FacultyName));
 
-            // jetzt die Gruppen
+                // Studiengang innerhalb der Fakultät ermitteln
+                var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.CurriculumShortName));
+                if (curr == null)
+                {
+                    curr = new TimeTable.Data.Curriculum
+                    {
+                        ShortName = scheduleGroup.CurriculumShortName,
+                        Name = scheduleGroup.CurriculumName,
+                        Organiser = org
+                    };
+                    db.Curricula.Add(curr);
+                    db.SaveChanges();
+                }
+
+                // jetzt das Label im Studiengang finden
+                if (!string.IsNullOrEmpty(scheduleGroup.GroupName))
+                {
+                    var labelName = scheduleGroup.GroupName;
+                    var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
+
+                    if (label == null)
+                    {
+                        label = db.ItemLabels.SingleOrDefault(x => x.Name.Equals(labelName));
+
+                        if (label == null)
+                        {
+                            label = new ItemLabel
+                            {
+                                Name = labelName
+                            };
+                            db.ItemLabels.Add(label);
+                        }
+
+                        curr.LabelSet.ItemLabels.Add(label);
+                        db.SaveChanges();
+                    }
+
+                    course.LabelSet.ItemLabels.Add(label);
+                }
+            }
+
+            // jetzt die Gruppen => Veraltet
+            /*
             foreach (var scheduleGroup in scheduleCourse.Groups)
             {
                 // Fakultät ermitteln
@@ -182,23 +230,6 @@ namespace MyStik.TimeTable.DataServices.IO.Json
 
                 // Studiengruppe innerhalb des Studiengangs ermitteln
                 var groupName = scheduleGroup.GroupName;
-
-                // Sonderlocke FK 11
-                // aus der LV-Nummer das Semester raussuchen
-                /* OHI 20180720: wieder ausgebaut, weil Schnittstelle jetzt sauber befüllt ist
-                if (org.ShortName.Equals("FK 11"))
-                {
-                    if (!string.IsNullOrEmpty(course.ShortName))
-                    {
-                        groupName = course.ShortName[1].ToString();
-
-                    }
-                    else
-                    {
-                        groupName = "#N.V.";
-                    }
-                }
-                */
 
                 var currGroup = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(groupName));
                 if (currGroup == null)
@@ -337,6 +368,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                 }
                 // else => Semestergruppe wird nicht angelegt
             }
+            */
 
             db.SaveChanges();
 

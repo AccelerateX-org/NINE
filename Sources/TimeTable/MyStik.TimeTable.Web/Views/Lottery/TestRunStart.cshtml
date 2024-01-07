@@ -98,7 +98,6 @@
                     }
                 </tr>
                 <tr>
-                    <th></th>
                     <th>Name</th>
                     <th>Bezeichnung</th>
                     <th><i class="fa fa-bed"></i></th>
@@ -126,17 +125,6 @@
                 @foreach (var lotPot in Model.LotPots.OrderByDescending(x => x.BookingRank).ThenByDescending(x => x.Lots.Count(y => y.Priority == 1)))
                 {
                     <tr>
-                        <td>
-                            @if (lotPot.Course.Occurrence.IsCoterie)
-                            {
-                                <i class="fa fa-lock text-danger"></i>
-                            }
-                            else
-                            {
-                                <i class="fa fa-unlock text-success"></i>
-
-                            }
-                        </td>
                         <td>
                             <a href="@Url.Action("Details", "Course", new {id = lotPot.Course.Id})">@lotPot.Course.Name (@lotPot.Course.ShortName)</a>
                         </td>

@@ -21,16 +21,6 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// <summary>
         /// 
         /// </summary>
-        public bool IsCoterie { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool HasHomeBias { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public List<CorrelationDto> Correlations { get; set; }
 
         /// <summary>
@@ -185,19 +175,6 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public string Description { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsCoterie { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool HasHomeBias { get; set; }
 
         /// <summary>
         /// 

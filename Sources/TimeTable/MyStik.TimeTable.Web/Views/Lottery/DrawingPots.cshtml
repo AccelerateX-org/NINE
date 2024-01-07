@@ -30,35 +30,27 @@
                 <div class="list-group-item">
                     <h4>Legende / Symbole</h4>
                     <div class="row">
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-unlock text-success"></i>Keine Zugangsbeschränkung nach Studiengang</li>
-                                <li><i class="fa-li fa fa-lock text-danger"></i>Zugang nur für Studierende der jeweiligen Studiengänge</li>
+                        <div class="col-md-6">
+                            <ul>
+                                <li><i class="bi-ticket"></i> Anzahl der Plätze (Kapazität)</li>
+                                <li><i class="bi-people"></i> Anzahl Teilnehmer</li>
+                                <li><i class="bi-hourglass"></i> Anzahl Einträge auf Warteliste</li>
                             </ul>
                         </div>
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-bed"></i>Anzahl der Plätze (Kapazität)</li>
-                                <li><i class="fa-li fa fa-users"></i>Anzahl Teilnehmer</li>
-                                <li><i class="fa-li fa fa-hourglass-half"></i>Anzahl Einträge auf Warteliste</li>
-                                <li><i class="fa-li fa fa-percent text-warning"></i>"Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
+                        <div class="col-md-6">
+                            <ul>
+                                <li><i class="bi-percent text-warning"></i> "Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
+                                <li><i class="bi-percent text-danger"></i> "Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
                             </ul>
-                        </div>
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-percent text-danger"></i>"Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3">
                         </div>
                     </div>
                 </div>
 
             </div>
-            <table id="tabPots" class="table table-condensed">
+            <table id="tabPots" class="table">
                 <thead>
                     <tr>
-                        <th colspan="2">Lehrveranstaltung</th>
+                        <th colspan="1">Lehrveranstaltung</th>
                         <th colspan="5">Buchungsliste</th>
                         @if (Model.Lottery.IsFixed)
                         {
@@ -67,17 +59,16 @@
                         }
                     </tr>
                     <tr>
-                        <th></th>
                         <th>Name</th>
                         <th>Bezeichnung</th>
-                        <th><i class="fa fa-bed"></i></th>
-                        <th><i class="fa fa-users"></i></th>
-                        <th><i class="fa fa-hourglass-half"></i></th>
-                        <th><i class="fa fa-percent text-warning"></i></th>
+                        <th><i class="bi-ticket"></i></th>
+                        <th><i class="bi-people"></i></th>
+                        <th><i class="bi-hourglass"></i></th>
+                        <th><i class="bi-percent text-warning"></i></th>
 
                         @if (Model.Lottery.IsFixed)
                         {
-                            <th><i class="fa fa-percent text-danger"></i></th>
+                            <th><i class="bi-percent text-danger"></i></th>
                             <th>Keine Prio</th>
                             for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
                             {
@@ -96,17 +87,6 @@
                     {
                         <tr>
                             <td>
-                                @if (lotPot.Course.Occurrence.IsCoterie)
-                                {
-                                    <i class="fa fa-lock text-danger"></i>
-                                }
-                                else
-                                {
-                                    <i class="fa fa-unlock text-success"></i>
-
-                                }
-                            </td>
-                            <td>
                                 <a href="@Url.Action("Details", "Course", new {id = lotPot.Course.Id})">@lotPot.Course.Name (@lotPot.Course.ShortName)</a>
                             </td>
                             <td>
@@ -114,7 +94,7 @@
                             </td>
                             @if (lotPot.Capacity == int.MaxValue)
                             {
-                                <td>n.b.</td>
+                                <td><i class="bi-infinity"></i></td>
                             }
                             else
                             {
@@ -138,7 +118,7 @@
 
                                 if (lotPot.Capacity == int.MaxValue)
                                 {
-                                    <td></td>
+                                    <td><i class="bi-infinity"></i></td>
                                 }
                                 else
                                 {

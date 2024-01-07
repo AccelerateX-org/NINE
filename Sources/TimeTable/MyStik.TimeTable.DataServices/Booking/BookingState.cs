@@ -14,8 +14,6 @@ namespace MyStik.TimeTable.DataServices.Booking
 
     public class BookingState
     {
-        private BookingList _myBookingList;
-
         public BookingState()
         {
             Reasons = new List<string>();
@@ -25,6 +23,8 @@ namespace MyStik.TimeTable.DataServices.Booking
         }
 
         public List<BookingList> BookingLists { get; set; }
+
+        public BookingList LostBookings { get; set; }
 
         public Occurrence Occurrence { get; set; }
 
@@ -38,78 +38,32 @@ namespace MyStik.TimeTable.DataServices.Booking
 
         public List<string> Reasons { get; }
 
-        public BookingList MyBookingList
-        {
-            get { return _myBookingList; }
-        }
-
-        public BookingType BookingType
-        {
-            get
-            {
-                return !Occurrence.HasHomeBias
-                    ? BookingType.green
-                    : (!Occurrence.IsCoterie ? BookingType.yellow : BookingType.red);
-            }
-        }
+        public BookingList MyBookingList { get; set; }
 
         public void Init()
         {
-            if (Student != null)
-            {
-                switch (BookingType)
-                {
-                    case BookingType.green:
-                    {
-                        _myBookingList = BookingLists.FirstOrDefault();
-                        break;
-                    }
-                    case BookingType.yellow:
-                    {
-                        var list = BookingLists.FirstOrDefault(x =>
-                            x.Curricula.Any(c => c.Id == Student.Curriculum.Id));
-                        if (list != null)
-                        {
-                            _myBookingList = list;
-                        }
-                        else
-                        {
-                            _myBookingList = BookingLists.FirstOrDefault(x => !x.Curricula.Any());
-                        }
-
-                        break;
-                    }
-                    case BookingType.red:
-                    {
-                        _myBookingList = BookingLists.FirstOrDefault(x =>
-                            x.Curricula.Any(c => c.Id == Student.Curriculum.Id));
-                        break;
-                    }
-                }
-            }
-
             if (!Occurrence.IsAvailable)
             {
                 IsAvailable = false;
                 Reasons.Add("Eintragung ist von Admin-Seite aus gesperrt worden.");
             }
 
-            if (BookingType == BookingType.red && _myBookingList == null)
+            if (MyBookingList == null)
             {
                 IsAvailable = false;
                 Reasons.Add("Diese Lehrveranstaltung steht für meinen Studiengang nicht zur Verfügung.");
             }
 
-            if (_myBookingList != null && _myBookingList.Capacity >= 0)
+            if (MyBookingList != null && MyBookingList.Capacity >= 0)
             {
                 IsUnrestricted = false;
-                if (_myBookingList.Capacity == int.MaxValue)
+                if (MyBookingList.Capacity == int.MaxValue)
                 {
                     AvailableSeats = int.MaxValue;  // ohne Platzbescränkung ist die Anzahl der verfügbaren Plätze unerheblich
                 }
                 else
                 {
-                    AvailableSeats = _myBookingList.Capacity - _myBookingList.Participients.Count;
+                    AvailableSeats = MyBookingList.Capacity - MyBookingList.Participients.Count;
                 }
             }
         }

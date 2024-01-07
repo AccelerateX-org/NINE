@@ -48,43 +48,42 @@
                 </div>
 
             </div>
-            <table id="tabPots" class="table table-condensed">
+            <table id="tabPots" class="table">
+                @{
+                    var nCapa = Model.Curricula.Count() + 1;
+                }
                 <thead>
-                    <tr>
-                        <th colspan="2">Lehrveranstaltung</th>
-                        <th colspan="@Model.Curricula.Count()">Freie Plätze nach Studiengängen</th>
-                        <th colspan="4">Auswertungen auf Ebene Lehrveranstaltung</th>
-                    </tr>
-                    <tr>
-                        <th>Bezeichnung</th>
-                        <th>Kürzel</th>
-                        @foreach (var c in Model.Curricula)
-                        {
-                            <th>@c.ShortName</th>
-                        }
-                        <th>Kapazität</th>
-                        <th>Belegt</th>
-                        <th>Warteliste</th>
-                        <th>Auslastung</th>
-                    </tr>
+                <tr>
+                    <th colspan="2">Lehrveranstaltung</th>
+                    <th colspan="@nCapa">Freie Plätze nach Studiengängen</th>
+                    <th colspan="4">Auswertungen auf Ebene Lehrveranstaltung</th>
+                </tr>
+                <tr>
+                    <th>Bezeichnung</th>
+                    <th>Kürzel</th>
+                    @foreach (var c in Model.Curricula)
+                    {
+                        <th>@c.ShortName</th>
+                    }
+                    <th>Offene Liste</th>
+                    <th>Kapazität</th>
+                    <th>Belegt</th>
+                    <th>Warteliste</th>
+                    <th>Auslastung</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var course in Model.Courses)
-                    {
-                        var cap = 0;
-                        var useGroups = course.Occurrence.UseGroups;
-                        var tn = course.Occurrence.Subscriptions.Count(x => !x.OnWaitingList);
-                        var wl = course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
-                        var total = tn + wl;
+                @foreach (var course in Model.Courses)
+                {
+                    var cap = 0;
+                    var isInfinity = false;
+                    var tn = course.Occurrence.Subscriptions.Count(x => !x.OnWaitingList);
+                    var wl = course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
+                    var total = tn + wl;
 
-                        if (!useGroups)
-                        {
-                            cap = course.Occurrence.Capacity;
-                        }
+                    var openPot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && !x.BookingList.Curricula.Any() && !x.BookingList.IsLost);
+                    var lostPot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && !x.BookingList.Curricula.Any() && x.BookingList.IsLost);
 
-
-                        if (useGroups)
-                        {
                     <tr>
                         <td>
                             <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
@@ -98,15 +97,24 @@
 
                             if (pot != null)
                             {
-                                cap += pot.Capacity;
-                                var free = pot.SeatsAvailable - pot.Lots.Count;
-                                if (cap > 0)
+                                if (pot.Capacity == int.MaxValue)
                                 {
-                                    <td>@free</td>
+                                    isInfinity = true;
+                                    <td><i class="bi-infinity"></i></td>
                                 }
                                 else
                                 {
-                                    <td></td>
+                                    cap += pot.Capacity;
+                                    var free = pot.SeatsAvailable - pot.Lots.Count;
+                                    if (cap > 0)
+                                    {
+                                        <td>@free von @pot.Capacity</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
                                 }
                             }
                             else
@@ -114,7 +122,33 @@
                                 <td></td>
                             }
                         }
-                        @if (cap < 0)
+                        @if (openPot != null)
+                        {
+                            if (openPot.Capacity == int.MaxValue)
+                            {
+                                isInfinity = true;
+                                <td><i class="bi-infinity"></i></td>
+                            }
+                            else
+                            {
+                                cap += openPot.Capacity;
+                                var free = openPot.SeatsAvailable - openPot.Lots.Count;
+                                if (cap > 0)
+                                {
+                                    <td>@free von @openPot.Capacity</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <td>0</td>
+                        }
+
+                        @if (isInfinity)
                         {
                             <td><i class="bi-infinity"></i></td>
                         }
@@ -124,51 +158,23 @@
                         }
                         <td>@tn</td>
                         <td>@wl</td>
-                        @if (cap != 0)
+                        @if (lostPot != null)
                         {
-                            <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
+                            <td>@lostPot.BookingList.Bookings.Count Einträge ohne Zuordnung zu einem Kontingent</td>
                         }
                         else
                         {
-                            <td></td>
+                            if (isInfinity)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
+                            }
                         }
                     </tr>
-                        }
-                        else
-                        {
-                <tr>
-                    <td>
-                        <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
-                    </td>
-                    <td>
-                        <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName</a>
-                    </td>
-                    @foreach (var c in Model.Curricula)
-                    {
-                        <td></td>
-                    }
-                    @if (cap < 0)
-                    {
-                        <td><i class="bi-infinity"></i></td>
-                    }
-                    else
-                    {
-                        <td>@cap</td>
-                    }
-                    <td>@tn</td>
-                    <td>@wl</td>
-                    @if (cap != 0)
-                    {
-                        <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                </tr>
-
-                        }
-                    }
+                }
                 </tbody>
             </table>
         </div>

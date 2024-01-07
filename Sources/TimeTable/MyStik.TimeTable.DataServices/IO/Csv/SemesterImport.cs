@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using log4net;
 using MyStik.TimeTable.Data;
@@ -58,11 +59,59 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
         }
 
 
-        public void CheckFaculty()
+        public void CheckModules()
         {
             _organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
             _semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
             _segment = db.SemesterDates.SingleOrDefault(s => s.Id == _segmentId);
+
+            foreach (var validCourse in _import.ValidCourses)
+            {
+                var course = validCourse.Value.First();
+                if (course == null)
+                {
+                    _import.AddErrorMessage("Import",  string.Format("Lehrveranstaltung ohne Inhalt: {0}", validCourse.Key), true);
+                    continue;
+                }
+
+                if (course.SubjectId.Contains("::"))
+                {
+                    var words = course.SubjectId.Split(':');
+
+                    if (words.Length == 7)
+                    {
+                        var orgTag = words[0];
+                        var catTag = words[2];
+                        var modTag = words[4];
+                        var subTag = words[6];
+
+                        var subjects = db.ModuleCourses.Where(x =>
+                            x.Module.Catalog != null &&
+                            x.Module.Catalog.Organiser.ShortName.Equals(orgTag) &&
+                            x.Module.Catalog.Tag.Equals(catTag) &&
+                            x.Module.Tag.Equals(modTag) &&
+                            x.Tag.Equals(subTag)
+                        ).ToList();
+
+                        if (subjects.Any())
+                        {
+                        }
+                        else
+                        {
+                            _import.AddErrorMessage("Import", string.Format("Modul nicht vorhanden: {0} - {1}", validCourse.Key, course.SubjectId), true);
+                        }
+                    }
+                }
+                else
+                {
+                    _import.AddErrorMessage("Import", string.Format("Kein Modul angegeben: {0}", validCourse.Key), false);
+                }
+
+            }
+
+
+
+
 
             if (!_isValid)
                 return;
@@ -70,12 +119,90 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
         public void CheckRooms()
         {
+            var rooms = _import.AllCourseEntries.Select(x => x.Room).Distinct().ToList();
+            var nNew = 0;
+            var nExist = 0;
+
+
+            var db = new TimeTableDbContext();
+            var org = db.Organisers.SingleOrDefault(o => o.Id == _orgId);
+
+            if (org == null)
+            {
+                _import.AddErrorMessage("Import", "Unbekannte Organisationseinheit", true);
+                return;
+            }
+
+            foreach (var raum in rooms)
+            {
+                var dbRooms = db.Rooms.Where(r => r.Number.Equals(raum)).ToList();
+                if (dbRooms.Any())
+                {
+                    nExist++;
+                    foreach (var dbRoom in dbRooms)
+                    {
+                        if (dbRoom.Assignments.All(a => a.Organiser.Id != org.Id))
+                        {
+                            _import.AddErrorMessage("Import",
+                                $"Raum [{raum}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.",
+                                false);
+                        }
+                    }
+                }
+                else
+                {
+                    _import.AddErrorMessage("Import",
+                        $"Raum [{raum}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet",
+                        false);
+                    nNew++;
+                }
+            }
+
+            _import.AddErrorMessage("Import", string.Format("Anzahl Räueme: {0}: {1} vorhanden - {2} werden angelegt", rooms.Count, nExist, nNew), false);
+
             if (!_isValid)
                 return;
         }
 
         public void CheckLecturers()
         {
+            var lecturer = _import.AllCourseEntries.Select(x => x.Lecturer).Distinct().ToList();
+            var nNew = 0;
+            var nExist = 0;
+
+            var db = new TimeTableDbContext();
+            var org = db.Organisers.SingleOrDefault(o => o.Id == _orgId);
+
+            if (org == null)
+            {
+                _import.AddErrorMessage("Import", "Unbekannte Organisationseinheit", true);
+                return;
+            }
+
+            foreach (var doz in lecturer)
+            {
+                if (org.Members.Count(m => m.ShortName.Equals(doz)) > 1)
+                {
+                    _import.AddErrorMessage("Import", string.Format("Kurzname {0} existieren mehrfach in Datenbank. Dozent wird keinem Termin zugeordnet", doz), true);
+                }
+                else
+                {
+                    var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz));
+                    if (lec == null)
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Dozent [{0}] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz), false);
+                        nNew++;
+                    }
+                    else
+                    {
+                        nExist++;
+                    }
+                }
+            }
+
+            _import.AddErrorMessage("Import", string.Format("Anzahl lehrende: {0}: {1} vorhanden - {2} werden angelegt", lecturer.Count, nExist, nNew), false);
+
+
             if (!_isValid)
                 return;
         }
@@ -133,8 +260,6 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                     var modTag = words[4];
                     var subTag = words[6];
 
-                    shortName = $"{words[4]} ({words[6]})";
-
                     subjects.AddRange(db.ModuleCourses.Where(x =>
                         x.Module.Catalog != null &&
                         x.Module.Catalog.Organiser.ShortName.Equals(orgTag) &&
@@ -142,8 +267,16 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                         x.Module.Tag.Equals(modTag) &&
                         x.Tag.Equals(subTag)
                     ).ToList());
+
+                    // Kurzname nur dann ändern, wenn es auch ein Fach dazu gibt
+                    if (subjects.Any())
+                    {
+                        shortName = $"{words[4]} ({words[6]})";
+                    }
                 }
             }
+
+
 
 
             long msStart = sw.ElapsedMilliseconds;

@@ -44,8 +44,6 @@ namespace MyStik.TimeTable.Web.Api.Services
             dto.Name = course.Name;
             dto.ShortName = course.ShortName;
             dto.Description = course.Description;
-            dto.IsCoterie = course.Occurrence.IsCoterie;
-            dto.HasHomeBias = course.Occurrence.HasHomeBias;
 
             foreach (var semesterGroup in course.SemesterGroups)
             {
@@ -196,8 +194,6 @@ namespace MyStik.TimeTable.Web.Api.Services
             dto.Name = course.Name;
             dto.ShortName = course.ShortName;
             dto.Description = course.Description;
-            dto.IsCoterie = course.Occurrence.IsCoterie;
-            dto.HasHomeBias = course.Occurrence.HasHomeBias;
 
             foreach (var host in summary.Lecturers)
             {

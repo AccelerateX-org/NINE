@@ -181,13 +181,27 @@
                                     <td>@lottery.Lottery.Name</td>
                                 }
                             }
-                            <td style="text-align: right">@lottery.Lottery.Occurrences.Count</td>
-                            <td style="text-align: right">@lottery.Capacity</td>
-                            <td style="text-align: right">@lottery.TotalSubscriberCount</td>
-                            <td style="text-align: right">@lottery.TotalSubscriptionCount</td>
-                            <td style="text-align: right">@nConfirmed</td>
-                            <td style="text-align: right">@nWaiting</td>
-                            <td style="text-align: right">@perc.ToString("P")</td>
+                            <td>@lottery.Lottery.Occurrences.Count</td>
+                            @if (lottery.Capacity == int.MaxValue)
+                            {
+                                <td><i class="bi-infinity"></i></td>
+                            }
+                            else
+                            {
+                                <td>@lottery.Capacity</td>
+                            }
+                            <td>@lottery.TotalSubscriberCount</td>
+                            <td>@lottery.TotalSubscriptionCount</td>
+                            <td>@nConfirmed</td>
+                            <td>@nWaiting</td>
+                            @if (lottery.Capacity == int.MaxValue)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td style="text-align: right">@perc.ToString("P")</td>
+                            }
 
                             @if (lottery.Lottery.IsActiveFrom.HasValue)
                             {

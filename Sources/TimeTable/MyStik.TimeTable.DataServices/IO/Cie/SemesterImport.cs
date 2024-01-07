@@ -164,6 +164,7 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
 
             // Semestergruppe => auch hier eine "intelligente" Zuordnung
             // nur machen, wenn Kurs keine Gruppen hat
+            /*
             if (!course.SemesterGroups.Any())
             {
                 foreach (var curriculum in curricula)
@@ -214,44 +215,8 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
             {
                 _Logger.ErrorFormat("Kurs {0} ohne Gruppe", scheduleCourse.id);
             }
-
-            // jetzt die Module
-            // wieder pro Studiengang
-            /*
-            foreach (var curriculum in curricula)
-            {
-                //var module = GetModule(db, curriculum, scheduleCourse);
-
-                var nexus = new CourseModuleNexus();
-                //nexus.Requirement = module;
-                nexus.Course = course;
-                // nexus.ModuleCourse = // fehlt noch
-
-                course.Nexus.Add(nexus);
-
-                db.CourseNexus.Add(nexus);
-            }
             */
-            db.SaveChanges();
 
-
-            // Das Ampelsystem
-            if (scheduleCourse.courseStatus.Equals("RED"))
-            {
-                course.Occurrence.IsCoterie = true;
-                course.Occurrence.HasHomeBias = true; // Bedeutungslos
-            }
-            else if (scheduleCourse.courseStatus.Equals("YELLOW"))
-            {
-                course.Occurrence.IsCoterie = false;
-                course.Occurrence.HasHomeBias = true;
-
-            }
-            else //(scheduleCourse.courseStatus.Equals("GREEN"))
-            {
-                course.Occurrence.IsCoterie = false;
-                course.Occurrence.HasHomeBias = false;
-            }
 
             db.SaveChanges();
 

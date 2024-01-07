@@ -577,33 +577,36 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var summary = ac.GetSummary(occ.Id);
 
-                var dates = summary.GetDates(begin, end);
-
-                foreach (var date in dates)
+                if (summary != null)
                 {
-                    var agendaDay = model.Days.SingleOrDefault(d => d.Day.Date == date.Begin.Date);
-                    if (agendaDay == null)
+                    var dates = summary.GetDates(begin, end);
+
+                    foreach (var date in dates)
                     {
-                        agendaDay = new AgendaDayViewModel
+                        var agendaDay = model.Days.SingleOrDefault(d => d.Day.Date == date.Begin.Date);
+                        if (agendaDay == null)
                         {
-                            Day = date.Begin.Date
-                        };
-                        model.Days.Add(agendaDay);
-                    }
+                            agendaDay = new AgendaDayViewModel
+                            {
+                                Day = date.Begin.Date
+                            };
+                            model.Days.Add(agendaDay);
+                        }
 
-                    if (agendaDay.Activities.All(x => x.Date.Id == date.Id))
-                    {
-                        var agendaActivity = new AgendaActivityViewModel
+                        if (agendaDay.Activities.All(x => x.Date.Id == date.Id))
                         {
-                            Date = date
-                        };
+                            var agendaActivity = new AgendaActivityViewModel
+                            {
+                                Date = date
+                            };
 
-                        // den slot prüfen
-                        agendaActivity.Slot =
-                            date.Slots.FirstOrDefault(
-                                x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+                            // den slot prüfen
+                            agendaActivity.Slot =
+                                date.Slots.FirstOrDefault(
+                                    x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
 
-                        agendaDay.Activities.Add(agendaActivity);
+                            agendaDay.Activities.Add(agendaActivity);
+                        }
                     }
                 }
             }

@@ -9,9 +9,11 @@ using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.Booking;
+using MyStik.TimeTable.DataServices.Booking.Data;
 using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using static System.Windows.Forms.AxHost;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -28,32 +30,39 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
             var org = GetOrganisation(id);
 
+            var model = new List<LotterySemesterSummaryModel>();
+
             // aktuelles Semester
             var semester = SemesterService.GetSemester(DateTime.Today);
             var nextSemester = SemesterService.GetNextSemester(semester);
 
-            var allLotteries = Db.Lotteries.Where(x =>
-                x.Semester != null && x.Semester.Id == semester.Id &&
-                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
-
-            var allNextLotteries = Db.Lotteries.Where(x =>
-                x.Semester != null && x.Semester.Id == nextSemester.Id &&
-                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
-
-            var model = new List<LotterySemesterSummaryModel>();
-
-            model.Add(new LotterySemesterSummaryModel
+            if (nextSemester != null)
             {
-                Semester = nextSemester,
-                Lottery = allNextLotteries
-            });
+                var allNextLotteries = Db.Lotteries.Where(x =>
+                    x.Semester != null && x.Semester.Id == nextSemester.Id &&
+                    x.Organiser != null && x.Organiser.Id == org.Id).ToList();
 
-            model.Add(new LotterySemesterSummaryModel
+
+                model.Add(new LotterySemesterSummaryModel
+                {
+                    Semester = nextSemester,
+                    Lottery = allNextLotteries
+                });
+            }
+
+            if (semester != null)
             {
-                Semester = semester,
-                Lottery = allLotteries
-            });
+                var allLotteries = Db.Lotteries.Where(x =>
+                    x.Semester != null && x.Semester.Id == semester.Id &&
+                    x.Organiser != null && x.Organiser.Id == org.Id).ToList();
 
+
+                model.Add(new LotterySemesterSummaryModel
+                {
+                    Semester = semester,
+                    Lottery = allLotteries
+                });
+            }
 
             ViewBag.Organiser = org;
             ViewBag.userRight = GetUserRight(org);
@@ -126,14 +135,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var lotteryOccurrence in lottery.Occurrences)
                 {
-                    if (lotteryOccurrence.UseGroups)
-                    {
-                        totalCapacity += lotteryOccurrence.Groups.Sum(x => x.Capacity);
-                    }
-                    else
-                    {
-                        totalCapacity += lotteryOccurrence.Capacity > 0 ? lotteryOccurrence.Capacity : 0;
-                    }
+                    totalCapacity += lotteryOccurrence.SeatQuotas.Sum(x => x.MaxCapacity);
 
                     totalSubscriptions += lotteryOccurrence.Subscriptions.Count;
 
@@ -2182,22 +2184,24 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
 
+                var bookingService = new BookingServiceQuotas(Db, course.Occurrence);
+                var bookingLists = bookingService.GetBookingLists();
+                var myBookingList = bookingService.GetBookingList(student);
 
-                var bookingLists = new BookingService(Db).GetBookingLists(course.Occurrence.Id);
                 var bookingState = new BookingState
                 {
                     Student = student,
                     Occurrence = course.Occurrence,
-                    BookingLists = bookingLists
+                    BookingLists = bookingLists,
+                    MyBookingList = myBookingList
                 };
                 bookingState.Init();
-
 
 
                 var isSelectable = true;
                 var msg = new StringBuilder();
 
-                if (student?.Curriculum == null || course.Occurrence.IsCoterie && !courseSummary.Curricula.Contains(student.Curriculum))
+                if (student?.Curriculum == null || myBookingList == null)
                 {
                     isSelectable = false;
                     msg.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht für Ihren Studiengang nicht zur Verfügung</li>");
@@ -2209,8 +2213,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     msg.AppendLine("<li><i class=\"fa fa-li fa-lock\"></i>Lehrveranstaltung ist für Eintragungen gesperrt</li>");
                 }
 
-                if (course.Occurrence.Capacity > 0 && course.Occurrence.Subscriptions.Count(x => !x.OnWaitingList) >=
-                    course.Occurrence.Capacity)
+                if (bookingState.MyBookingList != null && bookingState.MyBookingList.FreeSeats < 1)
                 {
                     isSelectable = false;
                     msg.AppendLine("<li><i class=\"fa fa-li fa-times\"></i>Keine freien Plätze in der Lehrveranstaltung verfügbar</li>");
@@ -2622,7 +2625,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new LotteryTestModel();
             model.Lottery = lottery;
             model.Capacity = 10;
-            model.IsCoterie = true;
 
             return View(model);
         }
@@ -2645,9 +2647,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     course.Occurrence.Capacity += model.Capacity;
                 }
-
-                course.Occurrence.IsCoterie = model.IsCoterie;
-                course.Occurrence.UseGroups = false;
             }
 
             Db.SaveChanges();
@@ -2712,19 +2711,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var course in courses)
                 {
-                    // Berücksichtigung der "geschlossenen Gesellschaft"
-                    if (course.Occurrence.IsCoterie)
-                    {
-                        if (course.SemesterGroups.Any(x =>
-                            x.CapacityGroup.CurriculumGroup.Curriculum.Id == student.Curriculum.Id))
-                        {
-                            coursePortfolio.Add(course);
-                        }
-                    }
-                    else
-                    {
-                        coursePortfolio.Add(course);
-                    }
+                    coursePortfolio.Add(course);
                 }
 
                 // Per Zufall wählen
@@ -3134,36 +3121,45 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
-                var bookingLists = new BookingService(Db).GetBookingLists(course.Occurrence.Id);
-                var state1 = new BookingState();
-                state1.Student = currentStudent;
-                state1.Occurrence = course.Occurrence;
-                state1.BookingLists = bookingLists;
+
+                var bookingService = new BookingServiceQuotas(Db, course.Occurrence);
+                var bookingLists = bookingService.GetBookingLists();
+                var myBookingList = bookingService.GetBookingList(currentStudent);
+
+                var state1 = new BookingState
+                {
+                    Student = currentStudent,
+                    Occurrence = course.Occurrence,
+                    BookingLists = bookingLists,
+                    MyBookingList = myBookingList
+                };
                 var state = state1;
                 state.Init();
                 var flag = true;
                 var builder = new StringBuilder();
-                if ((currentStudent?.Curriculum == null) || (course.Occurrence.IsCoterie && !courseSummary.Curricula.Contains(currentStudent.Curriculum)))
+                if (currentStudent?.Curriculum == null || myBookingList == null)
                 {
                     flag = false;
-                    builder.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht f\x00fcr Ihren Studiengang nicht zur Verf\x00fcgung</li>");
+                    builder.AppendLine("<li><i class=\"bi-ban\"></i> Lehrveranstaltung steht f\x00fcr Ihren Studiengang nicht zur Verf\x00fcgung</li>");
                 }
                 if (!course.Occurrence.IsAvailable)
                 {
                     flag = false;
-                    builder.AppendLine("<li><i class=\"fa fa-li fa-lock\"></i>Lehrveranstaltung ist f\x00fcr Eintragungen gesperrt</li>");
+                    builder.AppendLine("<li><i class=\"bi-lock\"></i>Lehrveranstaltung ist f\x00fcr Eintragungen gesperrt</li>");
                 }
                 if (state.MyBookingList != null && state.MyBookingList.FreeSeats < 1)
                 {
                     flag = false;
-                    builder.AppendLine("<li><i class=\"fa fa-li fa-times\"></i>Keine freien Pl\x00e4tze verf\x00fcgbar</li>");
+                    builder.AppendLine("<li><i class=\"bi-x\"></i>Keine freien Pl\x00e4tze verf\x00fcgbar</li>");
                 }
-                var model4 = new LotteryOverviewCourseModel();
-                model4.CourseSummary = courseSummary;
-                model4.IsSelectable = flag;
-                model4.Message = builder.ToString();
-                model4.BookingState = state;
-                model4.Subscription = courseSummary.Subscription;
+                var model4 = new LotteryOverviewCourseModel
+                {
+                    CourseSummary = courseSummary,
+                    IsSelectable = flag,
+                    Message = builder.ToString(),
+                    BookingState = state,
+                    Subscription = courseSummary.Subscription
+                };
                 var item = model4;
                 model.Courses.Add(item);
                 if (courseSummary.Subscription != null)
@@ -3171,15 +3167,16 @@ namespace MyStik.TimeTable.Web.Controllers
                     model.CoursesSelected.Add(item);
                 }
             }
-        return model;
-    }
+            return model;
+        }
 
 
         public PartialViewResult Subscribe(Guid lotteryId, Guid courseId)
         {
             var logger = LogManager.GetLogger("Booking");
             var currentUser = GetCurrentUser();
-            var ticket = new BookingService(Db).Subscribe(currentUser.Id, courseId);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+            var ticket = new BookingServiceQuotas(Db, course.Occurrence).Subscribe(currentUser.Id, course);
             if (ticket.SucceedingSubscription != null)
             {
                 new SubscriptionMailService().SendSucceedingEMail(ticket.Course, ticket.SucceedingSubscription);

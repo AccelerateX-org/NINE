@@ -49,22 +49,7 @@ namespace MyStik.TimeTable.Web.Models
         {
             get
             {
-                if (Course.Course.Occurrence.IsCoterie)
-                {
                     return 3;            // red
-                }
-                else
-                {
-                    if (Course.Course.Occurrence.HasHomeBias)
-                    {
-                        return 2;        // yellow
-                    }
-                    else
-                    {
-                        return 1;        // green
-                    }
-                }
-
             }
         }
 

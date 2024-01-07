@@ -875,9 +875,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courseSummary = courseService.GetCourseSummary(id);
 
-            var bookingService = new BookingService(Db);
+            var bookingService = new BookingServiceQuotas(Db, courseSummary.Course.Occurrence);
 
-            var bookingLists = bookingService.GetBookingLists(courseSummary.Course.Occurrence.Id);
+            var bookingList = bookingService.GetBookingList(student);
 
             var subscriptionService = new SubscriptionService(Db);
 
@@ -928,7 +928,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Student = student,
                 Occurrence = courseSummary.Course.Occurrence,
-                BookingLists = bookingLists
+                MyBookingList = bookingList
             };
             bookingState.Init();
 
@@ -981,17 +981,17 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 subscription = occ.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
 
-                var bookingService = new BookingService(Db);
-                var bookingLists = bookingService.GetBookingLists(occ.Id);
+                var bookingService = new BookingServiceQuotas(Db, occ);
+                var bookingList = bookingService.GetBookingList(student);
                 var bookingState = new BookingState
                 {
                     Student = student,
                     Occurrence = occ,
-                    BookingLists = bookingLists
+                    MyBookingList = bookingList
                 };
                 bookingState.Init();
 
-                var bookingList = bookingState.MyBookingList;
+                bookingList = bookingState.MyBookingList;
 
                 if (subscription == null)
                 {

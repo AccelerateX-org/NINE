@@ -19,27 +19,35 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
 
         public bool IsMisc { get; set; }
 
+        public bool IsLost { get; set; }
+
         public Occurrence Occurrence { get; set; }
 
-        public OccurrenceGroup Group { get; set; }
-
-        public List<Curriculum> Curricula { get; }
+        public SeatQuota SeatQuota { get; set; }
 
         public List<Booking> Bookings { get; }
+
+        /// <summary>
+        /// deprecated
+        /// </summary>
+        //public OccurrenceGroup Group { get; set; }
+
+        /// <summary>
+        /// deprecated
+        /// </summary>
+        public List<Curriculum> Curricula { get; }
+
 
         public int Capacity
         {
             get
             {
-                if (IsMisc)
-                    return 0;
-
-                if (Group == null)
+                if (SeatQuota != null)
                 {
-                    return Occurrence.Capacity < 0 ? int.MaxValue : Occurrence.Capacity;
+                    return SeatQuota.MaxCapacity;
                 }
 
-                return Group.Capacity < 0 ? int.MaxValue : Group.Capacity;
+                return int.MaxValue;
             }
         }
 
@@ -47,10 +55,12 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
         {
             get
             {
-                if (IsMisc)
-                    return 0;
+                if (SeatQuota != null)
+                {
+                    return Capacity != int.MaxValue ? Capacity - Participients.Count : int.MaxValue;
+                }
 
-                return Capacity != int.MaxValue ? Capacity - Participients.Count : int.MaxValue;
+                return int.MaxValue;
             }
         }
 
@@ -96,6 +106,11 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
         {
             get
             {
+                if (SeatQuota != null)
+                {
+                    return SeatQuota.Summary;
+                }
+
                 if (!Curricula.Any())
                 {
                     return _name;

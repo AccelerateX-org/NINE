@@ -83,7 +83,7 @@ namespace MyStik.TimeTable.Web.Hubs
             // Annahme: Fehler sind dem Anwender bekannt, da vorher ein Check durchgeführt wurde
             // daher können die Checks oben auch entfallen
             var importer = new DataServices.IO.Csv.SemesterImport(reader.Context, semId, orgId, segmentId);
-            importer.CheckFaculty();
+            importer.CheckModules();
 
             var n = reader.Context.ValidCourses.Count;
             var i = 0;

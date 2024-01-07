@@ -586,30 +586,11 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Organiser = catalog.Organiser;
             model.Catalog = catalog;
 
-            var currList = new List<Curriculum>();
-            /*
-            foreach (var module in catalog.Modules)
-            {
-                var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
-
-                foreach (var curr in currs)
-                {
-                    if (!currList.Contains(curr))
-                    {
-                        currList.Add(curr);
-                    }
-                }
-
-            }
-            */
-            model.Curriculum = currList.FirstOrDefault();
-
             var semesterList = new List<Semester>();
-            semesterList.Add(SemesterService.GetNextSemester(model.Semester));
+            //semesterList.Add(SemesterService.GetNextSemester(model.Semester));
             semesterList.Add(model.Semester);
 
             ViewBag.Semester = semesterList;
-            ViewBag.Curricula = currList;
 
             return View(model);
         }

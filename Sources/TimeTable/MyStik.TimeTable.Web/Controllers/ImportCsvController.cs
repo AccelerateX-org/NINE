@@ -121,8 +121,8 @@ namespace MyStik.TimeTable.Web.Controllers
             reader.ReadFiles(tempDir);
             var importer = new DataServices.IO.Csv.SemesterImport(reader.Context, model.SemesterId, model.OrganiserId, model.SegmentId);
 
-            // Die Fakultät muss existieren
-            importer.CheckFaculty();
+            // Module prüfen => Warnung
+            importer.CheckModules();
 
             // Räume sollten existieren => Warnung
             // Zuordnungen zu Räumen sollten existieren => Warnung

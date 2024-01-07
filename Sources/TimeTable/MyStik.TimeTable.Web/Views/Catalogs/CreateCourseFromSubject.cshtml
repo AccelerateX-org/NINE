@@ -1,0 +1,269 @@
+﻿@model MyStik.TimeTable.Web.Models.CatalogPlanModel
+@{
+    ViewBag.Title = "Plan";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Planungssicht</h4>
+            </div>
+            @*
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi-save"></i>  Änderungen übernehmen
+                    </a>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            *@
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <h5>Modulbereich</h5>
+                        <div class="row">
+                            <div class="col-4">Semester</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="selectSeemster" onchange="onSemesterChanged(this.value)">
+                                    @foreach (var sem in ViewBag.Semester)
+                                    {
+                                        if (sem.Id == Model.Semester.Id)
+                                        {
+                                            <option selected value="@sem.Id">@sem.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="sem.Id">@sem.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Fakultät</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="selectOrg" onchange="onOrgChanged(this.value)">
+                                    <option selected value="@Model.Organiser.Id">@Model.Organiser.ShortName</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Modulkatalog</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="selectCat" onchange="onCatalogChanged(this.value)">
+                                    <option selected value="@Model.Catalog.Id">@Model.Catalog.Name</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Studiengang</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="selectCurr" onchange="onCurriculumChanged(this.value)">
+                                    @foreach (var curr in ViewBag.Curricula)
+                                    {
+                                        if (curr.Id == Model.Curriculum.Id)
+                                        {
+                                            <option selected value="@curr.Id">@curr.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="sem.Id">@curr.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Fachsemester</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="selectTerm" onchange="onTermChanged(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            var org = $("#targetOrg").val();
+            onTargetOrgChanged(org);
+
+            org = $("#sourceOrg").val();
+            onSourceOrgChanged(org);
+        });
+
+
+        function onSourceOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCatalogs")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceCat").html(data);
+                        $("#sourceCat").change();
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onSourceCatChanged(value) {
+
+            updateMoveState();
+            var catId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetModules")',
+                    data: {
+                        catId: catId,
+                        side: "source"
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceModules").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onTargetOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCatalogs")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#targetCat").html(data);
+                        $("#targetCat").change();
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onTargetCatChanged(value) {
+
+            updateMoveState();
+            var catId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetModules")',
+                    data: {
+                        catId: catId,
+                        side: "target"
+                    },
+                    success: function(data, success, xhr) {
+                        $("#targetModules").html(data);
+                        $("#loading").hide();
+                    }
+                });
+        }
+
+        function updateMoveState() {
+            var sourceCat = $('#sourceCat').val();
+            var targetCat = $('#targetCat').val();
+
+            if (targetCat === sourceCat) {
+                $('#btnMove').addClass("disabled");
+            } else {
+                $('#btnMove').removeClass("disabled");
+            }
+
+        }
+
+
+        function moveModules() {
+            //var list = $("#sourceModules > ul > li > input[type='checkbox'][checked='checked']").get();
+            var list = $("#sourceModuleList > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+
+                    var listElemId = '#' + list[i].id;
+                    //alert(listElemId);
+
+                    var listElem = $(listElemId).remove();
+
+                    listElem.addClass('disabled');
+
+                    $('#targetModuleList').append(listElem);
+                }
+
+            }
+        }
+
+        function saveChanges() {
+            // Zielkatalog
+            var catId = $('#targetCat').val();
+
+            // Liste der hinzugekommemen Module
+            var list = $("#targetModuleList > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+                }
+
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("MoveModulesSave")',
+                        data: {
+                            catId: catId,
+                            moduleIds: moduleIdList
+                        },
+                        success: function(data, success, xhr) {
+                            window.location.replace("@Url.Action("Index")");
+                            $("#loading").hide();
+                        }
+                    });
+
+            }
+
+
+        }
+
+
+    </script>
+}

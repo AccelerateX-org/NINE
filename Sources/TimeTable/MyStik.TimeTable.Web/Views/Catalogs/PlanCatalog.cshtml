@@ -1,6 +1,40 @@
-﻿@model MyStik.TimeTable.Web.Models.CatalogPlanModel
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CatalogPlanModel
 @{
-    ViewBag.Title = "Plan";
+    ViewBag.Title = "Katalogplanung";
+
+    var db = new TimeTableDbContext();
+    var courseService = new CourseService(db);
+
+    var allCourses = db.Activities.OfType<Course>()
+        .Where(x => 
+            x.Semester.Id == Model.Semester.Id && x.Organiser.Id == Model.Organiser.Id &&
+            x.SubjectTeachings.Any(t => t.Subject.Module.Catalog.Id == Model.Catalog.Id))
+        .ToList();
+
+    var allLecturers = new List<OrganiserMember>();
+    var allRooms = new List<Room>();
+    var allLabels = new List<ItemLabel>();
+
+    foreach (var course in allCourses)
+    {
+        var summary = courseService.GetCourseSummary(course);
+
+        allLecturers.AddRange(summary.Lecturers);
+        allRooms.AddRange(summary.Rooms);
+        allLabels.AddRange(course.LabelSet.ItemLabels);
+    }
+
+    allLecturers = allLecturers.Distinct().ToList();
+    allRooms = allRooms.Distinct().ToList();
+    allLabels = allLabels.Distinct().ToList();
+}
+
+
+@section styles
+{
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
 
@@ -8,85 +42,162 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Planungssicht</h4>
+                <h4>Planungssicht für @Model.Catalog.Name</h4>
             </div>
-            @*
-            <div class="list-group">
-                <div class="list-group-item">
-                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
-                        <i class="bi-save"></i>  Änderungen übernehmen
-                    </a>
-                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
-                        <i class="bi-x"></i> Abbrechen
-                    </a>
-                </div>
-            </div>
-            *@
             <div class="card-body">
                 <div class="row">
-                    <div class="col-5">
-                        <h5>Modulbereich</h5>
-                        <div class="row">
-                            <div class="col-4">Semester</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="selectSeemster" onchange="onSemesterChanged(this.value)">
-                                    @foreach (var sem in ViewBag.Semester)
+                    <div class="col-md-2">
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectSemster" onchange="onSemesterChanged(this.value)">
+                                @foreach (var sem in ViewBag.Semester)
+                                {
+                                    if (sem.Id == Model.Semester.Id)
                                     {
-                                        if (sem.Id == Model.Semester.Id)
-                                        {
-                                            <option selected value="@sem.Id">@sem.Name</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="sem.Id">@sem.Name</option>
-                                        }
+                                        <option selected value="@sem.Id">@sem.Name</option>
                                     }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Fakultät</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="selectOrg" onchange="onOrgChanged(this.value)">
-                                    <option selected value="@Model.Organiser.Id">@Model.Organiser.ShortName</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Modulkatalog</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="selectCat" onchange="onCatalogChanged(this.value)">
-                                    <option selected value="@Model.Catalog.Id">@Model.Catalog.Name</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Studiengang</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="selectCurr" onchange="onCurriculumChanged(this.value)">
-                                    @foreach (var curr in ViewBag.Curricula)
+                                    else
                                     {
-                                        if (curr.Id == Model.Curriculum.Id)
-                                        {
-                                            <option selected value="@curr.Id">@curr.Name</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="sem.Id">@curr.Name</option>
-                                        }
+                                        <option value="sem.Id">@sem.Name</option>
                                     }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Fachsemester</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="selectTerm" onchange="onTermChanged(this.value)">
-                                </select>
-                            </div>
+                                }
+                            </select>
+                            <label for="selectSemster">Semester</label>
                         </div>
                     </div>
-                    <div class="col-5">
+                    <div class="col-md-2">
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectSection" onchange="onSectionChanged(this.value)">
+                            </select>
+                            <label for="selectSection">Abschnitt</label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectOrg" onchange="onOrgChanged(this.value)">
+                                <option selected value="@Model.Organiser.Id">@Model.Organiser.ShortName</option>
+                            </select>
+                            <label for="selectOrg">Einrichtung</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectCat" onchange="onCatalogChanged(this.value)">
+                                <option selected value="@Model.Catalog.Id">@Model.Catalog.Tag</option>
+                            </select>
+                            <label for="selectCat">Modulkatalog</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                    <div class="col-md-2">
+                        <div class="btn-group">
+                            <a href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi-chevron-left"></i></a>
+                            <a href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi-chevron-right"></i></a>
+                            <a href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi-calendar-week"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Angebotene Lehrveranstaltungen</h5>
+                        <div class="list-group">
+                            @foreach (var module in Model.Catalog.Modules)
+                            {
+                                <div class="list-group-item p-0">
+                                <div class="row g-0">
+                                    <div class="col-md-8">
+                                        <div class="card" style="height: 100%">
+                                            <div class="card-body pt-0 pb-0">
+                                                <div class="text-truncate">
+                                                    <strong>@module.Name</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @foreach (var subject in module.ModuleSubjects)
+                                        {
+                                        <div class="row g-0">
+                                            <div class="col-md-6">
+                                                <div class="card" style="height: 100%">
+                                                    <div class="card-body pt-0 pb-0">
+                                                        @subject.Tag
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="list-group list-group-flush">
+                                                        @foreach (var teaching in subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id))
+                                                        {
+                                                            <div class="list-group-item pt-0 pb-0">
+                                                                @teaching.Course.ShortName
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Eingesetzte Lehrende</h5>
+                                <div class="card">
+                                    <div class="row g-0 gy-1">
+                                        @foreach (var lecturer in allLecturers)
+                                        {
+                                            <div class="col-3">
+                                                <a id="@lecturer.Id" href="javascript:toggleDoz('@lecturer.Id.ToString()')" class="btn btn-secondary btn-sm" style="width: 100%">@lecturer.ShortName</a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Verwendete Räume</h5>
+                                <div class="card">
+                                    <div class="row g-0 gy-1">
+                                        @foreach (var room in allRooms)
+                                        {
+                                            <div class="col-3">
+                                                <div class="btn btn-secondary btn-sm" style="width: 100%">
+                                                    @room.Number
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Betroffene Kohorten</h5>
+                                <div class="card">
+                                    <div class="row g-0 gy-1">
+                                        @foreach (var label in allLabels)
+                                        {
+                                            <div class="col-3">
+                                                <div class="btn btn-secondary btn-sm" style="width: 100%">
+                                                    @label.Name
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -96,15 +207,116 @@
 
 @section scripts
 {
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+
     <script>
+        var myCalendar = null;
+        var mySelection = "";
+        var showWeekend = true;
+        var dozIds = [];
+
         $(function() {
             $("#loading").hide();
-            var org = $("#targetOrg").val();
-            onTargetOrgChanged(org);
 
-            org = $("#sourceOrg").val();
-            onSourceOrgChanged(org);
+            showWeekCalendar();
+
         });
+
+        function onPrev() {
+            myCalendar.prev();
+        }
+        function onNext() {
+            myCalendar.next();
+        }
+        function toggleWeekend() {
+            showWeekend = !showWeekend;
+            myCalendar.setOption("weekends", showWeekend);
+        }
+
+        function toggleDoz(id) {
+            console.log(id);
+            if (dozIds.includes(id)) {
+                $("#" + id).removeClass("active");
+                i = dozIds.indexOf(id);
+                dozIds.splice(i, 1);
+            } else {
+                $("#" + id).addClass("active");
+                dozIds.push(id);
+            }
+
+
+        }
+
+
+        function showWeekCalendar() {
+            try {
+                $('#loading').show();
+                // Definition der LVs, die angezeigt werden sollen
+                // Basis
+                // Semester && Abschnitt
+                // Org && Catalog
+                // Option: Studiengang als Filter
+                // Overlays: null wenn kein Overlay, Liste wenn Overlay
+                // dozIds
+                // roomIds
+                // labelIds
+                semId = "@Model.Semester.Id";
+                orgId = "@Model.Organiser.Id";
+                @*
+                    labelId = "@Model.Label.Id";
+                    currId = "@Model.Curriculum.Id";
+                    *@
+
+                $('#calendar').html('');
+                myCalendar = initDayCalendar("calendar");
+
+                myCalendar.setOption("headerToolbar", false);
+                //myCalendar.setOption("slotDuration", "00:90:00");
+
+                @*
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("LabelEvents", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            orgId: orgId,
+                            labelId: labelId,
+                            currId: currId,
+
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+                    *@
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
+
+        }
+
 
 
         function onSourceOrgChanged(value) {
@@ -188,80 +400,6 @@
                         $("#loading").hide();
                     }
                 });
-        }
-
-        function updateMoveState() {
-            var sourceCat = $('#sourceCat').val();
-            var targetCat = $('#targetCat').val();
-
-            if (targetCat === sourceCat) {
-                $('#btnMove').addClass("disabled");
-            } else {
-                $('#btnMove').removeClass("disabled");
-            }
-
-        }
-
-
-        function moveModules() {
-            //var list = $("#sourceModules > ul > li > input[type='checkbox'][checked='checked']").get();
-            var list = $("#sourceModuleList > li > input[type='checkbox']:checked").parent().get();
-            var n = list.length;
-            //alert(n);
-
-            if (n > 0) {
-                var moduleIdList = new Array();
-
-                for (var i = 0; i < n; i++) {
-                    moduleIdList[i] = list[i].id;
-
-                    var listElemId = '#' + list[i].id;
-                    //alert(listElemId);
-
-                    var listElem = $(listElemId).remove();
-
-                    listElem.addClass('disabled');
-
-                    $('#targetModuleList').append(listElem);
-                }
-
-            }
-        }
-
-        function saveChanges() {
-            // Zielkatalog
-            var catId = $('#targetCat').val();
-
-            // Liste der hinzugekommemen Module
-            var list = $("#targetModuleList > li > input[type='checkbox']:checked").parent().get();
-            var n = list.length;
-            //alert(n);
-
-            if (n > 0) {
-                var moduleIdList = new Array();
-
-                for (var i = 0; i < n; i++) {
-                    moduleIdList[i] = list[i].id;
-                }
-
-
-                $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("MoveModulesSave")',
-                        data: {
-                            catId: catId,
-                            moduleIds: moduleIdList
-                        },
-                        success: function(data, success, xhr) {
-                            window.location.replace("@Url.Action("Index")");
-                            $("#loading").hide();
-                        }
-                    });
-
-            }
-
-
         }
 
 

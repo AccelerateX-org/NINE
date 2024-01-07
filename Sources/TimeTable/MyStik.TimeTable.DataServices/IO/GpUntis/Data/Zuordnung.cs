@@ -9,5 +9,19 @@
         public string Kapazitätsgruppe { get; set; }
 
         public string Alias { get; set; }
+
+        public string LabelName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Kapazitätsgruppe))
+                    return Studiengruppe;
+
+                if (Studiengruppe.Contains(" "))
+                    return $"{Studiengruppe} - {Kapazitätsgruppe}";
+
+                return $"{Studiengruppe}{Kapazitätsgruppe}";
+            }
+        }
     }
 }

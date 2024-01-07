@@ -25,7 +25,9 @@ namespace MyStik.TimeTable.Data
         public DbSet<Occurrence> Occurrences { get; set; }
 
         public DbSet<OccurrenceGroup> OccurrenceGroups { get; set; }
-        
+
+        public DbSet<SeatQuota> SeatQuotas { get; set; }
+
         public DbSet<Subscription> Subscriptions { get; set; }
 
         public DbSet<ActivityOrganiser> Organisers { get; set; }

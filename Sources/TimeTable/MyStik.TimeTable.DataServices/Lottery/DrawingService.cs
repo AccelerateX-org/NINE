@@ -46,16 +46,14 @@ namespace MyStik.TimeTable.DataServices.Lottery
             Curricula = new List<Curriculum>();
             foreach (var c in Courses)
             {
-                foreach (var g in c.SemesterGroups)
+                foreach (var quota in c.Occurrence.SeatQuotas)
                 {
-                    if (g.CapacityGroup != null && !Curricula.Contains(g.CapacityGroup.CurriculumGroup.Curriculum))
+                    if (quota.Curriculum != null && !Curricula.Contains(quota.Curriculum))
                     {
-                        Curricula.Add(g.CapacityGroup.CurriculumGroup.Curriculum);
+                        Curricula.Add(quota.Curriculum);
                     }
-
                 }
             }
-
 
             LotPots = new List<DrawingLotPot>();
 
@@ -71,12 +69,12 @@ namespace MyStik.TimeTable.DataServices.Lottery
             AddMessage(null, null, "Beginn Initialisierung der Lostöpfe");
             AddMessage(null, null, $"Anzahl Lehrveranstaltungen: {Courses.Count}");
 
-            var bookingService = new BookingService(db);
 
             // Pro Kurs die Lostöpfe anlegen
             foreach (var course in Courses)
             {
-                var bookingLists = bookingService.GetBookingLists(course.Occurrence.Id);
+                var bookingService = new BookingServiceQuotas(db, course.Occurrence);
+                var bookingLists = bookingService.GetBookingLists();
                 AddMessage(course, null, $"Anzahl Buchungslisten: {bookingLists.Count}");
 
                 foreach (var bookingList in bookingLists)

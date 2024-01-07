@@ -138,7 +138,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 }
 
                 ctx.ValidCourses[course.CourseId].Add(course);
-
+                ctx.AllCourseEntries.Add(course);
             }
 
         }

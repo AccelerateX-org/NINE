@@ -25,71 +25,70 @@ Content-Type: text/html; charset=utf-8
     </style>
 </head>
 <body>
-    <div class="mail-text-style">
+        <div class="mail-text-style">
 
-        <p>Sehr geehrte(r) @Model.User.FullName,</p>
+            <p>Sehr geehrte(r) @Model.User.FullName,</p>
 
-        <p>anbei das Ergebnis des Durchgangs im Wahlverfahren "@Model.Game.Lottery.Name" vom @Model.Drawing.Start.ToShortDateString().</p>
-        <p>Ihre Einstellungen:</p>
-        <ul>
-            <li>Datum der letzten Änderung: @Model.Game.LastChange.ToShortDateString()</li>
-            <li>Anazhl der gewünschten Lehrveranstaltungen: @Model.Game.CoursesWanted</li>
-            @if (Model.Game.AcceptDefault)
-            {
-                <li>Zuteilung anderer Lehrveranstaltungen wird akzeptiert.</li>
-            }
-            else
-            {
-                <li>Zuteilung anderer Lehrveranstaltungen wird <strong>nicht</strong> akzeptiert.</li>
-            }
-        </ul>
-        @if (Model.Game.Seats.Any())
-        {
-            <p>Bisher bereits erhaltene Plätze, z.B. durch frühere Durchgänge oder manuelles Eingreifen von Lehrenden:</p>
+            <p>anbei das Ergebnis des Durchgangs im Wahlverfahren "@Model.Game.Lottery.Name" vom @Model.Drawing.Start.ToShortDateString().</p>
+            <p>Ihre Einstellungen:</p>
             <ul>
-                @foreach (var lot in Model.Game.Seats)
+                <li>Datum der letzten Änderung: @Model.Game.LotteryGame.LastChange.ToShortDateString()</li>
+                <li>Anazhl der gewünschten Lehrveranstaltungen: @Model.Game.CoursesWanted</li>
+                @if (Model.Game.AcceptDefault)
                 {
-                    <li>@lot.Course.Name (@lot.Course.ShortName)</li>
+                    <li>Zuteilung anderer Lehrveranstaltungen wird akzeptiert.</li>
+                }
+                else
+                {
+                    <li>Zuteilung anderer Lehrveranstaltungen wird <strong>nicht</strong> akzeptiert.</li>
                 }
             </ul>
 
-        }
-
-        @if (Model.Game.Lots.Any())
-        {
-            var nReceived = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority > 0);
-
-            if (nReceived > 0)
+            @if (Model.Game.Seats.Any())
             {
-                <p>Im aktuellen Durchlauf haben Sie Plätze in folgenden Lehrveranstaltungen Ihrer Wahl erhalten:</p>
+                <p>Bisher bereits erhaltene Plätze, z.B. durch frühere Durchgänge oder manuelles Eingreifen von Lehrenden:</p>
                 <ul>
-                    @foreach (var lot in Model.Game.Lots.Where(x => !x.Subscription.OnWaitingList && x.Priority > 0).OrderBy(x => x.Priority))
+                    @foreach (var lot in Model.Game.Seats)
                     {
-                        <li>Priorität @lot.Priority: @lot.Course.Name (@lot.Course.ShortName)</li>
+                        <li>@lot.Course.Name (@lot.Course.ShortName)</li>
                     }
                 </ul>
+
             }
 
-            if (Model.Game.AcceptDefault)
+            @if (Model.Game.Lots.Any())
             {
-                var nExtra = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority == 0);
-                if (nExtra > 0)
+                var nReceived = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority > 0);
+
+                if (nReceived > 0)
                 {
-                    <p>Sie haben angegeben, Plätze in anderen Lehrveranstaltungen zu akzeptieren. Folgende Plätze konnten Ihnen zugeteilt werden:</p>
+                    <p>Im aktuellen Durchlauf haben Sie Plätze in folgenden Lehrveranstaltungen Ihrer Wahl erhalten:</p>
                     <ul>
-                        @foreach (var lot in Model.Game.Lots.Where(x => !x.Subscription.OnWaitingList && x.Priority == 0))
+                        @foreach (var lot in Model.Game.Lots.Where(x => !x.Subscription.OnWaitingList && x.Priority > 0).OrderBy(x => x.Priority))
                         {
-                            <li>@lot.Course.Name (@lot.Course.ShortName)</li>
+                            <li>Priorität @lot.Priority: @lot.Course.Name (@lot.Course.ShortName)</li>
                         }
                     </ul>
                 }
-            }
-        }
-        
 
-        
-        @{
-            if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
+                if (Model.Game.AcceptDefault)
+                {
+                    var nExtra = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority == 0);
+                    if (nExtra > 0)
+                    {
+                        <p>Sie haben angegeben, Plätze in anderen Lehrveranstaltungen zu akzeptieren. Folgende Plätze konnten Ihnen zugeteilt werden:</p>
+                        <ul>
+                            @foreach (var lot in Model.Game.Lots.Where(x => !x.Subscription.OnWaitingList && x.Priority == 0))
+                            {
+                                <li>@lot.Course.Name (@lot.Course.ShortName)</li>
+                            }
+                        </ul>
+                    }
+                }
+            }
+
+
+            @if (Model.Game.Lottery.MaxConfirm == 0 && Model.Game.Lottery.MaxExceptionConfirm == 0)
             {
             }
             else
@@ -117,24 +116,21 @@ Content-Type: text/html; charset=utf-8
                     {
                         <p>Sie haben angegeben, keine Plätze in anderen Lehrveranstaltungen zu akzeptieren.</p>
                     }
-
                 }
             }
-        }
 
 
 
 
+            <h5>Hinweise:</h5>
+            <ul>
+                <li>Das Wahlverfahren ist keine bzw. ersetzt keine Prüfungsanmeldung.</li>
+                <li>Lehrende können jederzeit in die Platzvergabe eingreifen (z.B. "Voreinschreibung"). Bei Unstimmigkeiten bitte direkt an die jeweiligen Lehrenden wenden.</li>
+            </ul>
 
-        <h5>Hinweise:</h5>
-        <ul>
-            <li>Das Wahlverfahren ist keine bzw. ersetzt keine Prüfungsanmeldung.</li>
-            <li>Lehrende können jederzeit in die Platzvergabe eingreifen (z.B. "Voreinschreibung"). Bei Unstimmigkeiten bitte direkt an die jeweiligen Lehrenden wenden.</li>
-        </ul>
 
-
-        <hr />
-    </div>
+            <hr/>
+        </div>
     <div class="mail-stationary-style">Dies ist eine systemseitig erstellte E-Mail. Bitte antworten Sie nicht auf diese Nachricht.</div>
     <div class="mail-stationary-style">Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:support-nine@hm.edu ">NINE Support</a>.</div>
 </body>

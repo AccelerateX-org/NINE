@@ -586,13 +586,15 @@ namespace MyStik.TimeTable.Web.Services
                 var subscriptionService = new SubscriptionService(Db);
                 var subscription = subscriptionService.GetSubscription(summary.Course.Occurrence.Id, userId);
 
-                var bookingService = new BookingService(Db);
-                var bookingLists = bookingService.GetBookingLists(summary.Course.Occurrence.Id);
+                var bookingService = new BookingServiceQuotas(Db, summary.Course.Occurrence);
+                var bookingList = bookingService.GetBookingList(student);
 
-                var bookingState = new BookingState();
-                bookingState.Occurrence = summary.Course.Occurrence;
-                bookingState.Student = student;
-                bookingState.BookingLists = bookingLists;
+                var bookingState = new BookingState
+                {
+                    Occurrence = summary.Course.Occurrence,
+                    Student = student,
+                    MyBookingList = bookingList
+                };
                 bookingState.Init();
 
                 if (summary.Course.Dates.Any())

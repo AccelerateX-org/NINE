@@ -8,10 +8,13 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
         public ImportContext()
         {
             ValidCourses = new Dictionary<string, List<SimpleCourse>>();
+
+            AllCourseEntries = new List<SimpleCourse>();
         }
 
 
         public Dictionary<string, List<SimpleCourse>> ValidCourses { get; set; }
 
+        public List<SimpleCourse> AllCourseEntries { get; set; }
     }
 }

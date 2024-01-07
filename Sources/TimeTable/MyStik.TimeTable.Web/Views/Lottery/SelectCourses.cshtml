@@ -184,7 +184,34 @@
                                                 <span class="badge bg-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
                                             }
                                         </li>
-                                        <li><i class="fa-li fa fa-book"></i>@Html.GroupList(course.Course.Occurrence)</li>
+                                        @if (course.CourseSummary.Course.Occurrence.SeatQuotas.Any())
+                                        {
+                                            <li>
+                                                <i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen
+                                                <ul>
+                                                    @foreach (var quota in course.BookingState.BookingLists)
+                                                    {
+                                                        if (quota.SeatQuota != null)
+                                                        {
+                                                            <li>@quota.SeatQuota.Summary: @quota.FreeSeats freie Plätze</li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li>Offene Liste</li>
+                                                        }
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            if (course.BookingState.MyBookingList != null)
+                                            {
+                                                <li><i class="fa-li fa fa-bed"></i> Offene Liste</li>
+                                            }
+                                        }
+
+                                    @*
                                         @if (course.CourseSummary.Course.Occurrence.Capacity < 0)
                                         {
                                             if (course.CourseSummary.Course.Occurrence.UseGroups)
@@ -204,7 +231,7 @@
                                             }
                                             else
                                             {
-                                                <li><i class="fa-li fa fa-bed"></i>keine Platzbeschränkungen: @*course.BookingState.MyBookingList.WaitingList.Count auf Warteliste*@</li>
+                                                <li><i class="fa-li fa fa-bed"></i>keine Platzbeschränkungen</li>
                                             }
                                         }
                                         else
@@ -247,6 +274,7 @@
                                                 }
                                             }
                                         }
+                                        *@
                                     </ul>
                                     @if (!course.IsSelectable)
                                     {
@@ -293,8 +321,9 @@
 
 @section scripts
 {
-
+    @*
     <script src="@Url.Content("~/Assets/global/plugins/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js")"></script>
+        *@
 
     <script>
         $(function() {

@@ -61,363 +61,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult ChangeGroups(Guid id)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            if (course == null)
-                return RedirectToAction("MissingCourse", "Error");
-
-            var org = GetMyOrganisation();
-            var sem = SemesterService.GetSemester(DateTime.Today);
-            var courseService = new CourseService(Db);
-            var summary = courseService.GetCourseSummary(id);
-
-            var model = new CourseCreateModel3
-            {
-                Course = course,
-                CourseId = course.Id,
-                Summary = summary, 
-                Semester = sem,
-                SemesterId = sem.Id,
-                OrganiserId = org.Id
-            };
-
-
-            var acticeorgs = SemesterService.GetActiveOrganiser(sem);
-
-            ViewBag.Faculties = acticeorgs.Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
-
-            // Alle Semester, die in Zukunft enden
-            ViewBag.Semesters = Db.Semesters
-                .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
-                .OrderByDescending(x => x.EndCourses)
-                .Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-
-                });
-
-            // bei der ersten Anzeige wird kein onChange ausgelöst
-            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
-            ViewBag.Curricula = currList.Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
-
-            // Default Selection
-            var curr = currList.FirstOrDefault();
-            if (curr != null)
-            {
-                model.CurriculumId = curr.Id;
-
-                var semGroups = Db.SemesterGroups.Where(g => g.Semester.Id == sem.Id &&
-                                                             g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
-                    .ToList();
-
-                var group = semGroups.FirstOrDefault();
-
-                model.GroupId = group != null ? group.Id : Guid.Empty;
-                ViewBag.Groups = semGroups.Select(c => new SelectListItem
-                {
-                    Text = c.GroupName,
-                    Value = c.Id.ToString(),
-                });
-            }
-            else
-            {
-                model.CurriculumId = Guid.Empty;
-                model.GroupId = Guid.Empty;
-
-                ViewBag.Groups = new SelectList("Text", "Value");
-            }
-
-            // Hier reparieren wir die OccurrenceGroups
-            // Ziel: pro Studiengang exakt eine OccGroup, mit allen zugehörigen Semestergruppen
-            // wir mach uns eine Map und gehen die Dinger durch
-            var map = new Dictionary<Curriculum, List<OccurrenceGroup>>();
-
-            foreach (var occurrenceGroup in course.Occurrence.Groups)
-            {
-                foreach (var semesterGroup in occurrenceGroup.SemesterGroups)
-                {
-                    if (!map.ContainsKey(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum))
-                    {
-                        map[semesterGroup.CapacityGroup.CurriculumGroup.Curriculum] = new List<OccurrenceGroup>();
-                    }
-
-                    if (!map[semesterGroup.CapacityGroup.CurriculumGroup.Curriculum].Contains(occurrenceGroup))
-                    {
-                        map[semesterGroup.CapacityGroup.CurriculumGroup.Curriculum].Add(occurrenceGroup);
-                    }
-
-                }
-            }
-
-            // jetzt darf es zu jedem Studiengang jeweils nur eine Gruppe geben, sonst muss repariert werden
-            var isDistributed = map.Values.Any(x => x.Count > 1);
-            if (isDistributed)
-            {
-                var listToDelete = new List<OccurrenceGroup>();
-                // pro Studiengang durchgehen
-                foreach (var list in map.Values)
-                {
-                    var firstGroup = list.First();
-                    foreach (var occGroup in list)
-                    {
-                        if (occGroup != firstGroup)
-                        {
-                            foreach (var semGroup in occGroup.SemesterGroups.ToList())
-                            {
-                                occGroup.SemesterGroups.Remove(semGroup);
-                                semGroup.OccurrenceGroups.Remove(occGroup);
-                                firstGroup.SemesterGroups.Add(semGroup);
-                                semGroup.OccurrenceGroups.Add(firstGroup);
-                            }
-                            listToDelete.Add(occGroup);
-                        }
-                    }
-                }
-
-                // Am Ende müssten alle zu löschenden Listen leer sein
-                foreach (var occurrenceGroup in listToDelete)
-                {
-                    course.Occurrence.Groups.Remove(occurrenceGroup);
-                    Db.OccurrenceGroups.Remove(occurrenceGroup);
-                }
-
-                Db.SaveChanges();
-
-            }
-
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult ChangeGroups(CourseCreateModel3 model)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
-            if (model.GroupIds == null)
-                return RedirectToAction("Details", new { id = course.Id });
-
-
-            // die aktuell vorhandenen Gruppen
-            var groupList = course.SemesterGroups.ToList();
-
-            foreach (var groupId in model.GroupIds)
-            {
-                // ist die Gruppe bereits vorhanden?
-                var group = course.SemesterGroups.FirstOrDefault(g => g.Id == groupId);
-                if (group != null)
-                {
-                    // Gruppe bereits vorhanden, aus der Liste entfernen,
-                    // sont keine weitere Aktion
-                    if (groupList.Contains(group))
-                    {
-                        groupList.Remove(group);
-                    }
-                }
-                else
-                {
-                    // neue Gruppe
-                    // hinzufügen
-                    var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Id == groupId);
-                    if (semGroup != null)
-                    {
-                        course.SemesterGroups.Add(semGroup);
-
-                        // zugehörige Occurrencegroup zum Studiengang suchen
-                        var occGroup = course.Occurrence.Groups.SingleOrDefault(x => 
-                            x.SemesterGroups.Any(g => 
-                                g.CapacityGroup.CurriculumGroup.Curriculum.Id == semGroup.CapacityGroup.CurriculumGroup.Curriculum.Id));
-
-                        if (occGroup == null)
-                        {
-                            occGroup = new OccurrenceGroup
-                            {
-                                Capacity = 0,
-                                FitToCurriculumOnly = true,
-                                Occurrence = course.Occurrence
-                            };
-                            semGroup.OccurrenceGroups.Add(occGroup);
-                            course.Occurrence.Groups.Add(occGroup);
-                            Db.OccurrenceGroups.Add(occGroup);
-                        }
-
-                        occGroup.SemesterGroups.Add(semGroup);
-                    }
-                }
-            }
-
-
-            // in der Liste dürften jetzt nur noch die zu löschenden Gruppen sein
-            foreach (var semGroup in groupList)
-            {
-                course.SemesterGroups.Remove(semGroup);
-
-                // zugehörige OccurrenceGroup löschen, wenn sie leer ist
-                var group = course.Occurrence.Groups.FirstOrDefault(g => g.SemesterGroups.Contains(semGroup));
-                if (group != null)
-                {
-                    group.SemesterGroups.Remove(semGroup);
-
-                    if (!group.SemesterGroups.Any())
-                    {
-                        course.Occurrence.Groups.Remove(group);
-                        Db.OccurrenceGroups.Remove(group);
-                    }
-                }
-            }
-
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Details", new { id = course.Id });
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult ChangeTopics(Guid id)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            if (course == null)
-                return RedirectToAction("MissingCourse", "Error");
-
-            var org = GetMyOrganisation();
-            var sem = SemesterService.GetSemester(DateTime.Today);
-            var courseService = new CourseService(Db);
-            var summary = courseService.GetCourseSummary(id);
-
-            var model = new CourseCreateModel3
-            {
-                Course = course,
-                CourseId = course.Id,
-                Summary = summary,
-                Semester = sem,
-                SemesterId = sem.Id,
-                OrganiserId = org.Id
-            };
-
-
-            var acticeorgs =
-                Db.Organisers.Where(
-                    x => x.IsFaculty && x.Activities.Any(a =>
-                             a.SemesterGroups.Any(s => s.Semester.EndCourses >= DateTime.Today))).ToList();
-
-            ViewBag.Faculties = acticeorgs.Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
-
-            // Alle Semester, die in Zukunft enden
-            ViewBag.Semesters = Db.Semesters
-                .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
-                .OrderByDescending(x => x.EndCourses)
-                .Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-
-                });
-
-            // bei der ersten Anzeige wird kein onChange ausgelöst
-            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
-            var curr = currList.FirstOrDefault();
-            model.CurriculumId = curr != null ? curr.Id : Guid.Empty;
-            ViewBag.Curricula = currList.Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
-
-            var semGroups = Db.SemesterTopics.Where(g => g.Semester.Id == sem.Id &&
-                                                         g.Topic.Chapter.Curriculum.Id == curr.Id)
-                .ToList();
-
-            var group = semGroups.FirstOrDefault();
-            model.GroupId = group != null ? group.Id : Guid.Empty;
-            ViewBag.Groups = semGroups.Select(c => new SelectListItem
-            {
-                Text = c.TopicName,
-                Value = c.Id.ToString(),
-            });
-
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult ChangeTopics(CourseCreateModel3 model)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
-            if (model.GroupIds == null)
-                return RedirectToAction("Details", new {id=course.Id});
-
-
-            // die aktuell vorhandenen Gruppen
-            var groupList = course.SemesterTopics.ToList();
-
-            foreach (var groupId in model.GroupIds)
-            {
-                // ist die Gruppe bereits vorhanden?
-                var group = groupList.FirstOrDefault(g => g.Id == groupId);
-                if (group != null)
-                {
-                    // Gruppe bereits vorhanden, aus der Liste entfernen,
-                    // sont keine weitere Aktion
-                    groupList.Remove(group);
-                }
-                else
-                {
-                    // neue Gruppe
-                    // hinzufügen
-                    var semGroup = Db.SemesterTopics.SingleOrDefault(g => g.Id == groupId);
-                    if (semGroup != null)
-                    {
-                        course.SemesterTopics.Add(semGroup);
-                    }
-                }
-            }
-
-
-            // in der Liste dürften jetzt nur noch die zu löschenden Gruppen sein
-            foreach (var semGroup in groupList)
-            {
-                course.SemesterTopics.Remove(semGroup);
-            }
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Details", new { id = course.Id });
-        }
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public ActionResult Index(Guid? id)
         {
             if (id.HasValue)
@@ -2016,6 +1659,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        /*
         [HttpPost]
         public PartialViewResult ChangeCapacitySettings(CourseDetailViewModel model)
         {
@@ -2061,6 +1705,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_SaveSuccess");
         }
+        */
 
         /// <summary>
         /// Absage über Schaltfläche
@@ -3308,49 +2953,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 Summary = courseService.GetCourseSummary(course),
             };
 
-            if (course.Occurrence.IsCoterie)
-            {
-                model.optionsAccess = 3;            // red
-            }
-            else
-            {
-                if (course.Occurrence.HasHomeBias)
-                {
-                    model.optionsAccess = 2;        // yellow
-                }
-                else
-                {
-                    model.optionsAccess = 1;        // green
-                }
-            }
-
-            if (course.Occurrence.UseGroups)
-            {
-                if (course.Occurrence.UseExactFit)
-                {
-                    model.optionsLimit = 4; // Gruppen => eine OccGroup pro Semestergruppe
-                    // gibt es nicht mehr
-                }
-                else
-                {
-                    model.optionsLimit = 3; // Studiengänge => eine OccGroup pro Studiengang, d.h. alle SemGroups eines Studiengangs werden zusammengefasst
-                }
-
-
-            }
-            else
-            {
-                if (course.Occurrence.Capacity <= 0)
-                {
-                    model.optionsLimit = 1; // keine Beschränkung
-                }
-                else
-                {
-                    model.optionsLimit = 2; // Gesamtplätze
-                    model.Capacity = course.Occurrence.Capacity;
-                }
-            }
-
             var userRight = GetUserRight(User.Identity.Name, model.Course);
             ViewBag.UserRight = userRight;
 
@@ -3370,6 +2972,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="groupIds"></param>
         /// <param name="groupCaps"></param>
         /// <returns></returns>
+        /*
         [HttpPost]
         public ActionResult SaveAdminNewRules(Guid courseId, int optAccess, int optLimit, int capacity, Guid[] groupIds, int[] groupCaps)
         {
@@ -3435,13 +3038,93 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return Json(new { result = "Redirect", url = Url.Action("Details", new { id = course.Id }) });
         }
+        */
+
+        public ActionResult AddQuota(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+            var model = new CourseLabelViewModel()
+            {
+                Course = course,
+                Organisers = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(x => x.ShortName).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddQuota(Guid courseId, Guid currid, int capa)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currid);
+
+            int cpacity = capa == -1 ? int.MaxValue : capa;
+
+            if (curr != null)
+            {
+                // Aktuell keine doppelten zulassen
+                if (course.Occurrence.SeatQuotas.Any(x => x.Curriculum.Id == curr.Id))
+                {
+                    return null;
+                }
+
+                var quota = new SeatQuota
+                {
+                    Curriculum = curr,
+                    ItemLabelSet = new ItemLabelSet(),
+                    MaxCapacity = cpacity,
+                    MinCapacity = 0,
+                    Description = string.Empty,
+                    Occurrence = course.Occurrence
+                };
+
+                Db.SeatQuotas.Add(quota);
+                Db.SaveChanges();
+            }
+            else
+            {
+                if (course.Occurrence.SeatQuotas.Any(x => x.Curriculum == null))
+                {
+                    return null;
+                }
+
+                var quota = new SeatQuota
+                {
+                    Curriculum = null,
+                    ItemLabelSet = new ItemLabelSet(),
+                    MaxCapacity = cpacity,
+                    MinCapacity = 0,
+                    Description = string.Empty,
+                    Occurrence = course.Occurrence
+                };
+
+                Db.SeatQuotas.Add(quota);
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
+        public ActionResult DeleteQuota(Guid id)
+        {
+            var quota = Db.SeatQuotas.FirstOrDefault(x => x.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
+
+            Db.SeatQuotas.Remove(quota);
+            Db.SaveChanges();
+
+            return RedirectToAction("AdminNewRules", new { id = course.Id });
+        }
+
+
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult AdminNewDates(Guid id)
+            /// 
+            /// </summary>
+            /// <param name="id"></param>
+            /// <returns></returns>
+            public ActionResult AdminNewDates(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
             var org = GetMyOrganisation();
