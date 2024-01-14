@@ -1384,7 +1384,7 @@ url("./fonts/bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2") format("wof
 .bi-pin-map::before { content: "\f64c"; }
 .bi-plus-lg::before { content: "\f64d"; }
 .bi-question-lg::before { content: "\f64e"; }
-.bi-recycle::before { content: "\f64f"; }
+.bi-arrow-repeat::before { content: "\f64f"; }
 .bi-reddit::before { content: "\f650"; }
 .bi-safe-fill::before { content: "\f651"; }
 .bi-safe2-fill::before { content: "\f652"; }

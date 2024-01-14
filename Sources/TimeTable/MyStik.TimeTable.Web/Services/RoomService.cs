@@ -334,7 +334,6 @@ namespace MyStik.TimeTable.Web.Services
                 roomList.Add(new RoomInfoModel
                 {
                     Room = room,
-                    //CurrentDate = GetCurrentDate(room), kann ja nicht sein, da ja oben nach freien Räumen gesucht wird
                     NextDate = GetNextDate(room)
                 });
             }

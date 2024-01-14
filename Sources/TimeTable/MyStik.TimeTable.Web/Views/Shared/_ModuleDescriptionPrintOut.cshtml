@@ -67,45 +67,6 @@
                 </div>
             </td>
         </tr>
-        @foreach (var accr in Model.CurriculumModule.Accreditations)
-        {
-            <tr>
-                <td rowspan="3">
-                    <div class="vordruck">
-                        Zgehörigkeit zu Curriculum
-                    </div>
-                </td>
-                <td colspan="2">
-                    <div class="vordruck">
-                        <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="vordruck">
-                        Fachsemester
-                    </div>
-                </td>
-                <td>
-                    <div class="vordruck">
-                        <div>@accr.Slot.Semester</div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="vordruck">
-                        Leistungspunkte
-                    </div>
-                </td>
-                <td>
-                    <div class="vordruck">
-                        <div>@accr.Slot.ECTS ECTS</div>
-                    </div>
-                </td>
-            </tr>
-        }
         @foreach (var subject in Model.CurriculumModule.ModuleSubjects)
         {
             <tr>
@@ -217,9 +178,7 @@
                 <div>@Html.Raw(Model.ModuleDescription.Description.Trim())</div>
             </td>
         </tr>
-        @foreach (var accr in Model.CurriculumModule.Accreditations)
-        {
-            foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+            @foreach (var exam in Model.Exams.Where(x => x.Semester.Id == Model.Semester.Id))
             {
                 <tr>
                     <td rowspan="6">
@@ -229,7 +188,6 @@
                     </td>
                     <td colspan="2">
                         <div class="vordruck">
-                            <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
                         </div>
                     </td>
                 </tr>

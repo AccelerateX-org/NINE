@@ -24,7 +24,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var semester = SemesterService.GetSemester(DateTime.Today);
 
-            var semesterList = Db.Semesters.Where(x => x.StartCourses > semester.StartCourses).OrderBy(x => x.StartCourses).Take(3).ToList();
+            var semesterList = Db.Semesters.Where(x => x.StartCourses > semester.StartCourses)
+                .OrderBy(x => x.StartCourses).Take(3).ToList();
 
             semesterList.Add(semester);
 
@@ -156,11 +157,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="semGroupId"></param>
-            /// <returns></returns>
-            [HttpPost]
+        /// 
+        /// </summary>
+        /// <param name="semGroupId"></param>
+        /// <returns></returns>
+        [HttpPost]
         public PartialViewResult DateList(string semGroupId)
         {
             var model = Db.Semesters.SingleOrDefault(s => s.Name.Equals(semGroupId));
@@ -180,7 +181,58 @@ namespace MyStik.TimeTable.Web.Controllers
             var semGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == id);
 
             return RedirectToAction("CapacityGroup", "Planer",
-                new {semId = semGroup.Semester.Id, groupId = semGroup.CapacityGroup.Id});
+                new { semId = semGroup.Semester.Id, groupId = semGroup.CapacityGroup.Id });
+        }
+
+        public ActionResult Lock(Guid orgId, Guid semId, int state)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var courses = Db.Activities.OfType<Course>().Where(x => x.Organiser.Id == orgId && x.Semester.Id == semId)
+                .ToList();
+
+            foreach (var course in courses)
+            {
+                switch (state)
+                {
+                    case 1:
+                    {
+                        course.IsProjected = true;
+                        break;
+                    }
+                    case 2:
+                    {
+                        course.IsProjected = false;
+                        break;
+                    }
+                    case 3:
+                    {
+                        course.IsInternal = true;
+                        break;
+                    }
+                    case 4:
+                    {
+                        course.IsInternal = false;
+                        break;
+                    }
+                    case 5:
+                    {
+                        course.Occurrence.IsAvailable = false;
+                        break;
+                    }
+                    case 6:
+                    {
+                        course.Occurrence.IsAvailable = true;
+                        break;
+                    }
+                }
+            }
+
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { orgId = org.Id, semId = sem.Id });
         }
     }
 }

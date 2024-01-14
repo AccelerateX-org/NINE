@@ -15,6 +15,7 @@ namespace MyStik.TimeTable.Web.Controllers
     public partial class MailController : MailerBase
     {
         public static readonly string MAIL_SECTION_ACCOUNT = "Benutzerverwaltung";
+        public static readonly string MAIL_SECTION_ALUMNI = "Alumniverwaltung";
         public static readonly string MAIL_SECTION_MESSAGES = "Benachrichtigung";
         public static readonly string MAIL_SECTION_THESIS = "Abschlussarbeiten";
         public static readonly string MAIL_SECTION_SUBSCRIPTIONS = "Platzvergabe";

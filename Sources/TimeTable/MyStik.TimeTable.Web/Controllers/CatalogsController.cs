@@ -587,10 +587,17 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Catalog = catalog;
 
             var semesterList = new List<Semester>();
-            //semesterList.Add(SemesterService.GetNextSemester(model.Semester));
+            var nextSemester = SemesterService.GetNextSemester(model.Semester);
+            if (nextSemester != null)
+            {
+                semesterList.Add(nextSemester);
+            }
             semesterList.Add(model.Semester);
 
+            
             ViewBag.Semester = semesterList;
+            ViewBag.Catalogs = model.Organiser.ModuleCatalogs.ToList();
+            ViewBag.Curricula = model.Organiser.Curricula.Where(x => !x.IsDeprecated).ToList();
 
             return View(model);
         }
@@ -633,6 +640,22 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Organisers = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList();
 
             return View(model);
+        }
+
+        [HttpPost]
+        public PartialViewResult PlanByCatalog(Guid semId, Guid catId, Guid? currId)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var model = new CatalogPlanModel();
+
+            model.Semester = semester;
+            model.Organiser = catalog.Organiser;
+            model.Catalog = catalog;
+            model.Curriculum = currId.HasValue ? Db.Curricula.FirstOrDefault(x => x.Id == currId.Value) : null;
+
+            return PartialView("_PlanByCatalog", model);
         }
 
     }

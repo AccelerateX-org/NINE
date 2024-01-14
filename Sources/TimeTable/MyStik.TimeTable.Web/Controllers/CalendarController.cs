@@ -200,11 +200,25 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                     else
                     {
+                        var sbr = new StringBuilder();
+                        sbr.Append(date.Activity.ShortName);
+                        if (date.Date.Rooms.Any())
+                        {
+                            if (date.Date.Rooms.Count() == 1)
+                            {
+                                sbr.AppendFormat(" ({0})", date.Date.Rooms.First().Number);
+                            }
+                            else
+                            {
+                                sbr.AppendFormat(" ({0}, ...)", date.Date.Rooms.First().Number);
+                            }
+                        }
+
                         events.Add(new CalendarEventModel
                         {
                             id = date.Date.Id.ToString(),
                             courseId = date.Activity.Id.ToString(),
-                            title = date.Activity.ShortName, // string.Empty,
+                            title = sbr.ToString(),
                             allDay = false,
                             start = date.Date.Begin.ToString(_calDateFormatCalendar),
                             end = date.Date.End.ToString(_calDateFormatCalendar),
@@ -375,14 +389,6 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var model = new SemesterActiveViewModel
-            {
-                Curriculum = curr,
-                Semester = semester,
-                Organiser = org,
-                Courses = courseSummaries
-            };
-
             var cal = new List<CalendarEventModel>();
             var dateMap = new Dictionary<Guid, ActivityDateSummary>();
 
@@ -404,6 +410,87 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(cal);
 
         }
+
+
+        [HttpPost]
+        public JsonResult CatalogEvents(string start, string end, Guid semId, Guid catId, Guid? currId, Guid[] dozIds)
+        {
+            var startDate = GetDateTime(start);
+            var endDate = GetDateTime(end);
+
+            var semester = SemesterService.GetSemester(semId);
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+
+            var allCourses = Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semester.Id && x.Organiser.Id == catalog.Organiser.Id &&
+                    x.SubjectTeachings.Any(t => t.Subject.Module.Catalog.Id == catalog.Id))
+                .ToList();
+
+            if (currId.HasValue)
+            {
+                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId.Value);
+                if (curr != null)
+                {
+                    allCourses =
+                        allCourses
+                            .Where(x => x.SubjectTeachings.Any(t =>
+                                t.Subject.SubjectAccreditations.Any(
+                                    a => a.Slot.AreaOption.Area.Curriculum.Id == curr.Id))).ToList();
+                }
+            }
+
+
+            var cs = new CourseService();
+            var courseSummaries = new List<CourseSummaryModel>();
+
+            foreach (var labeledCourse in allCourses.OrderBy(g => g.ShortName))
+            {
+                courseSummaries.Add(cs.GetCourseSummary(labeledCourse));
+            }
+
+            var cal = new List<CalendarEventModel>();
+            var dateMap = new Dictionary<Guid, ActivityDateSummary>();
+
+            foreach (var course in allCourses)
+            {
+                var dates = course.Dates.Where(c => c.Begin >= startDate && c.End <= endDate);
+
+                foreach (var date in dates)
+                {
+                    if (!dateMap.ContainsKey(date.Id))
+                    {
+                        dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.SearchResult);
+                    }
+                }
+            }
+
+            if (dozIds != null)
+            {
+                foreach (var dozId in dozIds)
+                {
+                    // 1. Angebot des angemeldeten Dozentens
+                    var allDates = Db.ActivityDates.Where(c =>
+                        c.Begin >= startDate && c.End <= endDate &&
+                        c.Hosts.Any(l => l.Id == dozId)).ToList();
+
+                    foreach (var date in allDates)
+                    {
+                        if (!dateMap.ContainsKey(date.Id))
+                        {
+                            dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.Offer);
+                        }
+                    }
+                }
+            }
+
+
+            cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), false));
+
+            return Json(cal);
+
+        }
+
 
 
 

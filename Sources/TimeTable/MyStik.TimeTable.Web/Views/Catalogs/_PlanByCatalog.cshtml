@@ -1,0 +1,168 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CatalogPlanModel
+@{
+    var db = new TimeTableDbContext();
+    var courseService = new CourseService(db);
+
+    var allCourses = db.Activities.OfType<Course>()
+        .Where(x =>
+            x.Semester.Id == Model.Semester.Id && x.Organiser.Id == Model.Organiser.Id &&
+            x.SubjectTeachings.Any(t => t.Subject.Module.Catalog.Id == Model.Catalog.Id))
+        .ToList();
+
+    if (Model.Curriculum != null)
+    {
+        allCourses =
+            allCourses
+                .Where(x => x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id))).ToList();
+    }
+
+
+    var allLecturers = new List<OrganiserMember>();
+    var allRooms = new List<Room>();
+    var allLabels = new List<ItemLabel>();
+
+    foreach (var course in allCourses)
+    {
+        var summary = courseService.GetCourseSummary(course);
+
+        allLecturers.AddRange(summary.Lecturers);
+        allRooms.AddRange(summary.Rooms);
+        allLabels.AddRange(course.LabelSet.ItemLabels);
+    }
+
+    allLecturers = allLecturers.Distinct().ToList();
+    allRooms = allRooms.Distinct().ToList();
+    allLabels = allLabels.Distinct().ToList();
+
+    var modules = new List<CurriculumModule>();
+    foreach (var module in Model.Catalog.Modules)
+    {
+        foreach (var subject in module.ModuleSubjects)
+        {
+            foreach (var teaching in subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id))
+            {
+                if (allCourses.Any(x => x.Id == teaching.Course.Id))
+                {
+                    modules.Add(module);
+                }
+            }
+        }
+    }
+    modules = modules.Distinct().ToList();
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h5>Angebotene Lehrveranstaltungen</h5>
+        <div class="list-group">
+            @foreach (var module in modules)
+            {
+                <div class="list-group-item p-0">
+                    <div class="row g-0">
+                        <div class="col-md-7">
+                            <div class="card" style="height: 100%">
+                                <div class="card-body pt-0 pb-0">
+                                    <div class="text-truncate">
+                                        <strong>@module.Name</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            @foreach (var subject in module.ModuleSubjects)
+                            {
+                                <div class="row g-0">
+                                    <div class="col-md-7">
+                                        <div class="card" style="height: 100%">
+                                            <div class="card-body pt-0 pb-0">
+                                                @subject.Tag
+                                                @if (subject.SubjectAccreditations.Any())
+                                                {
+                                                    foreach (var acc in subject.SubjectAccreditations)
+                                                    {
+                                                        <span class="badge bg-primary">@acc.Slot.Tag</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">0</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="card">
+                                            <div class="list-group list-group-flush">
+                                                @foreach (var teaching in subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id))
+                                                {
+                                                    <div class="list-group-item pt-0 pb-0">
+                                                        @teaching.Course.ShortName
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="calendar"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Eingesetzte Lehrende</h5>
+                <div class="card">
+                    <div class="row g-0 gy-1">
+                        @foreach (var lecturer in allLecturers)
+                        {
+                            <div class="col-3">
+                                <a id="@lecturer.Id" href="javascript:toggleDoz('@lecturer.Id.ToString()')" class="btn btn-secondary btn-sm" style="width: 100%">@lecturer.ShortName</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h5>Verwendete Räume</h5>
+                <div class="card">
+                    <div class="row g-0 gy-1">
+                        @foreach (var room in allRooms)
+                        {
+                            <div class="col-3">
+                                <a id="@room.Id" href="javascript:toggleRoom('@room.Id.ToString()')" class="btn btn-secondary btn-sm" style="width: 100%">
+                                    @room.Number
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h5>Betroffene Kohorten</h5>
+                <div class="card">
+                    <div class="row g-0 gy-1">
+                        @foreach (var label in allLabels)
+                        {
+                            <div class="col-3">
+                                <a id="@label.Id" href="javascript:toggleLabel('@label.Id.ToString()')" class="btn btn-secondary btn-sm" style="width: 100%">
+                                    @label.Name
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

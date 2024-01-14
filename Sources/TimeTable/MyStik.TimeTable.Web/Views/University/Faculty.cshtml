@@ -119,7 +119,7 @@
                         <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
                         @if (!isStudent)
                         {
-                            <a href="@Url.Action("CreateCourse", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
+                            <a href="@Url.Action("CreateCoursePortal", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
                             <a href="@Url.Action("CreateEvent", "Event", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltung anlegen</a>
                             <a href="@Url.Action("Index", "InternshipAdmin", new { id = Model.Id })" class="list-group-item list-group-item-action disabled">Praxissemester</a>
                             <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>

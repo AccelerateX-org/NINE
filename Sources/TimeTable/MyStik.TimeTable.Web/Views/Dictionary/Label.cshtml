@@ -21,7 +21,7 @@
             <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">@Model.Curriculum.ShortName</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Etiketten</li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Label.Name</li>
         </ol>
     </nav>
 

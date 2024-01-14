@@ -8,6 +8,30 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public string Email { get; set; }
+
+        public int Code { get; set; }
+
+        public DateTime CodeExpiryDateTime { get; set; }
+
+        public bool IsValid { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Title { get; set; }
+
+        /// <summary>
+        /// FK::Kurz
+        /// </summary>
+        public string Degree { get; set; }
+
+        /// <summary>
+        /// Bezeichnung des Semesters
+        /// </summary>
+        public string FinishingSemester { get; set; }
+        
         /// <summary>
         /// Studiengang des Absolventen
         /// </summary>

@@ -82,48 +82,53 @@
                 <tbody>
                     @foreach (var c in Model.Courses)
                     {
-                        var linkName = c.Course.ShortName ?? "Kein Kurzname";
-                        <tr>
-                            <td>
-                                @if (c.Course.IsInternal)
-                                {
-                                    <i class="bi-lock text-danger"></i>
-                                }
-                                else
-                                {
-                                    <i class="bi-unlock text-success"></i>
-                                }
-                                @if (!c.Course.Occurrence.IsAvailable)
-                                {
-                                    <i class="bi-pen-fill text-danger"></i>
-                                }
-                                else
-                                {
-                                    <i class="bi-pen-fill text-success"></i>
-                                }
-                            </td>
-                            <td>
-                                @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
-                            </td>
-                            <td>
-                                @c.Course.Name
-                            </td>
-                            <td>
-                                @if (c.Course.LabelSet != null)
-                                {
-                                    foreach (var label in c.Course.LabelSet.ItemLabels)
+                        if (!c.Course.IsProjected || ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+
+
+                            var linkName = c.Course.ShortName ?? "Kein Kurzname";
+                            <tr>
+                                <td>
+                                    @if (c.Course.IsInternal)
                                     {
-                                        <span>@label.Name</span>
+                                        <i class="bi-lock text-danger"></i>
                                     }
-                                }
-                            </td>
-                            <td>
-                                @Html.RoomList(c.Rooms)
-                            </td>
-                            <td>
-                                @Html.LecturerList(c.Lecturers)
-                            </td>
-                        </tr>
+                                    else
+                                    {
+                                        <i class="bi-unlock text-success"></i>
+                                    }
+                                    @if (!c.Course.Occurrence.IsAvailable)
+                                    {
+                                        <i class="bi-pen-fill text-danger"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi-pen-fill text-success"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
+                                </td>
+                                <td>
+                                    @c.Course.Name
+                                </td>
+                                <td>
+                                    @if (c.Course.LabelSet != null)
+                                    {
+                                        foreach (var label in c.Course.LabelSet.ItemLabels)
+                                        {
+                                            <span>@label.Name</span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @Html.RoomList(c.Rooms)
+                                </td>
+                                <td>
+                                    @Html.LecturerList(c.Lecturers)
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>

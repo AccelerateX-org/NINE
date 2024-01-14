@@ -552,6 +552,7 @@
     <Compile Include="Controllers\LabelSetController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
+    <Compile Include="Controllers\MailControllerAlumni.cs" />
     <Compile Include="Controllers\MailControllerMisc.cs" />
     <Compile Include="Controllers\MailControllerScript.cs" />
     <Compile Include="Controllers\MailControllerThesis.cs" />
@@ -3717,7 +3718,7 @@
     <Content Include="Views\Organiser\Courses.cshtml" />
     <Content Include="Views\Organiser\Events.cshtml" />
     <Content Include="Views\Organiser\Newsletter.cshtml" />
-    <Content Include="Views\Course\CreateCourse.cshtml" />
+    <Content Include="Views\Course\CreateCoursePeriod.cshtml" />
     <Content Include="Views\Shared\_OfficeHourWarning.cshtml" />
     <Content Include="Views\Room\LookupDate.cshtml" />
     <Content Include="Views\Room\LookupPeriod.cshtml" />
@@ -3915,7 +3916,7 @@
     <Content Include="Views\Change\Index.cshtml" />
     <Content Include="Views\Jobs\Index.cshtml" />
     <Content Include="Views\Alumni\Index.cshtml" />
-    <Content Include="Views\Alumni\Invitation.cshtml" />
+    <Content Include="Views\Alumni\ContactData.cshtml" />
     <Content Include="Views\Alumni\InvitationList.cshtml" />
     <Content Include="Views\Alumni\SendInvitationsSuccess.cshtml" />
     <Content Include="Views\Alumni\SendInvitations.cshtml" />
@@ -4015,13 +4016,7 @@
     <Content Include="Views\Subscription\_SelectSemGroup.cshtml" />
     <Content Include="Views\OrganiserMembers\Today.cshtml" />
     <Content Include="Views\Organiser\Admins.cshtml" />
-    <Content Include="Views\CurriculumCriteria\Create.cshtml" />
-    <Content Include="Views\CurriculumCriteria\Delete.cshtml" />
-    <Content Include="Views\CurriculumCriteria\Details.cshtml" />
-    <Content Include="Views\CurriculumCriteria\Edit.cshtml" />
-    <Content Include="Views\CurriculumCriteria\Index.cshtml" />
     <Content Include="Views\Curricula\SelectModule.cshtml" />
-    <Content Include="Views\Curricula\Criteria.cshtml" />
     <Content Include="Views\Planer\Courses.cshtml" />
     <Content Include="Views\ThesisAnnouncements\Create.cshtml" />
     <Content Include="Views\ThesisAnnouncements\Delete.cshtml" />
@@ -4718,6 +4713,15 @@
     <Content Include="Views\Catalogs\_SubjectListGroup.cshtml" />
     <Content Include="Views\Catalogs\CreateCourseFromSubject.cshtml" />
     <Content Include="Views\Course\AddQuota.cshtml" />
+    <Content Include="Views\Course\AdminNewState.cshtml" />
+    <Content Include="Views\Catalogs\_PlanByCatalog.cshtml" />
+    <Content Include="Views\Course\CreateCourseBlock.cshtml" />
+    <Content Include="Views\Course\CreateCoursePortal.cshtml" />
+    <Content Include="Views\Room\_FreeRoomListDates.cshtml" />
+    <Content Include="Views\Course\CreateCourseMass.cshtml" />
+    <Content Include="Views\Alumni\KeySent.cshtml" />
+    <Content Include="Views\Mail\AlumniInvitationEMail.html.cshtml" />
+    <Content Include="Views\Room\_FreeRoomSelect.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

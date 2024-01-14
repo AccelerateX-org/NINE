@@ -1163,4 +1163,17 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<ActivityOrganiser> Organisers { get; set; }
     }
+
+    public class CourseStateModel
+    {
+        public Course Course { get; set; }
+
+        public Guid CourseId { get;set; }
+
+        public int locked { get; set; }
+
+        public int editable { get; set; }
+
+        public int projected { get; set; }
+    }
 }

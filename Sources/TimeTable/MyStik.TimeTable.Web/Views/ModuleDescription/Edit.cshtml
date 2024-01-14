@@ -51,17 +51,6 @@
                             <div>Zugehörigkeit zu Curriculum</div>
                         </div>
                         <div class="col-8">
-                            @foreach (var acc in Model.ModuleDescription.Module.Accreditations)
-                            {
-                                if (acc.Slot.CurriculumSection != null)
-                                {
-                                    <div>@acc.Slot.CurriculumSection.Curriculum.Name | @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span></div>
-                                }
-                                else
-                                {
-                                    <div>@acc.Slot.AreaOption.Area.Curriculum.Name | @acc.Slot.AreaOption.Area.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span></div>
-                                }
-                            }
                         </div>
                     </div>
                 </div>

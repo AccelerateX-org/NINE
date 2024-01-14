@@ -1,0 +1,6 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.RoomInfoModel>
+
+@foreach (var room in Model.OrderBy(r => r.Room.Number))
+{
+    <option value="@room.Room.Id">@room.Room.FullName (@room.Room.Capacity Plätze)</option>
+}

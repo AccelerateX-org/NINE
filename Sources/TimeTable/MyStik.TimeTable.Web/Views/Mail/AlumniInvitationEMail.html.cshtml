@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Data.Alumnus
+
+@{
+    Layout = "~/Views/Mail/_AnonymousTemplate.cshtml";
+}
+
+
+<p>Sie haben einen Zugangscode für das Alumni-Portal von NINE angefordert. Der Code lautet:</p>
+<p><strong>@Model.Code</strong></p>
+<p>Zur Erfassung Ihrer Daten folgen Sie bitte dem folgenden Link: <a href="@Url.Action("ContactData", "Alumni", new { id = Model.Id }, Request.Url.Scheme)">Eingabe Kontaktdaten</a></p>

@@ -23,22 +23,11 @@
                         <a href="@Url.Action("Semester", new {moduleId = Model.Module.Id, semId=Model.Semester.Id}  )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
-                        @if (Model.Module.Accreditations.Any())
-                        {
-                            <a href="@Url.Action("CreateExamination", null, new { moduleId = Model.Module.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neues Angebot hinzufügen
-                            </a>
-                        }
+                        <a href="@Url.Action("CreateExamination", null, new { moduleId = Model.Module.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                            <i class="bi-plus"></i> Neues Angebot hinzufügen
+                        </a>
                     </div>
                 </div>
-                @if (!Model.Module.Accreditations.Any())
-                {
-                    <div class="list-group-item">
-                        <div class="alert alert-danger">
-                            <p>Keine Prüfungsangebote möglich, da keine Zuordnung des Moduls zu einem Studiengang vorliegt.</p>
-                        </div>
-                    </div>
-                }
             </div>
             <table class="table">
                 <thead>

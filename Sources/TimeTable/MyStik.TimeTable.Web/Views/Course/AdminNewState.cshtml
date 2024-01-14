@@ -1,0 +1,140 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseStateModel
+
+@{
+    ViewBag.Title = "Freigaben";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Wer darf was</h5>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+
+                    @Html.HiddenFor(m => m.CourseId)
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Ansicht im Vorlesungsverzeichnis</label>
+                        <div class="col-sm-10">
+                            @if (Model.projected == 1)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="projected" id="projOn" value="1" checked>
+                                    <label class="form-check-label" for="projOn">
+                                        Im Planungsmodus - wird im Vorlesungsverzeichnis nicht angezeigt
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="projected" id="projOff" value="0">
+                                    <label class="form-check-label" for="projOff">
+                                        Wird im Vorlesungsverzeichnis angezeigt
+                                    </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="projected" id="projOn" value="1">
+                                    <label class="form-check-label" for="projOn">
+                                        Im Planungsmodus - wird im Vorlesungsverzeichnis nicht angezeigt
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="projected" id="projOff" value="0" checked>
+                                    <label class="form-check-label" for="projOff">
+                                        Wird im Vorlesungsverzeichnis angezeigt
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Eintragungen durch Studierende</label>
+                        <div class="col-sm-10">
+                            @if (Model.locked == 1)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="locked" id="lockOn" value="1" checked>
+                                    <label class="form-check-label" for="lockOn">
+                                        Keine Eintragungen durch Studierende möglich
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="locked" id="lockOff" value="0">
+                                    <label class="form-check-label" for="lockOff">
+                                        Studierende können sich eintragen
+                                    </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="locked" id="lockOn" value="1">
+                                    <label class="form-check-label" for="lockOn">
+                                        Keine Eintragungen durch Studierende möglich
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="locked" id="lockOff" value="0" checked>
+                                    <label class="form-check-label" for="lockOff">
+                                        Studierende können sich eintragen
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+
+                    if (ViewBag.UserRight.IsCourseAdmin)
+                    {
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Änderung durch Lehrende</label>
+                            <div class="col-sm-10">
+                                @if (Model.editable == 1)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="editable" id="editOn" value="1" checked>
+                                        <label class="form-check-label" for="editOn">
+                                            Lehrende können Angaben ändern
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="editable" id="editOff" value="0">
+                                        <label class="form-check-label" for="editOff">
+                                            Änderungen nur mit Admin-Rechten möglich
+                                        </label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="editable" id="editOn" value="1">
+                                        <label class="form-check-label" for="editOn">
+                                            Lehrende können Angaben ändern
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="editable" id="editOff" value="0" checked>
+                                        <label class="form-check-label" for="editOff">
+                                            Änderungen nur mit Admin-Rechten möglich
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.editable)
+                    }
+
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Details", new {id = Model.CourseId})">Abbrechen</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

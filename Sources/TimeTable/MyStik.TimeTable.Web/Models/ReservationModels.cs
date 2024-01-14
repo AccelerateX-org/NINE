@@ -120,5 +120,11 @@ namespace MyStik.TimeTable.Web.Models
         public string WeeklyEnd { get; set; }
 
         public Guid OrganiserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<string> Dates { get; set; }
+
     }
 }

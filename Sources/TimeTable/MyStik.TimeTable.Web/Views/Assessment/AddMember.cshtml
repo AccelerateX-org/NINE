@@ -46,7 +46,7 @@
                                             <td>@doz.Member.Name</td>
                                             <td>
                                                 <button class="btn btn-outline-danger" onclick="deleteRow('@doz.Member.Id')">
-                                                    <i class="fas fa-trash-alt"></i>
+                                                    <i class="bi-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -114,7 +114,7 @@
                     var orgText = $("#OrganiserId2 option:selected").text();
 
 
-                    $("#dozList").append("<tr id=\"" + ui.item.text + "\"><td>" + orgText + "</td><td>" + ui.item.value + "</td><td><button class=\"btn btn-outline-danger\" onclick=\"deleteRow('" + ui.item.text + "');\"><i class=\"fas fa-trash-alt\"></i></button></td></tr>");
+                    $("#dozList").append("<tr id=\"" + ui.item.text + "\"><td>" + orgText + "</td><td>" + ui.item.value + "</td><td><button class=\"btn btn-outline-danger\" onclick=\"deleteRow('" + ui.item.text + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
 
                 }
             });

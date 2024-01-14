@@ -84,32 +84,11 @@
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
                     <i class="bi-pencil-square"></i> Platzkontingente
                 </a>
-                @if (Model.Summary.Course.Occurrence.IsAvailable)
-                {
-                    <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})">
-                        <i class="bi-lock"></i> Eintragung für Studierende sperren
-                    </a>
-                }
-                else
-                {
-                    <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})">
-                        <i class="bi-unlock"></i> Eintragung für Studierende erlauben
-                    </a>
-                }
+                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
+                    <i class="bi-ui-radios"></i> Freigaben / Status
+                </a>
                 @if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                 {
-                    if (Model.Summary.Course.IsInternal)
-                    {
-                        <a class="list-group-item list-group-item-action" href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})">
-                            <i class="bi-unlock"></i> Änderung durch Lehrende erlauben
-                        </a>
-                    }
-                    else
-                    {
-                        <a class="list-group-item list-group-item-action" href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})">
-                            <i class="bi-lock"></i> Änderung durch Lehrende sperren
-                        </a>
-                    }
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
                         <i class="bi-person"></i> Besitzer
                     </a>

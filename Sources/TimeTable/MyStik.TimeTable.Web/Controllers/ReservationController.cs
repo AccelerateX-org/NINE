@@ -108,6 +108,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = c.Id.ToString(),
             });
 
+            // Liste aller Fakultäten, auf die Zugriff auf Räume bestehen
+            // aktuell nur meine
+            ViewBag.RoomOrganiser = Db.Organisers.Where(x => x.Id == org.Id).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;
 
@@ -147,89 +156,62 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Activities.Add(reservation);
             }
 
-            // Termine hinzufügen
-            var sDate = DateTime.Parse(model.NewDate);
-            var sBegin = TimeSpan.Parse(model.NewBegin);
-            var sEnd = TimeSpan.Parse(model.NewEnd);
-
-            var sDateEndDaily = DateTime.Parse(model.DailyEnd);
-            var sDateEndWeekly = DateTime.Parse(model.WeeklyEnd);
-
-
-            var semester = SemesterService.GetSemester(DateTime.Today);
-
-            var dayOfWeek = sDate.DayOfWeek;
-
-            var dayListDaily = new List<DateTime>();
-            var dayListWeekly = new List<DateTime>();
-
-            // Erstellung der Datumsliste
-            if (model.IsDaily)
+            // Jetzt die Termine - falls vorhanden
+            var dozList = new List<OrganiserMember>();
+            if (model.DozIds != null)
             {
-                // alle Tage von NewDate bis DailyDate
-                // egal ob Wochenende / Feiertag
-                var day = sDate;
-                while (day <= sDateEndDaily)
-                {
-                    dayListDaily.Add(day);
-                    day = day.AddDays(1);
-                }
+                dozList.AddRange(model.DozIds.Select(dozId => Db.Members.SingleOrDefault(g => g.Id == dozId))
+                    .Where(doz => doz != null));
             }
-            else
+
+            var roomList = new List<Room>();
+            if (model.RoomIds != null)
             {
-                dayListDaily.Add(sDate);
+                roomList.AddRange(model.RoomIds.Select(roomId => Db.Rooms.SingleOrDefault(g => g.Id == roomId))
+                    .Where(doz => doz != null));
             }
-            
-            
-            if (model.IsWeekly)
+
+            // Termine anelegen
+            if (model.Dates != null)
             {
-                foreach (var dailyDate in dayListDaily)
+                foreach (var date in model.Dates)
                 {
-                    var day = dailyDate;
-                    while (day <= sDateEndWeekly)
+                    var elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+
+
+                    ICollection<DateTime> dayList;
+                    dayList = new List<DateTime> { day };
+
+
+                    foreach (var dateDay in dayList)
                     {
-                        dayListWeekly.Add(day);
-                        day = day.AddDays(7);
+                        var activityDate = new ActivityDate
+                        {
+                            Activity = reservation,
+                            Begin = dateDay.Add(begin),
+                            End = dateDay.Add(end),
+                        };
+
+                        foreach (var room in roomList)
+                        {
+                            activityDate.Rooms.Add(room);
+                        }
+
+                        foreach (var doz in dozList)
+                        {
+                            activityDate.Hosts.Add(doz);
+                        }
+
+                        Db.ActivityDates.Add(activityDate);
+
                     }
                 }
             }
-            else
-            {
-                dayListWeekly.AddRange(dayListDaily);
-            }
 
 
-            foreach (var day in dayListWeekly)
-            {
-                var start = day.Add(sBegin);
-                var end = day.Add(sEnd);
-
-                var date = new ActivityDate
-                {
-                    Begin = start,
-                    End = end,
-                    //Occurrence = new Occurrence { Capacity = -1, IsAvailable = true, FromIsRestricted = false, UntilIsRestricted = false },
-                };
-
-                if (model.RoomIds != null)
-                {
-                    foreach (var roomId in model.RoomIds)
-                    {
-                        date.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
-                    }
-                }
-
-                if (model.DozIds != null)
-                {
-                    foreach (var dozId in model.DozIds )
-                    {
-                        date.Hosts.Add(Db.Members.SingleOrDefault(x => x.Id == dozId));
-                    }
-                }
-
-
-                reservation.Dates.Add(date);
-            }
 
             Db.SaveChanges();
 
@@ -274,7 +256,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult DeleteReservationConfirmed(Guid id)
         {
             var reservation = Db.Activities.OfType<Reservation>().SingleOrDefault(r => r.Id == id);
-
+            var org = reservation.Organiser;
             var dateList = reservation.Dates.ToList();
 
             foreach (var date in dateList)
@@ -285,7 +267,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.Activities.Remove(reservation);
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = org.Id });
         }
 
         /// <summary>
@@ -429,11 +411,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult CreateDate(Guid id)
+        public ActionResult CreateDate(Guid id, Guid orgId)
         {
             var course = Db.Activities.SingleOrDefault(c => c.Id == id);
-            var org = GetMyOrganisation();
-
+            var org = GetOrganisation(orgId);
 
             var model = new CourseDateCreatenModel
             {

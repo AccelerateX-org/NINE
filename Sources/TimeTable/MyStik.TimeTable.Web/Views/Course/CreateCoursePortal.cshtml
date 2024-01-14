@@ -1,0 +1,62 @@
+﻿
+@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
+    ViewBag.Title = "Lehrveranstaltung anlegen";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Id})">@Model.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lehrveranstaltung</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <i class="bi-calendar"></i><br />
+                        Einzelveranstaltung mit Terminen
+                    </h5>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("CreateCoursePeriod", new { orgId = Model.Id })" class="list-group-item list-group-item-action">Regelmäßig stattfindende Termine</a>
+                    <a href="@Url.Action("CreateCourseBlock", new { orgId = Model.Id })" class="list-group-item list-group-item-action">Geblockte Termine</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <i class="bi-book"></i><br />
+                        Aus Modulkatalog
+                    </h5>
+                </div>
+                <div class="list-group">
+                    <a href="" class="list-group-item list-group-item-action disabled">Für einzelnes Fach</a>
+                    <a href="" class="list-group-item list-group-item-action disabled">Für ganzen Studiengang</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <i class="bi-list"></i><br />
+                        Listenerfassung und Datenimport
+                    </h5>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("CreateCourseMass", new { orgId = Model.Id })" class="list-group-item list-group-item-action">Nur Titel und Kurzbezeichnung</a>
+                    <a href="@Url.Action("Index", "Semester",new { id = Model.Id })" class="list-group-item list-group-item-action">Datenimport (über Semesterplanung)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

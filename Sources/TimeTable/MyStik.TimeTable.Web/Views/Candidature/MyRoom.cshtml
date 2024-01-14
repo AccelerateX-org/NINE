@@ -95,7 +95,7 @@
                             <p>Profilbild ändern / löschen</p>
                             <form id="formDrop" action="@Url.Action("UploadProfileImage")" class="dropzone"></form>
                             <a href="@Url.Action("MyRoom", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladenes Bild anzeigen</a>
-                            <a href="@Url.Action("DeleteProfileImage", new {id = Model.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Profilbild löschen</a>
+                            <a href="@Url.Action("DeleteProfileImage", new {id = Model.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i> Profilbild löschen</a>
                         </div>
                     </div>
                 }

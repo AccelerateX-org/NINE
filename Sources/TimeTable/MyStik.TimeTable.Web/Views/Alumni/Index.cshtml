@@ -3,61 +3,46 @@
     ViewBag.Title = "Alumni";
 }
 
-
-<div class="container-fluid">
-
-    <div class="row" style="margin-top: 20px">
+<div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Alumni</h4>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Willkommen beim Alumni-Portal</h5>
+                <h6 class="card-subtitle">Anleitung</h6>
+                <p class="card-text">Die Hochschule München setzt intern ein CRM-System zur Verwaltung der Kontaktdaten von Alumni ein. Zur Unterstützung der Datenerfassung gibt es hier ein kleines Werkzeug. Anleitung:</p>
+                <ul>
+                    <li>Wenn ich meine Abschlussabeit über NINE angemeldet habe, dann wird das Werkzeug automatisch nach der Abgabe der Abschlussarbeit aufgerufen. Hier muss ich mich um nichts kümmern.</li>
+                    <li>
+                        Für alle anderen läuft es wie folgt ab:
+                        <ol>
+                            <li>Auf dieser Seite gebe ich meine E-Mail Adresse an. Mir wird dann ein Zugangscode zugesendet, der 24h gültig ist.</li>
+                            <li>In der Mail ist auch ein Link auf ein Eingabeformular. Dort gebe ich meine Kontaktdaten ein.</li>
+                            <li>Ich erhalte nach Abschluss der Eingabe eine Bestätigungsmail.</li>
+                        </ol>
+                    </li>
+                    <li>Die Daten werden in unregelmäßigen Abständen, i.d.R. einmal im Semester aus NINE in das CRM-System übertragen. Anschließend werden die Daten in NINE gelöscht. Dazu wird ebenfalss eine Bestätigungsmail versendet.</li>
+                    <li>Ich bin mir unsicher, ob meine Daten gespeichert sind? Dann bei den Alumnibeauftragten der Fakultät nachfragen</li>
+                </ul>
             </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="list-group-item">
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("Download")" class="btn btn-default">
-                            <i class="fa fa-download"></i> Listen
-                                </a>
+            <hr/>
+            <div class="card-body">
+                @using (Html.BeginForm("RequestKey", null, FormMethod.Post))
+                {
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
+                                <label for="floatingInput">E-Mail Adresse</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-outline-primary btn-lg" type="button" id="button-addon2"><i class="bi-send-check"></i> Zugangscode anfordern</button>
                             </div>
                         </div>
                     </div>
-                    <div class="list-group-item">
-                            <table class="table table-condensed">
-                                <thead>
-                                <tr>
-                                    <th>Studiengang</th>
-                                    <th>Semester</th>
-                                    <th>Name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var item in @Model)
-                                {
-                                    <tr>
-                                        <td>@item.Alumni.Curriculum.Name</td>
-                                        <td>@item.Alumni.Semester.Name</td>
-                                        @if (item.User != null)
-                                        {
-                                            <td>@item.User.FullName</td>
-                                        }
-                                        else
-                                        {
-                                            <td>Kein Benutzerkonto vorhanden</td>
-                                        }
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>
-
-
-
-
-
-
+</div>

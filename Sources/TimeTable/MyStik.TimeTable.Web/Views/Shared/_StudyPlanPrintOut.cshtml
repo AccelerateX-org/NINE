@@ -96,11 +96,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var module in slot.ModuleAccreditations)
+                        @foreach (var module in slot.SubjectAccreditations)
                         {
                             <tr>
-                                <td>@module.Module.Tag</td>
-                                <td>@module.Module.Name</td>
+                                <td>@module.Subject.Tag</td>
+                                <td>@module.Subject.Name</td>
                             </tr>
                         }
                     </tbody>
@@ -140,45 +140,6 @@
                     </div>
                 </td>
             </tr>
-            @foreach (var accr in module.Accreditations)
-            {
-                <tr>
-                    <td rowspan="3">
-                        <div>
-                            Zgehörigkeit zu Curriculum
-                        </div>
-                    </td>
-                    <td colspan="2">
-                        <div>
-                            <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div>
-                            Fachsemester
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <div>@accr.Slot.Semester</div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div>
-                            Leistungspunkte
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <div>@accr.Slot.ECTS ECTS</div>
-                        </div>
-                    </td>
-                </tr>
-            }
             @foreach (var subject in module.ModuleSubjects)
             {
                 <tr>
@@ -297,84 +258,84 @@
                     }
                 </td>
             </tr>
-            @foreach (var accr in module.Accreditations)
+            @*
+            @foreach (var exam in module.ExaminationOptions.First().ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
             {
-                foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
-                {
-                    <tr>
-                        <td rowspan="6">
-                            <div>
-                                Prüfungsangebote
-                            </div>
-                        </td>
-                        <td colspan="2">
-                            <div>
-                                <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div>
-                                Erstprüfer:in
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div>@exam.FirstExminer.FullName</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div>
-                                Zweitprüfer:in
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div>@exam.SecondExaminer.FullName</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div>
-                                Prüfungsform
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div>@exam.ExaminationOption.FullName</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div>
-                                Details zur Prüfung
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div>@exam.Conditions</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div>
-                                Hilfsmittel
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div>@exam.Utilities</div>
-                            </div>
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td rowspan="6">
+                        <div>
+                            Prüfungsangebote
+                        </div>
+                    </td>
+                    <td colspan="2">
+                        <div>
+                            <div>@exam.ExaminationOption.Module.ExaminationOptions.Slot.AreaOption.Area.Curriculum.Name</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>
+                            Erstprüfer:in
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div>@exam.FirstExminer.FullName</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>
+                            Zweitprüfer:in
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div>@exam.SecondExaminer.FullName</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>
+                            Prüfungsform
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div>@exam.ExaminationOption.FullName</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>
+                            Details zur Prüfung
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div>@exam.Conditions</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>
+                            Hilfsmittel
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div>@exam.Utilities</div>
+                        </div>
+                    </td>
+                </tr>
             }
+        }
+            *@
 
         </table>
 

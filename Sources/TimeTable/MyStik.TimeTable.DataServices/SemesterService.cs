@@ -188,6 +188,12 @@ namespace MyStik.TimeTable.DataServices
             if (firstDate > lastDate)
                 return dates;
 
+            if (frequency == 0)
+            {
+                dates.Add(firstDate);
+                return dates;
+            }
+
             var day = firstDate;
             while (day <= lastDate)
             {

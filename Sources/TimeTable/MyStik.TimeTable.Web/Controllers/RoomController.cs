@@ -966,21 +966,72 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     string[] elems = date.Split('#');
                     var day = DateTime.Parse(elems[0]);
-                    var begin = TimeSpan.Parse(elems[1]);
-                    var end = TimeSpan.Parse(elems[2]);
-                    var isWdh = bool.Parse(elems[3]);
+                    var lastday = DateTime.Parse(elems[1]);
+                    var begin = TimeSpan.Parse(elems[2]);
+                    var end = TimeSpan.Parse(elems[3]);
+                    var frq = int.Parse(elems[4]);
 
                     ICollection<DateTime> dayList;
-                    var semester = semesterService.GetSemester(day);
+                    dayList = semesterService.GetDays(day, lastday, frq);
 
-                    if (isWdh && semester != null)
+                    foreach (var dateDay in dayList)
                     {
-                        dayList = semesterService.GetDays(semester.Id, day);
+                        var from = dateDay.Add(begin);
+                        var until = dateDay.Add(end);
+
+                        var cl = room.Dates.Where(d =>
+                            (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                            ).ToList();
+
+                        conflicts.AddRange(cl);
                     }
-                    else
-                    {
-                        dayList = new List<DateTime> {day};
-                    }
+                }
+            }
+
+            // wenn nur ein Konflikt, dann prüfen, ob man es selbst ist
+            if (conflicts.Count == 1 && dateId != null)
+            {
+                if (conflicts.First().Id == dateId)
+                {
+                    return Json(0);
+                }
+                else
+                {
+                    return Json(1);
+                }
+
+            }
+
+            return Json(conflicts.Count);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <param name="roomId"></param>
+        /// <param name="dates"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetStatesBlock(Guid? dateId, Guid roomId, ICollection<string> dates)
+        {
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
+            var semesterService = new SemesterService();
+
+            var conflicts = new List<ActivityDate>();
+
+            if (dates != null)
+            {
+                foreach (var date in dates)
+                {
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+
+                    ICollection<DateTime> dayList = new List<DateTime> { day };
 
                     foreach (var dateDay in dayList)
                     {
@@ -1016,6 +1067,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -1039,21 +1091,72 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     string[] elems = date.Split('#');
                     var day = DateTime.Parse(elems[0]);
-                    var begin = TimeSpan.Parse(elems[1]);
-                    var end = TimeSpan.Parse(elems[2]);
-                    var isWdh = bool.Parse(elems[3]);
+                    var lastday = DateTime.Parse(elems[1]);
+                    var begin = TimeSpan.Parse(elems[2]);
+                    var end = TimeSpan.Parse(elems[3]);
+                    var frq = int.Parse(elems[4]);
 
                     ICollection<DateTime> dayList;
-                    var semester = semesterService.GetSemester(day);
+                    dayList = semesterService.GetDays(day, lastday, frq);
 
-                    if (isWdh && semester != null)
+                    foreach (var dateDay in dayList)
                     {
-                        dayList = semesterService.GetDays(semester.Id, day);
+                        var from = dateDay.Add(begin);
+                        var until = dateDay.Add(end);
+
+                        var list = room.Dates.Where(d =>
+                            (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                            ).ToList();
+
+                        if (list.Any())
+                        {
+                            var conflict = new RoomDateConflictViewModel
+                            {
+                                Begin = from,
+                                End = until,
+                            };
+
+                            conflict.Conflicts.AddRange(list);
+
+                            model.ConflictDates.Add(conflict);
+                        }
                     }
-                    else
-                    {
-                        dayList = new List<DateTime> { day };
-                    }
+                }
+            }
+
+            return PartialView("_ConflictTable", model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="Dates"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult GetConflictsBlock(Guid roomId, ICollection<string> Dates)
+        {
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
+            var semesterService = new SemesterService();
+
+            var model = new RoomConflictViewModel
+            {
+                Room = room
+            };
+
+            if (Dates != null)
+            {
+                foreach (var date in Dates)
+                {
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+
+                    ICollection<DateTime> dayList = new List<DateTime> { day };
 
                     foreach (var dateDay in dayList)
                     {
@@ -1113,6 +1216,134 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_FreeRoomList", rooms);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult GetAvailableRoomsDates(Guid? orgId, ICollection<string> dates)
+        {
+            var semesterService = new SemesterService();
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+            var userRight = GetUserRight(org);
+
+            var roomDict = new Dictionary<RoomInfoModel, List<DateTime>>();
+
+            var dateCounter = 0;
+
+            if (dates != null)
+            {
+                foreach (var date in dates)
+                {
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var lastday = DateTime.Parse(elems[1]);
+                    var begin = TimeSpan.Parse(elems[2]);
+                    var end = TimeSpan.Parse(elems[3]);
+                    var frq = int.Parse(elems[4]);
+
+                    var dayList = semesterService.GetDays(day, lastday, frq);
+
+
+                    foreach (var dateDay in dayList)
+                    {
+                        dateCounter++;
+
+                        var from = dateDay.Add(begin);
+                        var until = dateDay.Add(end);
+
+                        // Alle Räume, auf die der Veranstalter Zugriff hat
+                        var rooms = roomService.GetAvaliableRooms(org.Id, from, until, userRight.IsRoomAdmin);
+
+                        if (rooms.Any())
+                        {
+                            foreach (var room in rooms)
+                            {
+                                var ri = roomDict.Keys.FirstOrDefault(x => x.Room.Id == room.Room.Id);
+                                if (ri == null)
+                                {
+                                    ri = room;
+                                    roomDict[ri] = new List<DateTime>();
+                                }
+                                roomDict[ri].Add(dateDay);
+                            }
+                        }
+                    }
+                }
+            }
+
+            var roomList = roomDict.Where(x => x.Value.Count == dateCounter).Select(x => x.Key).ToList();
+
+            return PartialView("_FreeRoomSelect", roomList);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult GetAvailableRoomsDatesBlock(Guid? orgId, ICollection<string> dates)
+        {
+            var semesterService = new SemesterService();
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+            var userRight = GetUserRight(org);
+
+            var roomDict = new Dictionary<RoomInfoModel, List<DateTime>>();
+
+            var dateCounter = 0;
+
+            if (dates != null)
+            {
+                foreach (var date in dates)
+                {
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+
+                    var dayList = new List<DateTime> { day };
+
+                    foreach (var dateDay in dayList)
+                    {
+                        dateCounter++;
+
+                        var from = dateDay.Add(begin);
+                        var until = dateDay.Add(end);
+
+                        // Alle Räume, auf die der Veranstalter Zugriff hat
+                        var rooms = roomService.GetAvaliableRooms(org.Id, from, until, userRight.IsRoomAdmin);
+
+                        if (rooms.Any())
+                        {
+                            foreach (var room in rooms)
+                            {
+                                var ri = roomDict.Keys.FirstOrDefault(x => x.Room.Id == room.Room.Id);
+                                if (ri == null)
+                                {
+                                    ri = room;
+                                    roomDict[ri] = new List<DateTime>();
+                                }
+                                roomDict[ri].Add(dateDay);
+                            }
+                        }
+                    }
+                }
+            }
+            var roomList = roomDict.Where(x => x.Value.Count == dateCounter).Select(x => x.Key).ToList();
+
+            return PartialView("_FreeRoomSelect", roomList);
+        }
+
 
         public ActionResult DateList(Guid id)
         {

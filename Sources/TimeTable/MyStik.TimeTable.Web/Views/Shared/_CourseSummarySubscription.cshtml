@@ -1,9 +1,15 @@
 ﻿@model MyStik.TimeTable.Web.Models.CourseSummaryModel
 
 
-@if (Model.Lottery == null)
+@if (Model.Lottery != null)
 {
-if (Model.Course.Occurrence.IsAvailable)
+    <div class="list-group-item list-group-item-info">
+        <h5 class="list-group-item-heading"><i class="fa fa-random"></i> Lehrveranstaltung gehört zum Wahlverfahren 
+            <a href="@Url.Action("Details", "Lottery", new {id=Model.Lottery.Id})">@Model.Lottery.Name</a></h5>
+    </div>
+}
+
+@if (Model.Course.Occurrence.IsAvailable)
  {
      <div class="list-group-item list-group-item-success">
          <h5 class="list-group-item-heading"><i class="fa fa-pencil"></i> Studierende können sich eintragen</h5>
@@ -15,11 +21,3 @@ if (Model.Course.Occurrence.IsAvailable)
          <h5 class="list-group-item-heading"><i class="fa fa-ban"></i> Studierende können sich aktuell nicht eintragen</h5>
      </div>
  }
-}
-else
-{
-    <div class="list-group-item list-group-item-info">
-        <h5 class="list-group-item-heading"><i class="fa fa-random"></i> Lehrveranstaltung gehört zum Wahlverfahren 
-            <a href="@Url.Action("Details", "Lottery", new {id=Model.Lottery.Id})">@Model.Lottery.Name</a></h5>
-    </div>
-}

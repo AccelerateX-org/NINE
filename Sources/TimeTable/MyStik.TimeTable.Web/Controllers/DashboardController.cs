@@ -95,11 +95,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     var courseInTheFuture = Db.ActivityDates
                         .Any(x =>
-                            x.Activity.Semester != null && x.Activity.Semester.Id == nextSemester.Id &&
+                            x.Activity.Semester != null && x.Activity.Semester.Id == currentSemester.Id && x.End > DateTime.Now &&
                             (x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
                              x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))));
 
-                    if (courseInTheFuture)
+                    if (!courseInTheFuture)
                     {
                         currentSemester = nextSemester;
                     }

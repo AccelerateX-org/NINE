@@ -165,45 +165,6 @@
                     </div>
                 </td>
             </tr>
-            @foreach (var accr in module.Accreditations)
-            {
-                <tr>
-                    <td rowspan="3">
-                        <div>
-                            Zgehörigkeit zu Curriculum
-                        </div>
-                    </td>
-                    <td colspan="2">
-                        <div>
-                            <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div>
-                            Fachsemester
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <div>@accr.Slot.Semester</div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div>
-                            Leistungspunkte
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <div>@accr.Slot.ECTS ECTS</div>
-                        </div>
-                    </td>
-                </tr>
-            }
             @foreach (var subject in module.ModuleSubjects)
             {
                 <tr>
@@ -322,6 +283,7 @@
                     }
                 </td>
             </tr>
+            @*
             @foreach (var accr in module.Accreditations)
             {
                 foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
@@ -418,7 +380,7 @@
                     </tr>
                 }
             }
-
+                *@
         </table>
 
 

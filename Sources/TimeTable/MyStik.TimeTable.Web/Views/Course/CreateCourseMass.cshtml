@@ -1,0 +1,201 @@
+﻿@using System.Web.Mvc.Html
+@model MyStik.TimeTable.Web.Models.CourseCreateModel2
+@{
+    ViewBag.Title = "Lehrveranstaltung anlegen";
+}
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4> Neue Lehrveranstaltung anlegen</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Zuordnung zum Lehrveranstaltungsangebot</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-select" })
+                                            <label for="SemesterId">Semester auswählen</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-select", onchange = "onOrganiserChanged()" })
+                                            <label for="OrganiserId">Fakultät auswählen</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Lehrveranstaltungen</h5>
+                                <div id="DateTable">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Kurzname</th>
+                                            <th>Name</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <input type="text" class="form-control" id="DateDay">
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control" id="DateBegin">
+                                            </th>
+                                            <th>
+                                                <button class="btn btn-outline-primary" onclick="addDate()"><i class="bi-plus-circle"></i> Lehrveranstaltung hinzufügen</button>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="dateList"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button class="btn btn-outline-primary" onclick="createCourse(false)"><i class="bi-save"></i> Lehrveranstaltungen anlegen</button>
+                        <a href="@Url.Action("Faculty", "University", new {id=Model.OrganiserId})" class="btn btn-outline-secondary">Abbrechen</a>
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
+
+    <script>
+
+        function onOrganiserChanged() {
+            var org = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("CurriculaList", "Curriculum")',
+                data: {
+                    orgId: org,
+                    activeOnly: false
+                },
+                success: function(data, success, xhr) {
+                    $('#CurriculumId').html(data);
+                }
+            });
+        }
+
+
+        function addDate() {
+            var dayText = $("#DateDay").val();
+            var beginText = $("#DateBegin").val();
+
+            var id = 'id' + (new Date()).getTime();
+
+            $("#dateList").append("<tr id=\"" + id
+                + "\" data-date-day=\"" + dayText
+                + "\" data-date-begin=\"" + beginText
+                + "\"><td>"
+                + dayText + "</td><td>"
+                + beginText + "</td><td>"
+                + "</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
+                + id + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
+        }
+
+
+        $(document).ready(function () {
+            $("#loading").hide();
+        });
+
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+
+
+
+
+        function createCourse(bShowDetails) {
+
+            $("#loading").show();
+
+            var semId = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
+            var courseName = $("#Name").val();
+            var courseShortName = $("#ShortName").val();
+            var groupList = new Array();
+            var topicList = new Array();
+            var dozList = new Array();
+            var roomList = new Array();
+            var dateList = new Array();
+
+
+            var list = $("#DateTable > table > tbody > tr").get();
+            n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    var elem = $("#" + list[i].id);
+
+                    dateList[i] = elem.data("date-day") + "#"
+                    + elem.data("date-begin") + "#"
+                    + elem.data("date-end");
+                }
+            }
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("CreateCourseMass")',
+                    data: {
+                        showDetails: bShowDetails,
+                        SemesterId: semId,
+                        OrganiserId: orgId,
+                    ShortName: courseShortName,
+                    Name: courseName,
+                    GroupIds: groupList,
+                    TopicIds: topicList,
+                    DozIds: dozList,
+                    RoomIds: roomList,
+                    Dates: dateList
+                },
+                    success: function (data, success, xhr) {
+                        $("#loading").show();
+                        window.location.replace(data);
+                }
+            });
+        }
+
+
+    </script>
+}

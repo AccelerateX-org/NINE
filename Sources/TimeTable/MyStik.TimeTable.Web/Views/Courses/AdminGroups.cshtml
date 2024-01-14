@@ -40,7 +40,7 @@
                         @if (ViewBag.UserRight.IsCourseAdmin)
                         {
                             <a class="btn btn-outline-primary text-center" href="@Url.Action("InitGroups", "Courses", new {id = Model.Semester.Id})"> <i class="bi-plus"></i><br />Gruppen anlegen</a>
-                            <a class="btn btn-outline-primary text-center" href="@Url.Action("InitGroups", "Courses", new {id = Model.Semester.Id})"> <i class="bi-recycle"></i><br />Gruppen ergänzen</a>
+                            <a class="btn btn-outline-primary text-center" href="@Url.Action("InitGroups", "Courses", new {id = Model.Semester.Id})"> <i class="bi-arrow-repeat"></i><br />Gruppen ergänzen</a>
                             <a class="btn btn-outline-primary text-center" href="@Url.Action("RemoveUnused", "Courses", new {id = Model.Semester.Id})"> <i class="bi-trash"></i><br />Alle ungenutzen Löschen</a>
                             <a class="btn btn-outline-danger text-center" href="@Url.Action("Analyse", "Courses")"> <i class="bi-radioactive"></i><br />Administration</a>
                         }

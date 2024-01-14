@@ -44,16 +44,16 @@
                     {
                         foreach (var subject in module.ModuleSubjects)
                         {
-                            foreach (var accr in module.Accreditations)
+                            foreach (var accr in subject.SubjectAccreditations)
                             {
-                                var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id && x.Subject.Id == subject.Id);
+                                var teachings = accr.Subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id);
 
                                 if (teachings.Any())
                                 {
                                     foreach (var teaching in teachings)
                                     {
                                         <tr>
-                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Subject.Module.Id })">@accr.Subject.Module.Tag @accr.Subject.Module.Name</a></td>
                                             <td>@subject.Tag (@subject.TeachingFormat.Tag)</td>
                                             <td><a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a></td>
                                             <td>@accr.Slot.FullTag :: @module.FullTag</td>
@@ -64,7 +64,7 @@
                                 else
                                 {
                                     <tr>
-                                        <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
+                                        <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Subject.Module.Id })">@accr.Subject.Module.Tag @accr.Subject.Module.Name</a></td>
                                         <td>@subject.Tag (@subject.TeachingFormat.Tag)</td>
                                         <td>wird nicht angeboten</td>
                                         <td>@accr.Slot.FullTag :: @module.FullTag</td>

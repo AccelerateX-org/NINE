@@ -1,9 +1,16 @@
 ﻿
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.SemesterViewModel
 
 @{
     ViewBag.Title = "Zeitplan";
+
+    var db = new TimeTableDbContext();
+    var nCourses = db.Activities.OfType<Course>().Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id);
+    var nProjected = db.Activities.OfType<Course>().Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && x.IsProjected);
+    var nInternal = db.Activities.OfType<Course>().Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && x.IsInternal);
+    var nLocked = db.Activities.OfType<Course>().Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && !x.Occurrence.IsAvailable);
 }
 
 
@@ -20,8 +27,26 @@
 
         <div class="card">
             <div class="card-header">
-                <h4>Semester @Model.Semester.Name für @Model.Organiser.ShortName</h4>
-                <p>@Model.Semester.StartCourses.ToShortDateString() - @Model.Semester.EndCourses.ToShortDateString()</p>
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>Semester @Model.Semester.Name für @Model.Organiser.ShortName</h4>
+                        <p>@Model.Semester.StartCourses.ToShortDateString() - @Model.Semester.EndCourses.ToShortDateString()</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div>
+                            Anzahl Kurse: @nCourses
+                        </div>
+                        <div>
+                            @nProjected im Planungsmodus <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new{orgId = Model.Organiser.Id, semId = Model.Semester.Id, state=1})">an</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new{orgId = Model.Organiser.Id, semId = Model.Semester.Id, state=2})">aus</a>
+                        </div>
+                        <div>
+                            @nInternal für Lehrende gesperrt <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new{orgId = Model.Organiser.Id, semId = Model.Semester.Id, state=3})">sperren</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new{orgId = Model.Organiser.Id, semId = Model.Semester.Id, state=4})">freigeben</a>
+                        </div>
+                        <div>
+                            @nLocked für Studierende gesperrt <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new{orgId = Model.Organiser.Id, semId = Model.Semester.Id, state=5})">sperren</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new{orgId = Model.Organiser.Id, semId = Model.Semester.Id, state=6})">freigeben</a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="list-group">
                 @if (ViewBag.UserRight.IsOrgAdmin)

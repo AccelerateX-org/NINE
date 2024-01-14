@@ -182,7 +182,8 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <h4>Freie Räume <span><a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary">Aktualisieren</a></span></h4>
+                        <h5>Freie Räume </h5>
+                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi-arrow-repeat"></i> Aktualisieren</a>
                         <div id="roomTable"></div>
                     </div>
                 </div>
@@ -267,7 +268,7 @@
                     + ui.item.text + "\"><td>"
                     + orgText + "</td><td>"
                     + ui.item.value + "</td><td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRow('"
-                    + ui.item.text + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
+                    + ui.item.text + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
 
             }
         });
@@ -513,7 +514,7 @@
             + roomId + "\"><td></td><td>"
             + roomNumber + "</td><td id=\"state_"
             + roomId + "\">unbekannt</td><td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRow('"
-            + roomId + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
+            + roomId + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
 
         checkRoomState(roomId);
 

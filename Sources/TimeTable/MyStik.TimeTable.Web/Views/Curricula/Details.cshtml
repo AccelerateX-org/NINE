@@ -63,10 +63,6 @@
                                                 }
                                             </td>
                                             <td>
-                                                @foreach (var accr in group.Accreditations)
-                                                {
-                                                    <div>@accr.Module.ShortName</div>
-                                                }
                                             </td>
                                         </tr>
 
@@ -83,16 +79,6 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
-                                @foreach (var criteria in Model.Criterias)
-                                {
-                                    <tr>
-                                        <td>
-                                            <a href="@Url.Action("Criteria", new {id=criteria.Id})">@criteria.Name</a>
-                                        </td>
-                                        <td>@criteria.Accreditations.Count</td>
-                                    </tr>
-                                }
                                 </tbody>
                             </table>
                         </div>

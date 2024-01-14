@@ -61,7 +61,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-center text-danger" href="@Url.Action("Clear", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Leeren</a>
+                        <a class="nav-link text-center text-danger" href="@Url.Action("Clear", new {id = Model.Id})"><i class="bi-trash fa-fw"></i><br />Leeren</a>
                     </li>
 
                     @*
@@ -115,7 +115,7 @@
                                     {
                                         <a class="btn btn-outline-primary" href="@Url.Action("AddChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz geben</a>
                                     }
-                                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-trash-alt fa-fw"></i> Mitglied entfernen</a>
+                                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="bi-trash fa-fw"></i> Mitglied entfernen</a>
 
                                 }
                             </li>
@@ -166,12 +166,12 @@
                                 {
                                     if (Model.Candidatures.Any(x => x.Stages.Any(y => y.AssessmentStage.Id == s.Id)))
                                     {
-                                        <a href="#" class="btn btn-outline-danger disabled"><i class="fas fa-trash-alt"></i> Löschen</a>
+                                        <a href="#" class="btn btn-outline-danger disabled"><i class="bi-trash"></i> Löschen</a>
 
                                     }
                                     else
                                     {
-                                        <a href="@Url.Action("DeleteStage", new {id = s.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Löschen</a>
+                                        <a href="@Url.Action("DeleteStage", new {id = s.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i> Löschen</a>
                                     }
                                 }
                             </div>
@@ -198,7 +198,7 @@
                     @*
                         @if (isAdmin)
                         {
-                            <a class="btn btn-outline-danger" href="@Url.Action("ClearCandidates", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i> Alle TeilnehmerInnen löschen</a>
+                            <a class="btn btn-outline-danger" href="@Url.Action("ClearCandidates", new {id = Model.Id})"><i class="bi-trash fa-fw"></i> Alle TeilnehmerInnen löschen</a>
                         }
                         *@
                 </div>
