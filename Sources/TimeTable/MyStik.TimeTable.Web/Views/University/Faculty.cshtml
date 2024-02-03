@@ -27,7 +27,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.ShortName</li>
@@ -38,7 +38,7 @@
                 <div class="card border-secondary">
                     <div class="card-body">
                         <h5 class="card-title text-center">
-                            <i class="bi-book"></i><br />
+                            <i class="bi bi-book"></i><br />
                             Angebote
                         </h5>
                     </div>
@@ -46,7 +46,7 @@
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
-                            <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Etiketten</a>
+                            <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
                         }
                         <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
                         @if (nSem != null)
@@ -67,7 +67,7 @@
                 <div class="card border-secondary">
                     <div class="card-body">
                         <h5 class="card-title text-center">
-                            <i class="bi-building"></i><br/>
+                            <i class="bi bi-building"></i><br/>
                             Räume
                         </h5>
                     </div>
@@ -90,7 +90,7 @@
                 <div class="card border-secondary">
                     <div class="card-body">
                         <h5 class="card-title text-center">
-                            <i class="bi-people"></i><br/>
+                            <i class="bi bi-people"></i><br/>
                             Personen
                         </h5>
                     </div>
@@ -99,7 +99,7 @@
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("Index", "Students", new {id = Model.Id})" class="list-group-item list-group-item-action">Studierende</a>
-                            <a href="@Url.Action("Index", "Alumni", new {id = Model.Id})" class="list-group-item list-group-item-action">Alumni</a>
+                            <a href="@Url.Action("List", "Alumni", new {id = Model.Id})" class="list-group-item list-group-item-action">Alumni</a>
                             <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Externe Partner</a>
                             <a href="@Url.Action("Index", "Autonomy", new {id = Model.Id})" class="list-group-item list-group-item-action">Gremien</a>
                         }
@@ -110,7 +110,7 @@
                 <div class="card border-secondary">
                     <div class="card-body">
                         <h5 class="card-title text-center">
-                            <i class="bi-gear"></i><br/>
+                            <i class="bi bi-gear"></i><br/>
                             Workflows
                         </h5>
                     </div>

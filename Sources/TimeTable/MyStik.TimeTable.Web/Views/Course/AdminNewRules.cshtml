@@ -1,9 +1,24 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.CourseDetailViewModel
 
 
 @{
     ViewBag.Title = "Platzvergabe";
+
+    var db = new TimeTableDbContext();
+
+    foreach (var quota in Model.Course.Occurrence.SeatQuotas)
+    {
+        if (quota.ItemLabelSet == null)
+        {
+            var labelSet = new ItemLabelSet();
+            quota.ItemLabelSet = labelSet;
+            db.ItemLabelSets.Add(labelSet);
+        }
+    }
+
+    db.SaveChanges();
 
 }
 
@@ -11,7 +26,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             @if (Model.Course.Organiser != null)
             {
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Course.Organiser.Id })">@Model.Course.Organiser.ShortName</a></li>
@@ -26,20 +41,21 @@
     </nav>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="card">
                 <div class="list-group">
                     <div class="list-group-item">
-                        <a class="btn btn-outline-primary" href="@Url.Action("AddQuota", new { id = Model.Course.Id })"><i class="bi-plus"></i> Platzkontingent hinzufügen</a>
+                        <a class="btn btn-outline-primary" href="@Url.Action("AddQuota", new { id = Model.Course.Id })"><i class="bi bi-plus"></i> Platzkontingent hinzufügen</a>
                     </div>
                 </div>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Studiengang</th>
-                            <th>Etikett / Kohorte</th>
+                            <th>Kohorte</th>
                             <th>Plätze</th>
                             <th>Beschreibung</th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -82,171 +98,180 @@
                                 }
                                 <td>@quota.Description</td>
                                 <td>
-                                @*
-                                    <a class="btn btn-outline-primary" href="@Url.Action("EditQuota", new { id = quota.Id })">
-                                        <i class="bi-gear"></i> ändern
-                                    </a>
-                                    *@
+                                    @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
+                                    {
+                                        <input name="quotaId" hidden value="@quota.Id" />
+                                        <input name="courseId" hidden value="@Model.Course.Id" />
+                                        <div class="col-auto">
+                                            <input type="text" name="delta" id="delta" class="form-control" placeholder="Anzahl Plätze">
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-primary mb-3">Ändern</button>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
                                     <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuota", new { id = quota.Id })">
-                                        <i class="bi-trash"></i> löschen
+                                        <i class="bi bi-trash"></i> löschen
                                     </a>
                                 </td>
-                            </tr>
+                                    </tr>
 
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="alert alert-info">
-                <h5>Hinweise zur Verwendung:</h5>
-                <ul>
-                    <li>Standard: Platzkontingent pro Studiengang</li>
-                    <li>Erweiterung: Platzkonrtingent pro Studiengang und Etikett / Kohorte</li>
-                    <li>Wichtig: Etiketten / Kohorten innerhalb eines Platzkontingents werden mit "UND" verknüpft</li>
-                    <li>Option: Ohne Angabe eines Studiengangs = offen für alle (anderen)</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-
-
-@*
-    @Html.Partial("_CourseSummaryHeader", Model.Summary)
-
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-legal"></i> Teilnahmebeschränkungen</h4>
-                    </div>
-                    <div class="panel-body">
-                        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                        {
-                            <fieldset>
-                                @Html.HiddenFor(m => m.Course.Id)
-
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">Einordnung nach "Ampelsystem"</label>
-                                    <div class="col-md-10">
-                                        <div class="radio-list">
-                                            <label>
-                                                @Html.RadioButtonFor(m => m.optionsAccess, 1)
-                                                Jeder Studierende kann sich eintragen
-                                            </label>
-                                            <label>
-                                                @Html.RadioButtonFor(m => m.optionsAccess, 2)
-                                                Studierende der angegebenen Studiengänge werden bevorzugt, d.h. alle anderen landen auf der Warteliste
-                                            </label>
-                                            <label>
-                                                @Html.RadioButtonFor(m => m.optionsAccess, 3)
-                                                Nur Studierende der angegebenen Studiengänge können sich eintragen
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">Platzkontingent</label>
-                                    <div class="col-md-10">
-                                        <div class="radio-list">
-                                            <label>
-                                                @Html.RadioButtonFor(m => m.optionsLimit, 1)
-                                                Keine Beschränkung
-                                            </label>
-                                            <label>
-                                                @Html.RadioButtonFor(m => m.optionsLimit, 2)
-                                                Beschränkung auf Ebene der Lehrveranstaltung als Ganzes
-                                                @Html.TextBoxFor(m => m.Capacity, new { @class = "form-control" })
-                                            </label>
-                                            <label>
-                                                @Html.RadioButtonFor(m => m.optionsLimit, 3)
-                                                Beschränkung auf Ebene der einzelnen Studiengänge
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                @foreach (var occGroup in Model.Course.Occurrence.Groups)
-                                {
-                                    <div class="form-group">
-                                        <label class="col-md-offset-2 col-md-2 control-label">Anzahl Plätze für @Html.GroupList(occGroup.SemesterGroups, showLink: false)</label>
-                                        <div class="col-md-2">
-                                            <input name="@occGroup.Id" id="@occGroup.Id" value="@occGroup.Capacity" class="form-control dtcap" />
-                                        </div>
-                                    </div>
                                 }
-
-                                <div class="form-group">
-                                    <div class="col-md-offset-2 col-md-8">
-                                        <a class="btn btn-primary" href="javascript:onSave()"><i class="fa fa-save"></i> Speichern</a>
-                                    </div>
-                                </div>
-
-                            </fieldset>
-
-                        }
-
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="alert alert-info">
+                        <h5>Hinweise zur Verwendung:</h5>
+                        <ul>
+                            <li>Anzahl Plätze < 0 => unbegrenzt</li>
+                            <li>Standard: Platzkontingent pro Studiengang</li>
+                            <li>Erweiterung: Platzkonrtingent pro Studiengang und Kohorte</li>
+                            <li>Wichtig: Kohorten innerhalb eines Platzkontingents werden mit "UND" verknüpft</li>
+                            <li>Option: Ohne Angabe eines Studiengangs = offen für alle (anderen)</li>
+                        </ul>
                     </div>
                 </div>
             </div>
+
         </div>
-    </div>
-    *@
 
-@section scripts
+
+
+        @*
+            @Html.Partial("_CourseSummaryHeader", Model.Summary)
+
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4><i class="fa fa-legal"></i> Teilnahmebeschränkungen</h4>
+                            </div>
+                            <div class="panel-body">
+                                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    <fieldset>
+                                        @Html.HiddenFor(m => m.Course.Id)
+
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">Einordnung nach "Ampelsystem"</label>
+                                            <div class="col-md-10">
+                                                <div class="radio-list">
+                                                    <label>
+                                                        @Html.RadioButtonFor(m => m.optionsAccess, 1)
+                                                        Jeder Studierende kann sich eintragen
+                                                    </label>
+                                                    <label>
+                                                        @Html.RadioButtonFor(m => m.optionsAccess, 2)
+                                                        Studierende der angegebenen Studiengänge werden bevorzugt, d.h. alle anderen landen auf der Warteliste
+                                                    </label>
+                                                    <label>
+                                                        @Html.RadioButtonFor(m => m.optionsAccess, 3)
+                                                        Nur Studierende der angegebenen Studiengänge können sich eintragen
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">Platzkontingent</label>
+                                            <div class="col-md-10">
+                                                <div class="radio-list">
+                                                    <label>
+                                                        @Html.RadioButtonFor(m => m.optionsLimit, 1)
+                                                        Keine Beschränkung
+                                                    </label>
+                                                    <label>
+                                                        @Html.RadioButtonFor(m => m.optionsLimit, 2)
+                                                        Beschränkung auf Ebene der Lehrveranstaltung als Ganzes
+                                                        @Html.TextBoxFor(m => m.Capacity, new { @class = "form-control" })
+                                                    </label>
+                                                    <label>
+                                                        @Html.RadioButtonFor(m => m.optionsLimit, 3)
+                                                        Beschränkung auf Ebene der einzelnen Studiengänge
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @foreach (var occGroup in Model.Course.Occurrence.Groups)
+                                        {
+                                            <div class="form-group">
+                                                <label class="col-md-offset-2 col-md-2 control-label">Anzahl Plätze für @Html.GroupList(occGroup.SemesterGroups, showLink: false)</label>
+                                                <div class="col-md-2">
+                                                    <input name="@occGroup.Id" id="@occGroup.Id" value="@occGroup.Capacity" class="form-control dtcap" />
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <div class="form-group">
+                                            <div class="col-md-offset-2 col-md-8">
+                                                <a class="btn btn-primary" href="javascript:onSave()"><i class="fa fa-save"></i> Speichern</a>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                                    *@
+
+                                    @section scripts
 {
-    @*
-        <script>
-            
-                                    function onSave() {
-                                        var list = $(".dtcap").get();
-                                        var capacity = $("#Capacity").val();
-                                        var optAccess = $('input[name=optionsAccess]:checked').val();
-                                        var optLimit = $('input[name=optionsLimit]:checked').val();
+                                        @*
+            <script>
+
+                                        function onSave() {
+                                            var list = $(".dtcap").get();
+                                            var capacity = $("#Capacity").val();
+                                            var optAccess = $('input[name=optionsAccess]:checked').val();
+                                            var optLimit = $('input[name=optionsLimit]:checked').val();
 
 
-                                        var n = list.length;
+                                            var n = list.length;
 
 
-                                        var groupIds = new Array();
-                                        var groupCaps = new Array();
+                                            var groupIds = new Array();
+                                            var groupCaps = new Array();
 
-                                        for (var i = 0; i < n; i++) {
-                                            groupIds[i] = list[i].name;
-                                            groupCaps[i] = list[i].value;
+                                            for (var i = 0; i < n; i++) {
+                                                groupIds[i] = list[i].name;
+                                                groupCaps[i] = list[i].value;
+                                            }
+
+
+                                            $.ajax(
+                                                {
+                                                    type: "POST",
+                                                    url: '@Url.Action("SaveAdminNewRules")',
+                                                    data: {
+                                                        courseId: "@Model.Course.Id",
+                                                        optAccess: optAccess,
+                                                        optLimit: optLimit,
+                                                        capacity: capacity,
+                                                        groupIds: groupIds,
+                                                        groupCaps: groupCaps
+
+                                                    },
+                                                    success: function (data, success, xhr) {
+                                                        window.location = data.url;
+                                                    }
+                                                });
+
+
+
                                         }
 
 
-                                        $.ajax(
-                                            {
-                                                type: "POST",
-                                                url: '@Url.Action("SaveAdminNewRules")',
-                                                data: {
-                                                    courseId: "@Model.Course.Id",
-                                                    optAccess: optAccess,
-                                                    optLimit: optLimit,
-                                                    capacity: capacity,
-                                                    groupIds: groupIds,
-                                                    groupCaps: groupCaps
-
-                                                },
-                                                success: function (data, success, xhr) {
-                                                    window.location = data.url;
-                                                }
-                                            });
-
-
+            </script>
+                                        *@
 
                                     }
-
-
-        </script>
-        *@
-
-    }

@@ -57,7 +57,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">@Model.CurriculumModule.Catalog.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">Modulkataloge</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.CurriculumModule.Catalog.Id})">@Model.CurriculumModule.Catalog.Tag</a></li>
@@ -174,7 +174,7 @@
                                 @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
                                 {
                                     <a href="@Url.Action("Descriptions", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
-                                        <i class="bi-keyboard"></i> Ändern
+                                        <i class="bi bi-keyboard"></i> Ändern
                                     </a>
                                 }
                             </div>
@@ -224,7 +224,7 @@
                                         @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                                         {
                                             <a href="@Url.Action("Teachings", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
-                                                <i class="bi-keyboard"></i> Ändern
+                                                <i class="bi bi-keyboard"></i> Ändern
                                             </a>
                                         }
 
@@ -320,7 +320,7 @@
                                         @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
                                         {
                                             <a href="@Url.Action("Exams", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
-                                                <i class="bi-keyboard"></i> Ändern
+                                                <i class="bi bi-keyboard"></i> Ändern
                                             </a>
                                         }
                                     </div>

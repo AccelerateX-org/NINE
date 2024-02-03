@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using MyStik.TimeTable.DataServices;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -37,7 +38,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Curriculum = curriculum,
                 Semester = semester
-            //    Modules = modules
+                //    Modules = modules
             };
 
             // hier muss überprüft werden, ob der aktuelle Benutzer
@@ -75,7 +76,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new StudyPlanPublishingModel
             {
                 Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId),
-                Semester =Db.Semesters.SingleOrDefault(y => y.Id == semId)
+                Semester = Db.Semesters.SingleOrDefault(y => y.Id == semId)
             };
 
             return View(model);
@@ -88,7 +89,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.Semester.Id);
-            var member = curr.Organiser.Members.SingleOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
+            var member =
+                curr.Organiser.Members.SingleOrDefault(m =>
+                    !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
 
             var now = DateTime.Now;
 
@@ -106,7 +109,8 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var module in modules)
             {
                 // aktuelle Beschreibung des Semesters
-                var currentDesc = module.Descriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
+                var currentDesc = module.Descriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null)
+                    .OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
 
                 if (currentDesc != null)
                 {
@@ -118,7 +122,9 @@ namespace MyStik.TimeTable.Web.Controllers
                     // die aktuelle Beschreibung des Folgesemesters
                     if (model.RollForward)
                     {
-                        var nextDesc = module.Descriptions.Where(x => x.Semester.Id == nextSemester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
+                        var nextDesc = module.Descriptions
+                            .Where(x => x.Semester.Id == nextSemester.Id && x.ChangeLog != null)
+                            .OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
 
                         // neue Beschreibung anlegen
                         if (nextDesc == null)
@@ -151,6 +157,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         }
                     }
                 }
+
                 foreach (var accr in module.ExaminationOptions.ToList())
                 {
                     foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id).ToList())
@@ -248,7 +255,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     Category = "Studienplan",
                     FileType = "application/pdf",
-                    Name = $"{semester.Name}_{curr.ShortName}_Studienplan_{printModel.TimeStamp.ToString("yyyyMMdd")}.pdf",
+                    Name =
+                        $"{semester.Name}_{curr.ShortName}_Studienplan_{printModel.TimeStamp.ToString("yyyyMMdd")}.pdf",
                     Created = DateTime.Now,
                     Description = "Automatisch erzeugt",
                 };
@@ -317,7 +325,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var accr in module.ExaminationOptions)
                 {
-                    var exams = accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).ToList();
+                    var exams = accr.ExaminationDescriptions
+                        .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).ToList();
                     foreach (var exam in exams)
                     {
                         exam.ChangeLog.Approved = null;
@@ -329,6 +338,144 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Details", new { currId = currId, semId = semId });
+        }
+
+        public ActionResult SlotPlan(Guid currId, Guid semId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+            model.Semester = SemesterService.GetSemester(semId);
+            model.Organiser = curr.Organiser;
+
+            // die Labels sammlen
+            var labels = new List<ItemLabel>();
+            foreach (var section in curr.Sections)
+            {
+                foreach (var slot in section.Slots)
+                {
+                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    {
+                        foreach (var label in slot.LabelSet.ItemLabels)
+                        {
+                            if (!labels.Contains(label))
+                            {
+                                labels.Add(label);
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+            ViewBag.FilterLabels = labels.OrderBy(x => x.Name);
+
+            model.Areas = new List<AreaSelectViewModel>();
+
+            var allAreasWithOptions = curr.Areas.Where(x => x.Options.Count > 1).ToList();
+            foreach (var area in allAreasWithOptions)
+            {
+                var optList = area.Options.ToList();
+                optList.Shuffle();
+                var option = optList.First();
+
+                var selectOption = new AreaSelectViewModel
+                {
+                    Area = area,
+                    Option = option,
+                };
+
+                model.Areas.Add(selectOption);
+            }
+
+            // hier muss überprüft werden, ob der aktuelle Benutzer
+            // der Fakultät des Studiengangs angehört oder nicht
+            ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult LoadModulePlan(Guid currId, string label)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+
+            model.FilterLabel = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(label));
+
+
+            return PartialView("_ModulePlan", model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult LoadModulePlanAreas(Guid currId, Guid semId, Guid[] optIds)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+            model.Semester = sem;
+
+            model.Areas = new List<AreaSelectViewModel>();
+
+            foreach (var optId in optIds)
+            {
+                var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optId);
+
+                var selectOption = new AreaSelectViewModel
+                {
+                    Area = option.Area,
+                    Option = option,
+                };
+
+                model.Areas.Add(selectOption);
+            }
+
+            return PartialView("_ModuleAreaPlan", model);
+        }
+
+
+        public ActionResult AssignmentPlan(Guid currId, Guid semId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+            model.Semester = sem;
+
+            return View(model);
+        }
+
+        public ActionResult Slot(Guid slotId, Guid semId)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
+
+            if (slot.CurriculumSection != null)
+            {
+                ViewBag.UserRight = GetUserRight(slot.CurriculumSection.Curriculum.Organiser);
+            }
+
+            if (slot.AreaOption != null)
+            {
+                ViewBag.UserRight = GetUserRight(slot.AreaOption.Area.Curriculum.Organiser);
+            }
+
+            ViewBag.Semester = SemesterService.GetSemester(semId);
+
+            return View(slot);
         }
     }
 }

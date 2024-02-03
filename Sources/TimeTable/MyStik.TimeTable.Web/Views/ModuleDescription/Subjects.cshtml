@@ -19,7 +19,7 @@
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
-                            <i class="bi-chevron-compact-left"></i> Zurück
+                            <i class="bi bi-chevron-compact-left"></i> Zurück
                         </a>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                         <td></td>
                         <td>
                             <a href="@Url.Action("CreateSubject", null, new { id = Model.Module.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neue Lehr-/Lernform hinzufügen
+                                <i class="bi bi-plus"></i> Neue Lehr-/Lernform hinzufügen
                             </a>
                         </td>
                     </tr>
@@ -55,10 +55,10 @@
                             <td>@subject.TeachingFormat.Tag</td>
                             <td>
                                 <a href="@Url.Action("EditSubject", new {id = subject.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-keyboard"></i> ändern
+                                    <i class="bi bi-keyboard"></i> ändern
                                 </a>
                                 <a href="@Url.Action("DeleteSubject", new {id = subject.Id})" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> löschen
+                                    <i class="bi bi-trash"></i> löschen
                                 </a>
                             </td>
                         </tr>

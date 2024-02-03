@@ -1,6 +1,14 @@
-﻿@model MyStik.TimeTable.Web.Models.OrgAutonomyModel
+﻿@using ImageMagick
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OrgAutonomyModel
 @{
     ViewBag.Title = "Gremien";
+
+    //var userDb = new ApplicationDbContext();
+
+//    var users = userDb.Users.Where(x => x.BinaryData != null).ToList();
+
+
 }
 
 
@@ -24,6 +32,54 @@
     </script>
 }
 
+@*
+@foreach (var user in users)
+    {
+        var maxSize = 240;
+        //var image = new ImageMagick.MagickImageInfo(user.BinaryData);
+
+        //var width_org = image.Width;
+        //var height_org = image.Height;
+
+        using (var memStream = new MemoryStream(user.BinaryData))
+        {
+            try
+            {
+                using (var image = new MagickImage(memStream))
+                {
+                    var width_org = image.Width;
+                    var height_org = image.Height;
+
+                    if (width_org > maxSize || height_org > maxSize)
+                    {
+                        //image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+                        image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+
+                        var bytes = image.ToByteArray();
+
+                        user.BinaryData = bytes;
+
+                        <li>@user.BinaryData.Length (@width_org x @height_org) => (@image.Width x @image.Height)</li>
+
+                        userDb.SaveChanges();
+                    }
+                    else
+                    {
+                        <li>Größe passt</li>
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                <li>Fehler</li>
+            }
+        }
+
+
+
+    }
+</ol>
+*@
 
 <div class="col-md-12">
     <div class="card">
@@ -38,7 +94,7 @@
                 <div class="btn-group">
                     @if (ViewBag.UserRight.IsMemberAdmin)
                     {
-                            <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateCommittee", "Autonomy")"> <i class="bi-folder-plus"></i><br />Hinzufügen</a>
+                            <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateCommittee", "Autonomy")"> <i class="bi bi-folder-plus"></i><br />Hinzufügen</a>
                     }
                 </div>
             </div>

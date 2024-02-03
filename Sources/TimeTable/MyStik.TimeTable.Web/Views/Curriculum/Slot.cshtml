@@ -18,7 +18,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">@Model.AreaOption.Area.Curriculum.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Areas", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">Themenbereiche</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Area", "Curriculum", new {id=Model.AreaOption.Area.Id})">@Model.AreaOption.Area.Name (@Model.AreaOption.Area.Tag)</a></li>
@@ -67,34 +67,34 @@
                         <div class="btn-group">
                         @*
                             <a href="@Url.Action("CreateModule", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Modul anlegen
+                                <i class="bi bi-plus"></i> Modul anlegen
                             </a>
                             *@
                             <a href="@Url.Action("AssignModules", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-list-columns"></i> Module akkreditieren
+                                <i class="bi bi-list-columns"></i> Fächer akkreditieren
                             </a>
                         </div>
                         <div class="btn-group">
                             <a href="@Url.Action("EditSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Slot ändern
+                                <i class="bi bi-gear"></i> Slot ändern
                             </a>
                             @if (Model.SubjectAccreditations.Any())
                             {
                                 <div class="btn btn-outline-danger disabled">
-                                    <i class="bi-trash"></i> Slot löschen
+                                    <i class="bi bi-trash"></i> Slot löschen
                                 </div>
                             }
                             else
                             {
                                 <a href="@Url.Action("DeleteSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Slot löschen
+                                    <i class="bi bi-trash"></i> Slot löschen
                                 </a>
                             }
                         </div>
                     </div>
                 }
                 <div class="list-group-item">
-                    <h5>Akkreditierte Module</h5>
+                    <h5>Akkreditierte Module / Fächer</h5>
                 </div>
                     <table id="tabModules" class="table">
                         <thead>
@@ -112,14 +112,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var module in Model.SubjectAccreditations)
+                            @foreach (var module in Model.SubjectAccreditations.Select(x => x.Subject.Module).Distinct().ToList())
                             {
                                 <tr>
-                                    <td>@module.Subject.Module.Tag</td>
-                                    <td><a href="@Url.Action("Latest", "ModuleDescription", new { id = module.Subject.Module.Id })">@module.Subject.Module.Name</a></td>
+                                    <td>@module.Tag</td>
+                                    <td><a href="@Url.Action("Latest", "ModuleDescription", new { id = module.Id })">@module.Name</a></td>
                                     @foreach (var t in tf)
                                     {
-                                        var subjects = module.Subject.Module.ModuleSubjects.Where(x => x.TeachingFormat.Id == t.Id).ToList();
+                                        var subjects = module.ModuleSubjects.Where(x => x.TeachingFormat.Id == t.Id).ToList();
 
                                         if (subjects.Any())
                                         {
@@ -141,7 +141,7 @@
                                     {
                                         <td>
                                             <a class="btn btn-outline-danger" href="@Url.Action("DeleteAccredition", new { id = module.Id })">
-                                                <i class="bi-x"></i> Entfernen
+                                                <i class="bi bi-x"></i> Entfernen
                                             </a>
                                         </td>
                                     }

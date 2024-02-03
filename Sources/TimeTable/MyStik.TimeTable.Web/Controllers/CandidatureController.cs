@@ -385,10 +385,28 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (file != null && currentUser != null)
             {
-                currentUser.FileType = file.ContentType;
-                currentUser.BinaryData = new byte[file.ContentLength];
+                //file.InputStream.Read(currentUser.BinaryData, 0, file.ContentLength);
 
-                file.InputStream.Read(currentUser.BinaryData, 0, file.ContentLength);
+                var images = new ImageMagick.MagickImageCollection(file.InputStream);
+                if (images.Count < 1)
+                {
+                    return null;
+                }
+
+                var maxSize = 240;
+
+                foreach (var image in images)
+                {
+                    if (image.Width > maxSize || image.Height > maxSize)
+                    {
+                        image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+                    }
+                }
+
+                var bytes = images.ToByteArray();
+
+                currentUser.FileType = file.ContentType;
+                currentUser.BinaryData = bytes;
 
                 userDb.SaveChanges();
             }

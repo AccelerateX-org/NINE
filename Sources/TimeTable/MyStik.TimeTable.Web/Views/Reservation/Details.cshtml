@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                     <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
                     <li class="breadcrumb-item"><a href="@Url.Action("Index", "Reservation", new {id = Model.Organiser.Id})">Raumreservierungen</a></li>
                     <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
@@ -21,9 +21,9 @@
                     <div class="list-group">
                         <div class="list-group-item">
                             <div class="btn-group" role="group">
-                                <a href="@Url.Action("Index", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> Zurück</a>
-                    <a href="@Url.Action("CreateDate", new { id = Model.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-file-plus"></i> Neuen Termin anlegen</a>
-                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservation", new { id = Model.Id })"><i class="bi-trash"></i> Reservierung löschen</a>
+                                <a href="@Url.Action("Index", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> Zurück</a>
+                    <a href="@Url.Action("CreateDate", new { id = Model.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-file-plus"></i> Neuen Termin anlegen</a>
+                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservation", new { id = Model.Id })"><i class="bi bi-trash"></i> Reservierung löschen</a>
                             </div>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                             <td>
                                 @if (ViewBag.UserRight.IsRoomAdmin)
                                 {
-                                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservationDate", new { id = date.Id })"><i class="bi-trash"></i> löschen</a>
+                                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservationDate", new { id = date.Id })"><i class="bi bi-trash"></i> löschen</a>
                                 }
                             </td>
                         </tr>

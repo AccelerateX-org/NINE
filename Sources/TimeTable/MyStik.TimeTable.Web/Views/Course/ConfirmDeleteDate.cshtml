@@ -10,8 +10,8 @@
                 <p>Soll der Termin am @Model.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE")) @Html.TimeSpan(Model) gelöscht werden?</p>
             </div>
             <div class="modal-footer">
-                <a href="@Url.Action("DeleteDateConfirmed", "Course", new {dateId=Model.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i> Löschen</a>
-                <a href="@Url.Action("AdminNewDates", "Course", new {id = Model.Activity.Id})" class="btn btn-outline-primary"><i class="bi-x"></i> Abbrechen</a>
+                <a href="@Url.Action("DeleteDateConfirmed", "Course", new {dateId=Model.Id})" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Löschen</a>
+                <a href="@Url.Action("AdminNewDates", "Course", new {id = Model.Activity.Id})" class="btn btn-outline-primary"><i class="bi bi-x"></i> Abbrechen</a>
             </div>
         </div>
     </div>

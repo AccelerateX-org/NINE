@@ -1270,5 +1270,19 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = thesis.Id });
         }
 
+        public ActionResult AddDays(ThesisStateModel model, int? Delta)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+            var d = Delta ?? 0;
+
+            if (thesis?.ExpirationDate != null)
+            {
+                thesis.ExpirationDate = thesis.ExpirationDate.Value.AddDays(d);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
     }
 }

@@ -60,7 +60,7 @@
 
 
                             <div class="mb-3">
-                                <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> @Resources.SaveButton</button>
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> @Resources.SaveButton</button>
                             </div>
                         }
                         <div>@Model.Profile.Email</div>
@@ -69,7 +69,7 @@
                         @if (ViewBag.HasImage == true)
                         {
                             <img src="@Url.Action("GetProfileImage")" class="card-img-top" />
-                            <a href="@Url.Action("DeleteProfileImage")" class="btn btn-outline-primary"><i class="bi-trash"></i> Profilbild löschen</a>
+                            <a href="@Url.Action("DeleteProfileImage")" class="btn btn-outline-primary"><i class="bi bi-trash"></i> Profilbild löschen</a>
                         }
                         else
                         {
@@ -109,7 +109,7 @@
                                 <label for="MsgProfile_LikeEmailOnGlobalLevel">@Resources.SetMailingSettingCheckbox</label>
                             </div>
                             <div class="mb-3">
-                                <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> @Resources.SaveButton</button>
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> @Resources.SaveButton</button>
                             </div>
                         }
 

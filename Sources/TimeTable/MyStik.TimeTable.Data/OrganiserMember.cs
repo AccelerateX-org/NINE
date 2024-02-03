@@ -152,6 +152,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CommitteeMember> CommitteeMembershios { get; set; }
 
+        public virtual ICollection<MemberAvailability> Availabilties { get; set; }
+
         public string FullName
         {
             get
@@ -178,4 +180,34 @@ namespace MyStik.TimeTable.Data
 
         public string Tag => ShortName;
     }
+
+    public class MemberAvailability
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public virtual OrganiserMember Member { get; set; }
+
+        public virtual Semester Semester { get; set; }
+
+        public virtual SemesterDate Segment { get; set; }
+
+        public DateTime Begin { get; set; }
+
+        public DateTime End { get; set; }
+
+        /// <summary>
+        /// -3 gar nicht
+        /// +3 super gut 
+        /// </summary>
+        public int Priority { get; set; }
+
+        public string Remarks { get; set; }
+
+        /// <summary>
+        /// true: Gremientermin
+        /// </summary>
+        public bool IsAdmin { get; set; }
+    }
+
 }

@@ -59,7 +59,7 @@
                     <div class="btn-group btn-group-justified" role="group" aria-label="...">
                         @if (Model.User != null)
                         {
-                            <a href="mailto:@Model.User.Email" class="btn btn-outline-primary"><i class="bi-envelope"></i> E-Mail schreiben</a>
+                            <a href="mailto:@Model.User.Email" class="btn btn-outline-primary"><i class="bi bi-envelope"></i> E-Mail schreiben</a>
 
                             if (!Model.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                             {

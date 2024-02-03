@@ -19,7 +19,7 @@
 <div class="col-md-12">
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
         @if (Model.Summary.Course.Organiser != null)
         {
             <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
@@ -47,13 +47,13 @@
                         attrDisabled = "";
                     }
                     <div class="list-group-item list-group-item-info">
-                        <i class="bi-lock"></i> Gesperrt - Aktuell können nur Administratoren und Besitzer Änderungen vornehmen.
+                        <i class="bi bi-lock"></i> Gesperrt - Aktuell können nur Administratoren und Besitzer Änderungen vornehmen.
                     </div>
                 }
                 @if (Model.Summary.Course.IsProjected)
                 {
                     <div class="list-group-item list-group-item-info">
-                        <i class="bi-layer-backward"></i> Lehrveranstaltung im Planungsmodus. Studierende können den Kurs nicht sehen.
+                        <i class="bi bi-layer-backward"></i> Lehrveranstaltung im Planungsmodus. Studierende können den Kurs nicht sehen.
                     </div>
                 }
             </div>
@@ -61,39 +61,39 @@
         <div class="card">
             <div class="list-group">
                 <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})">
-                    <i class="bi-envelope"></i> Nachricht senden
+                    <i class="bi bi-envelope"></i> Nachricht senden
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-calendar"></i> Terminverwaltung
+                    <i class="bi bi-calendar"></i> Terminverwaltung
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-people"></i> Teilnehmende
+                    <i class="bi bi-people"></i> Teilnehmende
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-gear"></i> Allgemeine Angaben
+                    <i class="bi bi-gear"></i> Allgemeine Angaben
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-collection-play"></i> Semester
+                    <i class="bi bi-collection-play"></i> Semester
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-tags"></i> Etiketten / Kohorten
+                    <i class="bi bi-tags"></i> Kohorten
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-book"></i> Modul / Fach
+                    <i class="bi bi-book"></i> Modul / Fach
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-pencil-square"></i> Platzkontingente
+                    <i class="bi bi-pencil-square"></i> Platzkontingente
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-ui-radios"></i> Freigaben / Status
+                    <i class="bi bi-ui-radios"></i> Freigaben / Status
                 </a>
                 @if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                 {
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
-                        <i class="bi-person"></i> Besitzer
+                        <i class="bi bi-person"></i> Besitzer
                     </a>
                     <a class="list-group-item list-group-item-action list-group-item-danger" href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})">
-                        <i class="bi-trash"></i> Löschen
+                        <i class="bi bi-trash"></i> Löschen
                     </a>
                 }
             </div>
@@ -143,7 +143,7 @@
                 </div>
                 <div class="row">
                     <div class="col-4">
-                        Etiketten / Kohorten
+                        Kohorten
                     </div>
                     <div class="col-8">
                         @if (Model.Summary.Course.LabelSet != null)
@@ -286,10 +286,10 @@
                     <div class="col-5">
                     </div>
                     <div class="col-3">
-                        <div><i class="bi-building-check"></i></div>
+                        <div><i class="bi bi-building-check"></i></div>
                     </div>
                     <div class="col-4">
-                        <div><i class="bi-person-gear"></i></div>
+                        <div><i class="bi bi-person-gear"></i></div>
                     </div>
                 </div>
                 <div class="list-group">

@@ -72,10 +72,10 @@
                         </a>
                         @if ((!Model.Summary.Course.IsInternal && Model.Summary.Lottery == null) || ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner)
                         {
-                            <a class="btn btn-outline-primary" href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" ><i class="bi-download"></i> Listen</a>
-                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="bi-person"></i> Alle auf Teilnehmerliste setzen</a>
-                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="bi-hourglass"></i> Alle auf Warteliste setzen</a>
-                            <a class="btn btn-outline-danger" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="bi-x"></i> Alle austragen</a>
+                            <a class="btn btn-outline-primary" href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" ><i class="bi bi-download"></i> Listen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-person"></i> Alle auf Teilnehmerliste setzen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-hourglass"></i> Alle auf Warteliste setzen</a>
+                            <a class="btn btn-outline-danger" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-x"></i> Alle austragen</a>
                         }
                         @if (ViewBag.UserRight.IsCourseAdmin)
                         {
@@ -95,12 +95,12 @@
                         <th>SG</th>
                         <th>Sem</th>
                         <th>TZ/VZ</th>
-                        <th><i class="bi-pen"></i></th>
+                        <th><i class="bi bi-pen"></i></th>
                         @if (bShowPrio)
                         {
-                            <th><i class="bi-exclamation"></i></th>
+                            <th><i class="bi bi-exclamation"></i></th>
                         }
-                        <th><i class="bi-envelope"></i></th>
+                        <th><i class="bi bi-envelope"></i></th>
                         <th>Eingetragen</th>
                     </tr>
                 </thead>
@@ -144,11 +144,11 @@
                             }
                             @if (sub.OnWaitingList)
                             {
-                                <td><span hidden="">0</span><i class="bi-hourglass"></i></td>
+                                <td><span hidden="">0</span><i class="bi bi-hourglass"></i></td>
                             }
                             else
                             {
-                                <td><span hidden="">1</span><i class="bi-people"></i></td>
+                                <td><span hidden="">1</span><i class="bi bi-people"></i></td>
                             }
                             @if (bShowPrio)
                             {
@@ -167,7 +167,7 @@
                             }
                             else
                             {
-                                <td><span hidden="">1</span><i class="bi-envelope"></i></td>
+                                <td><span hidden="">1</span><i class="bi bi-envelope"></i></td>
                             }
                             <td>@sub.TimeStamp</td>
                         </tr>

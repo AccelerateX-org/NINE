@@ -39,7 +39,7 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
                     </div>
                 </div>
                 <div class="list-group-item">
@@ -100,7 +100,7 @@
                                 if (pot.Capacity == int.MaxValue)
                                 {
                                     isInfinity = true;
-                                    <td><i class="bi-infinity"></i></td>
+                                    <td><i class="bi bi-infinity"></i></td>
                                 }
                                 else
                                 {
@@ -127,7 +127,7 @@
                             if (openPot.Capacity == int.MaxValue)
                             {
                                 isInfinity = true;
-                                <td><i class="bi-infinity"></i></td>
+                                <td><i class="bi bi-infinity"></i></td>
                             }
                             else
                             {
@@ -150,7 +150,7 @@
 
                         @if (isInfinity)
                         {
-                            <td><i class="bi-infinity"></i></td>
+                            <td><i class="bi bi-infinity"></i></td>
                         }
                         else
                         {

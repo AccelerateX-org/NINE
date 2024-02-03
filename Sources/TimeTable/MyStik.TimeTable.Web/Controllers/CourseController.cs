@@ -1080,16 +1080,15 @@ namespace MyStik.TimeTable.Web.Controllers
                     var day = DateTime.Parse(elems[0]);
                     var begin = TimeSpan.Parse(elems[1]);
                     var end = TimeSpan.Parse(elems[2]);
-                    var isWdh = bool.Parse(elems[3]);
+                    var frequency = int.Parse(elems[4]);
 
 
                     ICollection<DateTime> dayList;
                     // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
                     // sonst nimm nur den Einzeltag
-                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
+                    if (frequency > 0 &&!string.IsNullOrEmpty(elems[4]))
                     {
-                        var lastDay = DateTime.Parse(elems[4]);
-                        var frequency = int.Parse(elems[5]);
+                        var lastDay = DateTime.Parse(elems[3]);
                         dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
                     else
@@ -3512,7 +3511,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AdminNewDates(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var org = GetMyOrganisation();
+            var org = course.Organiser != null ? course.Organiser : GetMyOrganisation();
 
             var courseService = new CourseService(Db);
 
@@ -3895,5 +3894,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { id = course.Id });
         }
+
+        [HttpPost]
+        public ActionResult SetQuota(Guid courseId, Guid quotaId, int delta)
+        {
+            var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == quotaId);
+
+            if (delta > 0)
+            {
+                quota.MaxCapacity = delta;
+            }
+            else
+            {
+                quota.MaxCapacity = int.MaxValue;
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("AdminNewRules", new { id = courseId });
+        }
+
     }
 }

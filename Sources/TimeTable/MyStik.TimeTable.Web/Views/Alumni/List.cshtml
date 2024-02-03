@@ -1,0 +1,77 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Data.Alumnus>
+
+@{
+    ViewBag.Title = "Alumni";
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        var t = $('#tabMembers').DataTable({
+            "paging": false
+        });
+
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Alumnu</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <table id="tabMembers" class="table">
+                    <thead>
+                        <tr>
+                            <th>Titel</th>
+                            <th>Vorname</th>
+                            <th>Name</th>
+                            <th>EMail</th>
+                            <th>Abschluss</th>
+                            <th>Semester</th>
+                            <th>Expiry</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var member in Model)
+                        {
+                            <tr>
+                                <td>@member.Title</td>
+                                <td>@member.FirstName</td>
+                                <td>@member.LastName</td>
+                                <td>@member.Email</td>
+                                <td>@member.Degree</td>
+                                <td>@member.FinishingSemester</td>
+                                <td>@member.CodeExpiryDateTime</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

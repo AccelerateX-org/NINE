@@ -241,6 +241,9 @@ namespace MyStik.TimeTable.Web.Models
 
         public ApplicationUser User { get; set; }
 
+        [Display(Name = "Bezeichnung Einrichtung / Fakultät")]
+        public string OrgName { get; set; }
+
         [Display(Name = "Bezeichnung Semester")]
         public string SemesterName { get; set; }
 

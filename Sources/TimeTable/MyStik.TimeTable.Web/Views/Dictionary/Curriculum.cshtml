@@ -19,88 +19,53 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Curriculum.ShortName</li>
         </ol>
     </nav>
-
+</div>
+<div class="row">
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-light">
-                            <h4>Nach Studienplan</h4>
-                        </div>
+                    <div class="card-header">
+                        <h5 class="card-title">Übersichten</h5>
+                    </div>
+                    <div class="card-body">
+                        <a class="btn btn-outline-primary" href="@Url.Action("Courses", "Dictionary", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })">
+                            Alle Lehrveranstaltungen
+                        </a>
                         @if (Model.Curriculum.Areas.Any())
                         {
-                            <div class="list-group-item">
-                                Zugang bzw. Suche nach Anlage 1 der SPO des Studiengangs sowie der zugehörige Studienplan.
-                            </div>
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })">
-                                <h5>Aufbau Studiengang</h5>
+                            <a class="btn btn-outline-primary" href="@Url.Action("SlotPlan", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">
+                                Nach Modul- / Studienplan
                             </a>
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Planer", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">
-                                <h5>Semesterplaner</h5>
-                            </a>
-                        }
-                        else
-                        {
-                            <div class="list-group-item">
-                                Für diesen Studiengang steht kein Studienplan zur Verfügung.
-                            </div>
-                        }
-                        <div class="list-group-item">
-                            <div class="alert alert-info">
-                                <strong>Achtung Experiment:</strong> Der Umfang an hier abrufbaren Daten hängt von der Bereitstellungen durch die jeweilige Fakultät ab. Die Datenqualität ist nicht einheitlich.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        @*
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-light">
-                            <h5>Nach Semestergruppen (veraltet)</h5>
-                        </div>
-
-                        @foreach (var group in Model.Curriculum.CurriculumGroups.OrderBy(x => x.Name))
-                        {
-                            foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
+                            if (Request.IsLocal)
                             {
-                                if (capGroup.SemesterGroups.Any(x => x.Semester.Id == Model.Semester.Id))
-                                {
-                                    <a href="@Url.Action("Group", new { semId = Model.Semester.Id, groupId = capGroup.Id })" class="list-group-item list-group-item-action">
-                                        <h5>@capGroup.FullName</h5>
-                                    </a>
-                                }
+                                <a class="btn btn-outline-secondary" href="@Url.Action("Planer", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">
+                                    Semesterplaner
+                                </a>
                             }
                         }
                     </div>
                 </div>
             </div>
-            *@
             <div class="col-md-8">
                 <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Nach Kohorten, z.B. Studiengruppen, Studienrichtungen</h5>
+                    </div>
                     <div class="list-group">
-                        <div class="list-group-item list-group-item-light">
-                            <h4>Nach Stundenplan</h4>
-                        </div>
-                        <div class="list-group-item">
-                            Zugang und Suche nach den Kohorten des Studiengangs, z.B. Studiengruppen, Studienrichtungen und -schwerpukte oder semesterbezogen. 
-                        </div>
                         <div class="list-group-item">
                             <div class="row">
                                 @foreach (var label in Model.Curriculum.LabelSet.ItemLabels.OrderBy(x => x.Name))
                                 {
                                     var nCourses = 0;
-                                    if (ViewBag.UserRight.IsCurriculumAdmin)
+                                    if (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null)
                                     {
                                         nCourses = db.Activities.OfType<Course>()
                                             .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
@@ -115,11 +80,11 @@
                                     {
                                         <div class="col-2">
                                             <a href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = Model.Curriculum.Id, labelId = label.Id })"
-                                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                               class="btn btn-outline-secondary d-flex justify-content-between align-items-start">
                                                 <div class="ms-2 me-auto">
                                                     <div class="fw-bold">@label.Name</div>
                                                 </div>
-                                                <span class="badge bg-primary rounded-pill">@nCourses</span>
+                                                <span class="badge bg-secondary rounded-pill">@nCourses</span>
                                             </a>
                                         </div>
                                     }
@@ -127,52 +92,10 @@
 
                             </div>
                         </div>
-          </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
-@*
-@if (Model.Curriculum.Areas.Any())
-{
-    <div class="row mt-5">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="list-group">
-
-                    @{
-                        var allSlots = db.CurriculumSlots.Where(x =>
-                            x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
-
-                        var minSem = allSlots.Min(x => x.Semester);
-                        var maxSem = allSlots.Max(x => x.Semester);
-
-                        var allOptions = db.AreaOptions.Where(x => x.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
-
-                        for (var s = minSem; s <= maxSem; s++)
-                        {
-                            var semSlots = allSlots.Where(x => x.Semester == s).ToList();
-
-                            var optionSet = semSlots.Select(x => x.AreaOption).Distinct().ToList();
-
-                            <div class="list-group-item list-group-item-action">
-                                <h5>Semester @s</h5>
-                                <div>
-                                    @foreach (var opt in optionSet)
-                                    {
-                                        <span><a href="@Url.Action("Slot", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id, sem = s, optionId = opt.Id })">@opt.Area.Tag::@opt.Tag</a> |</span>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-}
-*@

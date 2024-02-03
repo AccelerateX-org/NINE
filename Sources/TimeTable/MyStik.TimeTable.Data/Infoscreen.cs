@@ -45,7 +45,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual Infoscreen Infoscreen { get; set; }
 
-        public virtual RoomAllocation RoomAllocation { get; set; }
+        public virtual RoomAllocationGroup RoomAllocationGroup { get; set; }
 
         public virtual BinaryStorage Image { get; set; }
 

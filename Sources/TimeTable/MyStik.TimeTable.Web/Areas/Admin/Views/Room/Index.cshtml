@@ -19,9 +19,9 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Hinzufügen</a>
-                        <a href="@Url.Action("UnAssigned")" class="btn btn-outline-primary"><i class="bi-question"></i> Ohne Zuordnung</a>
-                        <a href="@Url.Action("Transfer")" class="btn btn-outline-primary"><i class="bi-magic"></i> Zusammenführen</a>
+                        <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi bi-plus"></i> Hinzufügen</a>
+                        <a href="@Url.Action("UnAssigned")" class="btn btn-outline-primary"><i class="bi bi-question"></i> Ohne Zuordnung</a>
+                        <a href="@Url.Action("Transfer")" class="btn btn-outline-primary"><i class="bi bi-magic"></i> Zusammenführen</a>
                     </div>
                 </div>
             </div>
@@ -52,11 +52,11 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi-pen"></i></a>
-                                    <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi-link"></i></a>
+                                    <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-pen"></i></a>
+                                    <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-link"></i></a>
                                     @if (!room.Assignments.Any())
                                     {
-                                        <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-sm btn-danger"><i class="bi-trash"></i></a>
+                                        <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
                                     }
                                 </div>
                             </td>

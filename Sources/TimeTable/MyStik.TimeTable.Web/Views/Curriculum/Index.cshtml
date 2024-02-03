@@ -8,7 +8,7 @@
         <div class="card">
             <div class="card-header">
                 <h4>
-                    <i class="bi-trophy"></i> Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                    <i class="bi bi-trophy"></i> Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
                 </h4>
             </div>
             <div class="list-group">
@@ -67,19 +67,19 @@
 
             </div>
             <a href="@Url.Action("ModulePlan", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
-                <i class="bi-map"></i> Modulplan
+                <i class="bi bi-map"></i> Modulplan
             </a>
             <a href="#" class="list-group-item  list-group-item-action disabled">
-                <i class="bi-bookshelf"></i> Modulhandbuch @Model.Semester.Name
+                <i class="bi bi-bookshelf"></i> Modulhandbuch @Model.Semester.Name
             </a>
             <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
-                <i class="bi-mic"></i> Vorlesungsverzeichnis @Model.Semester.Name
+                <i class="bi bi-mic"></i> Vorlesungsverzeichnis @Model.Semester.Name
             </a>
             <a href="#" class="list-group-item  list-group-item-action disabled">
-                <i class="bi-mortarboard"></i> Prüfungen @Model.Semester.Name
+                <i class="bi bi-mortarboard"></i> Prüfungen @Model.Semester.Name
             </a>
             <a href="#" class="list-group-item  list-group-item-action disabled">
-                <i class="bi-people"></i> Prüfungskommission
+                <i class="bi bi-people"></i> Prüfungskommission
             </a>
 
             @if (Model.Assessments.Any())

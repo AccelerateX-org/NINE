@@ -128,7 +128,7 @@
                         {
                             @Html.RoomList(date.Rooms)<br/>
                         }
-                        @if (date.VirtualRooms.Any())
+                        @if (date.VirtualRooms != null && date.VirtualRooms.Any())
                         {
                             @Html.RoomList(date.VirtualRooms)
                         }

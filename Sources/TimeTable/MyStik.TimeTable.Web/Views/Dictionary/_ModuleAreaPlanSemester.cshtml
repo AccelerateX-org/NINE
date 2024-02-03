@@ -1,0 +1,135 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+
+@{
+    var db = new TimeTableDbContext();
+    var courseService = new CourseService(db);
+    var optionsSelected = new List<AreaOption>();
+
+    foreach (var area in Model.Areas)
+    {
+        optionsSelected.Add(area.Option);
+    }
+
+    var semSlots = db.CurriculumSlots.Where(x =>
+        x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id && x.Semester == Model.SemNo).OrderBy(x => x.Tag).ToList();
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="list-group">
+                        @foreach (var slot in semSlots.OrderBy(x => x.Tag))
+                        {
+                            var showSlot = false;
+                            var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);
+
+                            if (inOptionArea == 0)
+                            {
+                                showSlot = true;
+                            }
+                            else
+                            {
+                                var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
+                                if (inSelectedOption > 0)
+                                {
+                                    showSlot = true;
+                                }
+                            }
+                            if (showSlot)
+                            {
+                                <div id="@slot.Id" class="slotBox">
+                                    @if (slot.SubjectAccreditations.Any())
+                                    {
+                                        var nCourses = slot.SubjectAccreditations.Sum(x => x.Subject.SubjectTeachings.Count(y => y.Course.Semester != null && y.Course.Semester.Id == Model.Semester.Id));
+                                        var accrs = slot.SubjectAccreditations.Where(x => x.Subject.SubjectTeachings.Any(y => y.Course.Semester != null && y.Course.Semester.Id == Model.Semester.Id)).ToList();
+
+                                        if (nCourses > 0)
+                                        {
+                                            foreach (var module in slot.SubjectAccreditations.Select(x => x.Subject.Module).Distinct().ToList())
+                                            {
+                                                <div class="list-group-item">
+                                                    <div class="row">
+                                                        <h5 class="card-title">
+                                                            <strong>@module.Tag</strong>: <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = module.Id, semId = Model.Semester.Id })">@module.Name</a>
+                                                        </h5>
+                                                    </div>
+                                                    @foreach (var subject in module.ModuleSubjects.ToList())
+                                                    {
+                                                        var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
+                                                        <div class="row">
+                                                            <h6 class="card-subtitle"><strong>@subject.Name</strong> (@subject.TeachingFormat.Tag)</h6>
+                                                        </div>
+                                                        <div class="row">
+
+
+                                                            @if (teachings.Any())
+                                                            {
+                                                                foreach (var teaching in teachings)
+                                                                {
+                                                                    var summary = courseService.GetCourseSummary(teaching.Course);
+                                                                    var show = !summary.Course.IsProjected || (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null);
+
+                                                                    if (show)
+                                                                    {
+                                                                        <a id="@summary.Course.Id.ToString()" class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
+                                                                            <div class="card-title">
+                                                                                @summary.Course.ShortName
+                                                                                @if (summary.Course.LabelSet != null)
+                                                                                {
+                                                                                    foreach (var label in summary.Course.LabelSet.ItemLabels)
+                                                                                    {
+                                                                                        <span class="badge bg-secondary">@label.Name</span>
+                                                                                    }
+                                                                                }
+                                                                            </div>
+                                                                            <div class="card-text">@summary.Course.Name</div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-8">@Html.DateList(summary.Dates)</div>
+                                                                                <div class="col-md-4">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+                                                                            </div>
+                                                                        </a>
+                                                                    }
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="text-danger">Kein Angebot</div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                        }
+                                    }
+                                    else
+                                    {
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

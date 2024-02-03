@@ -3281,6 +3281,7 @@
     <Content Include="Assets\libs\jquery\jquery.min.js" />
     <Content Include="Assets\libs\jquery\jquery.slim.js" />
     <Content Include="Assets\libs\jquery\jquery.slim.min.js" />
+    <Content Include="Assets\libs\md-block\md-block.js" />
     <Content Include="Assets\libs\moment\locale\af.js" />
     <Content Include="Assets\libs\moment\locale\ar-dz.js" />
     <Content Include="Assets\libs\moment\locale\ar-kw.js" />
@@ -3917,7 +3918,6 @@
     <Content Include="Views\Jobs\Index.cshtml" />
     <Content Include="Views\Alumni\Index.cshtml" />
     <Content Include="Views\Alumni\ContactData.cshtml" />
-    <Content Include="Views\Alumni\InvitationList.cshtml" />
     <Content Include="Views\Alumni\SendInvitationsSuccess.cshtml" />
     <Content Include="Views\Alumni\SendInvitations.cshtml" />
     <Content Include="Views\Shared\_NotificationList.cshtml" />
@@ -4722,6 +4722,19 @@
     <Content Include="Views\Alumni\KeySent.cshtml" />
     <Content Include="Views\Mail\AlumniInvitationEMail.html.cshtml" />
     <Content Include="Views\Room\_FreeRoomSelect.cshtml" />
+    <Content Include="Views\Alumni\ThankYouAnonymous.cshtml" />
+    <Content Include="Views\Alumni\List.cshtml" />
+    <Content Include="Views\Alumni\StayConnected.cshtml" />
+    <Content Include="Views\StudyPlan\SlotPlan.cshtml" />
+    <Content Include="Views\StudyPlan\AssignmentPlan.cshtml" />
+    <Content Include="Views\StudyPlan\_ModulePlan.cshtml" />
+    <Content Include="Views\StudyPlan\_ModuleAreaPlan.cshtml" />
+    <Content Include="Views\StudyPlan\Slot.cshtml" />
+    <Content Include="Views\Dictionary\Courses.cshtml" />
+    <Content Include="Views\Dictionary\SlotPlan.cshtml" />
+    <Content Include="Views\Dictionary\_ModuleAreaPlan.cshtml" />
+    <Content Include="Views\Dictionary\SlotSemester.cshtml" />
+    <Content Include="Views\Dictionary\_ModuleAreaPlanSemester.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

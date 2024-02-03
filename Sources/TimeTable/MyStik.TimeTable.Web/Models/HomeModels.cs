@@ -84,6 +84,8 @@ namespace MyStik.TimeTable.Web.Models
         public List<Event> Events { get; set; }
 
         public ItemLabel Label { get; set; }
+
+        public List<Lottery> Lotteries { get; set; }
     }
 
     public class SemesterScheduleViewModel
@@ -116,9 +118,13 @@ namespace MyStik.TimeTable.Web.Models
 
         public Curriculum Curriculum { get; set; }
 
+        public ActivityOrganiser Organiser { get; set; }
+
         public AreaOption Option { get; set; }
 
         public int NUmberSemester { get; set; }
+
+        public CurriculumSlot Slot { get; set; }
 
         public List<CurriculumSlot> Slots { get; set; }
     }

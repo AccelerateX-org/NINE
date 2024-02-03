@@ -51,21 +51,21 @@
                     <div class="list-group-item">
                         <div class="btn-group">
                             <a href="@Url.Action("EditArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Ändern
+                                <i class="bi bi-gear"></i> Ändern
                             </a>
                             <a href="@Url.Action("CreateOption", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neue Wahlmöglichkeit
+                                <i class="bi bi-plus"></i> Neue Wahlmöglichkeit
                             </a>
                             @if (Model.Options.Any())
                             {
                             <div class="btn btn-outline-danger disabled">
-                                <i class="bi-trash"></i> Themenbereich löschen
+                                <i class="bi bi-trash"></i> Themenbereich löschen
                             </div>
                             }
                             else
                             {
                             <a href="@Url.Action("DeleteArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Themenbereich löschen
+                                <i class="bi bi-trash"></i> Themenbereich löschen
                             </a>
                             }
                         </div>

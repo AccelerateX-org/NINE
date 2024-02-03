@@ -36,7 +36,7 @@
                 <div class="list-group-item">
                     <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.OfficeHour.Id})"
                        class="btn btn-outline-primary">
-                        <i class="bi-chevron-left"></i>zurück
+                        <i class="bi bi-chevron-left"></i>zurück
                     </a>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                                                         <td>@sub.TimeStamp</td>
                                                         <td>@sub.SubscriberRemark</td>
                                                         <td>
-                                                            <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = slot.Occurrence.Id, userId = sub.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
+                                                            <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = slot.Occurrence.Id, userId = sub.UserId})" class="btn btn-outline-danger"><i class="bi bi-trash"></i> austragen</a>
 
 
                                                             @*
@@ -154,7 +154,7 @@
                                                     <td>@subscription.TimeStamp</td>
                                                     <td>@subscription.SubscriberRemark</td>
                                                     <td>
-                                                        <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = Model.Date.Occurrence.Id, userId = subscription.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
+                                                        <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = Model.Date.Occurrence.Id, userId = subscription.UserId})" class="btn btn-outline-danger"><i class="bi bi-trash"></i> austragen</a>
 
                                                         @*
 

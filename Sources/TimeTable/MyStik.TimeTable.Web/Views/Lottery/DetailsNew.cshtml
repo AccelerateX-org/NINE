@@ -21,7 +21,7 @@
                 <div class="list-group">
                     <div class="list-group-item">
                         <div class="btn-group" role="group">
-                            <a href="@Url.Action("Index", new {id = Model.Lottery.Semester.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                            <a href="@Url.Action("Index", new {id = Model.Lottery.Semester.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
                             <a href="@Url.Action("Capacities", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-gavel"></i> Platzkontingente</a>
                         </div>
                     </div>
@@ -324,7 +324,7 @@
                                                 <div class="list-group-item-text">
                                                     Habe mein Kontingent ausgeschöpft. Muss mich entweder aus einer Lehrveranstlatung austragen oder ein größeres Kontingent beantragen.
                                                 </div>
-                                                <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="bi-x-circle"></i> Aus Lehrveranstaltungen austragen</a>
+                                                <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="bi bi-x-circle"></i> Aus Lehrveranstaltungen austragen</a>
                                             </div>
                                         }
                                         else
@@ -348,8 +348,8 @@
                                                     </ul>
                                                 </div>
                                                 <div class="btn-group" role="group">
-                                                    <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-pen"></i> Auswahl starten / ändern</a>
-                                                    <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="bi-x-circle"></i> Aus Lehrveranstaltungen austragen</a>
+                                                    <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-pen"></i> Auswahl starten / ändern</a>
+                                                    <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="bi bi-x-circle"></i> Aus Lehrveranstaltungen austragen</a>
                                                 </div>
                                             </div>
                                         }

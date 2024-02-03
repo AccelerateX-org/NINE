@@ -101,12 +101,13 @@ function initWeekCalendar(idCal, defaultDate) {
         allDaySlot: false,
         locale: 'de',
         dayHeaderFormat: { weekday: 'long' },
-        slotDuration: "00:30:00",
+        slotDuration: "00:45:00",
         slotMinTime: "08:00:00",
         slotMaxTime: "22:00:00",
         slotEventOverlap: false,
         contentHeight: "auto",
         displayEventTime: true,
+        /*
         eventContent: function (arg) {
             var italicEl = document.createElement('div');
 
@@ -119,6 +120,7 @@ function initWeekCalendar(idCal, defaultDate) {
             var arrayOfDomNodes = [italicEl];
             return { domNodes: arrayOfDomNodes };
         },
+        */
         eventClick: function (calEvent, jsEvent, view) {
             calEvent.jsEvent.preventDefault(); // don't let the browser navigate
             onShowEventInfo(calEvent.event.extendedProps.courseId);

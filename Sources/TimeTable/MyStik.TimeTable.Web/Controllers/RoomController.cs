@@ -309,8 +309,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult LookupDate(Guid id)
         {
+            var org = GetOrganiser(id);
+
             var model = new RoomLookUpModel
             {
+                Organiser = org,
                 NewDate = DateTime.Today.ToShortDateString(),
                 NewBegin = DateTime.Now.TimeOfDay.ToString(),
                 NewEnd = DateTime.Now.AddMinutes(90).TimeOfDay.ToString(),

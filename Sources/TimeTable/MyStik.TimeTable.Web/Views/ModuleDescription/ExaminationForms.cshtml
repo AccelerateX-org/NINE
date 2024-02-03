@@ -22,10 +22,10 @@
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
-                            <i class="bi-chevron-compact-left"></i> Zurück
+                            <i class="bi bi-chevron-compact-left"></i> Zurück
                         </a>
                         <a href="@Url.Action("CreateExaminationOption", null, new { id = Model.Module.Id })" class="btn btn-outline-primary">
-                            <i class="bi-plus"></i> Neue Prüfungsform hinzufügen
+                            <i class="bi bi-plus"></i> Neue Prüfungsform hinzufügen
                         </a>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                                     @exam.Name
                                     <div>
                                         <a href="@Url.Action("EditExaminationOption", new {id=exam.Id})" class="btn btn-outline-primary">
-                                            <i class="bi-keyboard"></i> ändern
+                                            <i class="bi bi-keyboard"></i> ändern
                                         </a>
                                     </div>
                                 </td>
@@ -66,7 +66,7 @@
                                 <td></td>
                                 <td>
                                     <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                        <i class="bi bi-plus"></i> Neuen Prüfungsteil hinzufügen
                                     </a>
                                 </td>
 
@@ -85,18 +85,18 @@
                                     @exam.Name
                                     <div>
                                         <a href="@Url.Action("EditExaminationOption", new {id=exam.Id})" class="btn btn-outline-primary">
-                                            <i class="bi-keyboard"></i> ändern
+                                            <i class="bi bi-keyboard"></i> ändern
                                         </a>
                                         @if (nExamUses == 0)
                                         {
                                             <a href="@Url.Action("DeleteExaminationOption", new {id=exam.Id})" class="btn btn-outline-danger">
-                                                <i class="bi-trash"></i> löschen
+                                                <i class="bi bi-trash"></i> löschen
                                             </a>
                                         }
                                         else
                                         {
                                             <div class="btn btn-outline-secondary disabled">
-                                                <i class="bi-trash"></i> löschen (@nExamUses Prüfungsangebote vorhanden)
+                                                <i class="bi bi-trash"></i> löschen (@nExamUses Prüfungsangebote vorhanden)
                                             </div>
                                         }
                                     </div>
@@ -105,10 +105,10 @@
                                 <td>@fraction.Weight.ToString("P")</td>
                                 <td>
                                     <a href="@Url.Action("EditExaminationFraction", new {id=fraction.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-keyboard"></i> ändern
+                                        <i class="bi bi-keyboard"></i> ändern
                                     </a>
                                     <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                        <i class="bi bi-plus"></i> Neuen Prüfungsteil hinzufügen
                                     </a>
                                 </td>
                             </tr>
@@ -120,10 +120,10 @@
                                 <td>@fraction.Weight.ToString("P")</td>
                                 <td>
                                     <a href="@Url.Action("EditExaminationFraction", new {id=fraction.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-keyboard"></i> ändern
+                                        <i class="bi bi-keyboard"></i> ändern
                                     </a>
                                     <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                        <i class="bi bi-plus"></i> Neuen Prüfungsteil hinzufügen
                                     </a>
                                 </td>
                             </tr>

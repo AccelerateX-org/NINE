@@ -17,37 +17,40 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Organiser.Id })">@Model.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Modulkataloge</li>
             </ol>
         </nav>
-
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
         <div class="card">
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("AllModules", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
-                            <i class="bi-list-columns"></i> Alle Module
+                            <i class="bi bi-list-columns"></i> Alle Module
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <a href="@Url.Action("CreateCatalog", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neuen Katalog anlegen
+                                <i class="bi bi-plus"></i> Neuen Katalog anlegen
                             </a>
                             <a href="@Url.Action("Import", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
-                                <i class="bi-upload"></i> Import
+                                <i class="bi bi-upload"></i> Import
                             </a>
                             <a href="@Url.Action("Export", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
-                                <i class="bi-download"></i> Export
+                                <i class="bi bi-download"></i> Export
                             </a>
                             <a href="@Url.Action("MoveModules")" class="btn btn-outline-primary">
-                                <i class="bi-list-check"></i> Zusammensetzung
+                                <i class="bi bi-list-check"></i> Zusammensetzung
                             </a>
 
                             @*
             <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
-                <i class="bi-trash"></i> Alle Löschen
+                <i class="bi bi-trash"></i> Alle Löschen
             </a>
                             *@
                         }
@@ -56,26 +59,27 @@
             </div>
             <table id="tabCatalogs" class="table">
                 <thead>
-                    <tr>
-                        <th>Tag</th>
-                        <th>Name</th>
-                        <th># Module</th>
-                    </tr>
+                <tr>
+                    <th>Tag</th>
+                    <th>Name</th>
+                    <th># Module</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var cat in Model.Organiser.ModuleCatalogs)
-                    {
-                        <tr>
-                            <td>@cat.Tag</td>
-                            <td><a href="@Url.Action("Details", new { id = cat.Id })">@cat.Name</a></td>
-                            <td>@cat.Modules.Count</td>
-                        </tr>
-                    }
+                @foreach (var cat in Model.Organiser.ModuleCatalogs)
+                {
+                    <tr>
+                        <td>@cat.Tag</td>
+                        <td><a href="@Url.Action("Details", new { id = cat.Id })">@cat.Name</a></td>
+                        <td>@cat.Modules.Count</td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
 
 
 @section scripts

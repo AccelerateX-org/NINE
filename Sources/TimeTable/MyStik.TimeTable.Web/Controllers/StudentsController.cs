@@ -565,34 +565,30 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).ToList();
             model.Student = model.Students.FirstOrDefault();
 
-            var semester = SemesterService.GetSemester(DateTime.Today);
-            var org = GetMyOrganisation();
+            var org = model.Student.Curriculum.Organiser;
 
             var allCourses = Db.Activities.OfType<Course>().Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
 
             foreach (var course in allCourses)
             {
-                foreach (var semesterGroup in course.SemesterGroups)
+                var semModel = model.Semester.FirstOrDefault(x => x.Semester.Id == course.Semester.Id);
+                if (semModel == null)
                 {
-                    var semModel = model.Semester.FirstOrDefault(x => x.Semester.Id == semesterGroup.Semester.Id);
-                    if (semModel == null)
+                    semModel = new StudentSemesterViewModel
                     {
-                        semModel = new StudentSemesterViewModel
-                        {
-                            Semester = semesterGroup.Semester
-                        };
+                        Semester = course.Semester
+                    };
 
-                        model.Semester.Add(semModel);
-                    }
+                    model.Semester.Add(semModel);
+                }
 
-                    if (!semModel.Courses.Contains(course))
-                    {
-                        semModel.Courses.Add(course);
-                    }
+                if (!semModel.Courses.Contains(course))
+                {
+                    semModel.Courses.Add(course);
                 }
             }
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
@@ -613,14 +609,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 .FirstOrDefault();
 
             var semester = SemesterService.GetSemester(semId);
-            var org = GetMyOrganisation();
-
+            var org = model.Student.Curriculum.Organiser;
 
             model.Semester = semester;
 
             var courses =
                 Db.Activities.OfType<Course>()
-                .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(id)) && c.SemesterGroups.Any((g => g.Semester.Id == semester.Id)))
+                .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(id)) && c.Semester.Id == semester.Id)
                 .OrderBy(c => c.Name)
                 .ToList();
 
@@ -660,7 +655,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
 
             return View(model);
@@ -883,8 +878,13 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var student = Db.Students.SingleOrDefault(x => x.Id == id);
             var user = GetUser(student.UserId);
+            var sem = SemesterService.GetSemester(DateTime.Today);
 
-            var model = new StudentSubscriptionModel();
+            var model = new StudentSubscriptionModel
+            {
+                OrgName = student.Curriculum.Organiser.ShortName,
+                SemesterName = sem.Name
+            };
 
             model.Student = student;
             model.User = user;
@@ -897,9 +897,15 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Subscribe(StudentSubscriptionModel model)
         {
-            var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(model.SemesterName.Trim());
+            var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(model.OrgName.Trim()));
+            if (org == null)
+            {
+                ModelState.AddModelError("OrgName", "Es existiert keine Einrichtung / Fakultät mit dieser Bezeichnung");
+                return View(model);
+            }
 
+
+            var semester = SemesterService.GetSemester(model.SemesterName.Trim());
             if (semester == null)
             {
                 ModelState.AddModelError("SemesterName", "Es existiert kein Semester mit dieser Bezeichnung");
@@ -909,8 +915,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courses = Db.Activities.OfType<Course>().Where(x =>
                 x.ShortName.Equals(model.CourseShortName.Trim()) &&
-                x.SemesterGroups.Any(g =>
-                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
+                x.Organiser.Id == org.Id &&
+                x.Semester.Id == semester.Id).ToList();
 
             if (!courses.Any())
             {
@@ -995,8 +1001,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courses = Db.Activities.OfType<Course>().Where(x =>
                 x.ShortName.Equals(model.CourseShortName.Trim()) &&
-                x.SemesterGroups.Any(g =>
-                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
+                x.Organiser.Id == org.Id &&
+                x.Semester.Id == semester.Id).ToList();
 
             if (!courses.Any())
             {

@@ -289,7 +289,18 @@
                     }
                     else
                     {
-                        <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                        <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe
+                            @using (Html.BeginForm("AddDays", "ThesisAdmin", FormMethod.Post, new { @class = "row g-3", role = "form" }))
+                            {
+                                @Html.HiddenFor(m => m.Thesis.Id)
+                                <div class="col-auto">
+                                    <input type="text" name="delta" id="delta" class="form-control" placeholder="Anzahl Tage">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary mb-3">Abgabe verschieben</button>
+                                </div>
+                            }
+                        </li>
                     }
                 }
 
@@ -349,9 +360,9 @@
                             {
                                 <a href="@Url.Action("AcceptProlongRequest", new {id = Model.Thesis.Id})" class="btn btn-success">Antrag auf Verlängerung zustimmen</a>
                                 <a href="@Url.Action("RejectProlongRequest", new {id = Model.Thesis.Id})" class="btn btn-danger">Antrag auf Verlängerung ablehnen</a>
-                            }                                                        
+                            }
                         }
-                                                        
+
                     }
                     else
                     {

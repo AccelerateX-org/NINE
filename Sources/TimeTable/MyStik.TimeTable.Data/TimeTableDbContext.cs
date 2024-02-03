@@ -34,6 +34,9 @@ namespace MyStik.TimeTable.Data
         
         public DbSet<OrganiserMember> Members { get; set; }
 
+        public DbSet<MemberAvailability> MemberAvailabilities { get; set; }
+
+
         public DbSet<MemberExport> MemberExports { get; set; }
 
         public DbSet<MemberResponsibility> MemberResponsibilities { get; set; }

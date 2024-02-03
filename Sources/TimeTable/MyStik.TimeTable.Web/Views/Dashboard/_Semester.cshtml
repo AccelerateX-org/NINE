@@ -6,19 +6,20 @@
         <div class="d-flex justify-content-between align-items-start">
             <h5 class="card-title">@Model.CurrentSemester.Semester.Name</h5>
             <div class="btn-group">
-                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "Dictionary")" data-bs-title="Vorlesungsverzeichnis"><i class="bi-collection-play"></i></a>
-                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "ScriptShop")"><i class="bi-file-pdf"></i></a>
-                @*<a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "Lottery")"><i class="bi-ticket"></i></a>*@
-                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="bi-question-octagon"></i></a>
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.CurrentSemester.Semester.Id })"><i class="bi bi-calendar-week"></i></a>
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "Dictionary")" data-bs-title="Vorlesungsverzeichnis"><i class="bi bi-collection-play"></i></a>
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "ScriptShop")"><i class="bi bi-file-pdf"></i></a>
+                @*<a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "Lottery")"><i class="bi bi-ticket"></i></a>*@
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="bi bi-question-octagon"></i></a>
             </div>
             <div class="btn-group">
                 @if (Model.PrevSemester != null)
                 {
-                    <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.PrevSemester.Id')"><i class="bi-chevron-double-left"></i></a>
+                    <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.PrevSemester.Id')"><i class="bi bi-chevron-double-left"></i></a>
                 }
                 @if (Model.NextSemester != null)
                 {
-                    <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.NextSemester.Id')"><i class="bi-chevron-double-right"></i></a>
+                    <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.NextSemester.Id')"><i class="bi bi-chevron-double-right"></i></a>
                 }
             </div>
         </div>
@@ -37,23 +38,23 @@
                         {
                             if (summary.Subscription.OnWaitingList)
                             {
-                                <span><i class="bi-hourglass"></i></span>
+                                <span><i class="bi bi-hourglass"></i></span>
                             }
                             else
                             {
-                                <span><i class="bi-people"></i></span>
+                                <span><i class="bi bi-people"></i></span>
                             }
                         }
                         @if (Model.Members.Any())
                         {
                             <span class="badge bg-secondary">
-                                <i class="bi-people"></i>
+                                <i class="bi bi-people"></i>
                                 @summary.Course.Occurrence.Subscriptions.Count
                             </span>
                             if (summary.CurrentDate != null)
                             {
                                 <span class="badge bg-danger">
-                                    <i class="bi-calendar"></i>
+                                    <i class="bi bi-calendar"></i>
                                     @summary.CurrentDate.Begin.ToShortDateString()
                                 </span>
 
@@ -61,7 +62,7 @@
                             else
                             {
                                 <span class="badge bg-success">
-                                    <i class="bi-check"></i>
+                                    <i class="bi bi-check"></i>
                                 </span>
                             }
                         }
@@ -84,7 +85,7 @@
                             @if (oh.Date != null)
                             {
                                 <span class="badge bg-secondary">
-                                    <i class="bi-calendar"></i>
+                                    <i class="bi bi-calendar"></i>
                                     @Html.TimeSpanWithDate(oh.Date)
                                 </span>
                             }
@@ -96,7 +97,7 @@
                                 else
                                 {
                                     <span class="badge bg-success">
-                                        <i class="bi-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </span>
                                 }
                             }
@@ -117,7 +118,7 @@
                         @if (oh.Date != null)
                         {
                             <span class="badge bg-secondary">
-                                <i class="bi-calendar"></i>
+                                <i class="bi bi-calendar"></i>
                                 @Html.TimeSpanWithDate(oh.Date)
                             </span>
                         }
@@ -129,7 +130,7 @@
                             else
                             {
                                 <span class="badge bg-success">
-                                    <i class="bi-check"></i>
+                                    <i class="bi bi-check"></i>
                                 </span>
                             }
                         }

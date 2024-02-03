@@ -7,7 +7,7 @@
     <div clas="col-md-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")">@Model.Semester.Name</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Meine Lehrveranstaltungen</li>
             </ol>
@@ -30,11 +30,11 @@
                                     <h5 class="card-title">@summary.Course.Name</h5>
                                     @if (subscription.OnWaitingList)
                                     {
-                                        <span><i class="bi-hourglass"></i></span>
+                                        <span><i class="bi bi-hourglass"></i></span>
                                     }
                                     else
                                     {
-                                        <span><i class="bi-people"></i></span>
+                                        <span><i class="bi bi-people"></i></span>
                                     }
                                 </div>
                             }
@@ -46,7 +46,7 @@
                                     </h5>
                                     <a href="@Url.Action("AdminNewParticipients", "Course", new { id = summary.Course.Id })">
                                         <span class="badge bg-secondary">
-                                            <i class="bi-people"></i>
+                                            <i class="bi bi-people"></i>
                                             @summary.Course.Occurrence.Subscriptions.Count
                                         </span>
                                     </a>
@@ -54,12 +54,12 @@
                             }
                                     @if (summary.IsHost(summary.User.Id))
                                     {
-                                        <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new { id = summary.Course.Occurrence.Id })" class="card-link"><i class="bi-envelope"></i></a>
-                                        <a href="@Url.Action("AdminNewDates", "Course", new { id = summary.Course.Id })" class="card-link"><i class="bi-calendar"></i></a>
+                                        <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new { id = summary.Course.Occurrence.Id })" class="card-link"><i class="bi bi-envelope"></i></a>
+                                        <a href="@Url.Action("AdminNewDates", "Course", new { id = summary.Course.Id })" class="card-link"><i class="bi bi-calendar"></i></a>
                                     }
                                     @if (!string.IsNullOrEmpty(summary.Course.UrlMoodleCourse))
                                     {
-                                        <a class="card-link" href="@summary.Course.UrlMoodleCourse" target="_blank"><i class="bi-cassette"></i></a>
+                                        <a class="card-link" href="@summary.Course.UrlMoodleCourse" target="_blank"><i class="bi bi-cassette"></i></a>
                                     }
 
                                     <a href="@Url.Action("Details", "Course", new { id = summary.Course.Id })" class="card-link">mehr >>></a>

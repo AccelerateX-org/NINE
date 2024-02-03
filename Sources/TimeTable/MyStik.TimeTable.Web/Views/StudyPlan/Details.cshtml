@@ -8,6 +8,10 @@
 
     var db = new TimeTableDbContext();
 
+    var courses = db.Activities.OfType<Course>().Where(x => 
+        x.Semester.Id == Model.Semester.Id &&
+        x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id))).ToList();
+
 
 }
 
@@ -27,12 +31,18 @@
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
-                            <i class="bi-chevron-left"></i> Studiengang
+                            <i class="bi bi-chevron-left"></i> Studiengang
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <a href="@Url.Action("Admin", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Administration
+                                <i class="bi bi-gear"></i> Administration
+                            </a>
+                            <a href="@Url.Action("SlotPlan", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi bi-gear"></i> Agebotsplan
+                            </a>
+                            <a href="@Url.Action("AssignmentPlan", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi bi-gear"></i> Einsatzplan
                             </a>
                         }
                     </div>
@@ -151,12 +161,12 @@
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
-                            <i class="bi-chevron-left"></i> Studiengang
+                            <i class="bi bi-chevron-left"></i> Studiengang
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                <i class="bi-printer"></i> veröffentlichen
+                                <i class="bi bi-printer"></i> veröffentlichen
                             </a>
                         }
                     </div>

@@ -40,13 +40,13 @@
                                     }
                                     <div class="row mb-3">
                                         <div class="col-6">
-                                            <div><i class="bi-upc"></i> Matrikelnummer:</div>
+                                            <div><i class="bi bi-upc"></i> Matrikelnummer:</div>
                                         </div>
                                         <div class="col-6"> @student.Student.Number</div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-6">
-                                            <div><i class="bi-gear-wide-connected"></i> Umfang:</div>
+                                            <div><i class="bi bi-gear-wide-connected"></i> Umfang:</div>
                                         </div>
                                         @if (student.Student.IsPartTime)
                                         {
@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-6">
-                                            <div><i class="bi-tags"></i> Interessen:</div>
+                                            <div><i class="bi bi-tags"></i> Interessen:</div>
                                         </div>
                                         <div class="col-6">
                                             @if (student.Student.LabelSet != null && student.Student.LabelSet.ItemLabels.Any())

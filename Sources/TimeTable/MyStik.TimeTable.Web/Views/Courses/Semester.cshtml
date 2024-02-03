@@ -1,11 +1,7 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-                /**/
-
-                // Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
-                ViewBag.Title = "Lehrangebot";
-                var isAvailable = Model.Semester.Groups.Any(x => x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id && x.IsAvailable);
+     ViewBag.Title = "Lehrangebot";
 }
 
 @section styles
@@ -30,7 +26,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {orgId=Model.Organiser.Id, semId=Model.Semester.Id})">@Model.Organiser.ShortName</a></li>
@@ -43,16 +39,22 @@
             <div class="card-header">
                 <div class="alert alert-info">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <ul>
-                                <li><i class="bi-unlock text-success"></i>: Lehrende können Änderungen vornehmen</li>
-                                <li><i class="bi-lock text-danger"></i>: Lehrende können keine Änderungen vornehmen</li>
+                                <li><i class="bi bi-check-square text-success"></i>:Lehrveranstaltung sichtbar</li>
+                                <li><i class="bi bi-x-square text-danger"></i>: Lehrveranstaltung im Planungsmodus</li>
                             </ul>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <ul>
-                                <li><i class="bi-pen-fill text-success"></i>: Studierende können sich eintragen</li>
-                                <li><i class="bi-pen-fill text-danger"></i>: Studierende können sich nicht eintragen</li>
+                                <li><i class="bi bi-unlock text-success"></i>: Lehrende können Änderungen vornehmen</li>
+                                <li><i class="bi bi-lock text-danger"></i>: Lehrende können keine Änderungen vornehmen</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul>
+                                <li><i class="bi bi-pen-fill text-success"></i>: Studierende können sich eintragen</li>
+                                <li><i class="bi bi-pen-fill text-danger"></i>: Studierende können sich nicht eintragen</li>
                             </ul>
                         </div>
                     </div>
@@ -63,7 +65,7 @@
                 <div class="list-group">
                 <div class="list-group-item">
                     <a href="@Url.Action("SemesterReport", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary">
-                        <i class="bi-download"></i> Semesterbericht
+                        <i class="bi bi-download"></i> Semesterbericht
                     </a>
                 </div>
                 </div>
@@ -74,7 +76,7 @@
                         <th>Status</th>
                         <th>Kurzname</th>
                         <th>Titel</th>
-                        <th>Etiketten / Kohorten</th>
+                        <th>Kohorten</th>
                         <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
                     </tr>
@@ -82,28 +84,36 @@
                 <tbody>
                     @foreach (var c in Model.Courses)
                     {
-                        if (!c.Course.IsProjected || ViewBag.UserRight.IsCurriculumAdmin)
+                        var show = !c.Course.IsProjected || (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null);
+
+                        if (show)
                         {
-
-
                             var linkName = c.Course.ShortName ?? "Kein Kurzname";
                             <tr>
                                 <td>
-                                    @if (c.Course.IsInternal)
+                                    @if (c.Course.IsProjected)
                                     {
-                                        <i class="bi-lock text-danger"></i>
+                                        <i class="bi bi-x-square text-danger"></i>
                                     }
                                     else
                                     {
-                                        <i class="bi-unlock text-success"></i>
+                                        <i class="bi bi-check-square text-success"></i>
+                                    }
+                                    @if (c.Course.IsInternal)
+                                    {
+                                        <i class="bi bi-lock text-danger"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-unlock text-success"></i>
                                     }
                                     @if (!c.Course.Occurrence.IsAvailable)
                                     {
-                                        <i class="bi-pen-fill text-danger"></i>
+                                        <i class="bi bi-pen-fill text-danger"></i>
                                     }
                                     else
                                     {
-                                        <i class="bi-pen-fill text-success"></i>
+                                        <i class="bi bi-pen-fill text-success"></i>
                                     }
                                 </td>
                                 <td>

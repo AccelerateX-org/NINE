@@ -87,8 +87,15 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 ShortName = kurs.Fach.FachID,
                 Name = kurs.Fach.Name,
                 Occurrence = CreateDefaultOccurrence(),
-                IsInternal = false,
+                IsInternal = true,
+                IsProjected = true
             };
+
+            var labelSet = new ItemLabelSet();
+            course.LabelSet = labelSet;
+            db.ItemLabelSets.Add(labelSet);
+
+            course.Occurrence.SeatQuotas = new List<SeatQuota>();
 
             // Kurs sofort speichern, damit die ID gesichert ist
             db.Activities.Add(course);
@@ -105,50 +112,44 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 {
                     course.LabelSet.ItemLabels.Add(label);
                 }
-            }
 
-            // Veraltet => keine Semestergruppen mehr
-            // Alle Gruppen durchgehen, die im gpUntis zugeordnet wurden
-            /*
-            foreach (var g in kurs.Gruppen)
-            {
-                // diesen Semestergruppen soll der Kurs zugeordnet werden
-                var semGroups = InitSemesterGroups(db, g.GruppenID);
+                // Platzkontingente anlegen
+                var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(g.GruppenID));
+                var org = db.Organisers.SingleOrDefault(x => x.Id == _orgId);
 
-                // TODO: Was macht eigentlich die OccurrenceGroup?
-                foreach (var semesterGroup in semGroups)
+                foreach (var zuordnung in zuordnungen)
                 {
-                    course.SemesterGroups.Add(semesterGroup);
-                    semesterGroup.Activities.Add(course);
+                    // Studiengang finden
+                    var curr = db.Curricula.SingleOrDefault(x =>
+                        x.ShortName.Equals(zuordnung.Studiengang) &&
+                        x.Organiser.Id == org.Id);
 
-                    var occGroup =
-                        course.Occurrence.Groups.SingleOrDefault(
-                            gg => gg.SemesterGroups.Any(s => s.Id == semesterGroup.Id));
-
-                    if (occGroup == null)
+                    if (curr != null)
                     {
-                        occGroup = new OccurrenceGroup
+                        var quota = course.Occurrence.SeatQuotas.FirstOrDefault(x => x.Curriculum.Id == curr.Id);
+                        if (quota == null)
                         {
-                            Capacity = 0,
-                            FitToCurriculumOnly = true,
-                            Occurrence = course.Occurrence
-                        };
-                        occGroup.SemesterGroups.Add(semesterGroup);
-                        semesterGroup.OccurrenceGroups.Add(occGroup);
-                        course.Occurrence.Groups.Add(occGroup);
-                        db.OccurrenceGroups.Add(occGroup);
+                            quota = new SeatQuota
+                            {
+                                Curriculum = curr,
+                                MinCapacity = 0,
+                                MaxCapacity = int.MaxValue,
+                                Occurrence = course.Occurrence,
+                            };
+
+                            db.SeatQuotas.Add(quota);
+                        }
                     }
                 }
             }
 
-            if (!course.SemesterGroups.Any())
-            {
-                _Logger.ErrorFormat("Kurs {0} ohne Gruppe", kurs);
-            }
-            */
 
             if (semester != null)
             {
+                var dateList = semester.Dates.Where(x => x.Organiser == null || x.Organiser.Id == organiser.Id)
+                    .ToList();
+
+
                 // jetzt die Termine für diesen Kurs anlegen
                 foreach (var termin in kurs.Termine)
                 {
@@ -212,7 +213,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                     while (occDate <= semesterEnde)
                     {
                         bool isVorlesung = true;
-                        foreach (var sd in semester.Dates)
+                        foreach (var sd in dateList)
                         {
                             // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
                             if (sd.From.Date <= occDate.Date &&
@@ -279,7 +280,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             return new Occurrence
             {
                 Capacity = -1,
-                IsAvailable = true,
+                IsAvailable = false,
                 IsCanceled = false,
                 IsMoved = false,
                 FromIsRestricted = false,
@@ -358,98 +359,6 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             return room;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="gruppenId">Gruppenalias nach dem in der Datenbank gesucht wird</param>
-        /// <returns></returns>
-        private List<SemesterGroup> InitSemesterGroups(TimeTableDbContext db, string gruppenId)
-        {
-            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
-            var org = db.Organisers.SingleOrDefault(x => x.Id == _orgId);
-
-            // Annahme, die Semestergruppen existieren!
-            var semGroupList = new List<SemesterGroup>();
-
-            // suche alle aktuellen Zuordnungen zu dieser gruppenID
-                var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(gruppenId));
-
-                foreach (var zuordnung in zuordnungen)
-                {
-                    // Studiengang finden
-                    var curr = db.Curricula.SingleOrDefault(x =>
-                        x.ShortName.Equals(zuordnung.Studiengang) &&
-                        x.Organiser.Id == org.Id);
-                    if (curr == null)
-                    {
-                        curr = new TimeTable.Data.Curriculum
-                        {
-                            Organiser = org,
-                            ShortName = zuordnung.Studiengang,
-                            Name = zuordnung.Studiengang
-                        };
-                        db.Curricula.Add(curr);
-                    }
-
-                    var sg = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Studiengruppe));
-                    if (sg == null)
-                    {
-                        sg = new CurriculumGroup
-                        {
-                            Name = zuordnung.Studiengruppe,
-                            IsSubscribable = true,
-                            Curriculum = curr
-                        };
-                        db.CurriculumGroups.Add(sg);
-                        curr.CurriculumGroups.Add(sg);
-                    }
-
-                    var cg = string.IsNullOrEmpty(zuordnung.Kapazitätsgruppe) ?
-                        sg.CapacityGroups.SingleOrDefault(x => string.IsNullOrEmpty(x.Name)) :
-                        sg.CapacityGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Kapazitätsgruppe));
-                    if (cg == null)
-                    {
-                        cg = new CapacityGroup
-                        {
-                            InSS = true,
-                            InWS = true,
-                            Name = zuordnung.Kapazitätsgruppe,
-                            CurriculumGroup = sg
-                        };
-                        db.CapacityGroups.Add(cg);
-                        sg.CapacityGroups.Add(cg);
-                    }
-
-                    // bis hierher habe ich ohne Semesterbezug gearbeitet
-                    // jetzt noch die Semestergruppe
-
-                    var semGroup = cg.SemesterGroups.SingleOrDefault(x => x.Semester.Id == semester.Id);
-                    if (semGroup == null)
-                    {
-                        // semestergruppe gibt es nicht => auf jeden Fall anlegen
-                        semGroup = new SemesterGroup
-                        {
-                            CapacityGroup = cg,
-                            Semester = semester,
-                        };
-
-                        _Logger.InfoFormat("Semestergruppe {0} angelegt {1}", semGroup.FullName, gruppenId);
-
-                        cg.SemesterGroups.Add(semGroup);
-                        db.SemesterGroups.Add(semGroup);
-                    }
-
-                    semGroupList.Add(semGroup);
-                }
-
-                db.SaveChanges();
-
-
-              return semGroupList;
-        }
-
-
         private List<ItemLabel> InitLabel(TimeTableDbContext db, string gruppenId)
         {
             var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
@@ -478,25 +387,46 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                     db.Curricula.Add(curr);
                 }
 
+                if (curr.LabelSet == null)
+                {
+                    var labelSet = new ItemLabelSet();
+                    curr.LabelSet = labelSet;
+                    db.ItemLabelSets.Add(labelSet);
+                }
+
                 // jetzt das Label im Studiengang finden
                 var labelName = zuordnung.LabelName;
                 var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
 
                 if (label == null)
                 {
-                    label = db.ItemLabels.SingleOrDefault(x => x.Name.Equals(labelName));
-
-                    if (label == null)
+                    // auf Ebene der Instution suchen
+                    // Positiver Ansatz: nur anfügen, wenn es es wirklich gibt
+                    var inst = org.Institution;
+                    if (inst != null && inst.LabelSet != null)
                     {
-                        label = new ItemLabel
+                        var labelInst = inst.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
+
+                        if (labelInst != null)
                         {
-                            Name = labelName
-                        };
-                        db.ItemLabels.Add(label);
+                            labelList.Add(labelInst);
+                        }
+                        else
+                        {
+                            label = new ItemLabel
+                            {
+                                Name = labelName
+                            };
+                            db.ItemLabels.Add(label);
+                            curr.LabelSet.ItemLabels.Add(label);
+                            labelList.Add(label);
+                        }
                     }
-                    curr.LabelSet.ItemLabels.Add(label);
                 }
-                labelList.Add(label);
+                else
+                {
+                    labelList.Add(label);
+                }
             }
 
             db.SaveChanges();
@@ -895,13 +825,15 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
             DateTime occDate = semesterAnfang.AddDays(nDays);
 
+            var dateList = semester.Dates.Where(x => x.Organiser == null || x.Organiser.Id == org.Id)
+                .ToList();
 
             //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
             int numOcc = 0;
             while (occDate <= semesterEnde)
             {
                 bool isVorlesung = true;
-                foreach (var sd in semester.Dates)
+                foreach (var sd in dateList)
                 {
                     // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
                     if (sd.From.Date <= occDate.Date &&

@@ -45,7 +45,7 @@
                             {
                                 <a class="btn btn-outline-primary" href="@Url.Action("AddChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz geben</a>
                             }
-                            <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="bi-trash fa-fw"></i> Mitglied entfernen</a>
+                            <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="bi bi-trash fa-fw"></i> Mitglied entfernen</a>
 
                         }
                     </li>
@@ -53,7 +53,7 @@
             </ul>
             @if (hasChair)
             {
-                <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
+                <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
             }
 
         </div>

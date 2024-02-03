@@ -35,7 +35,7 @@
 <div class="col-12">
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Catalog.Organiser.Id})">@Model.Catalog.Organiser.ShortName</a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.Catalog.Organiser.Id})">Modulkataloge</a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.Catalog.Id})">@Model.Catalog.Tag</a></li>
@@ -68,26 +68,26 @@
         <div class="list-group-item">
             <div class="btn-group">
                 <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
-                    <i class="bi-people"></i> Modulverantwortungen
+                    <i class="bi bi-people"></i> Modulverantwortungen
                 </a>
 
                 <a href="@Url.Action("EditGeneral", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
-                    <i class="bi-gear"></i> Allgemeine Angaben
+                    <i class="bi bi-gear"></i> Allgemeine Angaben
                 </a>
 
                 @if (ViewBag.UserRight.IsCurriculumAdmin)
                 {
                     <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                        <i class="bi-person-video"></i> Lehr- und Lernformen
+                        <i class="bi bi-person-video"></i> Lehr- und Lernformen
                     </a>
                     <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                        <i class="bi-exclamation-diamond"></i> Prüfungsformen
+                        <i class="bi bi-exclamation-diamond"></i> Prüfungsformen
                     </a>
 
                     if (!Model.ModuleSubjects.Any(s => s.SubjectAccreditations.Any()))
                     {
                         <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                            <i class="bi-trash"></i> Modul endgültig löschen
+                            <i class="bi bi-trash"></i> Modul endgültig löschen
                         </a>
                     }
                     else
@@ -95,13 +95,13 @@
                         if (Model.Descriptions.Any() || Model.ExaminationOptions.Any(x => x.ExaminationDescriptions.Any()))
                         {
                             <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                <i class="bi-x"></i> Modulbeschreibungen löschen
+                                <i class="bi bi-x"></i> Modulbeschreibungen löschen
                             </a>
                         }
                         else
                         {
                             <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                <i class="bi-x"></i> Modul aus allen Studiengängen entfernen
+                                <i class="bi bi-x"></i> Modul aus allen Studiengängen entfernen
                             </a>
                         }
                     }

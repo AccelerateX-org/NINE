@@ -23,9 +23,9 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <a class="btn btn-outline-primary" href="@Url.Action("Details", new {id = Model.Date.Activity.Id})"><i class="bi-arrow-left"></i> zurück</a>
-                    <a class="btn btn-outline-primary" id="saveAll" href="javascript:moveDate()"><i class="bi-save"></i> Änderungen speichern</a>
-                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservationDate",new {id=Model.Date.Id})"><i class="bi-trash"></i> Termin löschen</a>
+                    <a class="btn btn-outline-primary" href="@Url.Action("Details", new {id = Model.Date.Activity.Id})"><i class="bi bi-arrow-left"></i> zurück</a>
+                    <a class="btn btn-outline-primary" id="saveAll" href="javascript:moveDate()"><i class="bi bi-save"></i> Änderungen speichern</a>
+                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservationDate",new {id=Model.Date.Id})"><i class="bi bi-trash"></i> Termin löschen</a>
                 </div>
             </div>
             <div class="card-body">
@@ -91,7 +91,7 @@
                                                     <td>@doz.Name</td>
                                                     <td>
                                                         <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@doz.Id')">
-                                                            <i class="bi-trash"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -135,7 +135,7 @@
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@room.Id')">
-                                                            <i class="bi-trash"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -150,8 +150,8 @@
                     </div>
                     <div class="col-md-4">
                         <h5>Freie Räume</h5>
-                        <a href="javascript:takeRoom()" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> Übernehmen</a>
-                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi-arrow-repeat"></i> Aktualisieren</a>
+                        <a href="javascript:takeRoom()" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> Übernehmen</a>
+                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Aktualisieren</a>
                         <span id="loading" class="spinner-border"></span>
                         <select class="form-select slot-option" id="freeRoomTable">
                         </select>
@@ -343,6 +343,7 @@
 
         function deleteRow(id) {
             $("#" + id).remove();
+            checkRoomStates();
         }
 
         function onDateChanged() {

@@ -37,13 +37,13 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index")"><i class="bi-arrow-left"></i><br />Zurück</a>
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("GetDocument", "Storage", new {id = Model.Storage.Id})"><i class="bi-download"></i><br />Download</a>
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Edit", new {id = Model.Id})"><i class="bi-gear"></i><br />Titel / Version ändern</a>
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Add", new {id = Model.Id})"><i class="bi-share"></i><br />Für weitere Lehrveranstaltung publizieren</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index")"><i class="bi bi-arrow-left"></i><br />Zurück</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("GetDocument", "Storage", new {id = Model.Storage.Id})"><i class="bi bi-download"></i><br />Download</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Edit", new {id = Model.Id})"><i class="bi bi-gear"></i><br />Titel / Version ändern</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Add", new {id = Model.Id})"><i class="bi bi-share"></i><br />Für weitere Lehrveranstaltung publizieren</a>
                         @if (Model.Orders.Count == 0)
                         {
-                            <a class="btn btn-outline-danger text-center" href="@Url.Action("Delete", "ScriptPublishing", new {id = Model.Id})"><i class="bi-trash"></i><br />Löschen</a>
+                            <a class="btn btn-outline-danger text-center" href="@Url.Action("Delete", "ScriptPublishing", new {id = Model.Id})"><i class="bi bi-trash"></i><br />Löschen</a>
                         }
                         else
                         {
@@ -79,7 +79,7 @@
                                 }
                             </td>
                             <td>
-                                <a class="btn btn-outline-danger text-center" href="@Url.Action("Withdraw", new {id = pub.Id})"><i class="bi-x-circle"></i> Publikation zurückziehen</a>
+                                <a class="btn btn-outline-danger text-center" href="@Url.Action("Withdraw", new {id = pub.Id})"><i class="bi bi-x-circle"></i> Publikation zurückziehen</a>
                             </td>
                         </tr>
                     }

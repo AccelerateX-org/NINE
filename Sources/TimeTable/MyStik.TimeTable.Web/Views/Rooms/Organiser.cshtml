@@ -45,7 +45,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Organiser.ShortName</li>
         </ol>
@@ -61,10 +61,10 @@
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
                         <a href="@Url.Action("Allocation")" class="btn btn-outline-primary">Allokation</a>
-                        <a href="@Url.Action("List", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-list"></i> Liste</a>
-                        <a href="@Url.Action("AddGroup", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-plus"></i> Neue Raumgruppe</a>
-                        <a href="@Url.Action("Labels", "Room", new { orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-qr-code"></i> Türschilder</a>
-                        <a href="@Url.Action("LookupDate", "Room", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi-search"></i> Raumsuche</a>
+                        <a href="@Url.Action("List", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-list"></i> Liste</a>
+                        <a href="@Url.Action("AddGroup", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-plus"></i> Neue Raumgruppe</a>
+                        <a href="@Url.Action("Labels", "Room", new { orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-qr-code"></i> Türschilder</a>
+                        <a href="@Url.Action("LookupDate", "Room", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-search"></i> Raumsuche</a>
                     </div>
                 </div>
             </div>

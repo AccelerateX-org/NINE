@@ -760,6 +760,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     exam.SecondExaminer = null;
                 }
 
+                var lotteries = Db.Lotteries.Where(x => x.Owner.Id == member.Id).ToList();
+                foreach (var lottery in lotteries)
+                {
+                    lottery.Owner = null;
+                }
 
                 var org = member.Organiser;
 

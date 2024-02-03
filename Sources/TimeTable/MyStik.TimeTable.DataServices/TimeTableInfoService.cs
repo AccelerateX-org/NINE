@@ -175,6 +175,9 @@ namespace MyStik.TimeTable.DataServices
             if (occ == null)
                 return;
 
+            var quotes = occ.SeatQuotas.ToList();
+            quotes.ForEach(x => _db.SeatQuotas.Remove(x));
+
             // Occurrence Groups löschen
             var occGroups = occ.Groups.ToList();
             occGroups.ForEach(g => _db.OccurrenceGroups.Remove(g));

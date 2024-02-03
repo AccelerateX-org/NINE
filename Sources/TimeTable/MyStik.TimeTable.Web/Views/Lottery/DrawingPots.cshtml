@@ -24,7 +24,7 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
                     </div>
                 </div>
                 <div class="list-group-item">
@@ -32,15 +32,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <ul>
-                                <li><i class="bi-ticket"></i> Anzahl der Plätze (Kapazität)</li>
-                                <li><i class="bi-people"></i> Anzahl Teilnehmer</li>
-                                <li><i class="bi-hourglass"></i> Anzahl Einträge auf Warteliste</li>
+                                <li><i class="bi bi-ticket"></i> Anzahl der Plätze (Kapazität)</li>
+                                <li><i class="bi bi-people"></i> Anzahl Teilnehmer</li>
+                                <li><i class="bi bi-hourglass"></i> Anzahl Einträge auf Warteliste</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
                             <ul>
-                                <li><i class="bi-percent text-warning"></i> "Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
-                                <li><i class="bi-percent text-danger"></i> "Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
+                                <li><i class="bi bi-percent text-warning"></i> "Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
+                                <li><i class="bi bi-percent text-danger"></i> "Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
                             </ul>
                         </div>
                     </div>
@@ -61,14 +61,14 @@
                     <tr>
                         <th>Name</th>
                         <th>Bezeichnung</th>
-                        <th><i class="bi-ticket"></i></th>
-                        <th><i class="bi-people"></i></th>
-                        <th><i class="bi-hourglass"></i></th>
-                        <th><i class="bi-percent text-warning"></i></th>
+                        <th><i class="bi bi-ticket"></i></th>
+                        <th><i class="bi bi-people"></i></th>
+                        <th><i class="bi bi-hourglass"></i></th>
+                        <th><i class="bi bi-percent text-warning"></i></th>
 
                         @if (Model.Lottery.IsFixed)
                         {
-                            <th><i class="bi-percent text-danger"></i></th>
+                            <th><i class="bi bi-percent text-danger"></i></th>
                             <th>Keine Prio</th>
                             for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
                             {
@@ -94,7 +94,7 @@
                             </td>
                             @if (lotPot.Capacity == int.MaxValue)
                             {
-                                <td><i class="bi-infinity"></i></td>
+                                <td><i class="bi bi-infinity"></i></td>
                             }
                             else
                             {
@@ -118,7 +118,7 @@
 
                                 if (lotPot.Capacity == int.MaxValue)
                                 {
-                                    <td><i class="bi-infinity"></i></td>
+                                    <td><i class="bi bi-infinity"></i></td>
                                 }
                                 else
                                 {

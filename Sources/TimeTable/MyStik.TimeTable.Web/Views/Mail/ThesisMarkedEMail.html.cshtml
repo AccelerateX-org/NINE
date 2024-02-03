@@ -15,7 +15,7 @@
 {
     <h5>Alum-NINE</h5>
     <p>Wollen Sie auch nach dem Abschluss Ihres Studiums mit Ihrer Hochschule und Fakultät in Kontakt bleiben, z.B. für die Einladung zur Absolventenverabschiedung?</p>
-    <a href="@Url.Action("Accept", "Alumni", new { id = Model.Thesis.Student.Id }, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
+    <a href="@Url.Action("StayConnected", "Alumni", new { id = Model.Thesis.Student.Id }, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
 
     <h5>Teilnahme an der Alumnibefragung</h5>
     if (Model.Thesis.Student.Curriculum.ShortName.Equals("WI"))
@@ -44,7 +44,11 @@
 @if (Model.Thesis.Student.Curriculum.Organiser.ShortName.Equals("FK 10"))
 {
     <p>
-        Wir würden uns freuen, mit Ihnen in Kontakt zu bleiben! 
+        Wir würden uns freuen, mit Ihnen in Kontakt zu bleiben!
         Im Alumni-Newsletter erhalten Sie ein bis zwei Mal pro Semester Neuigkeiten aus der Fakultät und Infos zu Veranstaltungen und weiteren Vernetzungsmöglichkeiten: Zur <a href="https://tinyurl.com/fk10alumni">Anmeldung </a>
     </p>
+
+    <h5>Alum-NINE</h5>
+    <p>Wollen Sie auch nach dem Abschluss Ihres Studiums mit Ihrer Hochschule und Fakultät in Kontakt bleiben, z.B. für die Einladung zur Absolventenverabschiedung?</p>
+    <a href="@Url.Action("StayConnected", "Alumni", new { id = Model.Thesis.Student.Id }, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
 }

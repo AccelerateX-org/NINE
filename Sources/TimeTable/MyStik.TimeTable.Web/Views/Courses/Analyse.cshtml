@@ -25,7 +25,7 @@
                     <div class="list-group-item">
                         <div class="btn-group">
                             <a href="@Url.Action("Repair", "Courses", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
-                                <i class="bi-hammer"></i> Reparieren
+                                <i class="bi bi-hammer"></i> Reparieren
                             </a>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                                 <td>
                                     @if (course.Course.Semester == null && course.Course.Dates.Count == 0)
                                     {
-                                        <a href="#" class="btn btn-outline-danger disabled"><i class="bi-trash"></i> Löschen</a>
+                                        <a href="#" class="btn btn-outline-danger disabled"><i class="bi bi-trash"></i> Löschen</a>
                                     }
                                 </td>
                             </tr>

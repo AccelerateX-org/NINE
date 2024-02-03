@@ -64,11 +64,11 @@
                         <div>
                             @if (course.CurrentDate != null)
                             {
-                                <i class="bi-calendar-day"></i> @Html.TimeSpanWithDate(course.CurrentDate)
+                                <i class="bi bi-calendar-day"></i> @Html.TimeSpanWithDate(course.CurrentDate)
                             }
                             else
                             {
-                                <i class="bi-calendar-check"></i><span>keine weiteren Termine</span>
+                                <i class="bi bi-calendar-check"></i><span>keine weiteren Termine</span>
                             }
                         </div>
                         @if (course.Subscription != null)

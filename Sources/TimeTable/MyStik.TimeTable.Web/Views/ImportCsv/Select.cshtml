@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-header">
                 <h4>Import von Stundenplandaten für @Model.Organiser.ShortName und Semester @Model.Semester.Name</h4>
-                <h5 class="card-title"><i class="bi-calendar"></i> Schritt 1 von 3: Angabe Zeitraum</h5>
+                <h5 class="card-title"><i class="bi bi-calendar"></i> Schritt 1 von 3: Angabe Zeitraum</h5>
             </div>
             <div class="card-body">
                 @using (Html.BeginForm("SelectFiles", null, FormMethod.Post, new { @class = "form form-horizontal" }))
@@ -27,7 +27,7 @@
                         </div>
                         <div class="row">
                             <div class="offset-3 col-sm-9">
-                                <button type="submit" class="btn btn-outline-primary"><i class="bi-chevron-right"></i> Weiter</button>
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-chevron-right"></i> Weiter</button>
                             </div>
                         </div>
                     </fieldset>

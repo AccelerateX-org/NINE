@@ -586,6 +586,14 @@
     <Compile Include="Migrations\202401111813138_AlumniV1.designer.cs">
       <DependentUpon>202401111813138_AlumniV1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202401211702389_AlumniV2.cs" />
+    <Compile Include="Migrations\202401211702389_AlumniV2.designer.cs">
+      <DependentUpon>202401211702389_AlumniV2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202401231319565_AlumniV3.cs" />
+    <Compile Include="Migrations\202401231319565_AlumniV3.designer.cs">
+      <DependentUpon>202401231319565_AlumniV3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -937,6 +945,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202401111813138_AlumniV1.resx">
       <DependentUpon>202401111813138_AlumniV1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202401211702389_AlumniV2.resx">
+      <DependentUpon>202401211702389_AlumniV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202401231319565_AlumniV3.resx">
+      <DependentUpon>202401231319565_AlumniV3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

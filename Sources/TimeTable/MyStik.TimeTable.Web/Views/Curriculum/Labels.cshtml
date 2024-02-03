@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-md-10">
 
-                        <h4>Ettiketten Studiengang @Model.Name (@Model.ShortName)</h4>
+                        <h4>Kohorten Studiengang @Model.Name (@Model.ShortName)</h4>
                         <h5 class="card-subtitle">
                             <a href="@Url.Action("Index", "Curricula")">HM</a>
                             |
@@ -33,16 +33,16 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <a href="@Url.Action("Admin", new {id = Model.Id})" class="btn btn-outline-primary">
-                        <i class="bi-chevron-left"></i> Zurück
+                        <i class="bi bi-chevron-left"></i> Zurück
                     </a>
                     <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary disabled">
-                        <i class="bi-plus"></i> Neues Etikett (@Model.Organiser.Institution.Tag)
+                        <i class="bi bi-plus"></i> Neue Kohorte (@Model.Organiser.Institution.Tag)
                     </a>
                     <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary disabled">
-                        <i class="bi-plus"></i> Neues Etikett (@Model.Organiser.ShortName)
+                        <i class="bi bi-plus"></i> Neue Kohorte (@Model.Organiser.ShortName)
                     </a>
                     <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary">
-                        <i class="bi-plus"></i> Neues Etikett [@Model.ShortName]
+                        <i class="bi bi-plus"></i> Neue Kohorte [@Model.ShortName]
                     </a>
                 </div>
             </div>

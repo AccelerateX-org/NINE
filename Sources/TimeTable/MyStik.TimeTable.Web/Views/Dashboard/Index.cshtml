@@ -18,7 +18,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
 
             @if (Model.Organisers.Any())
@@ -36,6 +36,11 @@
     {
         <a href="https://localhost:44300/Course/Details/7dfad981-d23d-ee11-855b-7486e20bbe7b">Testkurs</a>
         <a href="https://localhost:44300/ModuleDescription/Semester?moduleId=9a068d88-77cc-ed11-8520-7486e20bbe7b&semId=17f321e3-76cc-ed11-8520-7486e20bbe7b">Testmodul</a>
+
+        <md-block>
+            # Heading
+            Some *embedded* Markdown which `md-block` can convert for you!           
+        </md-block>
     }
     <div class="col-md-5">
         <div class="row">
@@ -46,8 +51,7 @@
                             <h5 class="card-title">Agenda</h5>
                             <input id="dateAgenda" type="text" class="form-control form-control-sm datepicker" onchange="onDateChanged(value)" value="@DateTime.Today.ToShortDateString()" />
                             <div class="btn-group">
-                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi-calendar-day"></i></a>
-                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.CurrentSemester.Semester.Id })"><i class="bi-calendar-week"></i></a>
+                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-day"></i></a>
                             </div>
                         </div>
                     </div>
@@ -80,7 +84,7 @@
     <div class="col-md-4">
         <div class="row">
             <div id="refreshSemester">
-                <a class="btn btn-outline-primary" href="javascript:onSemesterChanged()"><i class="bi-arrow-repeat"></i> Refresh</a>
+                <a class="btn btn-outline-primary" href="javascript:onSemesterChanged()"><i class="bi bi-arrow-repeat"></i> Refresh</a>
             </div>
             <div id="placeholderSemester">
                 <div class="card">
@@ -114,7 +118,7 @@
                                 <h5 class="card-title">Abschlussarbeiten</h5>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi-dash"></i>
+                                        <i class="bi bi-dash"></i>
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Ausschreibungen</a></li>
@@ -134,7 +138,7 @@
                                     if (thesis.Thesis.DeliveryDate != null)
                                     {
                                         <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                            <i class="bi-trophy"></i> @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
+                                            <i class="bi bi-trophy"></i> @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
                                         </a>
                                     }
                                     else
@@ -150,7 +154,7 @@
                                         else
                                         {
                                             <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                                <i class="bi-gear"></i>
+                                                <i class="bi bi-gear"></i>
                                                 @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
                                                 @if (thesis.DaysToExpire == Int32.MaxValue)
                                                 {
@@ -192,13 +196,13 @@
                                     if (thesis.Thesis.DeliveryDate != null)
                                     {
                                         <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                            <i class="bi-trophy"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
+                                            <i class="bi bi-trophy"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
                                         </a>
                                     }
                                     else
                                     {
                                         <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                            <i class="bi-gear"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
+                                            <i class="bi bi-gear"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
                                             <span class="badge badge-secondary">@thesis.DaysToExpire</span>
                                         </a>
                                     }
@@ -224,22 +228,22 @@
                     </div>
                     <div class="list-group">
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
-                            <i class="bi-collection-play"></i> Vorlesungsverzeichnis
+                            <i class="bi bi-collection-play"></i> Vorlesungsverzeichnis
                         </a>
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Events")">
-                            <i class="bi-film"></i> Veranstaltungsverzeichnis
+                            <i class="bi bi-film"></i> Veranstaltungsverzeichnis
                         </a>
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")">
-                            <i class="bi-building"></i> Räume
+                            <i class="bi bi-building"></i> Räume
                         </a>
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Lecturer")">
-                            <i class="bi-people"></i> Personen
+                            <i class="bi bi-people"></i> Personen
                         </a>
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")">
-                            <i class="bi-tv"></i> Aushänge <span class="badge bg-primary">@nAds</span>
+                            <i class="bi bi-tv"></i> Aushänge <span class="badge bg-primary">@nAds</span>
                         </a>
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Newsletter")">
-                            <i class="bi-envelope-at"></i> Newsletter
+                            <i class="bi bi-envelope-at"></i> Newsletter
                         </a>
 
                         @*
@@ -401,6 +405,9 @@
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
+
+    <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
+
 
     <script>
 

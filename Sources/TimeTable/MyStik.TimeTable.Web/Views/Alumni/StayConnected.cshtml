@@ -1,0 +1,52 @@
+﻿@model MyStik.TimeTable.Web.Models.AlumniViewModel
+@{
+    ViewBag.Title = "Alumni";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Willkommen beim Alumni-Portal</h5>
+                <h6 class="card-subtitle">Anleitung</h6>
+                <p class="card-text">Die Hochschule München setzt intern ein CRM-System zur Verwaltung der Kontaktdaten von Alumni ein. Zur Unterstützung der Datenerfassung gibt es hier ein kleines Werkzeug. Anleitung:</p>
+                <ul>
+                    <li>Ich bin hier gelandet, weil ich gerade meine Abschlussarbeit abgegeben habe.</li>
+                    <li>Von daher sind die meisten Daten schon vorhanden.</li>
+                    <li>Allerdings habe ich bisher NINE mit meiner hm.edu Adresse verwendet. Diese erlischt, sobald ich die HM verlassen habe.</li>
+                    <li>Von daher wird im CRM kann nur die private E-Mail Adresse verwaltet.</li>
+                    <li>
+                        Es läuft es wie folgt ab:
+                        <ol>
+                            <li>Auf dieser Seite gebe ich meine E-Mail Adresse an. Mir wird dann ein Zugangscode zugesendet, der 24h gültig ist.</li>
+                            <li>In der Mail ist auch ein Link auf ein Eingabeformular. Dort gebe ich meine Kontaktdaten ein.</li>
+                            <li>Ich erhalte nach Abschluss der Eingabe eine Bestätigungsmail.</li>
+                        </ol>
+                    </li>
+                    <li>Die Daten werden in unregelmäßigen Abständen, i.d.R. einmal im Semester aus NINE in das CRM-System übertragen. Anschließend werden die Daten in NINE gelöscht. Dazu wird ebenfalss eine Bestätigungsmail versendet.</li>
+                    <li>Ich bin mir unsicher, ob meine Daten gespeichert sind? Dann bei den Alumnibeauftragten der Fakultät nachfragen</li>
+                </ul>
+            </div>
+            <hr/>
+            <div class="card-body">
+                @using (Html.BeginForm("RequestKeyInternal", null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.Student.Id)
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
+                                <label for="floatingInput">E-Mail Adresse</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-outline-primary btn-lg" type="button" id="button-addon2"><i class="bi bi-send-check"></i> Zugangscode anfordern</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

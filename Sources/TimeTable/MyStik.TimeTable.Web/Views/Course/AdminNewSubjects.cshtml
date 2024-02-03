@@ -10,7 +10,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             @if (Model.Organiser != null)
             {
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Organiser.Id })">@Model.Organiser.ShortName</a></li>
@@ -29,7 +29,7 @@
             <div class="card">
                 <div class="list-group">
                     <div class="list-group-item">
-                        <a class="btn btn-outline-primary" href="@Url.Action("CreateTeaching", new { id = Model.Id })"><i class="bi-link"></i> Mit Modul / Fach verknüpfen</a>
+                        <a class="btn btn-outline-primary" href="@Url.Action("CreateTeaching", new { id = Model.Id })"><i class="bi bi-link"></i> Mit Modul / Fach verknüpfen</a>
                     </div>
                     @foreach (var teaching in Model.SubjectTeachings)
                     {

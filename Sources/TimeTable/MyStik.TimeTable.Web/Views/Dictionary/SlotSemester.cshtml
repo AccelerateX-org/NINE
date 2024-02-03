@@ -1,0 +1,290 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+
+@{
+    ViewBag.Title = "Modulplan";
+
+    var db = new TimeTableDbContext();
+}
+
+@section styles
+{
+    <style>
+        .slotBox {
+            margin-top: 2px;
+            margin-bottom: 2px;
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+    </style>
+
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
+}
+
+
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">@Model.Curriculum.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("SlotPlan", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">Modulplan</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Semester @Model.SemNo</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                @if (Model.Curriculum.Areas.Any())
+                {
+                    var optionsSelected = new List<AreaOption>();
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            Auswahl Optionen
+                            <span id="loading" class="spinner-border"></span>
+                        </div>
+                        <div class="col-md-6">
+                            @foreach (var area in Model.Areas)
+                            {
+                                optionsSelected.Add(area.Option);
+                                <div class="row">
+                                    <div class="col-3">
+                                        @area.Area.Name
+                                    </div>
+                                    <div class="col-9">
+                                        <select class="form-select slot-option" id="@area.Area.Id" onchange="onFilterChanged()">
+                                            @foreach (var option in area.Area.Options)
+                                            {
+                                                if (option.Id == area.Option.Id)
+                                                {
+                                                    <option selected value="@option.Id">@option.Name (@option.Tag)</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@option.Id">@option.Name (@option.Tag)</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-3">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="ModulePlan" class="card-body">
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+
+    <script>
+        $(function() {
+            $("#loading").hide();
+
+            onFilterChanged();
+
+            /*
+            var label = $("#labelSelect").val();
+            if (label != null) {
+                onLabelSelected(label);
+            }
+            */
+        });
+
+
+        function onLabelSelected(value) {
+
+            var currId = "@Model.Curriculum.Id";
+            var label = value;
+
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("LoadModulePlan")',
+                    data: {
+                        currId: currId,
+                        label: label
+                    },
+                    success: function(data, success, xhr) {
+                        $("#ModulePlan").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onFilterChanged() {
+
+            var currId = "@Model.Curriculum.Id";
+            var semId = "@Model.Semester.Id";
+            var optionIds = new Array();
+            $(".slot-option").each(
+                function(index, value) {
+                    //alert(index);
+                    //alert(value.value);
+                    optionIds.push(value.value);
+                });
+
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("LoadModulePlanAreaSemester")',
+                    data: {
+                        currId: currId,
+                        semId: semId,
+                        semNo: @Model.SemNo,
+                        optIds: optionIds
+                    },
+                    success: function(data, success, xhr) {
+                        $("#ModulePlan").html(data);
+                        $("#loading").hide();
+                        showWeekCalendar(@Model.SemNo);
+                    }
+                });
+
+        }
+
+        function onSemesterSelected(semId) {
+
+            console.log("Semester ausgewählt: " + semId);
+
+            var list = $("#" + semId + " > a").get();
+            var n = list.length;
+
+            if (n > 0) {
+                var dateList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    console.log("Slot: " + list[i].id);
+                    dateList[i] = list[i].id;
+                }
+            }
+
+            @*
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("MoveDate", "Course")',
+                    data: {
+                        ActivityDateId: dateId,
+                        NewDate: newDate,
+                        NewBegin: newBegin,
+                        NewEnd: newEnd,
+                        RoomIds: roomList,
+                        DozIds: dozList,
+                        Description: desc,
+                        Title: title,
+                        ShortInfo: shortInfo
+                    },
+                    success: function(data, success, xhr) {
+                        window.location.replace("@Url.Action("AdminNewDates", new {id = Model.Course.Id})");
+                    }
+                });
+        }
+                *@
+
+
+
+        }
+
+
+        function showWeekCalendar(semNo) {
+            try {
+                var list = $(".slotBox").get();
+                var n = list.length;
+
+                var dateList = [];
+
+                if (n > 0) {
+
+                    for (var i = 0; i < n; i++) {
+                        console.log("Slot: " + list[i].id);
+                        dateList.push(list[i].id);
+                    }
+                }
+
+                var dates = dateList.join(";");
+
+                console.log(dateList);
+                console.log(dates);
+
+                $("#btnWeek").addClass("active");
+                $("#btnDay").removeClass("active");
+                $("#btnList").removeClass("active");
+
+                $('#loading').show();
+                semId = "@Model.Semester.Id";
+                orgId = "@Model.Organiser.Id";
+                currId = "@Model.Curriculum.Id";
+
+                $('#calendar').html('');
+                myCalendar = initDayCalendar("calendar");
+
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("SlotSemesterEvents", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            orgId: orgId,
+                            currId: currId,
+                            slotIds: dates
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
+
+        }
+
+    </script>
+}
+

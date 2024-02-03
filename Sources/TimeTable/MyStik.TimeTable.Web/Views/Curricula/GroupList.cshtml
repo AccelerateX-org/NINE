@@ -23,7 +23,7 @@
                     <div class="panel panel-default">
                         <ul class="nav">
                             <li>
-                                <a href="@Url.Action("Admin", "Curriculum", new {id = Model.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> Zurück</a>
+                                <a href="@Url.Action("Admin", "Curriculum", new {id = Model.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> Zurück</a>
                             </li>
                             <li>
                                 <a href="@Url.Action("CreateGroup", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Neue Studiengruppe</a>
@@ -99,15 +99,15 @@
                                                             @if (ViewBag.HasEditRights)
                                                             {
                                                                 <a href="@Url.Action("EditCapacityGroup", new {id = capacityGroup.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                                                <a href="@Url.Action("DeleteCapacityGroup", new {id = capacityGroup.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i></a>
+                                                                <a href="@Url.Action("DeleteCapacityGroup", new {id = capacityGroup.Id})" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
                                                             }
                                                         </td>
                                                         <td rowspan="@n">
                                                             @if (ViewBag.HasEditRights)
                                                             {
-                                                                <a href="@Url.Action("CreateCapacityGroup", new {id = group.Id})" class="btn btn-outline-primary"><i class="bi-folder-plus"></i> Neue Kap-Gruppe</a>
+                                                                <a href="@Url.Action("CreateCapacityGroup", new {id = group.Id})" class="btn btn-outline-primary"><i class="bi bi-folder-plus"></i> Neue Kap-Gruppe</a>
                                                                 <a href="@Url.Action("EditCurriculumGroup", new {id = group.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                                                <a href="@Url.Action("DeleteCurriculumGroup", new {id = group.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i></a>
+                                                                <a href="@Url.Action("DeleteCurriculumGroup", new {id = group.Id})" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
                                                             }
                                                         </td>
                                                     </tr>
@@ -135,7 +135,7 @@
                                                             @if (ViewBag.HasEditRights)
                                                             {
                                                                 <a href="@Url.Action("EditCapacityGroup", new {id = capacityGroup.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                                                <a href="@Url.Action("DeleteCapacityGroup", new {id = capacityGroup.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i></a>
+                                                                <a href="@Url.Action("DeleteCapacityGroup", new {id = capacityGroup.Id})" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
                                                             }
                                                         </td>
                                                     </tr>
@@ -155,7 +155,7 @@
                                                     @if (ViewBag.HasEditRights)
                                                     {
                                                         <a class="text-primary"><i class="fa fa-edit"></i></a>
-                                                        <a href="@Url.Action("DeleteCurriculumGroup", new {id = group.Id})" class="btn btn-outline-danger"><i class="bi-trash"></i></a>
+                                                        <a href="@Url.Action("DeleteCurriculumGroup", new {id = group.Id})" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
                                                     }
                                                 </td>
                                             </tr>

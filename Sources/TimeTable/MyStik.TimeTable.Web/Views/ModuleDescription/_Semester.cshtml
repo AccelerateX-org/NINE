@@ -37,7 +37,7 @@
             <div class="list-group-item">
                 <div class="btn-group">
                     <a href="@Url.Action("DownloadPdf", new {moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id} )" class="btn btn-outline-primary">
-                        <i class="bi-file-pdf"></i> als pdf
+                        <i class="bi bi-file-pdf"></i> als pdf
                     </a>
                 </div>
             </div>
@@ -136,7 +136,7 @@
                     @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
                     {
                         <a href="@Url.Action("Descriptions", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                            <i class="bi-keyboard"></i> Ändern
+                            <i class="bi bi-keyboard"></i> Ändern
                         </a>
                     }
                 </div>
@@ -173,7 +173,7 @@
                     @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                     {
                         <a href="@Url.Action("Teachings", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                            <i class="bi-keyboard"></i> Ändern
+                            <i class="bi bi-keyboard"></i> Ändern
                         </a>
                     }
 
@@ -290,7 +290,7 @@
                     @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
                     {
                         <a href="@Url.Action("Exams", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                            <i class="bi-keyboard"></i> Ändern
+                            <i class="bi bi-keyboard"></i> Ändern
                         </a>
                     }
                 </div>

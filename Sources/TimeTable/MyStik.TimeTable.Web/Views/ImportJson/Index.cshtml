@@ -12,7 +12,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
             <li class="breadcrumb-item active" aria-current="page">Datenimport</li>
@@ -34,10 +34,10 @@
                             <li>Dozent:in</li>
                             <li>Raum</li>
                             <li>Studiengang</li>
-                            <li>Etikett</li>
+                            <li>Kohorte</li>
                         </ul>
                         <a href="@Url.Action("Select", "ImportCsv", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="btn btn-outline-primary">
-                            <i class="bi-upload"></i> Import starten
+                            <i class="bi bi-upload"></i> Import starten
                         </a>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         </ul>
 
                         <a href="@Url.Action("Index", "Untis", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="btn btn-outline-primary">
-                            <i class="bi-upload"></i> Import starten
+                            <i class="bi bi-upload"></i> Import starten
                         </a>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         <h5 class="card-title">Detailierter Import</h5>
                         <p>Für Einzeltermine. (Format: JSON):</p>
                         <a href="@Url.Action("Select", "Import", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="btn btn-outline-primary">
-                            <i class="bi-upload"></i> Import starten
+                            <i class="bi bi-upload"></i> Import starten
                         </a>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <a href="@Url.Action("Delete", "Import", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Importe löschen
+                                <i class="bi bi-trash"></i> Importe löschen
                             </a>
                         }
                     </div>

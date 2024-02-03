@@ -15,7 +15,7 @@
 
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item active" aria-current="page">Aushänge</li>
             </ol>
         </nav>
@@ -28,13 +28,13 @@
             <div class="card-body">
                 <h5>Legende</h5>
                 <ul>
-                    <li><i class="bi-wrench-adjustable"></i> praktisches Studiensemester</li>
-                    <li><i class="bi-mortarboard"></i> Abschlussarbeit</li>
-                    <li><i class="bi-globe"></i> Auslandsaufenthalt</li>
-                    <li><i class="bi-cash"></i> Stipendien</li>
-                    <li><i class="bi-trophy"></i> Studentische Wettbewerbe</li>
-                    <li><i class="bi-zoom-in"></i> SHKs & Tutortätigkeiten</li>
-                    <li><i class="bi-gear-fill"></i> Werkstudententätigkeiten</li>
+                    <li><i class="bi bi-wrench-adjustable"></i> praktisches Studiensemester</li>
+                    <li><i class="bi bi-mortarboard"></i> Abschlussarbeit</li>
+                    <li><i class="bi bi-globe"></i> Auslandsaufenthalt</li>
+                    <li><i class="bi bi-cash"></i> Stipendien</li>
+                    <li><i class="bi bi-trophy"></i> Studentische Wettbewerbe</li>
+                    <li><i class="bi bi-zoom-in"></i> SHKs & Tutortätigkeiten</li>
+                    <li><i class="bi bi-gear-fill"></i> Werkstudententätigkeiten</li>
                 </ul>
 
             </div>
@@ -54,7 +54,7 @@
                         </ul>
                     </div>
                     <a href="@Url.Action("Create", "Advertisements", new { id = ViewBag.Organiser.Id })" class="btn btn-outline-primary">
-                        <i class="bi-plus"></i> Ausschreibung anlegen
+                        <i class="bi bi-plus"></i> Ausschreibung anlegen
                     </a>
                 </div>
             </div>
@@ -69,10 +69,10 @@
             <table id="tabAdv" class="table">
                 <thead>
                     <tr>
-                        <th><i class="bi-calendar-day"></i></th>
-                        <th><i class="bi-list-check"></i></th>
-                        <th><i class="bi-stars"></i></th>
-                        <th><i class="bi-file-pdf"></i></th>
+                        <th><i class="bi bi-calendar-day"></i></th>
+                        <th><i class="bi bi-list-check"></i></th>
+                        <th><i class="bi bi-stars"></i></th>
+                        <th><i class="bi bi-file-pdf"></i></th>
                         <th>Titel</th>
                         <th>Kontakt</th>
                     </tr>
@@ -87,37 +87,37 @@
                                 @if (adv.ForInternship)
                                 {
                                     nLevel += 1;
-                                    <i class="bi-wrench-adjustable"></i>
+                                    <i class="bi bi-wrench-adjustable"></i>
                                 }
                                 @if (adv.ForThesis)
                                 {
                                     nLevel += 2;
-                                    <i class="bi-mortarboard"></i>
+                                    <i class="bi bi-mortarboard"></i>
                                 }
                                 @if (adv.ForStayAbroad)
                                 {
                                     nLevel += 4;
-                                    <i class="bi-globe"></i>
+                                    <i class="bi bi-globe"></i>
                                 }
                                 @if (adv.ForAdvancement)
                                 {
                                     nLevel += 8;
-                                    <i class="bi-cash"></i>
+                                    <i class="bi bi-cash"></i>
                                 }
                                 @if (adv.ForCompetition)
                                 {
                                     nLevel += 16;
-                                    <i class="bi-trophy"></i>
+                                    <i class="bi bi-trophy"></i>
                                 }
                                 @if (adv.ForTutor)
                                 {
                                     nLevel += 32;
-                                    <i class="bi-zoom-in"></i>
+                                    <i class="bi bi-zoom-in"></i>
                                 }
                                 @if (adv.ForWorkingStudent)
                                 {
                                     nLevel += 64;
-                                    <i class="bi-gear-fill"></i>
+                                    <i class="bi bi-gear-fill"></i>
                                 }
                                 <span hidden="">@nLevel</span>
                             </td>
@@ -131,7 +131,7 @@
                             <td>
                                 @if (adv.Attachment != null)
                                 {
-                                    <a href="@Url.Action("ShowFile", new { id = adv.Attachment.Id })" target="_blank"><i class="bi-file-pdf"></i></a>
+                                    <a href="@Url.Action("ShowFile", new { id = adv.Attachment.Id })" target="_blank"><i class="bi bi-file-pdf"></i></a>
                                 }
                             </td>
 

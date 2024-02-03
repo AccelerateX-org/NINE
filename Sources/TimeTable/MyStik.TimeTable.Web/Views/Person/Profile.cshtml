@@ -6,7 +6,7 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
             <li class="breadcrumb-item active" aria-current="page">Lehrende</li>
@@ -25,7 +25,7 @@
                                     if (Model.User.BinaryData == null || Model.User.BinaryData.Length == 0)
                                     {
                                         <div>
-                                            <i class="bi-person-bounding-box"></i>
+                                            <i class="bi bi-person-bounding-box"></i>
                                         </div>
                                     }
                                     else
@@ -36,7 +36,7 @@
                                 else
                                 {
                                     <div>
-                                        <i class="bi-person-exclamation"></i> Kein Benutzerkonto
+                                        <i class="bi bi-person-exclamation"></i> Kein Benutzerkonto
                                     </div>
                                 }
                             </div>
@@ -44,7 +44,7 @@
                             @if (!string.IsNullOrEmpty(Model.UrlProfile))
                             {
                                 <a href="@Model.UrlProfile" target="_blank">
-                                    <i class="bi-link-45deg"></i>
+                                    <i class="bi bi-link-45deg"></i>
                                 </a>
                             }
 
@@ -90,10 +90,10 @@
                             {
                                 <div class="btn-group">
                                     <a class="btn btn-outline-primary" href="@Url.Action("Index", "UserProfile")">
-                                        <i class="bi-person-gear"></i>
+                                        <i class="bi bi-person-gear"></i>
                                     </a>
                                     <a class="btn btn-outline-primary" href="@Url.Action("Link", "Person")">
-                                        <i class="bi-link"></i>
+                                        <i class="bi bi-link"></i>
                                     </a>
                                 </div>
                             }

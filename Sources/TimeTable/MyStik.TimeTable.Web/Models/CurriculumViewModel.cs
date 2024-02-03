@@ -22,6 +22,10 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public Curriculum Curriculum { get; set; }
 
+        public ActivityOrganiser Organiser { get; set; }
+
+        public int SemNo { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

@@ -167,6 +167,7 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class RoomLookUpModel
     {
+        public ActivityOrganiser Organiser { get; set; }
         /// <summary>
         /// 
         /// </summary>

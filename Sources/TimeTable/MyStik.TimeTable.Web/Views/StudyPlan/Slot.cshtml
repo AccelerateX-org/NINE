@@ -1,0 +1,85 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.CurriculumSlot
+@{
+    ViewBag.Title = "Slot";
+
+    var db = new TimeTableDbContext();
+    var tf = db.TeachingFormats.ToList();
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">@Model.AreaOption.Area.Curriculum.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Areas", "Curriculum", new {id=Model.AreaOption.Area.Curriculum.Id})">Themenbereiche</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Area", "Curriculum", new {id=Model.AreaOption.Area.Id})">@Model.AreaOption.Area.Name (@Model.AreaOption.Area.Tag)</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Option", "Curriculum", new {id=Model.AreaOption.Id})">@Model.AreaOption.Name (@Model.AreaOption.Tag)</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Tag</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Modul-Slot: @Model.Tag @Model.Name</h5>
+            </div>
+            <div class="list-group">
+                @foreach (var module in Model.SubjectAccreditations.Select(x => x.Subject.Module).Distinct().ToList())
+                {
+                    <div class="list-group-item">
+                        <div>
+                            @module.Tag: <a href="@Url.Action("Latest", "ModuleDescription", new { id = module.Id })">@module.Name</a>
+                        </div>
+
+                        @foreach (var subject in module.ModuleSubjects.ToList())
+                        {
+                            <div>@subject.Name (@subject.TeachingFormat.Tag)</div>
+
+                            var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == ViewBag.Semester.Id).ToList();
+
+                            if (teachings.Any())
+                            {
+                                foreach (var teaching in teachings)
+                                {
+                                    <div>@teaching.Course.ShortName</div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-danger">Kein Angebot</div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabModules').DataTable({
+                "paging": false
+            });
+        });
+    </script>
+
+}

@@ -17,7 +17,7 @@
             </div>
             <div class="card-body">
                 <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Lecturer.Organiser.Id})" class="btn btn-outline-primary">
-                    <i class="bi-arrow-left"></i> zurück zur Liste
+                    <i class="bi bi-arrow-left"></i> zurück zur Liste
                 </a>
                 @if (ViewBag.UserRight.IsMemberAdmin)
                 {
@@ -28,7 +28,7 @@
                         <i class="fa fa-flask"></i> Verantwortungsbereiche
                     </a>
                     <a href="@Url.Action("DeleteMember", "Organiser", new {id = Model.Lecturer.Id})" class="btn btn-danger">
-                        <i class="bi-trash"></i> Lehrenden löschen
+                        <i class="bi bi-trash"></i> Lehrenden löschen
                     </a>
                 }
                 <div class="mt-3">

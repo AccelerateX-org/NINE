@@ -38,7 +38,7 @@
                                         <td>@doz.Member.FullName</td>
                                         <td>
                                             <button class="btn btn-danger btn-sm" onclick="deleteRow('@doz.Member.Id')">
-                                                <i class="bi-trash"></i>
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -50,8 +50,8 @@
                 </div>
                 <div class="row">
                     <div class="btn-group">
-                        <a href="javascript:save()" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen übernehmen</a>
-                        <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi-x"></i> Abbrechen</a>
+                        <a href="javascript:save()" class="btn btn-outline-primary"><i class="bi bi-save"></i> Änderungen übernehmen</a>
+                        <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi bi-x"></i> Abbrechen</a>
                     </div>
                 </div>
             </div>

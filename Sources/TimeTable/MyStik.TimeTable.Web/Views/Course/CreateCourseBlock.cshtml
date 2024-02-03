@@ -87,7 +87,7 @@
                                                 <input type="text" class="form-control timepicker timepicker-24" id="DateEnd">
                                             </th>
                                             <th>
-                                                <button class="btn btn-outline-primary" onclick="addDate()"><i class="bi-plus-circle"></i> Termin hinzufügen</button>
+                                                <button class="btn btn-outline-primary" onclick="addDate()"><i class="bi bi-plus-circle"></i> Termin hinzufügen</button>
                                             </th>
                                         </tr>
                                         </thead>
@@ -181,8 +181,8 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="card-title">Freie Räume</h5>
-                                        <a href="javascript:takeRoom()" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> Übernehmen</a>
-                                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi-arrow-repeat"></i> Aktualisieren</a>
+                                        <a href="javascript:takeRoom()" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> Übernehmen</a>
+                                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Aktualisieren</a>
                                         <span id="loading" class="spinner-border"></span>
                                         <select class="form-select slot-option" id="freeRoomTable">
                                         </select>
@@ -194,8 +194,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-12">
-                        <button class="btn btn-outline-primary" onclick="createCourse(true)"><i class="bi-save"></i> Lehrveranstaltung anlegen und zu den Details</button>
-                        <button class="btn btn-outline-primary" onclick="createCourse(false)"><i class="bi-save"></i> Lehrveranstaltung anlegen und zurück zu dieser Seite</button>
+                        <button class="btn btn-outline-primary" onclick="createCourse(true)"><i class="bi bi-save"></i> Lehrveranstaltung anlegen und zu den Details</button>
+                        <button class="btn btn-outline-primary" onclick="createCourse(false)"><i class="bi bi-save"></i> Lehrveranstaltung anlegen und zurück zu dieser Seite</button>
                         <a href="@Url.Action("Faculty", "University", new {id=Model.OrganiserId})" class="btn btn-outline-secondary">Abbrechen</a>
                     </div>
                 </div>

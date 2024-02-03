@@ -49,7 +49,7 @@
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
     <div class="container-fluid">
-        <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><i class="bi-list"></i></a>
+        <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><i class="bi bi-list"></i></a>
 
         @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
         {
@@ -79,7 +79,7 @@
             else
             {
                 <li class="nav-item">
-                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi-door-open"></i> @Resources.LoginButton</a>
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi bi-door-open"></i> @Resources.LoginButton</a>
                 </li>
             }
         </ul>
@@ -116,16 +116,16 @@
     </div>
     <div class="list-group">
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
-            <i class="bi-house"></i> Startseite
+            <i class="bi bi-house"></i> Startseite
         </a>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dashboard")">
-            <i class="bi-grid"></i> Dashboard
+            <i class="bi bi-grid"></i> Dashboard
         </a>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
-            <i class="bi-building"></i> Campus
+            <i class="bi bi-building"></i> Campus
         </a>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new {@area="Gym"})">
-            <i class="bi-controller"></i> Gym
+            <i class="bi bi-controller"></i> Gym
         </a>
     </div>
 </div>

@@ -26,6 +26,13 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            @Html.LabelFor(m => m.OrgName, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.OrgName, new { @class = "form-control", placeholder = "Kurzname der Einrichtung" })
+                                @Html.ValidationMessageFor(m => m.OrgName)
+                            </div>
+                        </div>
+                        <div class="form-group">
                             @Html.LabelFor(m => m.CourseShortName, new { @class = "col-md-2 control-label" })
                             <div class="col-md-8">
                                 @Html.TextBoxFor(m => m.CourseShortName, new { @class = "form-control", placeholder = "Kurzbezeichnung des Kurses" })

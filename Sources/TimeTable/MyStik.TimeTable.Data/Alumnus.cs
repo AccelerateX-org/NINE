@@ -23,7 +23,7 @@ namespace MyStik.TimeTable.Data
         public string Title { get; set; }
 
         /// <summary>
-        /// FK::Kurz
+        /// Bachelor, Master, Promotion
         /// </summary>
         public string Degree { get; set; }
 
@@ -32,6 +32,15 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string FinishingSemester { get; set; }
         
+        public string Gender { get; set; }
+
+        public string Faculty { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public DateTime? Created { get; set; }
+
+
         /// <summary>
         /// Studiengang des Absolventen
         /// </summary>

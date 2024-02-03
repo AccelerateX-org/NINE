@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-header">
                 <h4>Import von Stundenplandaten für @Model.Organiser.ShortName und Semester @Model.Semester.Name für den Abschnitt @Model.Segment.Description (@Model.Segment.From.ToShortDateString() bis @Model.Segment.To.ToShortDateString())</h4>
-                <h5 class="card-title"><i class="bi-check"></i> Schritt 3 von 3: Konsistenzprüfung und Import</h5>
+                <h5 class="card-title"><i class="bi bi-check"></i> Schritt 3 von 3: Konsistenzprüfung und Import</h5>
             </div>
             <div class="card-body">
                 <div id="importFileState"></div>
@@ -23,8 +23,8 @@
                         0%
                     </div>
                 </div>
-                <a href="#" id="btnImport" class="btn btn-danger"><i class="bi-upload"></i> Import starten</a>
-                <a id="btnBack" href="@Url.Action("Index", "Import", new {orgId=Model.OrganiserId, semId=Model.SemesterId})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                <a href="#" id="btnImport" class="btn btn-danger"><i class="bi bi-upload"></i> Import starten</a>
+                <a id="btnBack" href="@Url.Action("Index", "Import", new {orgId=Model.OrganiserId, semId=Model.SemesterId})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
 
                 <hr />
                 <table class="table">

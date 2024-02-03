@@ -22,12 +22,12 @@
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("Index", "Catalogs", new {id = ViewBag.Organiser.Id} )" class="btn btn-outline-primary">
-                            <i class="bi-chevron-compact-left"></i> Zurück
+                            <i class="bi bi-chevron-compact-left"></i> Zurück
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <a href="@Url.Action("MoveModules")" class="btn btn-outline-primary">
-                                <i class="bi-list-check"></i> Zusammensetzung
+                                <i class="bi bi-list-check"></i> Zusammensetzung
                             </a>
                         }
                     </div>

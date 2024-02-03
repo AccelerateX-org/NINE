@@ -19,27 +19,12 @@
                 <h4>@Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper())</h4>
                 <p>
                     @Model.Date.Begin.ToShortDateString() | @Html.TimeSpan(Model.Date)
-                    @foreach (var group in Model.Course.SemesterGroups)
-                    {
-                        if (group.CurriculumGroup != null)
-                        {
-                            @group.FullName
-                        }
-                        else
-                        {
-                            @Html.Raw("Ohne Zuordnung")
-                        }
-                        if (group != Model.Course.SemesterGroups.Last())
-                        {
-                            @Html.Raw(", ")
-                        }
-                    }
                 </p>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <a class="btn btn-outline-primary" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="bi-arrow-left"></i> zurück</a>
-                    <a class="btn btn-outline-primary" id="saveAll" href="javascript:moveDate()"><i class="bi-save"></i> Änderungen speichern</a>
+                    <a class="btn btn-outline-primary" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="bi bi-arrow-left"></i> zurück</a>
+                    <a class="btn btn-outline-primary" id="saveAll" href="javascript:moveDate()"><i class="bi bi-save"></i> Änderungen speichern</a>
                 </div>
             </div>
             <div class="card-body">
@@ -123,8 +108,8 @@
                                                 <td>@doz.Organiser.ShortName</td>
                                                 <td>@doz.Name</td>
                                                 <td>
-                                                    <button class="btn btn-danger btn-sm" onclick="deleteRow('@doz.Id')">
-                                                        <i class="bi-trash"></i>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@doz.Id')">
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -167,8 +152,8 @@
                                                     unbekannt
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-danger btn-sm" onclick="deleteRow('@room.Id')">
-                                                        <i class="bi-trash"></i>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@room.Id')">
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -182,9 +167,12 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <h5>Freie Räume </h5>
-                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi-arrow-repeat"></i> Aktualisieren</a>
-                        <div id="roomTable"></div>
+                        <h5>Freie Räume</h5>
+                        <a href="javascript:takeRoom()" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> Übernehmen</a>
+                        <a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Aktualisieren</a>
+                        <span id="loading" class="spinner-border"></span>
+                        <select class="form-select slot-option" id="freeRoomTable">
+                        </select>
                     </div>
                 </div>
             </div>
@@ -267,7 +255,7 @@
                 $("#dozList").append("<tr id=\""
                     + ui.item.text + "\"><td>"
                     + orgText + "</td><td>"
-                    + ui.item.value + "</td><td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRow('"
+                    + ui.item.value + "</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
                     + ui.item.text + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
 
             }
@@ -377,26 +365,24 @@
 
         function deleteRow(id) {
             $("#" + id).remove();
+            checkRoomStates();
         }
 
         function onDateChanged() {
             if (!isInit) {
                 checkRoomStates();
-                //reloadFreeRooms();
             }
         }
 
         function onBeginChanged() {
             if (!isInit) {
                 checkRoomStates();
-                //reloadFreeRooms();
             }
         }
 
         function onEndChanged() {
             if (!isInit) {
                 checkRoomStates();
-                //reloadFreeRooms();
             }
         }
 
@@ -415,15 +401,11 @@
             if (n > 0) {
                 for (var i = 0; i < n; i++) {
 
-                    dateList[i] = newDate + "#"
-                        + newBegin + "#"
-                        + newEnd + "#"
-                        + "false";
+                    dateList[i] = newDate + "#" + newDate + "#" + newBegin + "#" + newEnd + "#" + "0";
 
                 }
 
                 $("#" + roomId).addClass("info");
-                $("#state_" + roomId).innerHTML = "<i class=\"fa fa-spinner fa-spin text-muted\"></i>";
 
                 $.ajax(
                 {
@@ -447,9 +429,7 @@
                         $("#state_" + roomId).html("verfügbar");
                     } else {
                         $("#" + roomId).addClass("danger");
-                        $("#state_" + roomId).html("<button class=\"btn btn-outline-primary\" onclick=\"showConflicts('"
-                            + roomId
-                            + "')\">Konflikte <span class=\"badge\">" + data + "</span></button>");
+                        $("#state_" + roomId).html("<button class=\"btn btn-outline-primary\" onclick=\"showConflicts('" + roomId + "')\">Konflikte <span class=\"badge\">" + data + "</span></button>");
                     }
                 }
             });
@@ -477,10 +457,7 @@
         var n = 1;
         if (n > 0) {
             for (var i = 0; i < n; i++) {
-                dateList[i] = newDate + "#"
-                    + newBegin + "#"
-                    + newEnd + "#"
-                    + "false";
+                dateList[i] = newDate + "#" + newDate + "#" + newBegin + "#" + newEnd + "#" + "0";
             }
 
             $.ajax(
@@ -510,37 +487,49 @@
 
     function addRoom(roomId, roomNumber) {
 
-        $("#roomList").append("<tr id=\""
-            + roomId + "\"><td></td><td>"
-            + roomNumber + "</td><td id=\"state_"
-            + roomId + "\">unbekannt</td><td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRow('"
-            + roomId + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
+        $("#roomList").append("<tr id=\"" + roomId + "\"><td></td><td>" + roomNumber + "</td><td id=\"state_" + roomId + "\">unbekannt</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('" + roomId + "');\"><i class=\"bi-trash\"></i></button></td></tr>");
 
         checkRoomState(roomId);
 
     }
 
     function reloadFreeRooms() {
-        var org = $("#OrganiserId3 option:selected").val();
+        $("#loading").show();
+
+        var org = "@Model.Course.Organiser.Id.ToString()";
+
         var newDate = $("#NewDate").val();
         var newBegin = $("#NewBegin").val();
         var newEnd = $("#NewEnd").val();
 
-        $.ajax(
-        {
-            type: "POST",
-            url: '@Url.Action("GetAvailableRooms", "Room")',
-                data: {
-                    orgId: org,
-                    date: newDate,
-                    begin: newBegin,
-                    end: newEnd
-            },
-            success: function (data, success, xhr) {
-                $("#roomTable").html(data);
+        var dateList = new Array();
+        var n = 1;
+        if (n > 0) {
+            for (var i = 0; i < n; i++) {
+                dateList[i] = newDate + "#" + newDate + "#" + newBegin + "#" + newEnd + "#" + "0";
             }
-        });
 
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetAvailableRoomsDates", "Room")',
+                    data: {
+                        orgId: org,
+                        dates: dateList
+                    },
+                    success: function(data, success, xhr) {
+                        $("#freeRoomTable").html(data);
+                        $("#loading").hide();
+                    }
+                });
+        }
+    }
+
+    function takeRoom() {
+        var roomId = $("#freeRoomTable option:selected").val();
+        var roomName = $("#freeRoomTable option:selected").text();
+
+        addRoom(roomId, roomName);
     }
 
 

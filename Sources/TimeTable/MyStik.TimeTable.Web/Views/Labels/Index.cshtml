@@ -1,19 +1,39 @@
-﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.ActivityOrganiser
 
 @{
-    ViewBag.Title = Model.ShortName + " | Etiketten";
+    ViewBag.Title = Model.ShortName + " | Kohorten";
+
+    if (Request.IsLocal)
+    {
+        var db = new TimeTableDbContext();
+
+        foreach (var c in Model.Curricula)
+        {
+            if (c.LabelSet != null)
+            {
+                foreach (var label in c.LabelSet.ItemLabels.ToList())
+                {
+                    c.LabelSet.ItemLabels.Remove(label);
+                }
+            }
+        }
+
+        db.SaveChanges();
+    }
 }
 
-<div class="row">
+
+    <div class="row">
     <div class="col-12">
 
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Id })">@Model.ShortName</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Etiketten</li>
+                <li class="breadcrumb-item active" aria-current="page">Kohorten</li>
             </ol>
         </nav>
 
@@ -24,20 +44,20 @@
                         @if (ViewBag.UserRight.IsInstitutionAdmin && Model.Institution != null)
                         {
                             <a href="@Url.Action("AddInstitutionLabel", new { instId = Model.Institution.Id })" class="btn btn-outline-primary disabled">
-                                <i class="bi-plus"></i> Neues Etikett (@Model.Institution.Tag)
+                                <i class="bi bi-plus"></i> Neue Kohorte (@Model.Institution.Tag)
                             </a>
                         }
                         @if (ViewBag.UserRight.IsOrgAdmin)
                         {
                             <a href="@Url.Action("AddOrgLabel", new { orgId = Model.Id })" class="btn btn-outline-primary disabled">
-                                <i class="bi-plus"></i> Neues Etikett (@Model.ShortName)
+                                <i class="bi bi-plus"></i> Neue Kohorte (@Model.ShortName)
                             </a>
                         }
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <div class="dropdown">
                                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Neues Etikett für Studiengang
+                                    Neue Kohorte für Studiengang
                                 </button>
                                 <ul class="dropdown-menu">
                                     @foreach (var c in Model.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.ShortName))
@@ -51,7 +71,7 @@
                                 </ul>
                             </div>
                             <a href="@Url.Action("AddOrgLabel", new { orgId = Model.Id })" class="btn btn-outline-primary disabled">
-                                <i class="bi-binoculars"></i> Kohortenplanung
+                                <i class="bi bi-binoculars"></i> Kohortenplanung
                             </a>
                         }
                     </div>

@@ -133,6 +133,9 @@ namespace MyStik.TimeTable.DataServices.IO.Json
             var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
             var sem = db.Semesters.SingleOrDefault(s => s.Id == _semId);
 
+            var courseLabelSet = new ItemLabelSet();
+            db.ItemLabelSets.Add(courseLabelSet);
+
             long msStart = sw.ElapsedMilliseconds;
             var course = new Course
             {
@@ -145,6 +148,8 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                 Description = scheduleCourse.Description,
                 Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction ?? 0),
                 IsInternal = true,
+                IsProjected = true,
+                LabelSet = courseLabelSet
             };
             // Kurs sofort speichern, damit die ID gesichert ist
             db.Activities.Add(course);
@@ -180,25 +185,28 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                     db.SaveChanges();
                 }
 
+                if (curr.LabelSet == null)
+                {
+                    var labelSet = new ItemLabelSet();
+                    db.ItemLabelSets.Add(labelSet);
+                    curr.LabelSet = labelSet;
+                    db.SaveChanges();
+                }
+
                 // jetzt das Label im Studiengang finden
                 if (!string.IsNullOrEmpty(scheduleGroup.GroupName))
                 {
-                    var labelName = scheduleGroup.GroupName;
+                    var labelName = $"{curr.ShortName}-{scheduleGroup.GroupName}";
                     var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
 
                     if (label == null)
                     {
-                        label = db.ItemLabels.SingleOrDefault(x => x.Name.Equals(labelName));
-
-                        if (label == null)
+                        label = new ItemLabel
                         {
-                            label = new ItemLabel
-                            {
-                                Name = labelName
-                            };
-                            db.ItemLabels.Add(label);
-                        }
+                            Name = labelName
+                        };
 
+                        db.ItemLabels.Add(label);
                         curr.LabelSet.ItemLabels.Add(label);
                         db.SaveChanges();
                     }
@@ -910,7 +918,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
             return new Occurrence
             {
                 Capacity = c,
-                IsAvailable = true,
+                IsAvailable = false,
                 IsCanceled = false,
                 IsMoved = false,
                 FromIsRestricted = false,

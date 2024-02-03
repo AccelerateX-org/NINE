@@ -28,23 +28,23 @@
 
                     <div class="btn-group" role="group">
                         <a href="@Url.Action("Subscriptions")" class="btn btn-outline-primary">
-                            <i class="bi-arrow-left"></i>
+                            <i class="bi bi-arrow-left"></i>
                             Zurück zu meinen Buchungen
                         </a>
                         <a href="@Url.Action("EditDateSubscription", new {id = Model.Date.Id})" class="btn btn-outline-primary">
-                            <i class="bi-pen"></i> Anliegen ändern
+                            <i class="bi bi-pen"></i> Anliegen ändern
                         </a>
                         @if (Model.IsExpired)
                         {
                             <a href="" class="btn btn-outline-danger disabled">
-                                <i class="bi-trash"></i>
+                                <i class="bi bi-trash"></i>
                                 Nach Ende der Eintragungsfrist ist kein Austragen mehr möglich
                             </a>
                         }
                         else
                         {
                             <a href="@Url.Action("UnsubscribeDateSubscription", new {id = Model.Subscription.Id})" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i>
+                                <i class="bi bi-trash"></i>
                                 austragen
                             </a>
 
