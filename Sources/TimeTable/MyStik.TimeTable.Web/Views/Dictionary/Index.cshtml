@@ -2,7 +2,6 @@
 @model MyStik.TimeTable.Web.Models.HomeViewModel
 
 @{
-    // Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
@@ -21,26 +20,29 @@
                 {
                     if (sem.Organisers.Any())
                     {
-                        @*
-                        <a href="@Url.Action("Semester", new { semId = sem.Semester.Id })" class="list-group-item list-group-item-action">
+                        <div class="list-group-item">
                             <h5><strong>@sem.Semester.Name</strong></h5>
-                            <p>
+                            <div class="btn-group">
                                 @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
                                 {
-                                    @Html.FacultyLabel(organiser)
+                                    <a href="@Url.Action("Organiser", "Dictionary", new {semId=sem.Semester.Id, orgId=organiser.Id})" class="btn btn-outline-dark" style="background-color: @organiser.HtmlColor; color: white">@organiser.ShortName</a>
                                 }
-                            </p>
-                        </a>
-                            *@
-                    <div class="list-group-item">
-                        <h5><strong>@sem.Semester.Name</strong></h5>
-                        <div class="btn-group">
-                            @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
-                            {
-                                <a href="@Url.Action("Organiser", "Dictionary", new {semId=sem.Semester.Id, orgId=organiser.Id})" class="btn btn-outline-dark" style="background-color: @organiser.HtmlColor; color: white">@organiser.ShortName</a>
-                            }
+                            </div>
+                            <div class="btn-group">
+                                @{
+                                    var institutions = sem.Organisers.Where(x => x.Institution != null).Select(x => x.Institution).Distinct().ToList();
+
+                                    foreach (var institution in institutions.Where(x => x.LabelSet != null))
+                                    {
+                                        foreach (var labelSetItemLabel in institution.LabelSet.ItemLabels)
+                                        {
+                                            <a href="@Url.Action("Label", new { semId = sem.Semester.Id, labelId = labelSetItemLabel.Id })" class="btn btn-outline-dark">@labelSetItemLabel.Name</a>
+                                        }
+                                    }
+                                }
+
+                            </div>
                         </div>
-                    </div>
                     }
                 }
             </div>

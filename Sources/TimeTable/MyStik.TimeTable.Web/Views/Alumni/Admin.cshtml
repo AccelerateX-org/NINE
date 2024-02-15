@@ -1,0 +1,117 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Data.Alumnus>
+
+@{
+    ViewBag.Title = "Alumni";
+
+    var db = new TimeTableDbContext();
+
+    var alumni = db.Alumnae.Where(x => x.Curriculum != null).ToList();
+
+    foreach (var alumnus in alumni)
+    {
+        if (alumnus.Curriculum.Degree != null)
+        {
+            alumnus.Degree = alumnus.Curriculum.Degree.ShortName;
+        }
+    }
+
+    db.SaveChanges();
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        var t = $('#tabMembers').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
+            "paging": false
+        });
+
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Alumni</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-danger" href="@Url.Action("Repair", new {id = ViewBag.Organiser.Id})"><i class="bi bi-wrench-adjustable-circle"></i> Reparieren</a>
+                        <a class="btn btn-danger" href="@Url.Action("Remove", new {id = ViewBag.Organiser.Id})"><i class="bi bi-trash"></i> Leeren</a>
+                    </div>
+                </div>
+            </div>
+            <table id="tabMembers" class="table">
+                <thead>
+                    <tr>
+                        <th>Anrede</th>
+                        <th>Titel</th>
+                        <th>Vorname</th>
+                        <th>Name</th>
+                        <th>EMail</th>
+                        <th>Fakultät</th>
+                        <th>Studiengang</th>
+                        <th>Abschluss</th>
+                        <th>Semester</th>
+                        <th>Expiry</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td>@member.Gender</td>
+                        <td>@member.Title</td>
+                        <td>@member.FirstName</td>
+                        <td>@member.LastName</td>
+                        <td>@member.Email</td>
+                        <td>@member.Faculty</td>
+                        <td>@member.Program</td>
+                        <td>@member.Degree</td>
+                        <td>@member.FinishingSemester</td>
+                        <td>@member.CodeExpiryDateTime</td>
+                        @if (string.IsNullOrEmpty(member.UserId))
+                        {
+                            <td><i class="bi bi-person-x"></i><span hidden="">0</span></td>
+                        }
+                        else
+                        {
+                            <td><i class="bi bi-person-check"></i><span hidden="">1</span></td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

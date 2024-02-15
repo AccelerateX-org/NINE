@@ -50,6 +50,7 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class ReservationCreateModel
     {
+        public ActivityOrganiser Organiser { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -120,6 +121,7 @@ namespace MyStik.TimeTable.Web.Models
         public string WeeklyEnd { get; set; }
 
         public Guid OrganiserId { get; set; }
+        public Guid OrganiserId2 { get; set; }
 
         /// <summary>
         /// 

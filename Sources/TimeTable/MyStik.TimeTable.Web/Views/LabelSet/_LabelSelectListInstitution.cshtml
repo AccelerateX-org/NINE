@@ -1,0 +1,13 @@
+﻿@model MyStik.TimeTable.Data.Institution
+
+
+@if (Model != null && Model.LabelSet != null)
+{
+    foreach (var module in Model.LabelSet.ItemLabels)
+    {
+        <option value="@module.Id">@module.Name (@Model.Tag)</option>
+    }
+}
+else
+{
+}

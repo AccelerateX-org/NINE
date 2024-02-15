@@ -20,14 +20,22 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
             var member = GetMyMembership();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && 
-                                                     (x.Owner.Id == member.Id || x.VisibleUntil >= DateTime.Today)).ToList();
-
             ViewBag.Member = member;
             ViewBag.Organiser = org;
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
-            return View(model);
+            if (member != null)
+            {
+                var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                         (x.Owner.Id == member.Id || x.VisibleUntil >= DateTime.Today))
+                    .ToList();
+                return View(model);
+            }
+
+            var modelAll = Db.Advertisements.Where(x => x.VisibleUntil >= DateTime.Today)
+                .ToList();
+            return View(modelAll);
+
         }
 
         public ActionResult Overview()

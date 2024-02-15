@@ -5,97 +5,154 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-body">
+            <div class="card-header">
                 <h5 class="card-title">Eingabe Kontaktdaten als Alumni</h5>
+            </div>
+            <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
                     @Html.HiddenFor(m => m.Id)
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div><strong>Persönliche Daten</strong></div>
+                    <div class="row mb-1">
+                        <div class="col-md-3">
+                            <label for="Email">E-Mail Adresse</label>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
+                        @if (Model.Alumni.Student != null)
+                        {
+                            <div class="col-md-3">
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                            <div class="col-md-6">
+                                Unter welcher E-Mail Adresse möchte ich erreichbar bleiben?
+                                @*
+                        <a href="" class="btn btn-outline-primary"><i class="bi bi-send-check"></i> Verfifizierungscode anfordern</a>
+                                *@
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-3">
                                 @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", disabled = "" } })
-                                <label for="Email">E-Mail Adresse</label>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
-                                <label for="Code">Zugangscode</label>
+                            <div class="col-md-6">
                             </div>
-                        </div>
+                        }
                     </div>
-                    <div class="row">
+                    if (Model.Alumni.Student == null)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="Code">Verifizierungscode</label>
+                            </div>
+                            <div class="col-md-3">
+                                @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control", disabled = "" } })
+                            </div>
+                            <div class="col-md-6">
+                            </div>
+                        </div>
+                    }
+                    <div class="row mb-1">
+                        <div class="col-md-3">
+                            <label>Anrede / akad. Grad (heute)</label>
+                        </div>
                         <div class="col-md-2">
-                            <div class="form-floating mb-3">
-                                <select id="Gender" name="Gender" class="form-select slot-option">
-                                    <option selected value="">(ohne)</option>
-                                    <option value="Frau">Frau</option>
-                                    <option value="Herr">Herr</option>
-                                </select>
+                            <div class="form-floating">
+                                @Html.DropDownListFor(m => m.Gender, (IEnumerable<SelectListItem>)ViewBag.Gender, new { @class = "form-select" })
                                 <label for="Gender">Anrede</label>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="form-floating mb-3">
-                                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                                <label for="Title">akad. Titel (heute)</label>
+                            <div class="form-floating">
+                                <select id="Title" name="Title" class="form-select slot-option">
+                                    <option value="">(ohne)</option>
+                                    <option value="Dr.">Dr.</option>
+                                    <option value="Prof.">Prof.</option>
+                                    <option value="Prof. Dr.">Prof. Dr.</option>
+                                </select>
+                                <label for="Title">akad. Grad (heute)</label>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-floating mb-3">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label>Vorname / Nachname</label>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating">
                                 @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                                 <label for="FirstName">Vorname</label>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-floating mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
                                 @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
                                 <label for="LastName">Nachname</label>
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div><strong>Angaben zum letzten Studienabschluss</strong></div>
-                        </div>
-                    </div>
-                    if (ViewBag.Curriculum == null)
+                    if (Model.Alumni.Student != null)
                     {
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="form-floating mb-2">
-                                    <select id="Degee" name="Degree" class="form-select" id="floatingSelect">
-                                        <option value="Bachelor" selected>Bachelor</option>
-                                        <option value="Master">Master</option>
-                                        <option value="Promotion">Promotion</option>
-                                    </select>
-                                    <label for="Degee">Abschluss</label>
-                                </div>
+                        <div class="row mb-1">
+                            <div class="col-md-3">
+                                <label for="Degree">Abschluss</label>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-2">
-                                    <select id="FacultyId" name="FacultyId" class="form-select slot-option">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" disabled="" value="@Model.Alumni.Student.Curriculum.Organiser.Name"/>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" disabled="" value="@Model.Alumni.Student.Curriculum.Name" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mb-1">
+                            <div class="col-md-3">
+                                <label for="Degree">Abschluss</label>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select id="OrgId" name="OrgId" class="form-select slot-option" onchange="onOrgChanged(this.value)">
                                         @foreach (var org in ViewBag.Organisers)
                                         {
-                                            <option value="@org.Id">@org.Name</option>
+                                            <option value="@org.Id">@org.ShortName: @org.Name</option>
                                         }
+                                        <option values="@Guid.Empty">(andere)</option>
                                     </select>
-                                    <label for="FacultyId">Fakultät</label>
+                                    <label for="OrgId">Fakultät</label>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-floating mb-2">
-                                    <select id="Semester" name="Semester" class="form-select" id="floatingSelect">
-                                        <option value="WiSe" selected>Wintersenester</option>
-                                        <option value="SoSe">Sommersemester</option>
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <select id="CurrId" name="CurrId" class="form-select" id="floatingSelect">
                                     </select>
-                                    <label for="floatingSelect">Semester</label>
+                                    <label for="CurrId">Studiengang</label>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div id="misc" class="row mb-1">
+                            <div class="col-md-3">
+                                <label>Alternative Angabe zum Studienabschluss</label>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    @Html.EditorFor(model => model.CurrName, new { htmlAttributes = new { @class = "form-control" } })
+                                    <label for="CurrName">Studiengang</label>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    @Html.EditorFor(model => model.Degree, new { htmlAttributes = new { @class = "form-control" } })
+                                    <label for="Degree">Abschluss</label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (Model.Alumni.Semester == null)
+                    {
+                        <div class="row mb-1">
+                            <div class="col-md-3">
+                                <label>Abgeschlossen im ...</label>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-floating mb-2">
@@ -108,20 +165,45 @@
                                     <label for="Year">Jahr</label>
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <div class="form-floating mb-2">
+                                    <select id="Semester" name="Semester" class="form-select" id="floatingSelect">
+                                        <option value="WiSe" selected>Wintersenester</option>
+                                        <option value="SoSe">Sommersemester</option>
+                                    </select>
+                                    <label for="Semester">Semester</label>
+                                </div>
+                            </div>
                         </div>
                     }
                     else
                     {
+                        <div class="row mb-1">
+                            <div class="col-md-3">
+                                <label>Abgeschlossen im ...</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" disabled="" value="@Model.Alumni.Semester.Name" />
+                            </div>
+                        </div>
 
                     }
-                    <div class="row">
-                        <div class="form-check">
-                            <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required>
-                            <label for="DatenschutzGelesen" class="form-check-label">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+
                         </div>
+                        <div class="col-md-9">
+                            <div class="form-check">
+                                <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required>
+                                <label for="DatenschutzGelesen" class="form-check-label">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="row">
-                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Daten speichern</button>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Daten speichern</button>
+                        </div>
                     </div>
                 }
             </div>
@@ -132,9 +214,36 @@
 
 
 
+
 @section scripts
 {
     <script>
+
+        $(function() {
+            var org = $("#OrgId").val();
+            onOrgChanged(org);
+        });
+
+        function onOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CurriculaList2", "Curriculum")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#CurrId").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
 
     </script>
 

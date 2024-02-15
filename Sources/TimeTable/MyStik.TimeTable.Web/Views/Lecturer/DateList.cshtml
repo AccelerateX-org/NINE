@@ -9,30 +9,41 @@
 }
 
 
+
+@section scripts
+{
+    <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
+}
+
+
 <div class="row">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h4>Termine
+                <h4>
+                    Termine
                 </h4>
             </div>
-            <div class="list-group">
-                @foreach (var date in historicDates)
-                {
-                    <a href="@Url.Action("DateDetails", new {id = date.Date.Id})" class="list-group-item">
-                        <div class="list-group-item-heading">
-                            <h5>@Html.TimeSpanWithDate(date.Date)</h5>
-                        </div>
-                    </a>
-                }
-            </div>
+            @if (historicDates.Any())
+            {
+                <div class="list-group">
+                    @foreach (var date in historicDates)
+                    {
+                        <a href="@Url.Action("DateDetails", new { id = date.Date.Id })" class="list-group-item">
+                            <div>
+                                <h5>@Html.TimeSpanWithDate(date.Date)</h5>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
             <div class="list-group">
                 @foreach (var date in futureDates)
                 {
                     if (date.IsCancelled)
                     {
                         <a class="list-group-item list-group-item-danger" href="@Url.Action("DateDetails", new {id = date.Date.Id})">
-                            <div class="list-group-item-heading">
+                            <div>
                                 <h5>@Html.TimeSpanWithDate(date.Date) - abgesagt</h5>
                             </div>
                         </a>
@@ -40,33 +51,35 @@
                     else
                     {
                         <a class="list-group-item" href="@Url.Action("DateDetails", new {id = date.Date.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>@Html.TimeSpanWithDate(date.Date)</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    @Html.TimeSpanWithDate(date.Date)
+                                </div>
+                                <div class="col-md-8">
                                     @if (!string.IsNullOrEmpty(@date.Date.Title))
                                     {
-                                        <li><i class="fa fa-li fa-info-circle"></i>@date.Date.Title</li>
+                                        <div>
+                                            <i class="bi bi-info-circle"></i>@date.Date.Title
+                                        </div>
                                     }
                                     @if (date.Date.Slots.Any())
                                     {
-                                        <li><i class="fa fa-li fa-users"></i>Slotbuchung: @date.Subscriptions.Count von @date.Capacity Slots belegt</li>
+                                        <div><i class="bi bi-cart-dash"></i> Slotbuchung: @date.Subscriptions.Count von @date.Capacity Slots belegt</div>
                                     }
                                     else
                                     {
-                                        <li><i class="fa fa-li fa-users"></i>Offener Termin: @date.Subscriptions.Count von @date.Capacity Plätzen belegt</li>
+                                        <div><i class="bi bi-cart-dash"></i> Offener Termin: @date.Subscriptions.Count von @date.Capacity Plätzen belegt</div>
                                     }
                                     @if (date.EndOfSubscriptionPeriod == DateTime.MaxValue)
                                     {
-                                        <li><i class="fa fa-li fa-clock-o"></i>Kurzfristige Eintragung bis Beginn des Termins möglich</li>
-                                        
+                                        <div><i class="bi bi-pen"></i> Kurzfristige Eintragung bis Beginn des Termins möglich</div>
                                     }
                                     else
                                     {
-                                        <li><i class="fa fa-li fa-clock-o"></i>Eintragung möglich bis @date.EndOfSubscriptionPeriod</li>
+                                        <div><i class="bi bi-clock"></i> Eintragung möglich bis @date.EndOfSubscriptionPeriod.ToShortDateString() @date.EndOfSubscriptionPeriod.ToShortTimeString()</div>
                                     }
-                                </ul>
+
+                                </div>
                             </div>
                         </a>
                     }
@@ -75,46 +88,64 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Verwaltung</h4>
-            </div>
-            <div class="list-group">
-                <a class="list-group-item" href="@Url.Action("EditOpenSystem", "OfficeHour", new {id = Model.OfficeHour.Id})">
-                    <i class="fa fa-cogs"></i> Allgemeine Einstellungen ändern
-                </a>
-                <a class="list-group-item" href="@Url.Action("CreateDate", "OfficeHour", new {id = Model.OfficeHour.Id})">
-                    <i class="fa fa-calendar"></i> Neuen Termin oder Terminserie anlegen
-                </a>
-                <a class="list-group-item" href="@Url.Action("SubscriptionList", "OfficeHour", new {id = Model.OfficeHour.Id})">
-                    <i class="fa fa-download"></i> Teilnehmerliste (aller zukünftigen Termine)
-                </a>
-                <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteOfficeHour", "OfficeHour", new {id = Model.OfficeHour.Id})">
-                    <i class="fa fa-trash-o"></i> Sprechstunde komplett löschen
-                </a>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Verwaltung</h4>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item" href="@Url.Action("EditOpenSystem", "OfficeHour", new { id = Model.OfficeHour.Id })">
+                            <i class="bi bi-gear"></i> Allgemeine Einstellungen ändern
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("CreateDate", "OfficeHour", new { id = Model.OfficeHour.Id })">
+                            <i class="bi bi-calendar-plus"></i> Neuen Termin oder Terminserie anlegen
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("SubscriptionList", "OfficeHour", new { id = Model.OfficeHour.Id })">
+                            <i class="bi bi-download"></i> Teilnehmerliste (aller zukünftigen Termine)
+                        </a>
+                        <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteOfficeHour", "OfficeHour", new { id = Model.OfficeHour.Id })">
+                            <i class="bi bi-trash"></i> Sprechstunde komplett löschen
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Allgemeine Einstellungen</h4>
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="list-group-item-heading">
-                        <h5>Anzahl Eintragungen in zukünftigen Terminen: @Model.OfficeHour.FutureSubscriptions</h5>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Allgemeine Einstellungen</h4>
                     </div>
-                    <div class="list-group-item-text">
-                        Das ist die Anzahl von Termine, die Studierende "auf Vorrat" buchen können.
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div>
+                                <h5>Anzahl Eintragungen in zukünftigen Terminen: @Model.OfficeHour.FutureSubscriptions</h5>
+                            </div>
+                            <div>
+                                Das ist die Anzahl von Termine, die Studierende "auf Vorrat" buchen können.
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div>
+                                <h5>Beschreibungstext</h5>
+                            </div>
+                            <div>
+                                @if (!string.IsNullOrEmpty(Model.OfficeHour.Description) && Model.OfficeHour.Description.StartsWith("#"))
+                                {
+                                    <md-block>
+                                        @Model.OfficeHour.Description
+                                    </md-block>
+                                }
+                                else
+                                {
+                                    @Html.Raw(Model.OfficeHour.Description)
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="list-group-item">
-                    <div class="list-group-item-heading">
-                        <h5>Beschreibungstext</h5>
-                    </div>
-                    <div class="list-group-item-text">
-                        @Html.Raw(Model.OfficeHour.Description)
-                    </div>
-                </div>
+
             </div>
         </div>
 

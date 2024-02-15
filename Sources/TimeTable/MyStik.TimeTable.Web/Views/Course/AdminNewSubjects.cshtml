@@ -33,8 +33,9 @@
                     </div>
                     @foreach (var teaching in Model.SubjectTeachings)
                     {
-                        <a class="list-group-item list-group-item-action" href="@Url.Action("EditTeaching", new { id = teaching.Id })">
-                            @teaching.Subject.Tag
+                        <a class="list-group-item list-group-item-action"
+                           href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = Model.Semester.Id })">
+                            @teaching.Subject.Module.Name (@teaching.Subject.Module.Catalog.Name)
                         </a>
                     }
                 </div>

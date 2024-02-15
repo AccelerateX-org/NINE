@@ -1856,6 +1856,11 @@ namespace MyStik.TimeTable.Web.Controllers
                             Db.SemesterGroups.Remove(semesterGroup);
                         }
 
+                        foreach (var groupAlias in capacityGroup.Aliases.ToList())
+                        {
+                            Db.GroupAliases.Remove(groupAlias);
+                        }
+
                         Db.CapacityGroups.Remove(capacityGroup);
                     }
 
@@ -1888,6 +1893,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     Db.BulletinBoards.Remove(board);
                 }
 
+                if (curriculum.LabelSet != null)
+                {
+                    Db.ItemLabelSets.Remove(curriculum.LabelSet);
+                }
 
 
                 Db.Curricula.Remove(curriculum);

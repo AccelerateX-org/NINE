@@ -142,48 +142,78 @@ namespace MyStik.TimeTable.Web.Services
             return list.OrderBy(l => l.Semester.Name).ThenBy(l => l.Course.Name).ToList();
         }
 
+        public List<CourseSummaryModel> SearchCourses(string searchString, ActivityOrganiser organiser)
+        {
+
+            if (organiser != null)
+            {
+                var courses =
+                    Db.Activities.OfType<Course>().Where(
+                        c => 
+                             c.Organiser.Id == organiser.Id &&
+                             c.Dates.Any(d => d.End > DateTime.Now) &&
+                             (c.Name.ToUpper().Contains(searchString) ||
+                              c.ShortName.ToUpper().Contains(searchString) ||
+                              c.Dates.Any(
+                                  d =>
+                                      d.Hosts.Any(
+                                          h =>
+                                              h.Name.Contains(searchString) ||
+                                              h.ShortName.Contains(searchString))))
+                    ).OrderBy(c => c.Name).ToList();
+
+                return CreateCourseSummaries(courses);
+            }
+            else
+            {
+                var courses =
+                    Db.Activities.OfType<Course>().Where(
+                        c => 
+                             c.Dates.Any(d => d.End > DateTime.Now) &&
+                             (c.Name.ToUpper().Contains(searchString) ||
+                              c.ShortName.ToUpper().Contains(searchString) ||
+                              c.Dates.Any(
+                                  d =>
+                                      d.Hosts.Any(
+                                          h =>
+                                              h.Name.Contains(searchString) ||
+                                              h.ShortName.Contains(searchString))))
+                    ).OrderBy(c => c.Organiser.ShortName).ToList();
+
+                return CreateCourseSummaries(courses);
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="semesterName"></param>
         /// <param name="searchString"></param>
         /// <returns></returns>
-        public List<CourseSummaryModel> SearchCourses(Guid semesterId, string searchString, ActivityOrganiser organiser)
+        public List<CourseSummaryModel> SearchCourses(Semester semester, string searchString, ActivityOrganiser organiser)
         {
-            var semester = Db.Semesters.SingleOrDefault(l => l.Id == semesterId);
+            if (semester == null)
+                return new List<CourseSummaryModel>();
 
-            if (semester != null)
+
+            if (organiser != null)
             {
-                if (organiser != null)
-                {
-                    var courses1 =
-                        Db.Activities.OfType<Course>().Where(
-                            c => c.SemesterGroups.Any(g => g.Semester.Id == semester.Id &&
-                                                           (c.Name.ToUpper().Contains(searchString) ||
-                                                            c.ShortName.ToUpper().Contains(searchString)) &&
-                                                            (c.Dates.Any(d => d.Hosts.Any(h => h.Organiser.Id == organiser.Id)))) 
-                        ).OrderBy(c => c.Name).ToList();
+                var courses =
+                    Db.Activities.OfType<Course>().Where(
+                        c => c.Semester.Id == semester.Id &&
+                             c.Organiser.Id == organiser.Id &&
+                                                       (c.Name.ToUpper().Contains(searchString) ||
+                                                        c.ShortName.ToUpper().Contains(searchString)) 
+                    ).OrderBy(c => c.Name).ToList();
 
-                    var courses2 =
-                        Db.Activities.OfType<Course>().Where(
-                            c => c.SemesterGroups.Any(g => g.Semester.Id == semester.Id &&
-                                                           (c.Dates.Any(d => d.Hosts.Any(h => 
-                                                               h.Organiser.Id == organiser.Id &&
-                                                                (h.Name.Contains(searchString) ||
-                                                                h.ShortName.Contains(searchString))))))
-                        ).OrderBy(c => c.Name).ToList();
-
-                    courses1.AddRange(courses2);
-
-                    var courses = courses1.Distinct().ToList();
-
-                    return CreateCourseSummaries(courses);
-                }
-                else
-                {
-                    var courses =
-                        Db.Activities.OfType<Course>().Where(
-                            c => c.SemesterGroups.Any(g => g.Semester.Id == semester.Id &&
+                return CreateCourseSummaries(courses);
+            }
+            else
+            {
+                var courses =
+                    Db.Activities.OfType<Course>().Where(
+                            c => c.Semester.Id == semester.Id &&
                                                            (c.Name.ToUpper().Contains(searchString) ||
                                                             c.ShortName.ToUpper().Contains(searchString) ||
                                                             c.Dates.Any(
@@ -191,15 +221,11 @@ namespace MyStik.TimeTable.Web.Services
                                                                     d.Hosts.Any(
                                                                         h =>
                                                                             h.Name.Contains(searchString) ||
-                                                                            h.ShortName.Contains(searchString)))))
-                        ).OrderBy(c => c.Organiser.ShortName).ToList();
+                                                                            h.ShortName.Contains(searchString))))
+                    ).OrderBy(c => c.Organiser.ShortName).ToList();
 
-                    return CreateCourseSummaries(courses);
-                }
-
-
+                return CreateCourseSummaries(courses);
             }
-            return new List<CourseSummaryModel>();
         }
 
         /// <summary>

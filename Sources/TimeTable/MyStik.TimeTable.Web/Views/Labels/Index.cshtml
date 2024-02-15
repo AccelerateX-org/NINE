@@ -85,19 +85,21 @@
                         <th>Name</th>
                         <th>Beschreibung</th>
                         <th>Farbe</th>
+                        <th># Nutzung</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                 @if (Model.Institution != null)
                 {
-                    foreach (var label in Model.Institution.LabelSet.ItemLabels)
+                    foreach (var label in Model.Institution.LabelSet.ItemLabels.OrderBy(x => x.Name))
                     {
                         <tr>
                             <td>@Model.Institution.Tag</td>
                             <td>@label.Name</td>
                             <td>@label.Description</td>
                             <td>@label.HtmlColor</td>
+                            <td>@label.LabelSets.Count</td>
                             <td>
                                 @if (ViewBag.UserRight.IsInstitutionAdmin)
                                 {
@@ -108,13 +110,14 @@
                         </tr>
                     }
                 }
-                @foreach (var label in Model.LabelSet.ItemLabels)
+                @foreach (var label in Model.LabelSet.ItemLabels.OrderBy(x => x.Name))
                 {
                     <tr>
                         <td>@Model.ShortName</td>
                         <td>@label.Name</td>
                         <td>@label.Description</td>
                         <td>@label.HtmlColor</td>
+                        <td>@label.LabelSets.Count</td>
                         <td>
                             @if (ViewBag.UserRight.IsOrgAdmin)
                             {
@@ -124,21 +127,23 @@
                         </td>
                     </tr>
                 }
-                @foreach (var curr in Model.Curricula)
+                @foreach (var curr in Model.Curricula.OrderBy(x => x.ShortName))
                 {
                     if (curr.LabelSet != null)
                     {
-                        foreach (var label in curr.LabelSet.ItemLabels)
+                        foreach (var label in curr.LabelSet.ItemLabels.OrderBy(x => x.Name))
                         {
                             <tr>
                                 <td>@curr.ShortName</td>
                                 <td>@label.Name</td>
                                 <td>@label.Description</td>
                                 <td>@label.HtmlColor</td>
+                                <td>@label.LabelSets.Count</td>
                                 <td>
                                     @if (ViewBag.UserRight.IsCurriculumAdmin)
                                     {
                                         <a href="@Url.Action("EditLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                        <a href="@Url.Action("MergeLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Übertragen</a>
                                         <a href="@Url.Action("DeleteLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
                                     }
                                 </td>

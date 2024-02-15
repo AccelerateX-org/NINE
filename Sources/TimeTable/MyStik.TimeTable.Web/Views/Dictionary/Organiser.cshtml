@@ -50,7 +50,21 @@
                     {
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Lottery", new { id = l.Id })">
                             <div><strong>@l.Name</strong></div>
-                            <div><small>@l.IsActiveFrom.Value.ToShortDateString() - @l.IsActiveUntil.Value.ToShortDateString()</small></div>
+                            @if (l.IsFixed)
+                            {
+                                if (l.IsActiveUntil.Value != null && l.IsActiveUntil.Value > DateTime.Now)
+                                {
+                                    <div><small>Eintrgaung für Platzverlosung bis @l.IsActiveUntil.Value.ToShortDateString() @l.IsActiveUntil.Value.ToShortTimeString()</small></div>
+                                }
+                                else
+                                {
+                                    <div><small>Aktuell keine Eintragung möglich</small></div>
+                                }
+                            }
+                            else
+                            {
+                                <div><small>Eintragung nach Windhundverfahren</small></div>
+                            }
                         </a>
                     }
                 }

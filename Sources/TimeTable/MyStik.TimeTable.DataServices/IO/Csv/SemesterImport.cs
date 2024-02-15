@@ -119,7 +119,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
         public void CheckRooms()
         {
-            var rooms = _import.AllCourseEntries.Select(x => x.Room).Distinct().ToList();
+            var rooms = _import.AllCourseEntries.Where(x => !string.IsNullOrEmpty(x.Room)).Select(x => x.Room).Distinct().ToList();
             var nNew = 0;
             var nExist = 0;
 
@@ -135,30 +135,38 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
             foreach (var raum in rooms)
             {
-                var dbRooms = db.Rooms.Where(r => r.Number.Equals(raum)).ToList();
-                if (dbRooms.Any())
+                if (string.IsNullOrEmpty(raum))
                 {
-                    nExist++;
-                    foreach (var dbRoom in dbRooms)
-                    {
-                        if (dbRoom.Assignments.All(a => a.Organiser.Id != org.Id))
-                        {
-                            _import.AddErrorMessage("Import",
-                                $"Raum [{raum}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.",
-                                false);
-                        }
-                    }
+
                 }
                 else
                 {
-                    _import.AddErrorMessage("Import",
-                        $"Raum [{raum}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet",
-                        false);
-                    nNew++;
+                    var dbRooms = db.Rooms.Where(r => r.Number.Equals(raum)).ToList();
+                    if (dbRooms.Any())
+                    {
+                        nExist++;
+                        foreach (var dbRoom in dbRooms)
+                        {
+                            if (dbRoom.Assignments.All(a => a.Organiser.Id != org.Id))
+                            {
+                                _import.AddErrorMessage("Import",
+                                    $"Raum [{raum}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.",
+                                    false);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _import.AddErrorMessage("Import",
+                            $"Raum [{raum}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet",
+                            false);
+                        nNew++;
+                    }
                 }
             }
 
-            _import.AddErrorMessage("Import", string.Format("Anzahl Räueme: {0}: {1} vorhanden - {2} werden angelegt", rooms.Count, nExist, nNew), false);
+            _import.AddErrorMessage("Import", string.Format("Anzahl Räueme: {0}: {1} vorhanden - {2} werden angelegt", 
+                rooms.Count, nExist, nNew), false);
 
             if (!_isValid)
                 return;
@@ -166,7 +174,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
         public void CheckLecturers()
         {
-            var lecturer = _import.AllCourseEntries.Select(x => x.Lecturer).Distinct().ToList();
+            var lecturer = _import.AllCourseEntries.Where(x => !string.IsNullOrEmpty(x.Lecturer)).Select(x => x.Lecturer).Distinct().ToList();
             var nNew = 0;
             var nExist = 0;
 
@@ -181,21 +189,27 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
             foreach (var doz in lecturer)
             {
-                if (org.Members.Count(m => m.ShortName.Equals(doz)) > 1)
+                if (string.IsNullOrEmpty(doz))
                 {
-                    _import.AddErrorMessage("Import", string.Format("Kurzname {0} existieren mehrfach in Datenbank. Dozent wird keinem Termin zugeordnet", doz), true);
                 }
                 else
                 {
-                    var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz));
-                    if (lec == null)
+                    if (org.Members.Count(m => m.ShortName.Equals(doz)) > 1)
                     {
-                        _import.AddErrorMessage("Import", string.Format("Dozent [{0}] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz), false);
-                        nNew++;
+                        _import.AddErrorMessage("Import", string.Format("Kurzname {0} existieren mehrfach in Datenbank. Dozent wird keinem Termin zugeordnet", doz), true);
                     }
                     else
                     {
-                        nExist++;
+                        var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz));
+                        if (lec == null)
+                        {
+                            _import.AddErrorMessage("Import", string.Format("Dozent [{0}] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz), false);
+                            nNew++;
+                        }
+                        else
+                        {
+                            nExist++;
+                        }
                     }
                 }
             }

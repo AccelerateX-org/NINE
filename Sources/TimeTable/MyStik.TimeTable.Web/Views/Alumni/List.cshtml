@@ -19,6 +19,10 @@
 
     <script>
         var t = $('#tabMembers').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
             "paging": false
         });
 
@@ -34,7 +38,7 @@
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Alumnu</li>
+                <li class="breadcrumb-item active" aria-current="page">Alumni</li>
             </ol>
         </nav>
     </div>
@@ -42,36 +46,46 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-body">
-                <table id="tabMembers" class="table">
-                    <thead>
-                        <tr>
-                            <th>Titel</th>
-                            <th>Vorname</th>
-                            <th>Name</th>
-                            <th>EMail</th>
-                            <th>Abschluss</th>
-                            <th>Semester</th>
-                            <th>Expiry</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var member in Model)
-                        {
-                            <tr>
-                                <td>@member.Title</td>
-                                <td>@member.FirstName</td>
-                                <td>@member.LastName</td>
-                                <td>@member.Email</td>
-                                <td>@member.Degree</td>
-                                <td>@member.FinishingSemester</td>
-                                <td>@member.CodeExpiryDateTime</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-danger" href="@Url.Action("Admin", new {id = ViewBag.Organiser.Id})"><i class="bi bi-radioactive"></i> Low Level Administration</a>
+                    </div>
+                </div>
             </div>
+            <table id="tabMembers" class="table">
+                <thead>
+                    <tr>
+                        <th>Anrede</th>
+                        <th>Titel</th>
+                        <th>Vorname</th>
+                        <th>Name</th>
+                        <th>EMail</th>
+                        <th>Fakultät</th>
+                        <th>Studiengang</th>
+                        <th>Abschluss</th>
+                        <th>Semester</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td>@member.Gender</td>
+                        <td>@member.Title</td>
+                        <td>@member.FirstName</td>
+                        <td>@member.LastName</td>
+                        <td>@member.Email</td>
+                        <td>@member.Faculty</td>
+                        <td>@member.Program</td>
+                        <td>@member.Degree</td>
+                        <td>@member.FinishingSemester</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 

@@ -55,34 +55,41 @@
         {
             <form class="d-flex" action="@Url.Action("Index", "Search")">
                 <input class="form-control me-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                @*
                 <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                    *@
             </form>
         }
-        <ul class="navbar-nav">
-            @if (Request.IsAuthenticated)
-            {
-                <li class="nav-item active dropdown">
-                    <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle fa-fw"></i> @user.FullName
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="@Url.Action("PersonalMessage", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
-                        <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
-                        <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
-                        <li>
-                            <div class="dropdown-divider"></div>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
-                    </ul>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item">
-                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi bi-door-open"></i> @Resources.LoginButton</a>
-                </li>
-            }
-        </ul>
+    <ul class="navbar-nav">
+        @if (Request.IsAuthenticated)
+        {
+            @*
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-fw"></i> @user.FullName
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="@Url.Action("PersonalMessage", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
+                    <li>
+                        <div class="dropdown-divider"></div>
+                    </li>
+                    <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
+                </ul>
+            </li>
+            *@
+            <li class="nav-item">
+                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi bi-door-open"></i> @Resources.LoginButton</a>
+            </li>
+        }
+    </ul>
     </div>
 </nav>
     
@@ -111,8 +118,16 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">NINE</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        @if (Request.IsAuthenticated)
+        {
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">@user.FullName</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        }
+        else
+        {
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">NINE</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        }
     </div>
     <div class="list-group">
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
@@ -127,6 +142,10 @@
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new {@area="Gym"})">
             <i class="bi bi-controller"></i> Gym
         </a>
+        <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalMessage", "Notification")"><i class="bi bi-send"></i> Send me a notification</a>
+        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "UserProfile")"><i class="bi bi-gear"></i> @Resources.MySettings</a>
+        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Manage")"><i class="´bi bi-person-check"></i> @Resources.MyUserProfile</a>
+
     </div>
 </div>
 

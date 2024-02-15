@@ -149,14 +149,28 @@ namespace MyStik.TimeTable.Data
         public int MinCapacity { get; set; } = 0;
         public int MaxCapacity { get; set; } = int.MaxValue;
 
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Lotterie, die für die Vergabe des Kontingents zuständig ist
+        /// </summary>
+        public virtual Lottery Lottery { get; set; }
+
+        /// <summary>
+        /// Soll durch Fractions abgelöst werden
+        /// </summary>
         public virtual Curriculum Curriculum { get; set; }
 
         /// <summary>
-        /// Und Verknüpfung
+        /// Und Verknüpfung => soll durch Frations abgelöst werden
         /// </summary>
         public virtual ItemLabelSet ItemLabelSet { get; set; }
 
-        public string Description { get; set; }
+        public virtual ICollection<SeatQuotaFraction> Fractions { get; set; } 
+
 
         public string Summary
         {
@@ -187,4 +201,27 @@ namespace MyStik.TimeTable.Data
             }
         }
     }
+
+
+    public class SeatQuotaFraction
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Zuordnung zur Occurrence
+        /// </summary>
+        public virtual SeatQuota Quota { get; set; }
+
+        public int Percentage { get; set; } = 0;
+        public int Weight { get; set; } = 0;
+
+        public virtual Curriculum Curriculum { get; set; }
+
+        /// <summary>
+        /// Und Verknüpfung
+        /// </summary>
+        public virtual ItemLabelSet ItemLabelSet { get; set; }
+    }
+
 }

@@ -100,7 +100,7 @@ function initWeekCalendar(idCal, defaultDate) {
         timeZone: 'local',
         allDaySlot: false,
         locale: 'de',
-        dayHeaderFormat: { weekday: 'long' },
+        dayHeaderFormat: { weekday: 'short' },
         slotDuration: "00:45:00",
         slotMinTime: "08:00:00",
         slotMaxTime: "22:00:00",

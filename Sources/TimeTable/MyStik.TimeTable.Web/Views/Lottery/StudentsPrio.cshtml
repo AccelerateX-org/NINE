@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = "Status " + Model.Lottery.Name;
     var userService = new UserInfoService();
+
+    var nColPrio = Model.Lottery.MaxSubscription + 1;
 }
 
 
@@ -62,7 +64,7 @@
                         <th rowspan="2"><i class="fa fa-bed text-primary"></i></th>
                         <th rowspan="2"><i class="fa fa-frown-o text-primary"></i></th>
                         <th rowspan="2">Vor Losdurchgang bereits vorhandene Plätze</th>
-                        <th colspan="@Model.Lottery.MaxSubscription">Lose des Losdurchgangs (nach Priorität)</th>
+                        <th colspan="@nColPrio">Lose des Losdurchgangs (nach Priorität)</th>
                     </tr>
                     <tr>
                         @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
@@ -158,33 +160,41 @@
                             {
                                 var lots = student.Lots.Where(x => x.Priority == i).ToList();
 
-                                <td>
+                                if (!lots.Any())
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td>
+
                                     @foreach (var lot in lots)
                                     {
                                         var txtClass = "bg-info text-dark";
-                                        if (lot.IsTouched)
-                                        {
-                                            if (lot.Subscription.OnWaitingList)
+                                            if (lot.IsTouched)
                                             {
-                                                txtClass = "bg-warning text-darf";
-                                            }
-                                            else
-                                            {
-                                                txtClass = "bg-success text-white";
-                                            }
-                                        }
-                                        <div class="@txtClass">
-                                            @lot.Course.ShortName
-                                            <ul class="fa-ul">
-                                                <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
-                                                @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
+                                                if (lot.Subscription.OnWaitingList)
                                                 {
-                                                    <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
+                                                    txtClass = "bg-warning text-darf";
                                                 }
-                                            </ul>
-                                        </div>
+                                                else
+                                                {
+                                                    txtClass = "bg-success text-white";
+                                                }
+                                            }
+                                            <div class="@txtClass">
+                                                @lot.Course.ShortName
+                                                <ul class="fa-ul">
+                                                    <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
+                                                    @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
+                                                    {
+                                                        <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
+                                                    }
+                                                </ul>
+                                            </div>
                                     }
-                                </td>
+                                    </td>
+                                }
                             }
                         </tr>
                     }

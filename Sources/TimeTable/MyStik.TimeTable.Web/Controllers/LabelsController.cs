@@ -123,5 +123,56 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new { id = curr.Organiser.Id });
         }
 
+
+        public ActionResult MergeLabel(Guid currId, Guid labelId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            if (curr.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                curr.LabelSet = labelSet;
+                Db.ItemLabelSets.Add(labelSet);
+                Db.SaveChanges();
+            }
+
+
+            var model = new ItemLabelEditModel()
+            {
+                ItemLabel = label,
+                Curriculum = curr,
+                Name = label.Name,
+                Description = label.Description,
+                HtmlColor = label.HtmlColor
+
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult MergeLabel(ItemLabelEditModel model)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            var sourceLabel = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Id == model.ItemLabel.Id);
+            var targetLabel = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(model.Name));
+
+            if (sourceLabel != null && targetLabel != null)
+            {
+                var labelSets = Db.ItemLabelSets.Where(x => x.ItemLabels.Any(l => l.Id == sourceLabel.Id)).ToList();
+                foreach (var labelSet in labelSets.Where(labelSet => labelSet.Id != curr.LabelSet.Id))
+                {
+                    labelSet.ItemLabels.Remove(sourceLabel);
+                    labelSet.ItemLabels.Add(targetLabel);
+                }
+
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Index", new { id = curr.Organiser.Id });
+        }
+
     }
 }

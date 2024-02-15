@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Web.Mvc;
@@ -125,26 +126,40 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Index()
         {
-            var org = GetMyOrganisation();
+            var model = new HomeViewModel();
 
-            var allMySemester = Db.Semesters.Where(x =>
-                x.EndCourses >= DateTime.Today && x.Groups.Any(g =>
-                   g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).OrderByDescending(x => x.EndCourses).ToList();
+            var allPublishedSemester =
+                Db.Activities.OfType<Course>().Where(x => x.Semester != null).Select(x => x.Semester).Distinct()
+                    .OrderByDescending(s => s.EndCourses).Take(4).ToList();
 
+            foreach (var semester in allPublishedSemester)
+            {
+                var activeOrgs = SemesterService.GetActiveOrganiserOfficeHour(semester);
 
-            return View(allMySemester);
+                var semModel = new SemesterActiveViewModel
+                {
+                    Semester = semester,
+                    Organisers = activeOrgs.ToList()
+                };
+
+                model.ActiveSemester.Add(semModel);
+            }
+
+            return View(model);
         }
+
+
+
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Semester(Guid? id)
+        public ActionResult Organiser(Guid? semId, Guid orgId)
         {
-            // Liste aller Sprechstunden
-            var semester = SemesterService.GetSemester(id);
-            var org = GetMyOrganisation();
+            var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
             var officeHours = Db.Activities.OfType<OfficeHour>().Where(oh =>
                     oh.Semester.Id == semester.Id &&
@@ -158,6 +173,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
+            /*
             var member = GetMyMembership();
             if (member != null)
             {
@@ -165,7 +181,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id))
                     .ToList();
             }
-
+            */
 
 
             foreach (var officeHour in officeHours)
@@ -192,11 +208,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Subscriptions()
+        public ActionResult Subscriptions(Guid id)
         {
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
-            var sem = SemesterService.GetSemester(DateTime.Today);
+            var sem = SemesterService.GetSemester(id);
 
             ViewBag.Organiser = org;
 
@@ -206,15 +222,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Alle Sprechstunden mit zukünftigen Terminen
             /*
+            
             var allMySemesterWithOfficeHours = 
                 Db.Activities.OfType<OfficeHour>().Where(x =>
                     x.Semester.Id == sem.Id &&
                     x.Dates.Any(d => d.End >= now && (
                                         d.Occurrence.Subscriptions.Any(s =>s.UserId.Equals(user.Id)) ||
                                         d.Slots.Any(s =>s.Occurrence.Subscriptions.Any(g =>g.UserId.Equals(user.Id)))))).ToList();
-            */
+            
 
-            /*
             var allMySemesterWithOfficeHours =
                 Db.Activities.OfType<OfficeHour>().Where(x =>
                     x.Semester.Id == sem.Id).ToList();
@@ -461,6 +477,13 @@ namespace MyStik.TimeTable.Web.Controllers
             if (date.Slots.Any())
             {
                 model.AvailableSlots = date.Slots.Where(x => !x.Occurrence.Subscriptions.Any()).ToList();
+            }
+
+            var dates = infoService.GetDates(officeHour, user.Id);
+            var myDate = dates.FirstOrDefault(x => x.Date.Id == id);
+            if (myDate != null && myDate.IsExpired)
+            {
+                return RedirectToAction("Details", new { id = officeHour.Id });
             }
 
             // Konsistenzprüfungen

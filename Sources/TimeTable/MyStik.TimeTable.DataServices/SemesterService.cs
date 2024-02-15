@@ -313,6 +313,14 @@ namespace MyStik.TimeTable.DataServices
                 .Distinct().ToList();
         }
 
+        public ICollection<Data.ActivityOrganiser> GetActiveOrganiserOfficeHour(Semester semester)
+        {
+            return _db.Activities.OfType<OfficeHour>()
+                .Where(x => x.Organiser != null && x.Semester != null && x.Semester.Id == semester.Id)
+                .Select(x => x.Organiser)
+                .Distinct().ToList();
+        }
+
         public ICollection<Data.ActivityOrganiser> GetActiveEventOrganiser(Semester semester)
         {
             /*

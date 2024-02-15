@@ -39,20 +39,25 @@
             <div class="card-header">
                 <h4>Meine Sprechstunden</h4>
             </div>
-            <ul class="nav bg-light text-dark">
-                @foreach (var member in Model.Memberships)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("Create", "OfficeHour", new {semId=ViewBag.ThisSemester.Id, memberId = member.Id} )"><i class="bi bi-folder-plus fa-fw"></i><br />Sprechstunde @ViewBag.ThisSemester.Name als @member.ShortName (für @member.Organiser.ShortName) anlegen</a>
-                    </li>
-                    if (ViewBag.NextSemester != null)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-center" href="@Url.Action("Create", "OfficeHour", new {semId = ViewBag.NextSemester.Id, memberId = member.Id})"><i class="bi bi-folder-plus fa-fw"></i><br/>Sprechstunde @ViewBag.NextSemester.Name als @member.ShortName (für @member.Organiser.ShortName) anlegen</a>
-                        </li>
-                    }
-                }
-            </ul>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        @foreach (var member in Model.Memberships)
+                        {
+                            <a class="btn btn-outline-primary" href="@Url.Action("Create", "OfficeHour", new {semId=ViewBag.ThisSemester.Id, memberId = member.Id} )"><i class="bi bi-folder-plus"></i> @ViewBag.ThisSemester.Name (@member.ShortName / @member.Organiser.ShortName)</a>
+                        }
+                    </div>
+                    <div class="btn-group">
+                        @foreach (var member in Model.Memberships)
+                        {
+                            if (ViewBag.NextSemester != null)
+                            {
+                                <a class="btn btn-outline-primary" href="@Url.Action("Create", "OfficeHour", new {semId = ViewBag.NextSemester.Id, memberId = member.Id})"><i class="bi bi-folder-plus"></i> @ViewBag.NextSemester.Name (@member.ShortName / @member.Organiser.ShortName)</a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
             <table id="tabDates" class="table table-sm">
                 <thead>
                     <tr>

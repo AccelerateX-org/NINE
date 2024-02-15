@@ -107,6 +107,9 @@
     <Reference Include="Magick.NET.Core, Version=13.2.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Magick.NET.Core.13.2.0\lib\netstandard20\Magick.NET.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Markdig, Version=0.34.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Markdig.0.34.0\lib\net462\Markdig.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.4\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -3427,6 +3430,8 @@
     <Content Include="Assets\libs\popper\umd\popper-lite.min.js" />
     <Content Include="Assets\libs\popper\umd\popper.js" />
     <Content Include="Assets\libs\popper\umd\popper.min.js" />
+    <Content Include="Assets\libs\simplemde\simplemde.min.css" />
+    <Content Include="Assets\libs\simplemde\simplemde.min.js" />
     <Content Include="Content\images\room_error.png" />
     <Content Include="Content\images\room_ok.png" />
     <Content Include="Content\PagedList.css" />
@@ -3928,11 +3933,6 @@
     <Content Include="Views\User\TestAccounts.cshtml" />
     <Content Include="Views\UserProfile\_UserDevices.cshtml" />
     <Content Include="Views\Curricula\Index.cshtml" />
-    <Content Include="Views\Curricula\Details.cshtml" />
-    <Content Include="Views\Curricula\GroupDetails.cshtml" />
-    <Content Include="Views\Curricula\ImportData.cshtml" />
-    <Content Include="Views\Curricula\CheckGroups.cshtml" />
-    <Content Include="Views\Curricula\GroupAdmin.cshtml" />
     <Content Include="Views\Course\_CourseTable.cshtml" />
     <Content Include="Views\Room\_ConflictTable.cshtml" />
     <Content Include="Views\Room\_FreeRoomList.cshtml" />
@@ -3966,16 +3966,11 @@
     <Content Include="Views\Activity\Current.cshtml" />
     <Content Include="Views\User\ChangeUserName.cshtml" />
     <Content Include="Views\UserProfile\PersonalData.cshtml" />
-    <Content Include="Views\Curricula\ModuleDetails.cshtml" />
     <Content Include="Views\CoursePlan\Index.cshtml" />
     <Content Include="Views\CoursePlan\Create.cshtml" />
     <Content Include="Views\CoursePlan\Details.cshtml" />
-    <Content Include="Views\Curricula\GroupList.cshtml" />
-    <Content Include="Views\Curricula\ModuleCatalog.cshtml" />
-    <Content Include="Views\Curricula\CreateModule.cshtml" />
     <Content Include="Views\CoursePlan\Details2.cshtml" />
     <Content Include="Views\CoursePlan\Details3.cshtml" />
-    <Content Include="Views\Curricula\EditModule.cshtml" />
     <Content Include="Views\Semester\EditDate.cshtml" />
     <Content Include="Views\CoursePlan\Change.cshtml" />
     <Content Include="Views\UserProfile\EditPersonalData.cshtml" />
@@ -3987,10 +3982,6 @@
     <Content Include="Views\Building\Index.cshtml" />
     <Content Include="Views\Newsletter\_NewsletterList.cshtml" />
     <Content Include="Views\Curricula\Create.cshtml" />
-    <Content Include="Views\Curricula\CreateGroup.cshtml" />
-    <Content Include="Views\Curricula\EditCurriculumGroup.cshtml" />
-    <Content Include="Views\Curricula\EditCapacityGroup.cshtml" />
-    <Content Include="Views\Curricula\CreateCapacityGroup.cshtml" />
     <Content Include="Views\Building\CreateBuilding.cshtml" />
     <Content Include="Views\Level\CreateLevel.cshtml" />
     <Content Include="Views\Level\Index.cshtml" />
@@ -4016,7 +4007,6 @@
     <Content Include="Views\Subscription\_SelectSemGroup.cshtml" />
     <Content Include="Views\OrganiserMembers\Today.cshtml" />
     <Content Include="Views\Organiser\Admins.cshtml" />
-    <Content Include="Views\Curricula\SelectModule.cshtml" />
     <Content Include="Views\Planer\Courses.cshtml" />
     <Content Include="Views\ThesisAnnouncements\Create.cshtml" />
     <Content Include="Views\ThesisAnnouncements\Delete.cshtml" />
@@ -4117,7 +4107,6 @@
     <Content Include="Views\Course\_CourseSummaryHeader.cshtml" />
     <Content Include="Views\Course\_OwnerRow.cshtml" />
     <Content Include="Views\Course\_SubscriptionProfile.cshtml" />
-    <Content Include="Views\Curricula\Disclaimer.cshtml" />
     <Content Include="Views\CurriculumPackage\Create.cshtml" />
     <Content Include="Views\CurriculumPackage\Delete.cshtml" />
     <Content Include="Views\CurriculumPackage\Details.cshtml" />
@@ -4224,7 +4213,7 @@
     <Content Include="Views\OfficeHour\Create.cshtml" />
     <Content Include="Views\OfficeHour\EditDateSubscription.cshtml" />
     <Content Include="Views\OfficeHour\HasSubscription.cshtml" />
-    <Content Include="Views\OfficeHour\Semester.cshtml" />
+    <Content Include="Views\OfficeHour\Organiser.cshtml" />
     <Content Include="Views\OfficeHour\SemesterDates.cshtml" />
     <Content Include="Views\OfficeHour\SemesterList.cshtml" />
     <Content Include="Views\OfficeHour\SubscribeSlot.cshtml" />
@@ -4365,7 +4354,6 @@
     <Content Include="Views\Lottery\DrawingNew.cshtml" />
     <Content Include="Views\Lottery\_BookingList.cshtml" />
     <Content Include="Views\Lecturer\Organiser.cshtml" />
-    <Content Include="Views\Curricula\Organiser.cshtml" />
     <Content Include="Views\Lottery\StudentsPrio.cshtml" />
     <Content Include="Views\Thesis\Index.cshtml" />
     <Content Include="Views\Thesis\Request.cshtml" />
@@ -4458,7 +4446,6 @@
     <Content Include="Views\CurriculumModule\Admin.cshtml" />
     <Content Include="Views\Dashboard\FirstVisit.cshtml" />
     <Content Include="Views\Shared\_LayoutFirstVisit.cshtml" />
-    <Content Include="Views\Curricula\_ViewStart.cshtml" />
     <Content Include="Views\Assessment\Index.cshtml" />
     <Content Include="Views\Assessment\_ViewStart.cshtml" />
     <Content Include="Views\Assessment\Details.cshtml" />
@@ -4735,6 +4722,13 @@
     <Content Include="Views\Dictionary\_ModuleAreaPlan.cshtml" />
     <Content Include="Views\Dictionary\SlotSemester.cshtml" />
     <Content Include="Views\Dictionary\_ModuleAreaPlanSemester.cshtml" />
+    <Content Include="Views\LabelSet\_LabelListGroupCurriculum.cshtml" />
+    <Content Include="Views\LabelSet\_LabelSelectListCurriculum.cshtml" />
+    <Content Include="Views\LabelSet\_LabelSelectListInstitution.cshtml" />
+    <Content Include="Views\LabelSet\_LabelListGroupInstitution.cshtml" />
+    <Content Include="Views\Labels\MergeLabel.cshtml" />
+    <Content Include="Views\Lottery\StudentsSamePrio.cshtml" />
+    <Content Include="Views\Alumni\Admin.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

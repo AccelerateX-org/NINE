@@ -6,7 +6,8 @@
 
 @section styles
 {
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />*@
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/simplemde/simplemde.min.css")" />
 }
 
 
@@ -33,13 +34,13 @@
                         </div>
                     </div>
                     @*
-                    <div class="row">
-                        <div class="col-4">Bezug zu Curriculum</div>
-                        <div class="col-8">
-                            <input class="form-control" type="text" value="@Model.Accreditation.Slot.AreaOption.Area.Name" aria-label="Semester" readonly>
+                        <div class="row">
+                            <div class="col-4">Bezug zu Curriculum</div>
+                            <div class="col-8">
+                                <input class="form-control" type="text" value="@Model.Accreditation.Slot.AreaOption.Area.Name" aria-label="Semester" readonly>
+                            </div>
                         </div>
-                    </div>
-                        *@
+                    *@
                     <div class="row">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">
@@ -96,15 +97,18 @@
 
 @section scripts
 {
-    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
-    
+    @*<script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>*@
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/simplemde/simplemde.min.js")" type="text/javascript"></script>
+
 
     <script>
 
         $(document).ready(function() {
 
-            $("#Conditions").cleditor();
-            $("#Utilities").cleditor();
+            //$("#Conditions").cleditor();
+            //$("#Utilities").cleditor();
+            var simplemdeDe = new SimpleMDE({ element: document.getElementById("Conditions") });
+            var simplemdeEn = new SimpleMDE({ element: document.getElementById("Utilities") });
 
 
             $('#dozId1').autocomplete({

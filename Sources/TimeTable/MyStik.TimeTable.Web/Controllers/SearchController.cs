@@ -45,12 +45,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(defaultModel);
             }
 
-            var courseList = new CourseService(Db).SearchCourses(semester.Id, searchText, org);
+            var courseList = new CourseService(Db).SearchCourses(searchText, org);
             foreach (var course in courseList)
             {
-                course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
+                course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);
             }
 
+            /*
             // Veranstaltungen des nächsten Semesters 
             // user = student => nur wenn freigegeben
             var nextCoursesList = new List<CourseSummaryModel>();
@@ -70,7 +71,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
                 }
             }
-
+            */
 
 
             // alle Mitglieder
@@ -105,7 +106,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester,
                 NextSemester = nextSemester,
                 Courses = courseList,
-                NextCourses = nextCoursesList,
+                NextCourses = new List<CourseSummaryModel>(),
                 Lecturers = lecturerList,
                 Rooms = rooms
             };

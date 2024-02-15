@@ -135,7 +135,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var lotteryOccurrence in lottery.Occurrences)
                 {
-                    totalCapacity += lotteryOccurrence.SeatQuotas.Sum(x => x.MaxCapacity);
+                    totalCapacity += lotteryOccurrence.SeatQuotas.Where(x => x.MaxCapacity < int.MaxValue).Sum(x => x.MaxCapacity);
 
                     totalSubscriptions += lotteryOccurrence.Subscriptions.Count;
 
@@ -504,6 +504,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(org);
 
+            if (model.Lottery.MaxConfirm == 0 && model.Lottery.MaxExceptionConfirm == 0)
+            {
+                return View("StudentsSamePrio", model);
+            }
 
             return !model.Lottery.IsFixed ? View(model) : View("StudentsPrio", model);
         }

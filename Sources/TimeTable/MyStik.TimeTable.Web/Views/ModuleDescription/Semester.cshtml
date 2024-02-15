@@ -5,19 +5,19 @@
 @{
     ViewBag.Title = "Details";
     @*
-    var subjects = Model.CurriculumModule.ModuleSubjects.ToList();
-    var accrs = Model.CurriculumModule.Accreditations.ToList();
+        var subjects = Model.CurriculumModule.ModuleSubjects.ToList();
+        var accrs = Model.CurriculumModule.Accreditations.ToList();
 
-    var tt = new List<TeachingDescription>();
-    foreach (var moduleAccreditation in accrs)
-    {
-        foreach (var teachingDescription in moduleAccreditation.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+        var tt = new List<TeachingDescription>();
+        foreach (var moduleAccreditation in accrs)
         {
-            tt.Add(teachingDescription);
+            foreach (var teachingDescription in moduleAccreditation.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+            {
+                tt.Add(teachingDescription);
+            }
         }
-    }
-    var teachings = tt.Distinct();
-*@
+        var teachings = tt.Distinct();
+    *@
     var itsMe = false;
 
     if (ViewBag.UserRight.User != null)
@@ -40,7 +40,7 @@
             }
         }
     }
-    
+
     var dateOffset = DateTime.Today - Model.Semester.StartCourses;
     var isEditable = dateOffset.Days < 28;
 
@@ -53,284 +53,316 @@
 
 }
 
+@section scripts
+{
+    <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
+}
+
+
 <div class="row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">@Model.CurriculumModule.Catalog.Organiser.ShortName</a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">Modulkataloge</a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.CurriculumModule.Catalog.Id})">@Model.CurriculumModule.Catalog.Tag</a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Details", "ModuleDescription", new {id=Model.CurriculumModule.Id})">@Model.CurriculumModule.Tag</a></li>
-                <li class="breadcrumb-item active" aria-current="page">@Model.Semester.Name</li>
-            </ol>
-        </nav>
+<div class="col-12">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">@Model.CurriculumModule.Catalog.Organiser.ShortName</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">Modulkataloge</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.CurriculumModule.Catalog.Id})">@Model.CurriculumModule.Catalog.Tag</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Details", "ModuleDescription", new {id=Model.CurriculumModule.Id})">@Model.CurriculumModule.Tag</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Semester.Name</li>
+    </ol>
+</nav>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-md-12">
-                        @if (!string.IsNullOrEmpty(Model.CurriculumModule.Name))
-                        {
-                            <h4 class="card-title">
-                                <img src="~/Assets/img/flags/de.png" alt="de"/> @Model.CurriculumModule.Name
-                            </h4>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.CurriculumModule.NameEn))
-                        {
-                            <h4 class="card-title">
-                                <img src="~/Assets/img/flags/gb.png" alt="en"/> @Model.CurriculumModule.NameEn
-                            </h4>
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Inhalte und Qualifikationsziele</h5>
-                                @if (Model.ModuleDescription != null)
+<div class="card">
+<div class="card-header">
+    <div class="row">
+        <div class="col-md-12">
+            @if (!string.IsNullOrEmpty(Model.CurriculumModule.Name))
+            {
+                <h4 class="card-title">
+                    <img src="~/Assets/img/flags/de.png" alt="de" /> @Model.CurriculumModule.Name
+                </h4>
+            }
+            @if (!string.IsNullOrEmpty(Model.CurriculumModule.NameEn))
+            {
+                <h4 class="card-title">
+                    <img src="~/Assets/img/flags/gb.png" alt="en" /> @Model.CurriculumModule.NameEn
+                </h4>
+            }
+        </div>
+    </div>
+</div>
+<div class="card-body">
+<div class="row">
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Inhalte und Qualifikationsziele</h5>
+            @if (Model.ModuleDescription != null)
+            {
+                if (Model.ModuleDescription.ChangeLog != null)
+                {
+                    if (Model.ModuleDescription.ChangeLog.Approved.HasValue)
+                    {
+                        <h6 class="card-subtitle">
+                            verabschiedet am @Model.ModuleDescription.ChangeLog.Approved.Value.ToShortDateString()
+                        </h6>
+                    }
+                    else
+                    {
+                        <h6 class="card-subtitle text-danger">
+                            Status: vorläufig - kann sich jederzeit noch ändern
+                        </h6>
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        </div>
+        <div class="list-group">
+            <div class="list-group-item">
+                @if (Model.ModuleDescription != null)
+                {
+                    var hasDe = !string.IsNullOrEmpty(Model.ModuleDescription.Description);
+                    var hasEn = !string.IsNullOrEmpty(Model.ModuleDescription.DescriptionEn);
+
+                    if (!hasDe && !hasEn)
+                    {
+                        <div>Es liegt keine Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                    }
+                    else
+                    {
+                        var activeDe = hasDe ? "show active" : "";
+                        var activeEn = hasDe ? "" : "show active";
+
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                @if (hasDe)
                                 {
-                                    if (Model.ModuleDescription.ChangeLog != null)
-                                    {
-                                        if (Model.ModuleDescription.ChangeLog.Approved.HasValue)
-                                        {
-                                            <h6 class="card-subtitle">
-                                                verabschiedet am @Model.ModuleDescription.ChangeLog.Approved.Value.ToShortDateString()
-                                            </h6>
-                                        }
-                                        else
-                                        {
-                                            <h6 class="card-subtitle text-danger">
-                                                Status: vorläufig - kann sich jederzeit noch ändern
-                                            </h6>
-                                        }
-                                    }
+                                    <button class="nav-link" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                                        <img src="~/Assets/img/flags/de.png" alt="de" />
+                                    </button>
                                 }
-                                else
-                                {
 
+                                @if (hasEn)
+                                {
+                                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+                                        <img src="~/Assets/img/flags/gb.png" alt="en" />
+                                    </button>
                                 }
                             </div>
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    @if (Model.ModuleDescription != null)
-                                    {
-                                        var hasDe = !string.IsNullOrEmpty(Model.ModuleDescription.Description);
-                                        var hasEn = !string.IsNullOrEmpty(Model.ModuleDescription.DescriptionEn);
-
-                                        if (!hasDe && !hasEn)
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+                            @if (hasDe)
+                            {
+                                <div class="tab-pane fade @activeDe" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @if (Model.ModuleDescription.Description.Trim().StartsWith("#"))
+                                            {
+                                                <md-block>
+                                                    @Model.ModuleDescription.Description.Trim()
+                                                </md-block>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(Model.ModuleDescription.Description.Trim())
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (hasEn)
+                            {
+                                <div class="tab-pane fade @activeEn" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                                    <div class="col-md-12">
+                                        @if (Model.ModuleDescription.DescriptionEn.Trim().StartsWith("#"))
                                         {
-                                            <div>Es liegt keine Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                                            <md-block>
+                                                @Model.ModuleDescription.DescriptionEn.Trim()
+                                            </md-block>
                                         }
                                         else
                                         {
-                                            var activeDe = hasDe ? "show active" : "";
-                                            var activeEn = hasDe ? "" : "show active";
-
-                                            <nav>
-                                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                    @if (hasDe)
-                                                    {
-                                                        <button class="nav-link" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
-                                                            <img src="~/Assets/img/flags/de.png" alt="de" />
-                                                        </button>
-                                                    }
-
-                                                    @if (hasEn)
-                                                    {
-                                                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
-                                                            <img src="~/Assets/img/flags/gb.png" alt="en" />
-                                                        </button>
-                                                    }
-                                                </div>
-                                            </nav>
-                                            <div class="tab-content" id="nav-tabContent">
-                                                @if (hasDe)
-                                                {
-                                                    <div class="tab-pane fade @activeDe" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
-                                                        @Html.Raw(Model.ModuleDescription.Description.Trim())
-                                                    </div>
-                                                }
-                                                @if (hasEn)
-                                                {
-                                                    <div class="tab-pane fade @activeEn" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
-                                                        @Html.Raw(Model.ModuleDescription.DescriptionEn.Trim())
-                                                    </div>
-                                                }
-                                            </div>
+                                            @Html.Raw(Model.ModuleDescription.DescriptionEn.Trim())
                                         }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div>Es liegt keine Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                }
+
+            </div>
+        </div>
+        <div class="card-body">
+            @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
+            {
+                <a href="@Url.Action("Descriptions", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
+                    <i class="bi bi-keyboard"></i> Ändern
+                </a>
+            }
+        </div>
+
+    </div>
+</div>
+<div class="col-md-6">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lehrangebote</h5>
+                </div>
+                <div class="list-group">
+                    @foreach (var subject in Model.CurriculumModule.ModuleSubjects)
+                    {
+                        var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
+                        <div class="list-group-item">
+                            <div>
+                                <strong>@subject.Name (@subject.Tag) | @subject.SWS SWS | @subject.TeachingFormat.Tag</strong>
+                            </div>
+                            @if (teachings.Any())
+                            {
+                                <ul>
+                                    @foreach (var teaching in teachings)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
+                                                @teaching.Course.Name (@teaching.Course.ShortName)
+                                            </a>
+                                            @foreach (var item in teaching.Course.LabelSet.ItemLabels.ToList())
+                                            {
+                                                <span class="badge bg-secondary">@item.Name</span>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <div><i>wird nicht angeboten</i></div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                    {
+                        <a href="@Url.Action("Teachings", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
+                            <i class="bi bi-keyboard"></i> Ändern
+                        </a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Prüfungsangebote</h5>
+                    @{
+                        var nApproved = Model.Exams.Count(x => x.ChangeLog.Approved != null);
+                        var isPrelim = nApproved != Model.Exams.Count();
+                    }
+                    @if (Model.Exams.Any() && isPrelim)
+                    {
+                        <h6 class="card-subtitle text-danger">
+                            Status: vorläufig - kann sich jederzeit noch ändern
+                        </h6>
+                    }
+                </div>
+                <div class="list-group">
+                    @if (!Model.Exams.Any())
+                    {
+                        <div class="list-group-item">
+                            <div>Es liegen keine Prüfungsangebote für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                        </div>
+                    }
+
+                    @foreach (var examinationDescription in Model.Exams)
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Erstprüfer:in</div>
+                                </div>
+                                <div class="col-8">
+                                    @if (examinationDescription.FirstExminer != null)
+                                    {
+                                        <div>@examinationDescription.FirstExminer.FullName</div>
                                     }
                                     else
                                     {
-                                        <div>Es liegt keine Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                                        <div><i>Nicht festgelegt</i></div>
                                     }
-
                                 </div>
                             </div>
-                            <div class="card-body">
-                                @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
-                                {
-                                    <a href="@Url.Action("Descriptions", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
-                                        <i class="bi bi-keyboard"></i> Ändern
-                                    </a>
-                                }
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Zweitprüfer:in</div>
+                                </div>
+                                <div class="col-8">
+                                    @if (examinationDescription.SecondExaminer != null)
+                                    {
+                                        <div>@examinationDescription.SecondExaminer.FullName</div>
+                                    }
+                                    else
+                                    {
+                                        <div><i>Nicht festgelegt</i></div>
+                                    }
+                                </div>
                             </div>
-
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Lehrangebote</h5>
-                                    </div>
-                                    <div class="list-group">
-                                        @foreach (var subject in Model.CurriculumModule.ModuleSubjects)
-                                        {
-                                            var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
-                                            <div class="list-group-item">
-                                                <div>
-                                                    <strong>@subject.Name (@subject.Tag) | @subject.SWS SWS | @subject.TeachingFormat.Tag</strong>
-                                                </div>
-                                                @if (teachings.Any())
-                                                {
-                                                    <ul>
-                                                        @foreach (var teaching in teachings)
-                                                        {
-                                                            <li>
-                                                                <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
-                                                                    @teaching.Course.Name (@teaching.Course.ShortName)
-                                                                </a>
-                                                                @foreach (var item in teaching.Course.LabelSet.ItemLabels.ToList())
-                                                                {
-                                                                    <span class="badge bg-secondary">@item.Name</span>
-                                                                }
-                                                            </li>
-                                                        }
-                                                    </ul>
-                                                }
-                                                else
-                                                {
-                                                    <div><i>wird nicht angeboten</i></div>
-                                                }
-                                            </div>
-                                        }
-                                    </div>
-                                    <div class="card-body">
-                                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                        {
-                                            <a href="@Url.Action("Teachings", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
-                                                <i class="bi bi-keyboard"></i> Ändern
-                                            </a>
-                                        }
-
-                                    </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Prüfungsform</div>
+                                </div>
+                                <div class="col-8">
+                                    <div>@examinationDescription.ExaminationOption.OptionName</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Details zur Prüfung</div>
+                                </div>
+                                <div class="col-8">
+                                    <div>@Html.Raw(examinationDescription.Conditions)</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Hilfsmittel</div>
+                                </div>
+                                <div class="col-8">
+                                    <div>@Html.Raw(examinationDescription.Utilities)</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Prüfungsangebote</h5>
-                                        @{
-                                            var nApproved = Model.Exams.Count(x => x.ChangeLog.Approved != null);
-                                            var isPrelim = nApproved != Model.Exams.Count();
-                                        }
-                                        @if (Model.Exams.Any() && isPrelim)
-                                        {
-                                            <h6 class="card-subtitle text-danger">
-                                                Status: vorläufig - kann sich jederzeit noch ändern
-                                            </h6>
-                                        }
-                                    </div>
-                                    <div class="list-group">
-                                        @if (!Model.Exams.Any())
-                                        {
-                                            <div class="list-group-item">
-                                                <div>Es liegen keine Prüfungsangebote für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
-                                            </div>
-                                        }
-
-                                        @foreach (var examinationDescription in Model.Exams)
-                                        {
-                                            <div class="list-group-item">
-                                                <div class="row">
-                                                    <div class="col-4">
-                                                        <div>Erstprüfer:in</div>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        @if (examinationDescription.FirstExminer != null)
-                                                        {
-                                                            <div>@examinationDescription.FirstExminer.FullName</div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div><i>Nicht festgelegt</i></div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-4">
-                                                        <div>Zweitprüfer:in</div>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        @if (examinationDescription.SecondExaminer != null)
-                                                        {
-                                                            <div>@examinationDescription.SecondExaminer.FullName</div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div><i>Nicht festgelegt</i></div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-4">
-                                                        <div>Prüfungsform</div>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <div>@examinationDescription.ExaminationOption.OptionName</div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-4">
-                                                        <div>Details zur Prüfung</div>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <div>@Html.Raw(examinationDescription.Conditions)</div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-4">
-                                                        <div>Hilfsmittel</div>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <div>@Html.Raw(examinationDescription.Utilities)</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div class="card-body">
-                                        @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
-                                        {
-                                            <a href="@Url.Action("Exams", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
-                                                <i class="bi bi-keyboard"></i> Ändern
-                                            </a>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
+                    {
+                        <a href="@Url.Action("Exams", null, new { moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary">
+                            <i class="bi bi-keyboard"></i> Ändern
+                        </a>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
 

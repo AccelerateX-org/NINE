@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices.Booking
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.CourseDetailViewModel
 
@@ -19,6 +20,12 @@
     }
 
     db.SaveChanges();
+
+    var bookingService = new BookingServiceQuotas(db, Model.Course.Occurrence);
+    var bookingLists = bookingService.GetBookingLists();
+
+
+
 
 }
 
@@ -111,6 +118,12 @@
                                     }
                                 </td>
                                 <td>
+                                    @if (Request.IsLocal)
+                                    {
+                                        <a class="btn btn-outline-primary" href="@Url.Action("EditQuota", new { id = quota.Id })">
+                                            <i class="bi bi-gear"></i> ändern
+                                        </a>
+                                    }
                                     <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuota", new { id = quota.Id })">
                                         <i class="bi bi-trash"></i> löschen
                                     </a>
@@ -135,8 +148,19 @@
                     </div>
                 </div>
             </div>
-
+    
+    <div class="row">
+        <div class="col-md-12">
+            <ul>
+                @foreach (var bl in bookingLists)
+                {
+                    <li>@bl.Name</li>
+                }
+            </ul>
         </div>
+    </div>
+
+</div>
 
 
 

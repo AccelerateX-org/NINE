@@ -22,90 +22,120 @@
     {
         var semSlots = allSlots.Where(x => x.Semester == s).OrderBy(x => x.Tag).ToList();
         var semId = "sem" + s;
+
         <div class="row">
             <div class="col-md-2">
-                <a href="@Url.Action("SlotSemester", new {currId=Model.Curriculum.Id, semId=Model.Semester.Id, semNo = s})" class="btn btn-outline-primary" style="width:100%">
-                    <strong>Semester @s</strong><br/>
-                    <small>Alle Module</small>
-                </a>
-            </div>
-            <div id="@semId" class="col-md-10">
-                @foreach (var slot in semSlots.OrderBy(x => x.Tag))
-                {
-                    var showSlot = false;
-                    var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);
+                <div class="card">
+                    <h5 class="card-title">Semester @s</h5>
+                    <a href="@Url.Action("SlotSemester", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id, semNo = s })" class="btn btn-outline-primary">
+                        Alle Module
+                    </a>
 
-                    if (inOptionArea == 0)
+                @*
+                    @foreach (var label in Model.Curriculum.LabelSet.ItemLabels.OrderBy(x => x.Name))
                     {
-                        showSlot = true;
-                    }
-                    else
-                    {
-                        var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
-                        if (inSelectedOption > 0)
+                        var nCoursesSem = 0;
+                        if (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null)
                         {
-                            showSlot = true;
-                        }
-                    }
-                    if (showSlot)
-                    {
-                        var w = (int)(slot.ECTS / 32 * 100);
-
-                        if (slot.SubjectAccreditations.Any())
-                        {
-                            var nCourses = slot.SubjectAccreditations.Sum(x => x.Subject.SubjectTeachings.Count(y => y.Course.Semester != null && y.Course.Semester.Id == Model.Semester.Id));
-                            var accrs = slot.SubjectAccreditations.Where(x => x.Subject.SubjectTeachings.Any(y => y.Course.Semester != null && y.Course.Semester.Id == Model.Semester.Id)).ToList();
-
-                            if (nCourses > 0)
-                            {
-                                <a id="@slot.Id" class="btn btn-outline-success slot text-truncate " style="width: @w%" href="@Url.Action("Slot", new { slotId = slot.Id, semId = Model.Semester.Id })">
-                                    <strong>@slot.Tag</strong>
-                                    <br />
-                                    @if (slot.AreaOption.Area.Options.Count() > 1)
-                                    {
-                                        <small>@slot.Name (@slot.AreaOption.Tag)</small>
-                                    }
-                                    else
-                                    {
-                                        <small>@slot.Name</small>
-                                    }
-                                </a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-outline-danger slot text-truncate disabled" style="width: @w%" href="@Url.Action("Slot", new { slotId = slot.Id, semId = Model.Semester.Id })">
-                                    <strong>@slot.Tag</strong>
-                                    <br />
-                                    @if (slot.AreaOption.Area.Options.Count() > 1)
-                                    {
-                                        <small>@slot.Name (@slot.AreaOption.Tag)</small>
-                                    }
-                                    else
-                                    {
-                                        <small>@slot.Name</small>
-                                    }
-                                </a>
-                            }
+                            nCoursesSem = db.Activities.OfType<Course>()
+                                .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
                         }
                         else
                         {
-                            <a class="btn btn-outline-secondary slot text-truncate disabled" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
-                                <strong>@slot.Tag</strong>
-                                <br />
-                                @if (slot.AreaOption.Area.Options.Count() > 1)
-                                {
-                                    <small>@slot.Name (@slot.AreaOption.Tag)</small>
-                                }
-                                else
-                                {
-                                    <small>@slot.Name</small>
-                                }
+                            nCoursesSem = db.Activities.OfType<Course>()
+                                .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && !x.IsProjected && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                        }
+                        if (nCoursesSem > 0)
+                        {
+                            <a href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = Model.Curriculum.Id, labelId = label.Id })"
+                               class="btn btn-outline-secondary d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">@label.Name</div>
+                                </div>
+                                <span class="badge bg-secondary rounded-pill">@nCoursesSem</span>
                             </a>
                         }
                     }
-
-                }
+                    *@
+                </div>
             </div>
-        </div>
+                <div id="@semId" class="col-md-10">
+                    @foreach (var slot in semSlots.OrderBy(x => x.Tag))
+                    {
+                        var showSlot = false;
+                        var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);
+
+                        if (inOptionArea == 0)
+                        {
+                            showSlot = true;
+                        }
+                        else
+                        {
+                            var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
+                            if (inSelectedOption > 0)
+                            {
+                                showSlot = true;
+                            }
+                        }
+                        if (showSlot)
+                        {
+                            var w = (int)(slot.ECTS / 32 * 100);
+
+                            if (slot.SubjectAccreditations.Any())
+                            {
+                                var nCourses = slot.SubjectAccreditations.Sum(x => x.Subject.SubjectTeachings.Count(y => y.Course.Semester != null && y.Course.Semester.Id == Model.Semester.Id));
+                                var accrs = slot.SubjectAccreditations.Where(x => x.Subject.SubjectTeachings.Any(y => y.Course.Semester != null && y.Course.Semester.Id == Model.Semester.Id)).ToList();
+
+                                if (nCourses > 0)
+                                {
+                                    <a id="@slot.Id" class="btn btn-outline-success slot text-truncate " style="width: @w%" href="@Url.Action("Slot", new { slotId = slot.Id, semId = Model.Semester.Id })">
+                                        <strong>@slot.Tag</strong>
+                                        <br />
+                                        @if (slot.AreaOption.Area.Options.Count() > 1)
+                                        {
+                                            <small>@slot.Name (@slot.AreaOption.Tag)</small>
+                                        }
+                                        else
+                                        {
+                                            <small>@slot.Name</small>
+                                        }
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-outline-danger slot text-truncate disabled" style="width: @w%" href="@Url.Action("Slot", new { slotId = slot.Id, semId = Model.Semester.Id })">
+                                        <strong>@slot.Tag</strong>
+                                        <br />
+                                        @if (slot.AreaOption.Area.Options.Count() > 1)
+                                        {
+                                            <small>@slot.Name (@slot.AreaOption.Tag)</small>
+                                        }
+                                        else
+                                        {
+                                            <small>@slot.Name</small>
+                                        }
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                <a class="btn btn-outline-secondary slot text-truncate disabled" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
+                                    <strong>@slot.Tag</strong>
+                                    <br />
+                                    @if (slot.AreaOption.Area.Options.Count() > 1)
+                                    {
+                                        <small>@slot.Name (@slot.AreaOption.Tag)</small>
+                                    }
+                                    else
+                                    {
+                                        <small>@slot.Name</small>
+                                    }
+                                </a>
+                            }
+                        }
+
+                    }
+                </div>
+            </div>
+        }
     }
-}

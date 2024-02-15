@@ -19,8 +19,14 @@
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">@Model.Curriculum.ShortName</a></li>
+            @if (Model.Organiser != null)
+            {
+                <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+            }
+            @if (Model.Curriculum != null)
+            {
+                <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new { semId = Model.Semester.Id, currId = Model.Curriculum.Id })">@Model.Curriculum.ShortName</a></li>
+            }
             <li class="breadcrumb-item active" aria-current="page">@Model.Label.Name</li>
         </ol>
     </nav>
@@ -48,7 +54,7 @@
                                         <a id="btnPersonal" href="javascript:togglePersonal()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar2-heart"></i></a>
                                         <span id="loading" class="spinner-border"></span>
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -94,6 +100,20 @@
 
 @section scripts
 {
+    @{
+        var orgId2 = string.Empty;
+        var currId2 = string.Empty;
+
+        if (Model.Organiser != null)
+        {
+            orgId2 = Model.Organiser.Id.ToString();
+        }
+        if (Model.Curriculum != null)
+        {
+            currId2 = Model.Curriculum.Id.ToString();
+        }
+
+    }
     <!--
     <script src="~/Assets/global/plugins/moment.min.js"></script>
     -->
@@ -106,18 +126,17 @@
         var mySelection = "";
         var showWeekend = false;
         var showPersonal = false;
-        var showWeekDay = false;
+        var showWeekDay = true;
         var semId = "@Model.Semester.Id";
-        var orgId = "@Model.Organiser.Id";
         var labelId = "@Model.Label.Id";
-        var currId = "@Model.Curriculum.Id";
+        var orgId = "@orgId2";
+        var currId = "@currId2";
 
 
         $(document).ready(function() {
-            $("#btnHidePersonalDates").hide();
-            showWeekCalendar();
+            showWeekDayCalendar();
             showWeekendDays();
-            showLabelDates();
+            //showLabelDates();
         });
 
         function showWeekCalendar() {

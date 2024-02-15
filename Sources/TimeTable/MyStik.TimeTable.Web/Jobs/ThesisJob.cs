@@ -66,6 +66,40 @@ namespace MyStik.TimeTable.Web.Jobs
 
             var allThesisWithPk = allThesis.Where(x => allCurrWithPk.Contains(x.Student.Curriculum)).ToList();
 
+            var issueDate = DateTime.Today;
+            foreach (var thesis in allThesisWithPk)
+            {
+                var period = thesis.Student.Curriculum.ThesisDuration;
+                if (period == 0)
+                {
+                    period = 3;
+                }
+
+                thesis.IssueDate = issueDate;
+                thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period);
+            }
+
+            var allThesisRepair = db.Theses
+                .Where(x =>
+                    x.PlannedBegin != null && x.PlannedBegin <= today &&
+                    x.IssueDate != null && x.ExpirationDate == null && x.DeliveryDate == null &&
+                    x.Supervisors.Any(s => s.AcceptanceDate.HasValue))
+                .OrderBy(x => x.Student.Curriculum.ShortName)
+                .ThenBy(x => x.PlannedBegin.Value)
+                .ToList();
+
+            foreach (var thesis in allThesisRepair)
+            {
+                var period = thesis.Student.Curriculum.ThesisDuration;
+                if (period == 0)
+                {
+                    period = 3;
+                }
+
+                thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period);
+            }
+
+            db.SaveChanges();
 
 
             // Prepare Postal classes to work outside of ASP.NET request

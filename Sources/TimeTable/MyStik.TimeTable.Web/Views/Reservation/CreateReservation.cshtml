@@ -16,13 +16,13 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4> Neue Raumreservierung anlegen</h4>
+                <h4> Neue Raumreservierung für @Model.Organiser.ShortName anlegen</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a class="btn btn-outline-primary" id="saveAll" href="#"><i class="bi bi-save"></i> Reservierung anlegen</a>
-                        <a class="btn btn-outline-secondary" href="@Url.Action("Index")"><i class="bi bi-x"></i> Abbrechen</a>
+                        <a class="btn btn-outline-secondary" href="@Url.Action("Index", new {id=Model.Organiser.Id})"><i class="bi bi-x"></i> Abbrechen</a>
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                                                     </tr>
                                                     <tr>
                                                         <th>
-                                                            @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
+                                                            @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
                                                         </th>
                                                         <th>
                                                             <input type="text" class="form-control input-sm" id="RoomId">
@@ -275,7 +275,7 @@
 
             $('#RoomId').autocomplete({
                 source: function(request, response) {
-                    var org = $("#OrganiserId option:selected").val();
+                    var org = $("#OrganiserId2 option:selected").val();
 
                     $.ajax({
                         url: '@Url.Action("RoomListByOrg", "Curriculum")',
@@ -305,7 +305,7 @@
                 },
                 select: function(event, ui) {
 
-                    var orgText = $("#OrganiserId option:selected").text();
+                    var orgText = $("#OrganiserI2 option:selected").text();
 
 
                     $("#roomList").append("<tr id=\""
@@ -434,7 +434,7 @@
         function reloadFreeRooms() {
             $("#loading").show();
 
-            var org = $("#OrganiserId option:selected").val();
+            var org = $("#OrganiserId2 option:selected").val();
 
             var dateList = new Array();
             var list = $("#DateTable > table > tbody > tr").get();
@@ -487,7 +487,7 @@
             $("#loading").show();
 
             var semId = $("#SemesterId option:selected").val();
-            var orgId = $("#OrganiserId option:selected").val();
+            var orgId = $("#OrganiserId2 option:selected").val();
             var courseName = $("#Name").val();
             var courseShortName = $("#ShortName").val();
             var groupList = new Array();

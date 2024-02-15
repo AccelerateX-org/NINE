@@ -361,24 +361,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult LabelEvents(string start, string end, Guid semId, Guid orgId, Guid labelId, Guid currId)
+        public JsonResult LabelEvents(string start, string end, Guid semId, Guid? orgId, Guid labelId, Guid? currId)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
 
 
             var semester = SemesterService.GetSemester(semId);
-            var org = GetOrganiser(orgId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-            var courses = Db.Activities.OfType<Course>()
-                .Where(x =>
-                    x.Semester.Id == semester.Id &&
-                    //x.Organiser.Id == org.Id &&
-                    x.LabelSet != null &&
-                    x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                .ToList();
+            var courses = new List<Course>();
+
+            if (orgId == null && currId == null)
+            {
+                courses.AddRange(Db.Activities.OfType<Course>()
+                    .Where(x =>
+                        x.Semester.Id == semester.Id &&
+                        x.LabelSet != null &&
+                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                    .ToList());
+            }
+            else
+            {
+                var org = GetOrganiser(orgId.Value);
+                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+                courses.AddRange(Db.Activities.OfType<Course>()
+                    .Where(x =>
+                        x.Semester.Id == semester.Id &&
+                        x.Organiser.Id == org.Id &&
+                        x.LabelSet != null &&
+                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                    .ToList());
+            }
 
 
             var cs = new CourseService();
@@ -414,7 +429,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult LabelEventsWeekly(string start, string end, Guid semId, Guid orgId, Guid labelId, Guid currId)
+        public JsonResult LabelEventsWeekly(string start, string end, Guid semId, Guid? orgId, Guid labelId, Guid? currId)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
@@ -422,17 +437,32 @@ namespace MyStik.TimeTable.Web.Controllers
             var courseService = new CourseService(Db);
 
             var semester = SemesterService.GetSemester(semId);
-            var org = GetOrganiser(orgId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-            var courses = Db.Activities.OfType<Course>()
-                .Where(x =>
-                    x.Semester.Id == semester.Id &&
-                    //x.Organiser.Id == org.Id &&
-                    x.LabelSet != null &&
-                    x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                .ToList();
+            var courses = new List<Course>();
+
+            if (orgId == null && currId == null)
+            {
+                courses.AddRange(Db.Activities.OfType<Course>()
+                    .Where(x =>
+                        x.Semester.Id == semester.Id &&
+                        x.LabelSet != null &&
+                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                    .ToList());
+            }
+            else
+            {
+                var org = GetOrganiser(orgId.Value);
+                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+                courses.AddRange(Db.Activities.OfType<Course>()
+                    .Where(x =>
+                        x.Semester.Id == semester.Id &&
+                        x.Organiser.Id == org.Id &&
+                        x.LabelSet != null &&
+                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                    .ToList());
+            }
 
 
             var cs = new CourseService();

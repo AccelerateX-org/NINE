@@ -1,0 +1,34 @@
+﻿@model MyStik.TimeTable.Web.Models.ItemLabelEditModel
+@{
+    ViewBag.Title = "Kohorte zusammenführen";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Kohorte zusammenführen</h4>
+                <h5 class="card-subtitle">Die Kohorte @Model.ItemLabel.Name aus Studiengang @Model.Curriculum.ShortName soll übertragen werden ....</h5>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.ItemLabel.Id)
+                    @Html.HiddenFor(m => m.Curriculum.Id)
+                    <div class="row">
+                        <label for="Name" class="col-sm-2 col-form-label">Name der Zielkohorte</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Speichern</button>
+                            <a href="@Url.Action("Index",  new{id=Model.Curriculum.Organiser.Id})" class="btn btn-outline-secondary">Abbrechen</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

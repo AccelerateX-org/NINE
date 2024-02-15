@@ -338,13 +338,23 @@ namespace MyStik.TimeTable.DataServices.Booking
             if (student?.Curriculum == null)
                 return null;
 
+            // welche Liste gehört exakt zum Studiengang des Studierenden
             var list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum != null && x.SeatQuota.Curriculum.Id == student.Curriculum.Id);
             if (list != null)
             {
                 return list;
             }
 
-            list = _lists.FirstOrDefault(x => x.SeatQuota == null);
+            // Einschränkung ohne Studiengang
+            list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum == null && !x.IsLost);
+            if (list != null)
+            {
+                return list;
+            }
+
+
+            // gar keine Einschränken
+            list = _lists.FirstOrDefault(x => x.SeatQuota == null && !x.IsLost);
             return list;
         }
 

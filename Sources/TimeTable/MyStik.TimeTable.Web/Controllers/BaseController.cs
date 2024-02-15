@@ -169,7 +169,7 @@ namespace MyStik.TimeTable.Web.Controllers
         protected UserRight GetUserRight(ActivityOrganiser org)
         {
             var user = UserManager.FindByName(User.Identity.Name);
-            if (user != null)
+            if (user != null && org != null)
             {
                 var member =
                     org.Members.FirstOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
@@ -189,7 +189,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 IsSysAdmin = false,
                 IsHost = false,
                 IsSubscriber = false,
-                User = null,
+                User = user,
                 Member = null
             };
 

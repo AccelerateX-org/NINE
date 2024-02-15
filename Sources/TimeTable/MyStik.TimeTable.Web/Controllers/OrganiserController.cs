@@ -814,10 +814,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (org.Members.Any(x => x.ShortName.ToUpper().Equals(shortName)))
                 {
                     ModelState.AddModelError("", "Diesen Kurznamen gibt es schon");
+                    ViewBag.Organiser = org;
                     return View(model);
                 }
-
-
 
                 var member = new OrganiserMember
                 {
@@ -852,7 +851,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("Organiser", "Lecturer", new { id = member.Organiser.Id });
             }
 
-            return RedirectToAction("Index", "OrganiserMembers");
+            return RedirectToAction("Index", "Lecturer");
 
         }
 

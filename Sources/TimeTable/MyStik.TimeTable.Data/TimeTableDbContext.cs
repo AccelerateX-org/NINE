@@ -28,6 +28,9 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<SeatQuota> SeatQuotas { get; set; }
 
+        public DbSet<SeatQuotaFraction> SeatQuotaFractions { get; set; }
+
+
         public DbSet<Subscription> Subscriptions { get; set; }
 
         public DbSet<ActivityOrganiser> Organisers { get; set; }

@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using log4net;
+using Markdig;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -48,6 +50,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.ItemLabelSets.Add(labelSet);
                 model.Summary.Course.LabelSet = labelSet;
                 Db.SaveChanges();
+            }
+
+            if (!string.IsNullOrEmpty(model.Summary.Course.Description))
+            {
+                var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseBootstrap().Build();
+                var result = Markdown.ToHtml(model.Summary.Course.Description, pipeline);
+                model.CourseDescriptionHtml = result;
             }
 
             var userRights = GetUserRight(User.Identity.Name, model.Summary.Course);
@@ -3280,7 +3289,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 Description2 = course.Description
             };
 
+            var str = "# Heading\r\nSome *embedded* Markdown which `md-block` can convert for you!";
 
+            var _pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseBootstrap().Build();
+
+            var result = Markdown.ToHtml(str, _pipeline);
+
+            ViewBag.MarkdownHtml = result;
 
             return View(model);
         }
@@ -3431,7 +3446,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CourseLabelViewModel()
             {
                 Course = course,
-                Organisers = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(x => x.ShortName).ToList()
+                Organisers = Db.Organisers.Where(x => !x.IsStudent && x.IsFaculty).OrderBy(x => x.ShortName).ToList()
             };
 
             return View(model);
@@ -3639,29 +3654,16 @@ namespace MyStik.TimeTable.Web.Controllers
             var studentService = new StudentService(Db);
             var courseService = new CourseService(Db);
 
-
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
             var userId = subscription.UserId;
 
             var course = Db.Activities.OfType<Course>()
                 .SingleOrDefault(x => x.Occurrence.Id == subscription.Occurrence.Id);
 
-            var semester = SemesterService.GetSemester(DateTime.Today);
-            if (course.Semester != null)
-            {
-                semester = course.Semester;
-            }
-            else
-            {
-                if (course.SemesterGroups.Any())
-                {
-                    semester = course.SemesterGroups.First().Semester;
-                }
-            }
+            var semester = course.Semester;
 
             var user = UserManager.FindById(subscription.UserId);
             var student = studentService.GetCurrentStudent(subscription.UserId);
-
 
             var model = new UserCoursePlanViewModel
             {
@@ -3677,7 +3679,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var courses =
                 Db.Activities.OfType<Course>()
                     .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(subscription.UserId)) &&
-                                c.SemesterGroups.Any((g => g.Semester.Id == semester.Id)))
+                                c.Semester.Id == semester.Id)
                     .OrderBy(c => c.Name)
                     .ToList();
 
@@ -3913,6 +3915,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("AdminNewRules", new { id = courseId });
         }
+
+
+        public ActionResult EditQuota(Guid id)
+        {
+
+
+            return View();
+        }
+
 
     }
 }

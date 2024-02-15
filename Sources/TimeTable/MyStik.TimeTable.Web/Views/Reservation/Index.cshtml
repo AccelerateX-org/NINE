@@ -61,7 +61,12 @@
                             {
                                 <td>unbekannt</td>
                             }
-                            <td>@Html.LecturerList(res.Hosts)</td>
+                            <td>
+                                @foreach (var host in res.Hosts)
+                                {
+                                    <div><a href="@Url.Action("Private", "Person", new {memberId=host.Id})">@host.FullName (@host.Organiser.ShortName)</a></div>
+                                }
+                            </td>
                             @if (res.FirstDate != null)
                             {
                                 <td>@Html.TimeSpanWithDate(res.FirstDate)</td>

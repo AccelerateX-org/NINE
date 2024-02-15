@@ -13,6 +13,8 @@ namespace MyStik.TimeTable.Web.Models
         public BookingState BookingState { get; set; }
 
         public SemesterGroup SemesterGroup { get; set; }
+
+        public string CourseDescriptionHtml { get; set; }
     }
 
 

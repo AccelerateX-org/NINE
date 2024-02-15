@@ -594,6 +594,18 @@
     <Compile Include="Migrations\202401231319565_AlumniV3.designer.cs">
       <DependentUpon>202401231319565_AlumniV3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202402071009505_LotteryV9.cs" />
+    <Compile Include="Migrations\202402071009505_LotteryV9.designer.cs">
+      <DependentUpon>202402071009505_LotteryV9.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202402140727276_LotteryV10.cs" />
+    <Compile Include="Migrations\202402140727276_LotteryV10.designer.cs">
+      <DependentUpon>202402140727276_LotteryV10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202402151330014_AlumniV4.cs" />
+    <Compile Include="Migrations\202402151330014_AlumniV4.designer.cs">
+      <DependentUpon>202402151330014_AlumniV4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -951,6 +963,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202401231319565_AlumniV3.resx">
       <DependentUpon>202401231319565_AlumniV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402071009505_LotteryV9.resx">
+      <DependentUpon>202402071009505_LotteryV9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402140727276_LotteryV10.resx">
+      <DependentUpon>202402140727276_LotteryV10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402151330014_AlumniV4.resx">
+      <DependentUpon>202402151330014_AlumniV4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

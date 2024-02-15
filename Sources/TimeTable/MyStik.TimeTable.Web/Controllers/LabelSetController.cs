@@ -35,41 +35,46 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult GetLabelListCurriculum(Guid currId)
         {
-            var labels = new List<ItemLabel>();
-            if (currId != Guid.Empty)
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            if (curr != null)
             {
-                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-
-                if (curr != null && curr.LabelSet != null)
-                {
-                    labels.AddRange(curr.LabelSet.ItemLabels);
-
-                    var org = curr.Organiser;
-
-                    if (org != null && org.LabelSet != null)
-                    {
-                        labels.AddRange(org.LabelSet.ItemLabels);
-
-                        var inst = org.Institution;
-
-                        if (inst != null && inst.LabelSet != null)
-                        {
-                            labels.AddRange(inst.LabelSet.ItemLabels);
-                        }
-
-                    }
-                }
+                ViewBag.ListName = currId.ToString();
+                return PartialView("_LabelListGroupCurriculum", curr);
             }
 
-            var model = labels
-                .OrderBy(g => g.Name)
-                .ToList();
+            var inst = Db.Institutions.SingleOrDefault(x => x.Id == currId);
+            if (inst != null)
+            {
+                ViewBag.ListName = inst.Id.ToString();
+                return PartialView("_LabelListGroupInstitution", inst);
+            }
 
-            ViewBag.ListName = currId.ToString();
-
-            return PartialView("_LabelListGroup", model);
+            return null;
         }
 
+
+        [HttpPost]
+        public PartialViewResult GetLabelSelectListCurriculum(Guid currId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            if (curr != null)
+            {
+                ViewBag.ListName = currId.ToString();
+                return PartialView("_LabelSelectListCurriculum", curr);
+            }
+
+            var inst = Db.Institutions.SingleOrDefault(x => x.Id == currId);
+            if (inst != null)
+            {
+                ViewBag.ListName = inst.Id.ToString();
+                return PartialView("_LabelSelectListInstitution", inst);
+            }
+
+            return null;
+
+        }
 
     }
 }

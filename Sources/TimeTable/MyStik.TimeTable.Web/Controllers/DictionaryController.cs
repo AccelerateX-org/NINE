@@ -587,21 +587,40 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("GroupByTopic", model);
         }
 
-        public ActionResult Label(Guid semId, Guid orgId, Guid labelId, Guid currId)
+        public ActionResult Label(Guid semId, Guid? orgId, Guid labelId, Guid? currId)
         {
             var semester = SemesterService.GetSemester(semId);
-            var org = GetOrganiser(orgId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-            var courses = Db.Activities.OfType<Course>()
-                .Where(x =>
-                    x.Semester.Id == semester.Id &&
-                    //x.Organiser.Id == org.Id &&
-                    x.LabelSet != null &&
-                    x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                .ToList();
+            var courses = new List<Course>();
+            ActivityOrganiser org = null;
+            Curriculum curr = null;
 
+            if (orgId == null && currId == null)
+            {
+                courses.AddRange(Db.Activities.OfType<Course>()
+                    .Where(x =>
+                        x.Semester.Id == semester.Id &&
+                        x.LabelSet != null &&
+                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                    .ToList());
+            }
+            else
+            {
+                if (orgId != null)
+                {
+                    org = GetOrganiser(orgId.Value);
+                    //var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId.Value);
+
+                    courses.AddRange(Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.Organiser.Id == org.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList());
+                }
+            }
 
             var cs = new CourseService();
             var courseSummaries = new List<CourseSummaryModel>();

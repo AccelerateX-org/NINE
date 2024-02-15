@@ -1,0 +1,70 @@
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourOverviewModel
+@{
+    ViewBag.Title = "Sprechstunden";
+}
+
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "OfficeHour")">Sprechstundenverzeichnis</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Organiser.ShortName</li>
+        </ol>
+    </nav>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Lehrende @Model.Organiser.ShortName mit Sprechstunde im @Model.Semester.Name</h4>
+            </div>
+            <div class="accordion" id="accordionExample">
+                @foreach (var item in Model.OfficeHours.OrderBy(x => x.Lecturer.Name))
+                {
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@item.OfficeHour.Id" aria-expanded="false" aria-controls="@item.OfficeHour.Id">
+                                <h5>@item.Lecturer.FullName (@item.OfficeHour.Name)</h5>
+                            </button>
+                        </h2>
+                        <div id="@item.OfficeHour.Id" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                @if (!string.IsNullOrEmpty(item.OfficeHour.Description))
+                                {
+                                    <div>
+                                        @Html.Raw(item.OfficeHour.Description)
+                                    </div>
+                                }
+                                @if (item.OfficeHour.ByAgreement)
+                                {
+                                    <div><strong>Sprechstunde nach Vereinbarung</strong></div>
+                                }
+                                else
+                                {
+                                    if (item.Date != null)
+                                    {
+                                        <a class="btn btn-outline-primary"
+                                           href="@Url.Action("Details", "OfficeHour", new { id = item.OfficeHour.Id })">
+                                            <i class="bi bi-calendar"></i>
+                                            Zur Terminliste
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <div><strong>Keine Termine mehr im laufenden Semester</strong></div>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>            
+        </div>
+    </div>
+</div>
+
+

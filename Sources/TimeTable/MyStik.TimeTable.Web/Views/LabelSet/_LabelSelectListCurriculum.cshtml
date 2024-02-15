@@ -1,0 +1,20 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+
+
+@if (Model != null && Model.LabelSet != null)
+{
+    foreach (var module in Model.LabelSet.ItemLabels)
+    {
+        <option value="@module.Id">@module.Name (@Model.ShortName)</option>
+    }
+    if (Model.Organiser.Institution != null && Model.Organiser.Institution.LabelSet != null)
+    {
+        foreach (var module in Model.Organiser.Institution.LabelSet.ItemLabels)
+        {
+            <option value="@module.Id">@module.Name (@Model.Organiser.Institution.Tag)</option>
+        }
+    }
+}
+else
+{
+}

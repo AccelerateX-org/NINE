@@ -1,25 +1,36 @@
-﻿@model ICollection<MyStik.TimeTable.Data.Semester>
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.HomeViewModel
+
 @{
-    ViewBag.Title = "Semester";
+    ViewBag.Title = "Sprechstundenverzeichnis";
 }
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-user-md"></i> Semester mit Sprechstunden
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @foreach (var semester in Model)
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Sprechstundenverzeichnis</li>
+        </ol>
+    </nav>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="list-group">
+                @foreach (var sem in Model.ActiveSemester)
+                {
+                    if (sem.Organisers.Any())
                     {
-                        <a href="@Url.Action("Semester", "OfficeHour", new {id = semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@semester.Name</h5>
-                        </a>
+                        <div class="list-group-item">
+                            <h5><strong>@sem.Semester.Name</strong></h5>
+                            <div class="btn-group">
+                                @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
+                                {
+                                    <a href="@Url.Action("Organiser", "OfficeHour", new {semId=sem.Semester.Id, orgId=organiser.Id})" class="btn btn-outline-dark" style="background-color: @organiser.HtmlColor; color: white">@organiser.ShortName</a>
+                                }
+                            </div>
+                        </div>
                     }
-                </div>
+                }
             </div>
         </div>
     </div>

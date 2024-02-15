@@ -560,15 +560,26 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Details(Guid id)
         {
-            var org = GetMyOrganisation();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+            if (thesis == null)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            var org = thesis.Student.Curriculum.Organiser;
             var userRight = GetUserRight(org);
 
+            var currentUser = GetCurrentUser();
+            if (currentUser.Id.Equals(thesis.Student.UserId))
+            {
+                return RedirectToAction("Index", "Thesis", new { id = id });
+            }
+            
             if (!userRight.IsExamAdmin)
             {
                 return View("_NoAccess");
             }
 
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             var user = GetUser(thesis.Student.UserId);
             var student = thesis.Student;

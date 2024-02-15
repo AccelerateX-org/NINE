@@ -49,9 +49,11 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 ctx.AddErrorMessage(gpuFile, string.Format("Anzahl Zeilen in {0}: {1}", gpuFile, lines.Length), false);
                 // Leerzeilen löschen
                 var linesWithContent = new List<string>();
+                var i = 0;
                 foreach (var line in lines)
                 {
-                    if (string.IsNullOrEmpty(line.Trim()))
+                    i++;
+                    if (i == 1 || string.IsNullOrEmpty(line.Trim()))
                         continue;
                     linesWithContent.Add(line);
                 }

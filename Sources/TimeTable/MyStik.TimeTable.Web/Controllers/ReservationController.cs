@@ -99,10 +99,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 IsDaily = false,
                 IsWeekly = false,
                 Rooms = rooms,
-                OrganiserId = org.Id
+                Organiser = org,
+                OrganiserId = org.Id,
+                OrganiserId2 = org.Id
             };
 
-            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            ViewBag.Organiser = Db.Organisers.Where(x => !x.IsStudent).OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),

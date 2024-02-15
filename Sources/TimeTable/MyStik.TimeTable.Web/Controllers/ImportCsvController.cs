@@ -90,7 +90,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Directory.Delete(tempDir, true);
 
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(model.OrganiserId);
             model.Organiser = org;
             model.Semester = SemesterService.GetSemester(model.SemesterId);
             model.Segment = model.Semester.Dates.FirstOrDefault(x => x.Id == model.SegmentId);

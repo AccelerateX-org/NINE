@@ -8,19 +8,49 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public string Email { get; set; }
+        /// <summary>
+        /// public access
+        /// </summary>
+        public string Code { get; set; }
 
-        public int Code { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime CodeExpiryDateTime { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsValid { get; set; }
 
+        /// <summary>
+        /// required
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Gender { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string FirstName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string LastName { get; set; }
 
-        public string Title { get; set; }
+        public string Faculty { get; set; }
+
+        public string Program { get; set; }
 
         /// <summary>
         /// Bachelor, Master, Promotion
@@ -31,15 +61,22 @@ namespace MyStik.TimeTable.Data
         /// Bezeichnung des Semesters
         /// </summary>
         public string FinishingSemester { get; set; }
-        
-        public string Gender { get; set; }
+       
 
-        public string Faculty { get; set; }
-
-        public ActivityOrganiser Organiser { get; set; }
 
         public DateTime? Created { get; set; }
 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual Student Student { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivityOrganiser Organiser { get; set; }
 
         /// <summary>
         /// Studiengang des Absolventen

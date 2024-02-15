@@ -24,6 +24,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var student = StudentService.GetCurrentStudent(user);
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
+            if (thesis == null)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
             var model = new ThesisStateModel
             {
                 User = user,

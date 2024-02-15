@@ -3,11 +3,6 @@
     ViewBag.Title = "Alumni";
 }
 
-@if (Request.IsLocal)
-{
-    <a href="@Url.Action("ContactData")" class="btn btn-outline-primary">Testdialog</a>
-}
-
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -42,7 +37,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-outline-primary btn-lg" type="button" id="button-addon2"><i class="bi bi-send-check"></i> Zugangscode anfordern</button>
+                                <button type="submit" class="btn btn-outline-primary btn-lg" type="button" id="button-addon2"><i class="bi bi-send-check"></i> Verifizierungscode anfordern</button>
                             </div>
                         </div>
                     </div>

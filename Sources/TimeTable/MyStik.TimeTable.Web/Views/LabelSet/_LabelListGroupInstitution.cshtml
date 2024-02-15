@@ -1,0 +1,23 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.Institution
+
+
+@if (Model != null && Model.LabelSet != null)
+{
+
+    <ul id="@ViewBag.ListName" class="list-group">
+        @foreach (var module in Model.LabelSet.ItemLabels)
+        {
+            <li id="@module.Id" class="list-group-item">
+                <input class="form-check-input me-1" type="checkbox" value="">
+                <label class="form-check-label" for="@module.Id">@module.Name (@Model.Tag)</label>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="list-group-item">
+        Keine Labels vorhanden
+    </div>
+}

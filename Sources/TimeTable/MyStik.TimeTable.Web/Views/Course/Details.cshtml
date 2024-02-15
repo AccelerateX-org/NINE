@@ -58,37 +58,41 @@
                 }
             </div>
         </div>
-        <div class="card">
+        <div class="card mb-3">
             <div class="list-group">
                 <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})">
                     <i class="bi bi-envelope"></i> Nachricht senden
                 </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-calendar"></i> Terminverwaltung
                 </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-people"></i> Teilnehmende
                 </a>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="list-group">
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-gear"></i> Allgemeine Angaben
                 </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-collection-play"></i> Semester
-                </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-tags"></i> Kohorten
                 </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Summary.Course.Id})">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-book"></i> Modul / Fach
                 </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-pencil-square"></i> Platzkontingente
-                </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-ui-radios"></i> Freigaben / Status
                 </a>
                 @if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                 {
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-collection-play"></i> Semester
+                    </a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-ui-radios"></i> Freigaben / Status
+                    </a>
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
                         <i class="bi bi-person"></i> Besitzer
                     </a>
@@ -97,8 +101,10 @@
                     </a>
                 }
             </div>
+        </div>
+        <div class="card mb-3">
             <div class="list-group">
-                @if(string.IsNullOrEmpty(Model.Summary.Course.ExternalSource))
+                @if (string.IsNullOrEmpty(Model.Summary.Course.ExternalSource))
                 {
                     <div class="list-group-item">
                         Angelegt von:
@@ -332,7 +338,7 @@
                 }
                 else
                 {
-                    <div>@Html.Raw(Model.Summary.Course.Description)</div>
+                    <div>@Html.Raw(Model.CourseDescriptionHtml)</div>
                 }
             </div>
         </div>

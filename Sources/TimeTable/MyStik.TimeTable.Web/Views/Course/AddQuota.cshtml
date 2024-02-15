@@ -22,9 +22,16 @@
                 <div class="row">
                     <div class="col-5">
                         <div class="row">
+                            <div class="col-4">Bezeichnung</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="name" placeholder="optional: Bezeichnung">
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-4">Einrichtung</div>
                             <div class="col-8">
                                 <select id="selectOrg" class="form-select slot-option" onchange="onOrgChanged(this.value)">
+                                    <option value="@Model.Course.Organiser.Institution.Id">@Model.Course.Organiser.Institution.Name</option>
                                     @foreach (var org in Model.Organisers)
                                     {
                                         <option value="@org.Id">@org.ShortName</option>
@@ -58,7 +65,60 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-7">
+                        <div class="alert alert-info">
+                            <p>Die Anzahl an Plätzen wird vergeben an Studierende</p>
+                            <ul>
+                                <li>Keine Angabe des Studiengangs => offen für Studierende aller Studiengänge</li>
+                                <li>Angabe einer Kohorte ist Einschränkung (Eigenschaft Studierende, d.h. Zuordnung zu einer Kohorte erforderlich)</li>
+                                <li>Keine Kohorte => offen für alle Studierende des Studiengangs</li>
+                                <li>Mehrere Kohorten => oder Verknüpfung</li>
+                                <li>Mehrere Anteile => oder Verknüpfung</li>
+                            </ul>
+
+                        </div>
+                    </div>
                 </div>
+                @if (Request.IsLocal)
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="DateTable">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Einrichtung</th>
+                                        <th>Studiengang</th>
+                                        <th>Kohorten</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <select id="selectOrg2" class="form-select slot-option" onchange="onOrgChanged2(this.value)">
+                                                @foreach (var org in Model.Organisers)
+                                                {
+                                                    <option value="@org.Id">@org.ShortName</option>
+                                                }
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <select id="selectCurr2" class="form-select slot-option" onchange="onCurrChanged2(this.value)">
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <select id="selectLabel2" class="form-select slot-option" multiple="multiple">
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-outline-primary" onclick="addQuotaFraction()"><i class="bi bi-plus-circle"></i> Gruppe hinzufügen</button>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -139,6 +199,45 @@
                 });
 
 
+        }
+
+
+        function onOrgChanged2(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CurriculaList2", "Curriculum")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectCurr2").html(data);
+                        $("#selectLabel2").html("");
+                        $("#loading").hide();
+                    }
+                });
+        }
+
+
+        function onCurrChanged2(value) {
+            var currId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabelSelectListCurriculum", "LabelSet")',
+                    data: {
+                        currId: currId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectLabel2").html(data);
+                        $("#loading").hide();
+                    }
+                });
 
         }
 
