@@ -553,8 +553,48 @@ namespace MyStik.TimeTable.Web.Services
                 }
             }
 
+            AppendBlocks(course, summary);
+
             return summary;
         }
+
+        internal void AppendBlocks(Course course, CourseSummaryModel summary)
+        {
+            if (!course.Dates.Any())
+            {
+                return;
+            }
+
+            var orderedDates = course.Dates.OrderBy(x => x.Begin).ToList();
+            var currentDate = orderedDates.FirstOrDefault();
+
+            var currentBlock = new CourseBlockModel();
+            currentBlock.Dates.Add(currentDate);
+            summary.Blocks.Add(currentBlock);
+
+            foreach(var date in orderedDates)
+            {
+                if (date.Id == currentDate.Id) continue;
+
+                // Anzahl der Tage zwischen den Terminen
+                var delta = date.Begin.Day - currentDate.Begin.Day;
+                // =1 => zusammenhängender Block
+                if (delta <= 1)
+                {
+                    // Datum gehört zum aktuellen Block
+                    currentBlock.Dates.Add(date);
+                }
+                else
+                {
+                    // ein neuer Block
+                    currentBlock = new CourseBlockModel();
+                    currentBlock.Dates.Add(date);
+                    summary.Blocks.Add(currentBlock);
+                }
+                currentDate = date;
+            }
+        }
+
 
         internal bool IsActive(OrganiserMember member, Semester semester)
         {

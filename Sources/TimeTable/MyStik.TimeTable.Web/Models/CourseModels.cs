@@ -41,6 +41,7 @@ namespace MyStik.TimeTable.Web.Models
             VirtualRooms = new List<VirtualRoom>();
             Curricula = new List<Curriculum>();
             ConflictingDates = new Dictionary<ActivityDate, List<ActivityDate>>();
+            Blocks = new List<CourseBlockModel>();
         }
 
         /// <summary>
@@ -254,7 +255,55 @@ namespace MyStik.TimeTable.Web.Models
             return Course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(userId));
         }
 
+        public List<CourseBlockModel> Blocks { get; set; }
+
+        public bool IsPureBlock()
+        {
+            return Blocks.Count() == 1;
+        }
+
+        public bool IsPureRegular()
+        {
+            return Course.Dates.Count() == Blocks.Count();
+        }
+
+        public bool IsPureWeekEndCourse()
+        {
+            var nWeekEnds =
+                Blocks.Count(x => x.Dates.Any(d => d.Begin.DayOfWeek == DayOfWeek.Saturday || d.Begin.DayOfWeek == DayOfWeek.Sunday));
+
+            return Blocks.Count() == nWeekEnds;
+        }
+
+        public SemesterDate GetSemesterSegment(Semester semester)
+        {
+            var block = Blocks.FirstOrDefault();
+            if (block == null) { return null; }
+
+            var orderedDates = block.Dates.OrderBy(x => x.Beginn).ToList();
+
+            foreach (var segement in semester.Dates.Where(x => x.IsLecture))
+            {
+                if (segement.Begin <= orderedDates.First.Begin && 
+                    orderedDates.Last.End <= segement.End)
+                    return segement;
+            }
+
+            return null;
+        }
     }
+
+    public class CourseBlockModel
+    {
+        public CourseBlockModel()
+        {
+            Dates = new List<ActivityDate>();
+        }
+
+        public List<ActivityDate> Dates { get; set; }
+    
+    }
+
 
     /// <summary>
     /// 
