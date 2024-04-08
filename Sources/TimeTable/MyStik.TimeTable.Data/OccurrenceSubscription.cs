@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MyStik.TimeTable.Data
 {
@@ -13,6 +14,10 @@ namespace MyStik.TimeTable.Data
 
         public int? Position { get; set; }
 
+        public string CheckInRemark { get; set; }
+
+        public string CheckOutRemark { get; set; }
+
         public string PositionRemark { get; set; }
 
         public string SubscriberRemark { get; set; }
@@ -24,6 +29,8 @@ namespace MyStik.TimeTable.Data
         public int LapCount { get; set; }
 
         public bool IsConfirmed { get; set; }
+
+        public DateTime? ValdUntil { get; set; }
 
         public virtual Occurrence Occurrence { get; set; }
 

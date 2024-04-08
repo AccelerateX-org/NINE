@@ -55,20 +55,28 @@
                                 <td>@invitation.Email</td>
                                 @if (@invitation.Curriculum == null)
                                 {
-                                    <td></td>
+                                    <td class="bg-danger">@invitation.CurrName nicht gefunden</td>
                                 }
                                 else
                                 {
                                     <td>@invitation.Curriculum.ShortName (@invitation.Curriculum.Organiser.ShortName)</td>
                                 }
-                                <td>@invitation.Semester.Name</td>
-                                @if (invitation.Course != null)
+                                @if (@invitation.Semester == null)
                                 {
-                                    <td>@invitation.Course.Name (@invitation.Course.ShortName)</td>
+                                    <td class="bg-danger">@invitation.SemesterName nicht gefunden</td>
                                 }
                                 else
                                 {
-                                    <td></td>
+                                    <td>@invitation.Semester.Name</td>
+
+                                }
+                                @if (invitation.Course == null)
+                                {
+                                    <td class="bg-danger">@invitation.CourseName nicht gefunden</td>
+                                }
+                                else
+                                {
+                                    <td>@invitation.Course.Name (@invitation.Course.ShortName)</td>
                                 }
                                 @if (invitation.OnWaitinglist)
                                 {

@@ -470,7 +470,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (course.User != null)
                 {
                     writer.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8}",
-                        course.Curriculum.ShortName, course.Group.FullName,
+                        course.Curriculum.ShortName, course.Group.Name,
                         course.Lecturer.ShortName,
                         course.User.FirstName,
                         course.User.LastName,
@@ -482,7 +482,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 else
                 {
                     writer.Write("{0};{1};{2};;;;{3};{4};{5}",
-                        course.Curriculum.ShortName, course.Group.FullName,
+                        course.Curriculum.ShortName, course.Group.Name,
                         course.Lecturer.ShortName,
                         course.Course.ShortName,
                         course.Course.Name,
@@ -531,7 +531,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         if (course.User != null)
                         {
                             writer.Write("{0};{1};{2};{3};{4};{5};{6};{7}",
-                                course.Curriculum.ShortName, course.Group.FullName,
+                                course.Curriculum.ShortName, course.Group.Name,
                                 course.Lecturer.ShortName,
                                 course.User.FirstName,
                                 course.User.LastName,
@@ -542,7 +542,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         else
                         {
                             writer.Write("{0};{1};{2};;;{3};{4};{5}",
-                                course.Curriculum.ShortName, course.Group.FullName,
+                                course.Curriculum.ShortName, course.Group.Name,
                                 course.Lecturer.ShortName,
                                 course.Course.ShortName,
                                 course.Course.Name,
@@ -557,7 +557,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     if (course.User != null)
                     {
                         writer.Write("{0};{1};{2};{3};{4};{5};{6};Keine Termine",
-                            course.Curriculum.ShortName, course.Group.FullName,
+                            course.Curriculum.ShortName, course.Group.Name,
                             course.Lecturer.ShortName,
                             course.User.FirstName,
                             course.User.LastName,
@@ -567,7 +567,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     else
                     {
                         writer.Write("{0};{1};{2};;;{3};{4};Keine Termine",
-                            course.Curriculum.ShortName, course.Group.FullName,
+                            course.Curriculum.ShortName, course.Group.Name,
                             course.Lecturer.ShortName,
                             course.Course.ShortName,
                             course.Course.Name);
@@ -599,10 +599,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new List<SemesterCourseViewModel>();
 
             // Alle Lehrveranstaltungen in diesem Semester
-            var courses = Db.Activities.OfType<Course>().Where(x => x.SemesterGroups.Any(s =>
-                    s.Semester.Id == semester.Id && s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+            var courses = Db.Activities.OfType<Course>().Where(x => x.Organiser.Id == org.Id &&
+                    x.Semester.Id == semester.Id)
                 .ToList();
 
+            
             // für jede Lehrveranstaltung alle Dozenten
             foreach (var course in courses)
             {
@@ -612,22 +613,27 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
                 // Für jede Semestergruppe
-                foreach (var semesterGroup in course.SemesterGroups)
+                foreach (var semesterGroup in course.LabelSet.ItemLabels)
                 {
+                    var curriculum =
+                        org.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == semesterGroup.Id));
 
-                    foreach (var lecture in lectures)
+                    if (curriculum != null)
                     {
-                        var courseModel = new SemesterCourseViewModel
+                        foreach (var lecture in lectures)
                         {
-                            Course = course,
-                            Curriculum = semesterGroup.CapacityGroup.CurriculumGroup.Curriculum,
-                            Lecturer = lecture,
-                            User = userInfoService.GetUser(lecture.UserId),
-                            Group = semesterGroup
-                        };
+                            var courseModel = new SemesterCourseViewModel
+                            {
+                                Course = course,
+                                Curriculum = curriculum,
+                                Lecturer = lecture,
+                                User = userInfoService.GetUser(lecture.UserId),
+                                Group = semesterGroup
+                            };
 
-                        model.Add(courseModel);
+                            model.Add(courseModel);
 
+                        }
                     }
                 }
             }
@@ -1076,6 +1082,46 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View("CopyDayReport", report);
         }
+
+
+        public ActionResult Responsibility(Guid id)
+        {
+            var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(id);
+
+            var model = new TeachingOverviewModel();
+            var members = MemberService.GetMemberships(user.Id).ToList();
+
+            model.Members = members;
+            model.Organisers = members.Select(x => x.Organiser).Distinct().ToList();
+            model.CurrentSemester = new TeachingSemesterSummaryModel();
+
+            // das ist das der Anzeige
+            model.CurrentSemester.Semester = semester;
+
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+            var yearSemester = SemesterService.GetPreviousSemester(prevSemester);
+            
+            var currentSemester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(currentSemester);
+
+            ViewBag.PrevSemester = prevSemester;
+            ViewBag.YearSemester = yearSemester;
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+
+            if (semester.StartCourses > DateTime.Today)
+            {
+                return View("Future", model);
+            }
+            else if (semester.EndCourses < DateTime.Today)
+            {
+                return View("History", model);
+            }
+
+            return View(model);
+        }
+
 
     }
 }

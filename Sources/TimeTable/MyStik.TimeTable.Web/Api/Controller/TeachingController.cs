@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             var teaching = teachingService.GetActivities(semester, user, members);
 
 
-            foreach (var course in teaching.Courses)
+            foreach (var course in teaching.OfferedCourses)
             {
 
                 var subModel = new SubscriptionDto();

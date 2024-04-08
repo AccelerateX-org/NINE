@@ -280,17 +280,56 @@ namespace MyStik.TimeTable.Web.Models
             var block = Blocks.FirstOrDefault();
             if (block == null) { return null; }
 
-            var orderedDates = block.Dates.OrderBy(x => x.Beginn).ToList();
+            var orderedDates = block.Dates.OrderBy(x => x.Begin).ToList();
 
-            foreach (var segement in semester.Dates.Where(x => x.IsLecture))
+            foreach (var segement in semester.Dates.Where(x => x.HasCourses))
             {
-                if (segement.Begin <= orderedDates.First.Begin && 
-                    orderedDates.Last.End <= segement.End)
+                if (segement.From <= orderedDates.First().Begin && 
+                    orderedDates.Last().End <= segement.To)
                     return segement;
             }
 
             return null;
         }
+
+        public Room GetFavoriteRoom()
+        {
+            var maxUses = 1;
+            Room favRoom = null;
+
+            foreach (var room in Rooms)
+            {
+                var nUses = Course.Dates.Count(x => x.Rooms.Any(r => r.Id == room.Id));
+                if (nUses > maxUses)
+                {
+                    maxUses = nUses;
+                    favRoom = room;
+                }
+            }
+
+            return favRoom;
+        }
+
+        public OrganiserMember GetFavoriteHost()
+        {
+            var maxUses = 1;
+            OrganiserMember favMember = null;
+
+            foreach (var host in Lecturers)
+            {
+                var nUses = Course.Dates.Count(x => x.Hosts.Any(r => r.Id == host.Id));
+                if (nUses > maxUses)
+                {
+                    maxUses = nUses;
+                    favMember = host;
+                }
+            }
+
+            return favMember;
+        }
+
+
+
     }
 
     public class CourseBlockModel
@@ -1224,5 +1263,33 @@ namespace MyStik.TimeTable.Web.Models
         public int editable { get; set; }
 
         public int projected { get; set; }
+    }
+
+
+    public class CopyCourseModel
+    {
+        public ModuleSubject Subject { get; set; }
+
+        public Course OriginCourse { get; set; }
+
+        public Semester SourceSemester { get; set; }
+
+        public Course Clone { get; set; }
+
+        public Semester DestSemester { get; set; }
+
+        public bool WithDates { get; set; }
+    }
+
+    public class CreateSubjectCourseModel
+    {
+        public ModuleSubject Subject { get; set; }
+        
+        public Semester DestSemester { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public Course DestCourse { get; set; }
+
     }
 }

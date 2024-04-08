@@ -66,12 +66,12 @@
                                         <a href="@Url.Action("PlanCatalog", new { id = Model.Id })" class="btn btn-outline-primary">
                                             <i class="bi bi-binoculars"></i> Katalogplanung
                                         </a>
-                                        <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
-                                            <i class="bi bi-plus"></i> Neues Modul anlegen
-                                        </a>
 
                                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                                         {
+                                            <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
+                                                <i class="bi bi-plus"></i> Neues Modul anlegen
+                                            </a>
                                             if (Model.Modules.Any())
                                             {
                                                 <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger disabled">

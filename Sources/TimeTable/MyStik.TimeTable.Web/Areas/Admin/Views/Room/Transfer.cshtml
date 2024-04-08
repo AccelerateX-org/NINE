@@ -13,6 +13,7 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
 {
     <fieldset>
+        @Html.AntiForgeryToken()
         @Html.ValidationSummary()
         <div class="form-group">
             @Html.LabelFor(model => model.SourceRoomId, new { @class = "col-sm-4 control-label" })
@@ -29,7 +30,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-4 col-md-10">
-                <input type="submit" value="Ja" class="btn btn-danger" />
+                <input type="submit" value="Ja" class="btn btn-danger"/>
                 <a href="@Url.Action("Index", "Room")" class="btn btn-default">Zurück</a>
             </div>
         </div>

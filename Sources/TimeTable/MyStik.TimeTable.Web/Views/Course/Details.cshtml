@@ -39,7 +39,7 @@
         <div class="card mb-3">
             <div class="list-group">
                 @Html.Partial("_CourseSummarySubscription", Model.Summary)
-                @if (Model.Summary.Course.IsInternal)
+                @if (Model.Summary.Course.IsInternal && !(ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
                 {
                     attrDisabled = "disabled";
                     if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
@@ -85,13 +85,16 @@
                 <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
                     <i class="bi bi-pencil-square"></i> Platzkontingente
                 </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
+                    <i class="bi bi-ui-radios"></i> Freigaben / Status
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Copy", new {id = Model.Summary.Course.Id})">
+                    <i class="bi bi-copy"></i> Kopieren
+                </a>
                 @if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                 {
                     <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
                         <i class="bi bi-collection-play"></i> Semester
-                    </a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
-                        <i class="bi bi-ui-radios"></i> Freigaben / Status
                     </a>
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
                         <i class="bi bi-person"></i> Besitzer
@@ -152,13 +155,7 @@
                         Kohorten
                     </div>
                     <div class="col-8">
-                        @if (Model.Summary.Course.LabelSet != null)
-                        {
-                            foreach (var label in Model.Summary.Course.LabelSet.ItemLabels)
-                            {
-                                <span class="badge bg-secondary">@label.Name</span>
-                            }
-                        }
+                        @Html.LabelList(Model.Summary.Course)
                     </div>
                 </div>
                 <div class="row">
@@ -286,6 +283,13 @@
                 <div class="row">
                     <div class="col-12 mb-1">
                         <strong>Alle Termine</strong>
+                    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                    {
+
+                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("AdminNewDates", new { id = Model.Summary.Course.Id })">
+                            <i class="bi bi-calendar"></i> Terminverwaltung
+                        </a>
+                    }
                     </div>
                 </div>
                 <div class="row">

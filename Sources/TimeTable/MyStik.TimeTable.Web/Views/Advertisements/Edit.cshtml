@@ -34,6 +34,7 @@
                         @Html.ValidationSummary(true)
                         @Html.HiddenFor(m => m.Id)
                         <fieldset>
+                            @Html.AntiForgeryToken()
                             @Html.ValidationSummary()
                             <div class="form-group">
                                 @Html.LabelFor(m => m.Title, new { @class = "col-md-2 control-label" })

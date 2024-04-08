@@ -41,14 +41,7 @@
                                     {
                                         <a id="@summary.Course.Id.ToString()" class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
                                             <div class="card-title">
-                                                @summary.Course.ShortName
-                                                @if (summary.Course.LabelSet != null)
-                                                {
-                                                    foreach (var label in summary.Course.LabelSet.ItemLabels)
-                                                    {
-                                                        <span class="badge bg-secondary">@label.Name</span>
-                                                    }
-                                                }
+                                                @summary.Course.ShortName @Html.LabelList(summary.Course)
                                             </div>
                                             <div class="card-text">@summary.Course.Name</div>
                                             <div class="row">

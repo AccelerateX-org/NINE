@@ -6,6 +6,7 @@ using MyStik.TimeTable.Web.Models;
 using PdfSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,8 @@ using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
+using Microsoft.Ajax.Utilities;
+using System.Runtime.InteropServices;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -476,6 +479,47 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Semester = SemesterService.GetSemester(semId);
 
             return View(slot);
+        }
+
+        public FileResult Print(Guid currId, Guid semId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
+
+            var subjects = Db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
+                    c.Slot != null &&
+                    c.Slot.AreaOption != null &&
+                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).Include(moduleSubject => moduleSubject.Module).ToList();
+
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
+
+
+            var printModel = new StudyPlanViewModel
+            {
+                TimeStamp = DateTime.Now,
+                Remark = "Vorabdruck",
+                Curriculum = curr,
+                Semester = semester,
+                Modules = modules,
+            };
+
+
+            var viewName = "_StudyPlanPrintOutForeground";
+
+            var html = this.RenderViewToString(viewName, printModel);
+
+            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
+
+            var stream = new MemoryStream();
+            pdf.Save(stream, false);
+
+            // Stream zurücksetzen
+            stream.Position = 0;
+
+            var docName = $"Studienplan_{curr.ShortName}_{semester.Name}.pdf";
+
+            return File(stream.GetBuffer(), "application/pdf", docName);
         }
     }
 }

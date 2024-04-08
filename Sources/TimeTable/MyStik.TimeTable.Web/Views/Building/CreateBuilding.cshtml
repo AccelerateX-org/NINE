@@ -28,6 +28,8 @@
                 <div class="portlet-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
                     {
+                        @Html.AntiForgeryToken()
+
                         <fieldset>
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Name, new { @class = "col-sm-3 control-label" })

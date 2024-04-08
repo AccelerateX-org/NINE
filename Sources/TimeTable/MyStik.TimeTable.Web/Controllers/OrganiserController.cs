@@ -521,12 +521,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         if (string.IsNullOrEmpty(model.FirstName) && !string.IsNullOrEmpty(user.FirstName))
                         {
-                            model.Name = user.FirstName;
+                            model.FirstName = user.FirstName;
                         }
 
                         if (string.IsNullOrEmpty(model.Title) && !string.IsNullOrEmpty(user.Title))
                         {
-                            model.Name = user.Title;
+                            model.Title = user.Title;
                         }
 
                     }
@@ -774,10 +774,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 // TODO: wie löscht man den Rest, z.B. Termine?
                 Db.SaveChanges();
+
+                return RedirectToAction("Organiser", "Lecturer", new { id = org.Id });
             }
 
-            return RedirectToAction("Index", "OrganiserMembers");
-
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>

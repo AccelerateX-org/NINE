@@ -6,6 +6,15 @@
     var db = new TimeTableDbContext();
 
     var degr = db.Degrees.ToList();
+
+    /*
+    var cie = db.Curricula.Where(x => x.ShortName.StartsWith("CIE")).ToList();
+    foreach (var c in cie)
+    {
+        c.IsDeprecated = true;
+    }
+    db.SaveChanges();
+    */
 }
 
 

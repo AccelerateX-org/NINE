@@ -70,41 +70,20 @@
                 <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
                     <i class="bi bi-people"></i> Modulverantwortungen
                 </a>
-
-                <a href="@Url.Action("EditGeneral", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
-                    <i class="bi bi-gear"></i> Allgemeine Angaben
-                </a>
-
                 @if (ViewBag.UserRight.IsCurriculumAdmin)
                 {
+                    <a href="@Url.Action("EditGeneral", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
+                        <i class="bi bi-gear"></i> Allgemeine Angaben
+                    </a>
                     <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
                         <i class="bi bi-person-video"></i> Lehr- und Lernformen
                     </a>
                     <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
                         <i class="bi bi-exclamation-diamond"></i> Prüfungsformen
                     </a>
-
-                    if (!Model.ModuleSubjects.Any(s => s.SubjectAccreditations.Any()))
-                    {
-                        <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                            <i class="bi bi-trash"></i> Modul endgültig löschen
-                        </a>
-                    }
-                    else
-                    {
-                        if (Model.Descriptions.Any() || Model.ExaminationOptions.Any(x => x.ExaminationDescriptions.Any()))
-                        {
-                            <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                <i class="bi bi-x"></i> Modulbeschreibungen löschen
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                <i class="bi bi-x"></i> Modul aus allen Studiengängen entfernen
-                            </a>
-                        }
-                    }
+                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-danger" aria-current="true">
+                        <i class="bi bi-trash"></i> Modul löschen
+                    </a>
                 }
             </div>
         </div>

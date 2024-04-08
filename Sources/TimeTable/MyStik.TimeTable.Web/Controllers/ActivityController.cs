@@ -229,6 +229,11 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = new ActivityPlanModel();
 
+            var user = GetCurrentUser();
+            var members = MemberService.GetFacultyMemberships(user.Id);
+
+            ViewBag.IsLecturer = members.Count > 0;
+
             model.Semester = SemesterService.GetSemester(id);
 
             return View(model);
@@ -995,24 +1000,12 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
-
             var beginOfDay = DateTime.Today;
-
-            /*
-            var endOfDay = beginOfDay.AddDays(1);
-
-            var nowPlaying = Db.ActivityDates.Where(d =>
-                    d.Activity is Course &&
-                    (d.Begin > beginOfDay && d.Begin < endOfDay) &&
-                    d.Activity.SemesterGroups.Any(g =>
-                        g.CapacityGroup != null &&
-                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
-                .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
-                */
-
 
             ViewBag.Organiser = org;
             ViewBag.Date = beginOfDay;
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
             return View();
         }
@@ -1041,7 +1034,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public PartialViewResult Programm(string date, Guid orgId)
         {
-            var beginOfDay = string.IsNullOrEmpty(date) ? DateTime.Today : DateTime.ParseExact(date, "dd.MM.yyyy", null);
+            var beginOfDay = DateTime.Parse(date);
             var endOfDay = beginOfDay.AddDays(1);
 
             var org = GetOrganiser(orgId);

@@ -113,6 +113,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public Guid ModuleId { get; set; }
 
+        public Guid OrgId { get; set; }
+
         public Occurrence Occurrence { get; set; }
 
         public bool UseParticipients { get; set; }

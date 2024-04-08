@@ -33,6 +33,7 @@
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
                     {
                         <fieldset>
+                            @Html.AntiForgeryToken()
                             @Html.HiddenFor(m => m.OrganiserId)
                             @Html.HiddenFor(m => m.SemesterId)
                             @Html.HiddenFor(m => m.FormatId)
@@ -59,7 +60,7 @@
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">
-                                    <input type="submit" value="Weiter" class="btn btn-default" />
+                                    <input type="submit" value="Weiter" class="btn btn-default"/>
                                 </div>
                             </div>
                         </fieldset>

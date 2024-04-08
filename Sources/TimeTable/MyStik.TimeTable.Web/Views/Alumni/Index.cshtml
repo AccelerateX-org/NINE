@@ -28,6 +28,8 @@
             <div class="card-body">
                 @using (Html.BeginForm("RequestKey", null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
+
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-floating">

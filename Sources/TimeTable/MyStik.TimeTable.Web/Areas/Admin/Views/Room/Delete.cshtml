@@ -13,6 +13,7 @@
     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
     {
         <fieldset>
+            @Html.AntiForgeryToken()
             @Html.ValidationSummary()
             @Html.HiddenFor(m => m.Room.Id)
             <div class="form-group">

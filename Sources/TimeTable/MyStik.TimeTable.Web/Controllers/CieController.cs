@@ -89,13 +89,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var studentService = new StudentService(Db);
 
-            /*
-            if (!string.IsNullOrEmpty(invitationList.Error))
-                return View("InvitationList", invitationList);
-            */
-
-
-            foreach (var invitation in invitationList.Invitations)
+            foreach (var invitation in invitationList.Invitations.Where(x => x.Semester != null && x.Curriculum != null && x.Course != null))
             {
                 var user = UserManager.FindByEmail(invitation.Email);
 
@@ -229,32 +223,27 @@ namespace MyStik.TimeTable.Web.Controllers
                                 LastName = words[0].Trim(),
                                 FirstName = words[1].Trim(),
                                 Email = words[2].Trim(),
+                                CurrName = words[3].Trim(),
+                                CourseName = words[4].Trim(),
+                                SemesterName = words[5].Trim(),
+                                StateName = words[6].Trim(),
                                 Invite = true,
-                                Curriculum = GetCieCurriculum(words[3].Trim()),
-                                Semester = SemesterService.GetSemester(words[5].Trim())
                             };
 
-                            invitation.Course = GetCieCourse(invitation.Semester, words[4].Trim());
-
-                            if (invitation.Curriculum != null && invitation.Course != null)
+                            invitation.Curriculum = GetCieCurriculum(invitation.CurrName);
+                            invitation.Semester = SemesterService.GetSemester(invitation.SemesterName);
+                            if (invitation.Curriculum != null && invitation.Semester != null)
                             {
-                                // Es werden die Daten aus primuss so übernommen
-                                // keine Überprüfung des Ampesystems
-                                var state = words[6].Trim();
+                                invitation.Course = GetCieCourse(invitation.Semester, invitation.Curriculum.Organiser, invitation.CourseName);
+                            }
 
-                                if (state.Equals("TN"))
-                                {
-                                    invitation.OnWaitinglist = false;
-                                }
-                                else
-                                {
-                                    invitation.OnWaitinglist = true;
-                                }
+                            if (invitation.StateName.Equals("TN"))
+                            {
+                                invitation.OnWaitinglist = false;
                             }
                             else
                             {
-                                invitation.Remark = "Studiengang oder LV nicht gefunden";
-                                invitationList.Error = "Fehlehafte Daten";
+                                invitation.OnWaitinglist = true;
                             }
 
                             invitationList.Invitations.Add(invitation);
@@ -272,40 +261,45 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        private Course GetCieCourse(Semester semester, string code)
+        private Course GetCieCourse(Semester semester, ActivityOrganiser org, string code)
         {
+            if (semester == null || org == null)
+                return null;
+
             return 
             Db.Activities.OfType<Course>().FirstOrDefault(x =>
-                x.SemesterGroups.Any(g =>g.Semester.Id == semester.Id) &&
-                x.ShortName.Contains(code));
+                    x.Semester.Id == semester.Id &&
+                    x.Organiser.Id == org.Id &&
+                    x.ShortName.Equals(code));
         }
 
         private Curriculum GetCieCurriculum(string code)
         {
-            var org = GetCieOrganiser(code);
+            // FK01
+            if (code.StartsWith("AR-B")) return GetCurriculum("BAAR");
+            if (code.StartsWith("AR-M")) return GetCurriculum("MAAR");
 
-            var curr = code.EndsWith("-B") ? "CIE-B" : "CIE-M";
+            // FK01
+            if (code.StartsWith("BI-B")) return GetCurriculum("BIB");
+            if (code.StartsWith("BI-M")) return GetCurriculum("BIM");
 
-            return org.Curricula.FirstOrDefault(x => x.ShortName.Equals(curr));
-        }
+            // FK03
+            if (code.StartsWith("FA-B")) return GetCurriculum("FAB");
+            if (code.StartsWith("MB-B")) return GetCurriculum("MBB");
+            if (code.StartsWith("LR-B")) return GetCurriculum("LRB");
+            if (code.StartsWith("MB-M")) return GetCurriculum("MBM");
 
-
-        private ActivityOrganiser GetCieOrganiser(string code)
-        {
-            if (code.StartsWith("AR"))
-                return GetOrganiser("FK 01");
-
-            if (code.StartsWith("BI"))
-                return GetOrganiser("FK 02");
-
-            if (code.StartsWith("FA") || 
-                code.StartsWith("MB") || 
-                code.StartsWith("LR") || 
-                code.StartsWith("RS") ||
+            /*
+            code.StartsWith("RS") ||
                 code.StartsWith("FE") ||
                 code.StartsWith("TB"))
-                return GetOrganiser("FK 03");
+            */
 
+            // FK04
+            if (code.StartsWith("EI-B")) return GetCurriculum("BAET");
+            if (code.StartsWith("EI-M")) return GetCurriculum("MAET");
+
+            /*
             if (code.StartsWith("EI") ||
                 code.StartsWith("RE") ||
                 code.StartsWith("EM") ||
@@ -313,7 +307,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 code.StartsWith("EL") ||
                 code.StartsWith("EE"))
                 return GetOrganiser("FK 04");
+            */
 
+            // FK05
+
+            /*
             if (code.StartsWith("VS") ||
                 code.StartsWith("VV") ||
                 code.StartsWith("DR") ||
@@ -326,7 +324,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 code.StartsWith("DP") ||
                 code.StartsWith("TK"))
                 return GetOrganiser("FK 05");
+            */
 
+            // FK06
+
+            /*
             if (code.StartsWith("AO") ||
                 code.StartsWith("CT") ||
                 code.StartsWith("PH") ||
@@ -339,7 +341,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 code.StartsWith("PO") ||
                 code.StartsWith("BT"))
                 return GetOrganiser("FK 06");
+            */
 
+            // FK07
+            if (code.StartsWith("IF-B")) return GetCurriculum("BAINF");
+            if (code.StartsWith("IF-M")) return GetCurriculum("MAINF");
+
+            /*
             if (code.StartsWith("IF") ||
                 code.StartsWith("IC") ||
                 code.StartsWith("IB") ||
@@ -347,26 +355,49 @@ namespace MyStik.TimeTable.Web.Controllers
                 code.StartsWith("IG") ||
                 code.StartsWith("IN"))
                 return GetOrganiser("FK 07");
+            */
 
+            // FK08
+
+            /*
             if (code.StartsWith("GN") ||
                 code.StartsWith("GD") ||
                 code.StartsWith("KG") ||
                 code.StartsWith("GO"))
                 return GetOrganiser("FK 08");
+            */
 
+            // FK09
+            if (code.StartsWith("AU-B")) return GetCurriculum("AU");
+            if (code.StartsWith("LM-B")) return GetCurriculum("LM");
+            if (code.StartsWith("WI-B")) return GetCurriculum("WI");
+            if (code.StartsWith("WI-M")) return GetCurriculum("WIM");
+
+            /*
             if (code.StartsWith("LM") ||
                 code.StartsWith("AU") ||
                 code.StartsWith("WI") ||
                 code.StartsWith("WW"))
                 return GetOrganiser("FK 09");
+            */
 
+            // FK10
+            if (code.StartsWith("BW-B")) return GetCurriculum("BABW");
+            if (code.StartsWith("BW-M")) return GetCurriculum("MABW");
+
+            /*
             if (code.StartsWith("BW") ||
                 code.StartsWith("UB") ||
                 code.StartsWith("BB") ||
                 code.StartsWith("BE") ||
                 code.StartsWith("BS"))
                 return GetOrganiser("FK 10");
+            */
 
+            // FK11
+            if (code.StartsWith("SA-M")) return GetCurriculum("SAFD");
+
+            /*
             if (code.StartsWith("SW") ||
                 code.StartsWith("SR") ||
                 code.StartsWith("SI") ||
@@ -382,23 +413,44 @@ namespace MyStik.TimeTable.Web.Controllers
                 code.StartsWith("PY") ||
                 code.StartsWith("SE"))
                 return GetOrganiser("FK 11");
+            */
 
+            // FK12
+            if (code.StartsWith("DS-B")) return GetCurriculum("DES-B");
+            if (code.StartsWith("DS-M")) return GetCurriculum("DES-M");
+
+            /*
             if (code.StartsWith("DS"))
                 return GetOrganiser("FK 12");
+            */
 
+            // FK13
+
+            /*
             if (code.StartsWith("IK") ||
                 code.StartsWith("PI") ||
                 code.StartsWith("IK") ||
                 code.StartsWith("PZ"))
                 return GetOrganiser("FK 13");
+            */
 
+            // FK14
+            if (code.StartsWith("TR-B")) return GetCurriculum("BATM");
+            if (code.StartsWith("TS-M")) return GetCurriculum("MATM");
+            if (code.StartsWith("TH-M")) return GetCurriculum("MAHM");
 
+            /*
             if (code.StartsWith("TR") ||
                 code.StartsWith("TH"))
                 return GetOrganiser("FK 14");
+            */
 
+            return null;
+        }
 
-            return GetOrganiser("FK 13");
+        private Curriculum GetCurriculum(string code)
+        {
+            return Db.Curricula.FirstOrDefault(x => x.ShortName.StartsWith(code));
         }
 
     }

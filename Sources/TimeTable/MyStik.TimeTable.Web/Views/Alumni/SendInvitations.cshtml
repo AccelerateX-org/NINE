@@ -26,6 +26,8 @@
     <div class="row">
         @using (Html.BeginForm("SendInvitations", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
         {
+            @Html.AntiForgeryToken()
+
             @Html.ValidationSummary(true)
             <fieldset>
                 @Html.ValidationSummary()

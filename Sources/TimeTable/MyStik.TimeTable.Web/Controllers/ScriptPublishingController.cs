@@ -44,7 +44,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var activities = TeachingService.GetActivities(semester, user, members);
 
-            var coursesNames = activities.Courses.GroupBy(x => x.Course.Name).Distinct();
+            var coursesNames = activities.OfferedCourses.GroupBy(x => x.Course.Name).Distinct();
 
 
             var modules = new List<SelectListItem>();
@@ -223,7 +223,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var activities = TeachingService.GetActivities(semester, user, members);
 
-            var coursesNames = activities.Courses.GroupBy(x => x.Course.Name).Distinct();
+            var coursesNames = activities.OfferedCourses.GroupBy(x => x.Course.Name).Distinct();
 
 
             var modules = new List<SelectListItem>();

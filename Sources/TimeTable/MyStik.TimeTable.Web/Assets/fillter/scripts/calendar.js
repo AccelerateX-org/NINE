@@ -16,7 +16,12 @@
         weekNumbers: true,
         allDaySlot: false,
         locale: 'de',
-        dayHeaderFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
+        dayHeaderFormat: {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            omitCommas: true
+        },
         slotDuration: "00:45:00",
         slotMinTime: "08:00:00",
         slotMaxTime: "22:00:00",

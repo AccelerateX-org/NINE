@@ -7,6 +7,7 @@ using System.Web.Mvc.Html;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Globalization;
+using MyStik.TimeTable.Web.Api.DTOs;
 
 namespace MyStik.TimeTable.Web.Helpers
 {
@@ -557,6 +558,41 @@ namespace MyStik.TimeTable.Web.Helpers
 
             return new MvcHtmlString(sb.ToString());
         }
+
+
+        public static MvcHtmlString LabelList(this HtmlHelper htmlHelper, Course course)
+        {
+            if (course == null || course.LabelSet == null)
+                return new MvcHtmlString(string.Empty);
+
+            var sb = new StringBuilder();
+            var db = new TimeTableDbContext();
+
+
+            foreach (var label in course.LabelSet.ItemLabels)
+            {
+                sb.Append("<span class=\"badge bg-secondary\">");
+
+                var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+                if (curr != null)
+                {
+                    sb.AppendFormat("{0}:{1}", curr.ShortName, label.Name);
+                }
+
+                var inst = db.Institutions.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+                if (inst != null)
+                {
+                    sb.AppendFormat("{0}:{1}", inst.Tag, label.Name);
+                }
+
+                sb.Append("</span>");
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
 
 
         public static MvcHtmlString FacultyList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> members)

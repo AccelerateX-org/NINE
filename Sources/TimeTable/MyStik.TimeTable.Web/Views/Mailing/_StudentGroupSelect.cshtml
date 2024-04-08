@@ -5,13 +5,13 @@
 }
 <div class="row">
     <div class="col-md-4">
-        <div class="panel panel-default">
-            <h4 class="panel-heading">
-                <i class="fa fa-calendar"></i> Semestergruppen im @Model.Semester.Name
-            </h4>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Kohorten im @Model.Semester.Name</h5>
+            </div>
             <div class="panel-body">
                 <div id="groupTable">
-                    <table class="table table-condensed">
+                    <table class="table">
                         <thead>
                         <tr>
                             <th></th>
@@ -19,16 +19,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var group in Model.SemesterGroups)
+                        @foreach (var curr in Model.Organiser.Curricula.Where(x => !x.IsDeprecated && x.LabelSet != null))
                         {
-                            <tr>
-                                <td><input id="@group.Group.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
-                                <td>@group.Group.FullName</td>
-                            </tr>
+                            foreach (var itemLabel in curr.LabelSet.ItemLabels)
+                            {
+                                <tr>
+                                    <td><input id="@itemLabel.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
+                                    <td>@curr.ShortName::@itemLabel.Name</td>
+                                </tr>
+                            }
                         }
                         </tbody>
                     </table>
-                    <a id="btnNext" class="btn btn-default disabled" id="send" href="javascript:onSend()"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
+                    <a id="btnNext" class="btn btn-outline-primary disabled" id="send" href="javascript:onSend()"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
                 </div>
             </div>
         </div>

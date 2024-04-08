@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -8,9 +9,9 @@ namespace MyStik.TimeTable.Web.Controllers
     public class MessagingController : BaseController
     {
         // GET: Messaging
-        public ActionResult Index()
+        public ActionResult Index(Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
             var model = new MessagingOverviewModel();
 

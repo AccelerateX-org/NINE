@@ -786,7 +786,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var summary = courseSummaryService.GetCourseSummary(course);
                 summary.User = user;
-                model.Courses.Add(summary);
+                model.OfferedCourses.Add(summary);
             }
 
 

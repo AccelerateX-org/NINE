@@ -529,7 +529,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_CurriculumSelectList", model);
         }
-
+        
         [HttpPost]
         public PartialViewResult CurriculaList3(Guid orgId)
         {

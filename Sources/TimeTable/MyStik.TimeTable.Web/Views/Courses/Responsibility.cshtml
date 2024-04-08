@@ -1,0 +1,136 @@
+﻿@model MyStik.TimeTable.Web.Models.TeachingOverviewModel
+@using System.Text
+@using MyStik.TimeTable.Data
+
+@{
+    ViewBag.Title = "Responsibility";
+
+
+    var semester = Model.CurrentSemester.Semester;
+    var member = Model.Members.First();
+
+    var db = new TimeTableDbContext();
+
+    var catalogs = db.CurriculumModuleCatalogs.Where(x => x.CatalogResponsibilities.Any(r => r.Member.UserId.Equals(member.UserId))).ToList();
+
+    var modules = db.CurriculumModules.Where(x => x.ModuleResponsibilities.Any(r => r.Member.UserId.Equals(member.UserId))).ToList();
+
+    var dozCourses = db.Activities.OfType<Course>().Where(x => x.Semester.Id == semester.Id && x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(member.UserId)))).ToList();
+
+    foreach (var catalog in catalogs)
+    {
+        foreach (var module in catalog.Modules.ToList())
+        {
+            var m = modules.FirstOrDefault(x => x.Id == module.Id);
+            if (m == null)
+            {
+                modules.Add(module);
+            }
+
+            foreach (var subject in module.ModuleSubjects)
+            {
+                var courses = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == semester.Id && x.Course.Organiser.Id == member.Organiser.Id).Select(x => x.Course).ToList();
+                foreach (var course in courses)
+                {
+                    // ist das einer meiner Kurse
+                    var c = dozCourses.FirstOrDefault(x => x.Id == course.Id);
+                    if (c != null)
+                    {
+                        dozCourses.Remove(c);
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    Alle Lehrveranstaltungen im @Model.CurrentSemester.Semester.Name, auf die ich Zugriff habe
+                </h5>
+            </div>
+            <table class="table table-striped">
+                <theed>
+                    <tr>
+                        <th>Katalog-ID</th>
+                        <th>Modul-ID</th>
+                        <th>Modul</th>
+                        <th>Kurse</th>
+                        <th></th>
+                    </tr>
+                </theed>
+                <tbody>
+                    @foreach (var module in modules)
+                    {
+                        foreach (var subject in module.ModuleSubjects)
+                        {
+                            var courses = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == semester.Id && x.Course.Organiser.Id == member.Organiser.Id).Select(x => x.Course).ToList();
+
+                            <tr>
+                                <td>@module.Catalog.Tag</td>
+                                <td>@module.Tag</td>
+                                <td>@module.Name</td>
+                                <td>
+                                    @foreach (var course in courses)
+                                    {
+                                        var sb = new StringBuilder();
+                                        foreach (var accr in subject.SubjectAccreditations)
+                                        {
+                                            sb.AppendFormat("{0} {1} | ", accr.Slot.AreaOption.Area.Curriculum.ShortName, accr.Slot.Tag);
+                                        }
+
+                                        if (module.ModuleSubjects.Count > 1)
+                                        {
+                                            <div>
+                                                @sb.ToString() (@subject.Name):
+                                                <a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.ShortName (@course.Name)</a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>
+                                                @sb.ToString():
+                                                <a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.ShortName (@course.Name)</a>
+                                            </div>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Planungsaktion
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><h6 class="dropdown-header">Übernehmen aus</h6></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = ViewBag.PrevSemester.Id, destSemId = Model.CurrentSemester.Semester.Id, backSemId = Model.CurrentSemester.Semester.Id })">@ViewBag.PrevSemester.Name (letztes Semester)</a></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = ViewBag.YearSemester.Id, destSemId = Model.CurrentSemester.Semester.Id, backSemId = Model.CurrentSemester.Semester.Id })">@ViewBag.YearSemester.Name (vorletzes Semester)</a></li>
+                                            <li><h6 class="dropdown-header">Übertragen nach</h6></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = Model.CurrentSemester.Semester.Id, destSemId = ViewBag.CurrentSemester.Id, backSemId = Model.CurrentSemester.Semester.Id })">@ViewBag.CurrentSemester.Name (aktuelle Semester)</a></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = Model.CurrentSemester.Semester.Id, destSemId = ViewBag.NextSemester.Id, backSemId = Model.CurrentSemester.Semester.Id })">@ViewBag.NextSemester.Name (nächste Semester)</a></li>
+                                            <li><h6 class="dropdown-header">Neues Kursangebot</h6></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("CreateCourse", "CurriculumModule", new { subjectId = subject.Id, destSemId = ViewBag.CurrentSemester.Id })">@ViewBag.CurrentSemester.Name (aktuelles Semester)</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("CreateCoursePortal", "Course", new {orgId =member.Organiser.Id})" class="btn btn-outline-primary">Lehrveranstaltung ohne Bezug zu Modul anlegen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

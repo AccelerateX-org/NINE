@@ -211,17 +211,12 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Subscriptions(Guid id)
         {
             var user = GetCurrentUser();
-            var org = GetMyOrganisation();
             var sem = SemesterService.GetSemester(id);
-
-            ViewBag.Organiser = org;
-
             var now = DateTime.Now;
 
             var list = new List<OfficeHourOverviewModel>();
 
             // Alle Sprechstunden mit zukünftigen Terminen
-            /*
             
             var allMySemesterWithOfficeHours = 
                 Db.Activities.OfType<OfficeHour>().Where(x =>
@@ -230,10 +225,11 @@ namespace MyStik.TimeTable.Web.Controllers
                                         d.Occurrence.Subscriptions.Any(s =>s.UserId.Equals(user.Id)) ||
                                         d.Slots.Any(s =>s.Occurrence.Subscriptions.Any(g =>g.UserId.Equals(user.Id)))))).ToList();
             
-
+            /*
             var allMySemesterWithOfficeHours =
                 Db.Activities.OfType<OfficeHour>().Where(x =>
                     x.Semester.Id == sem.Id).ToList();
+            */
 
             var model = new OfficeHourOverviewModel();
             model.Semester = sem;
@@ -280,8 +276,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 list.Add(model);
             }
-            */
 
+            ViewBag.User = user;
+            ViewBag.Semester = sem;
 
             return View("SemesterList", list);
         }
@@ -570,7 +567,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Subscriptions");
+            return RedirectToAction("Subscriptions", new {id = officeHour.Semester.Id});
         }
 
 
@@ -2226,7 +2223,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.Subscriptions.Remove(subscription);
             Db.SaveChanges();
 
-            return RedirectToAction("Lecturer", new { id = host.Id, semId = officeHour.Semester.Id });
+            return RedirectToAction("Subscriptions", new { id = officeHour.Semester.Id });
         }
 
 

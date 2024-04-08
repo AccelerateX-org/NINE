@@ -16,6 +16,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Zeitstempel der Eintragung
         /// wird in Ticks gemessen (100 nanosekunden)
+        /// ValidFrom
         /// </summary>
         public DateTime TimeStamp { get; set; }
 

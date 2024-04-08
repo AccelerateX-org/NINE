@@ -577,9 +577,9 @@ namespace MyStik.TimeTable.Web.Services
                 if (date.Id == currentDate.Id) continue;
 
                 // Anzahl der Tage zwischen den Terminen
-                var delta = date.Begin.Day - currentDate.Begin.Day;
+                var delta = date.Begin - currentDate.Begin;
                 // =1 => zusammenhängender Block
-                if (delta <= 1)
+                if (delta.Days <= 1)
                 {
                     // Datum gehört zum aktuellen Block
                     currentBlock.Dates.Add(date);

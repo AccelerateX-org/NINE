@@ -121,11 +121,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var module in slot.ModuleAccreditations)
+                        @foreach (var module in slot.SubjectAccreditations)
                         {
                             <tr>
-                                <td>@module.Module.Tag</td>
-                                <td>@module.Module.Name</td>
+                                <td>@module.Subject.Module.Tag</td>
+                                <td>@module.Subject.Module.Name</td>
                             </tr>
                         }
                     </tbody>

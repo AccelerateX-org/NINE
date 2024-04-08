@@ -1,0 +1,434 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices.IO.GpUntis.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.ModuleCopyModel
+@{
+    ViewBag.Title = "Copy";
+
+    var courseService = new CourseService();
+
+    List<Course> existingCourses = new List<Course>();
+    foreach (var subject in Model.Module.ModuleSubjects.ToList())
+    {
+        var courses = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.DestSemester.Id).Select(x => x.Course).ToList();
+        existingCourses.AddRange(courses);
+    }
+}
+
+    <div class="row">
+<div class="col-md-12">
+<div class="card">
+    <div class="card-header">
+        <h4>Fortschreibung / Kopieren von Lehrveranstaltungen des Moduls <strong>@Model.Module.Name</strong></h4>
+    </div>
+</div>
+<div class="list-group">
+    <div class="list-group-item">
+        <div class="alert alert-info">
+            <h5>Achtung experimentell</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p>Was geht</p>
+                    <ul>
+                        <li>Der Ablauf der Bedienung</li>
+                        <li>Vorschau für wöchentlich stattfindende Kurse</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <p>Was geht noch nicht</p>
+                    <ul>
+                        <li>Speichern, d.h. anlegen der Kurse</li>
+                        <li>Vorschau für Blockkurse (Mo-Fr)</li>
+                        <li>Vorschau für Wochenendkurse (Fr-Sa)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="list-group-item">
+        <div class="btn-group">
+            <a class="btn btn-outline-primary" href="@Url.Action("Responsibility", "Courses", new { id = Model.BackSemester.Id })"><i class="bi bi-chevron-left"></i> Zurück</a>
+            <span id="loading" class="spinner-border"></span>
+        </div>
+    </div>
+    @if (existingCourses.Any())
+    {
+        <div id="courseAlert" class="list-group-item">
+            <div class="alert alert-info">
+                <h5>Zu diesem Modul gibt es im @Model.DestSemester.Name bereits folgende Kurse</h5>
+                <ul>
+                    @foreach (var course in existingCourses)
+                    {
+                        <li>@course.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div id="courseAlert" class="list-group-item">
+            <div class="alert alert-success">
+                <h5>Zu diesem Modul gibt es im @Model.DestSemester.Name bisher kein Kursangebot</h5>
+            </div>
+        </div>
+
+    }
+</div>
+<div id="courseArea" class="card-body">
+@foreach (var subject in Model.Module.ModuleSubjects.ToList())
+{
+    var courses = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.SourceSemester.Id).Select(x => x.Course).ToList();
+    foreach (var course in courses)
+    {
+        var summary = courseService.GetCourseSummary(course);
+
+        var planCourse = new Course();
+        planCourse.Id = Guid.NewGuid();
+        planCourse.ShortName = course.ShortName;
+        planCourse.Name = course.Name;
+        planCourse.Occurrence = new Occurrence();
+        planCourse.Semester = Model.DestSemester;
+        planCourse.Organiser = course.Organiser;
+
+        List<Room> favRooms = new List<Room>();
+        List<OrganiserMember> favHosts = new List<OrganiserMember>();
+
+
+        if (summary.IsPureRegular())
+        {
+
+            var ordereDates = course.Dates.OrderBy(x => x.Begin).ToList();
+            var segment = Model.SourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                                         (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                                                                         x.From.Date <= ordereDates.First().Begin.Date &&
+                                                                         ordereDates.Last().Begin.Date <= x.To.Date);
+
+            if (segment != null)
+            {
+                var planSegment = Model.DestSemester.Dates.FirstOrDefault(x =>
+                    x.HasCourses &&
+                    (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                    x.Description.Equals(segment.Description));
+
+                if (planSegment != null)
+                {
+                    var room = summary.GetFavoriteRoom();
+                    var host = summary.GetFavoriteHost();
+
+                    if (room != null)
+                    {
+                        favRooms.Add(room);
+                    }
+
+                    if (host != null)
+                    {
+                        favHosts.Add(host);
+                    }
+
+
+                    var refDate = course.Dates.First();
+                    var semesterStartTag = (int)planSegment.From.DayOfWeek;
+                    var day = (int)refDate.Begin.DayOfWeek;
+                    int nDays = day - semesterStartTag;
+                    if (nDays < 0)
+                    {
+                        nDays += 7;
+                    }
+
+                    DateTime occDate = planSegment.From.AddDays(nDays);
+
+
+                    //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+                    int numOcc = 0;
+                    while (occDate <= planSegment.To)
+                    {
+                        bool isVorlesung = true;
+                        foreach (var sd in Model.DestSemester.Dates)
+                        {
+                            // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                            if (sd.From.Date <= occDate.Date &&
+                                occDate.Date <= sd.To.Date &&
+                                sd.HasCourses == false)
+                            {
+                                isVorlesung = false;
+                            }
+                        }
+
+                        if (isVorlesung)
+                        {
+                            var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day, refDate.Begin.Hour,
+                                refDate.Begin.Minute, refDate.Begin.Second);
+                            var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day, refDate.End.Hour,
+                                refDate.End.Minute, refDate.End.Second);
+
+                            var occ = new ActivityDate
+                            {
+                                Id = Guid.NewGuid(),
+                                Begin = ocStart,
+                                End = ocEnd,
+                                Activity = planCourse,
+                                Occurrence = new Occurrence(),
+                            };
+
+
+                            foreach (var favRoom in favRooms)
+                            {
+                                occ.Rooms.Add(favRoom);
+                            }
+
+                            foreach (var favHost in favHosts)
+                            {
+                                occ.Hosts.Add(favHost);
+                            }
+
+                            planCourse.Dates.Add(occ);
+                            numOcc++;
+                        }
+
+                        occDate = occDate.AddDays(7);
+                    }
+
+                }
+                else
+                {
+                }
+            }
+        }
+
+        var planSummary = courseService.GetCourseSummary(planCourse);
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="@course.Id" class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">
+                                    @subject.Module.Catalog.Tag @subject.Module.Tag @course.ShortName @course.Name @Html.LabelList(course)
+                                </h5>
+                                <h6 class="card-subtitle">
+                                    @foreach (var accr in subject.SubjectAccreditations)
+                                    {
+                                        <span>@accr.Slot.AreaOption.Area.Curriculum.ShortName @accr.Slot.Tag</span>
+                                    }
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div>Existierender Kurs in <strong>@Model.SourceSemester.Name</strong></div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                @if (summary.IsPureRegular())
+                                                {
+                                                    var ordereDates = course.Dates.OrderBy(x => x.Begin).ToList();
+                                                    var segment = Model.SourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                                                                                 (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                                                                                                                 x.From.Date <= ordereDates.First().Begin.Date &&
+                                                                                                                 ordereDates.Last().Begin.Date < x.To.AddDays(1).Date);
+
+                                                    if (segment != null)
+                                                    {
+                                                        <li>Im Abschnitt @segment.Description @course.Dates.Count Terminen <br />@Html.DateList(summary.Dates)</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>Verteilt @course.Dates.Count Terminen <br />@Html.DateList(summary.Dates)</li>
+                                                    }
+                                                }
+                                                else if (summary.IsPureBlock())
+                                                {
+                                                    <li>Blockveranstaltung mit @course.Dates.Count Terminen</li>
+                                                }
+                                                else if (summary.IsPureWeekEndCourse())
+                                                {
+                                                    <li>Wochenendkurs in @summary.Blocks.Count Blöcken</li>
+                                                }
+                                                else
+                                                {
+                                                    <li>@course.Dates.Count Termine in @summary.Blocks.Count Blöcken</li>
+                                                }
+                                                <li>@Html.LecturerList(summary.Lecturers)</li>
+                                                <li>@Html.RoomList(summary.Rooms)</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                </div>
+                                                <div class="col-4">
+                                                    <div><i class="bi bi-building-check"></i></div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div><i class="bi bi-person-gear"></i></div>
+                                                </div>
+                                            </div>
+                                            <div class="list-group">
+                                                @foreach (var date in course.Dates.OrderBy(x => x.Begin))
+                                                {
+                                                    <div class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                @date.Begin.ToShortDateString()
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div>@Html.RoomList(date.Rooms)</div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div>@Html.LecturerList(date.Hosts)</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div>Vorschau für <strong>@Model.DestSemester.Name</strong></div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                @if (planSummary.IsPureRegular())
+                                                {
+                                                    var ordereDates = planCourse.Dates.OrderBy(x => x.Begin).ToList();
+
+                                                    // warum auch immer => der Zugriff mit First() / Last() produziert eine Fehlermeldung
+                                                    DateTime firstDate = DateTime.MaxValue;
+                                                    DateTime lastDate = DateTime.MaxValue;
+                                                    var n = ordereDates.Count;
+                                                    var i = 0;
+                                                    foreach (var activityDate in ordereDates)
+                                                    {
+                                                        if (i == 0)
+                                                        {
+                                                            firstDate = activityDate.Begin;
+                                                        }
+                                                        if (i == n - 1)
+                                                        {
+                                                            lastDate = activityDate.Begin;
+                                                        }
+                                                        i++;
+                                                    }
+
+                                                    var segment = Model.DestSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                                                                               (x.Organiser != null && x.Organiser.Id == planCourse.Organiser.Id) &&
+                                                                                                               x.From.Date <= firstDate.Date &&
+                                                                                                               lastDate.Date <= x.To.Date);
+
+                                                    if (segment != null)
+                                                    {
+                                                        <li>Im Abschnitt @segment.Description @planCourse.Dates.Count Terminen <br />@Html.DateList(planSummary.Dates)</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>Verteilt @planCourse.Dates.Count Terminen <br />@Html.DateList(planSummary.Dates)</li>
+                                                    }
+                                                }
+                                                else if (planSummary.IsPureBlock())
+                                                {
+                                                    <li>Blockveranstaltung mit @planCourse.Dates.Count Terminen @planSummary.Blocks.Count Blöcke</li>
+                                                }
+                                                else if (planSummary.IsPureWeekEndCourse())
+                                                {
+                                                    <li>Wochenendkurs in @planSummary.Blocks.Count Blöcken</li>
+                                                }
+                                                else
+                                                {
+                                                    <li>@planCourse.Dates.Count Termine in @planSummary.Blocks.Count Blöcken</li>
+                                                }
+                                                <li>@Html.LecturerList(favHosts)</li>
+                                                <li>@Html.RoomList(favRooms)</li>
+                                            </ul>
+                                            <div class="btn-group">
+                                                <a class="btn btn-outline-success" href="javascript:copyCourseWithDates('@course.Id', '@subject.Id')"><i class="bi bi-copy"></i> Kurs MIT Terminen anlegen</a>
+                                                <a class="btn btn-outline-danger" href="javascript:copyCourseNoDates('@course.Id')"><i class="bi bi-copy"></i> Kurs OHNE Termine anlegen</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                </div>
+                                                <div class="col-4">
+                                                    <div><i class="bi bi-building-check"></i></div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div><i class="bi bi-person-gear"></i></div>
+                                                </div>
+                                            </div>
+                                            <div class="list-group">
+                                                @foreach (var date in planCourse.Dates.OrderBy(x => x.Begin))
+                                                {
+                                                    <div class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                @date.Begin.ToShortDateString()
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div>@Html.RoomList(date.Rooms)</div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div>@Html.LecturerList(date.Hosts)</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}    
+
+</div>
+</div>
+</div>
+
+@section scripts
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#loading').hide();
+        });
+
+
+
+        function copyCourseWithDates(courseId, subjectId) {
+            $("#courseArea").hide();
+            $('#loading').show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CopyCourse", "CurriculumModule")',
+                    data: {
+                        courseId: courseId,
+                        subjectId: subjectId,
+                        sourceSemId: '@Model.SourceSemester.Id',
+                        destSemId: '@Model.DestSemester.Id',
+                        copyDates: true
+                    },
+                    success: function(data, success, xhr) {
+                        $('#' + courseId).html(data);
+                        $("#courseArea").show();
+                        $("#loading").hide();
+                        $('#courseAlert').html('<div class=\"alert alert-info\">Es wurden neue Kurse angelegt</div>');
+                    }
+                });
+        }
+    </script>
+}

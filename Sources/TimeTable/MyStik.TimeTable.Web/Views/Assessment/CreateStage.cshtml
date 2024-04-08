@@ -18,6 +18,8 @@
                 </div>
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
+
                     @Html.HiddenFor(m => m.AssessmentId)
                     <div class="form-group row">
                         <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>

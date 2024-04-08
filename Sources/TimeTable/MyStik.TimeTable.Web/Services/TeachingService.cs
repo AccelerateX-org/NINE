@@ -37,7 +37,7 @@ namespace MyStik.TimeTable.Web.Services
 
                 summary.Subscription = course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(user.Id));
                 
-                model.Courses.Add(summary);
+                model.OfferedCourses.Add(summary);
             }
 
             // wo ich eingeschrieben bin
@@ -50,14 +50,14 @@ namespace MyStik.TimeTable.Web.Services
             foreach (var course in courses)
             {
                 // doppelte raus
-                if (model.Courses.Any(x => x.Course.Id == course.Id)) continue;
+                if (model.SubscribedCourses.Any(x => x.Course.Id == course.Id)) continue;
                 
                 var summary = courseSummaryService.GetCourseSummary(course);
 
                 summary.Subscription =
                     course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(user.Id));
 
-                model.Courses.Add(summary);
+                model.SubscribedCourses.Add(summary);
             }
 
 
@@ -77,31 +77,8 @@ namespace MyStik.TimeTable.Web.Services
                 ohSummary.Date = oh.Dates.Where(x => x.Begin > DateTime.Now).OrderBy(x => x.Begin).FirstOrDefault();
 
 
-                model.OfficeHours.Add(ohSummary);
+                model.OfferedOfficeHours.Add(ohSummary);
             }
-
-
-
-
-            /*
-            var modules = new List<CurriculumModule>();
-            foreach (var member in members)
-            {
-                modules.AddRange(_db.CurriculumModules.Where(x => 
-                    x.ModuleResponsibilities.Any(m => 
-                        m.Member.Id == member.Id)).ToList());
-            }
-
-            foreach (var module in modules)
-            {
-                var mModel = new TeachingModuleSemesterModel
-                {
-                    Module = module
-                };
-
-                model.Modules.Add(mModel);
-            }
-            */
 
             return model;
         }

@@ -16,6 +16,13 @@
             <div class="card-header">
                 <h4>Alle Abschlussarbeiten</h4>
             </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-danger" href="@Url.Action("DeleteAll", new {orgId = ViewBag.Organiser.Id})"><i class="bi bi-trash"></i> ALLE LÖSCHEN - NO UNDO!!!!</a>
+                    </div>
+                </div>
+            </div>
             <table id="tabThesis" class="table">
                 <thead>
                     <tr>

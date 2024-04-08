@@ -20,6 +20,7 @@
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
                     <fieldset>
+                        @Html.AntiForgeryToken()
                         @Html.ValidationSummary()
                         @Html.HiddenFor(model => model.Date.Id)
                         @if (Model.Date.Slots.Any() && Model.AvailableSlots != null && Model.AvailableSlots.Any())

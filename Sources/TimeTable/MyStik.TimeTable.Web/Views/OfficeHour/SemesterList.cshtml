@@ -1,7 +1,11 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Web.Models.OfficeHourOverviewModel>
 @{
     ViewBag.Title = "Semester";
+
+   
 }
 
 <div class="row">
@@ -25,7 +29,6 @@
                 {
                     <div class="list-group-item list-group-item-danger">
                         <h5>Keine zukünftigen Termine vorhanden</h5>
-                        <p>Achtung: aktuell können die gebuchten Termine hier nicht als Liste angezeigt werden. Wir arbeiten an einer Lösung.</p>
                     </div>
                 }
 

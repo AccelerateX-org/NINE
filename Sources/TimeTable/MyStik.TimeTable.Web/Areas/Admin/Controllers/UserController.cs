@@ -131,8 +131,8 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             var userList = _db.Users
                 .Where(u => u.MemberState == MemberState.Student && u.LastLogin.HasValue && u.LastLogin < border)
-                .Take(200)
-                .OrderBy(u => u.LastLogin.Value).ToList();
+                .OrderBy(u => u.LastLogin.Value)
+                .Take(200).ToList();
 
             var model = CreateUserList(userList);
 

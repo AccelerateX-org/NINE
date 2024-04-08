@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure.Interception;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.UI;
+using Microsoft.Ajax.Utilities;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using Org.BouncyCastle.Asn1.X509.SigI;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -50,6 +55,223 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult PersonalDates(Guid id)
+        {
+            var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(id);
+
+            var members = MemberService.GetFacultyMemberships(user.Id);
+            var orgs = members.Select(x => x.Organiser).Distinct().ToList();
+
+
+            var org = orgs.FirstOrDefault();
+            var member = MemberService.GetMember(user.Id, org.Id);
+
+            var segment =
+                semester.Dates.FirstOrDefault(x => x.HasCourses && x.Organiser != null && x.Organiser.Id == orgs.First().Id);
+            var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
+                x.Organiser.Id == org.Id && x.Segment.Id == segment.Id && 
+                x.Owners.Any(o => o.Member.Id == member.Id));
+
+
+            var summaryModel = new LecturerSummaryModel()
+            {
+                Memberships = members,
+                Semester = semester,
+                Dates = new List<PersonalDate>(),
+            };
+            if (personalDate != null)
+            {
+                summaryModel.Dates.Add(personalDate);
+            }
+
+            ViewBag.Segments = semester.Dates.Where(x => x.HasCourses && x.Organiser != null && x.Organiser.Id == orgs.First().Id).Select(c => new SelectListItem
+            {
+                Text = c.Description,
+                Value = c.Id.ToString(),
+            });
+
+            ViewBag.Organiser = orgs.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
+            return View(summaryModel);
+        }
+
+        [HttpPost]
+        public PartialViewResult CreateDates(string[] timeArray, Guid orgId, Guid segmentId)
+        {
+            var user = GetCurrentUser();
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            var segment = Db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var member = MemberService.GetMember(user.Id, org.Id);
+
+            var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
+                x.Organiser.Id == org.Id && x.Segment.Id == segment.Id &&
+                x.Owners.Any(o => o.Member.Id == member.Id));
+
+            if (personalDate == null)
+            {
+                personalDate = new PersonalDate()
+                {
+                    Name = "Verfügbarkeit",
+                    ShortName = "VF",
+                    Organiser = org,
+                    Segment = segment,
+                    Semester = segment.Semester,
+                    IsProjected = true,
+                    IsInternal = true,
+                    Occurrence = new Occurrence
+                    {
+                        Capacity = -1,
+                        IsAvailable = false,
+                        FromIsRestricted = false,
+                        UntilIsRestricted = false,
+                        IsCanceled = false,
+                        IsMoved = false,
+                        UseGroups = false,
+                    },
+                };
+
+                ActivityOwner owner = new ActivityOwner
+                {
+                    Activity = personalDate,
+                    Member = member,
+                    IsLocked = false
+                };
+
+                personalDate.Owners.Add(owner);
+                Db.ActivityOwners.Add(owner);
+                Db.Activities.Add(personalDate);
+            }
+
+
+
+            var semester = segment.Semester;
+            var startDate = segment.From.Date;
+            var occDate = startDate;
+
+            while(occDate <= segment.To.Date)
+            {
+                bool isVorlesung = true;
+                foreach (var sd in semester.Dates)
+                {
+                    // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                    if (sd.From.Date <= occDate.Date &&
+                        occDate.Date <= sd.To.Date &&
+                        sd.HasCourses == false)
+                    {
+                        isVorlesung = false;
+                    }
+                }
+
+                if (isVorlesung)
+                {
+                    var begin = new DateTime();
+                    var end = new DateTime();
+
+                    for (var b = 0; b < 3; b++)
+                    {
+                        var isValid = false;
+                        var d = (int)occDate.DayOfWeek;
+                        if (d >= 1 && d <= 5)
+                        {
+                            var i1 = (d - 1) * 2 + (b * 10);
+
+                            if (!string.IsNullOrEmpty(timeArray[i1]) && !string.IsNullOrEmpty(timeArray[i1 + 1]))
+                            {
+                                begin = DateTime.Parse(timeArray[i1]);
+                                end = DateTime.Parse(timeArray[i1 + 1]);
+
+                                if (begin <= end && begin.Hour > 0 && end.Hour > 0)
+                                {
+                                    isValid = true;
+                                }
+                            }
+                        }
+
+                        if (isValid)
+                        {
+                            var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day, begin.Hour,
+                                begin.Minute, begin.Second);
+                            var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day, end.Hour,
+                                end.Minute, end.Second);
+
+                            var occ = new ActivityDate
+                            {
+                                Begin = ocStart,
+                                End = ocEnd,
+                                Occurrence = new Occurrence()
+                            };
+
+                            personalDate.Dates.Add(occ);
+                            Db.ActivityDates.Add(occ);
+                        }
+                    }
+                }
+
+                occDate = occDate.AddDays(1);
+            }
+
+            Db.SaveChanges();
+
+
+            var model = new PersonalDateCreateModel
+            {
+                Organiser = org,
+                Segment = segment,
+                PersonalDate = personalDate,
+            };
+
+
+            return PartialView("_DateList", model);
+        }
+
+        [HttpPost]
+        public PartialViewResult DeleteSingleDate(Guid dateId)
+        {
+            DeleteService.DeleteActivityDate(dateId);
+
+            return PartialView("_EmptyRow");
+        }
+
+        [HttpPost]
+        public PartialViewResult DeleteAllDates(Guid orgId, Guid segmentId)
+        {
+            var user = GetCurrentUser();
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            var segment = Db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var member = MemberService.GetMember(user.Id, org.Id);
+
+            var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
+                x.Organiser.Id == org.Id && x.Segment.Id == segment.Id &&
+                x.Owners.Any(o => o.Member.Id == member.Id));
+
+            if (personalDate != null)
+            {
+                var dates = personalDate.Dates.ToList();
+                foreach (var date in dates)
+                {
+                    DeleteService.DeleteActivityDate(date.Id);
+                }
+            }
+
+            var model = new PersonalDateCreateModel
+            {
+                Organiser = org,
+                Segment = segment,
+                PersonalDate = personalDate,
+            };
+
+            return PartialView("_DateList", model);
+        }
+
 
         /// <summary>
         /// 
@@ -208,5 +430,38 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+
+        public ActionResult OfficeHours(Guid id)
+        {
+            var user = GetCurrentUser();
+            var infoService = new OfficeHourInfoService(UserManager);
+            var semester = SemesterService.GetSemester(id);
+
+            var summaryModel = new LecturerSummaryModel()
+            {
+                Memberships = MemberService.GetFacultyMemberships(user.Id)
+            };
+
+            var officeHours =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                        x.Owners.Any(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id)))
+                    .ToList();
+
+            foreach (var oh in officeHours)
+            {
+                var ohModel = new LecturerOfficehourSummaryModel()
+                {
+                    OfficeHour = oh
+                };
+
+
+                summaryModel.OfficeHours.Add(ohModel);
+            }
+
+            ViewBag.ThisSemester = semester;
+            ViewBag.NextSemester = SemesterService.GetNextSemester(semester);
+
+            return View(summaryModel);
+        }
     }
 }

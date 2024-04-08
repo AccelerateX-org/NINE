@@ -23,4 +23,10 @@
         /// </summary>
         public int? FutureSubscriptions { get; set; }
     }
+
+    public class PersonalDate : Activity
+    {
+        public int Preference { get; set; }
+
+    }
 }

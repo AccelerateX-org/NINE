@@ -11,6 +11,7 @@
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
                     @Html.HiddenFor(m => m.Id)
                     <div class="row mb-1">
                         <div class="col-md-3">
@@ -203,6 +204,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Daten speichern</button>
+                            <p>Den Datenschutzbestimmungen muss zugestimmt werden, sonst geht es hier nicht weiter.</p>
                         </div>
                     </div>
                 }

@@ -296,7 +296,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public SemesterGroup Group { get; set; }
+        public ItemLabel Group { get; set; }
 
         /// <summary>
         /// 

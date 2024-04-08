@@ -279,6 +279,13 @@ namespace MyStik.TimeTable.Web.Models
         public ICollection<OrganiserMember> Memberships { get; set; }
 
         public ICollection<CurriculumModule> Modules { get; set; }
+
+        public Semester Semester { get; set; }
+
+        public List<PersonalDate> Dates { get; set; }
+
+        public Guid OrganiserId { get; set; }
+        public Guid SegmentId { get; set; }
     }
 
     public class LecturerCourseSummaryModel
@@ -303,6 +310,14 @@ namespace MyStik.TimeTable.Web.Models
         public ActivityDate LastDate { get; set; }
 
         public ActivityOwner Owner { get; set; }
+    }
+
+    public class PersonalDateCreateModel
+    {
+        public ActivityOrganiser Organiser { get; set; }
+        public SemesterDate Segment { get; set; }
+
+        public PersonalDate PersonalDate { get; set; }
     }
 
 }

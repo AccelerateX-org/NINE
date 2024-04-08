@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="list-group-item  list-group-item-secondary">Lehrveranstaltungen</div>
-                @foreach (var course in Model.CurrentSemester.Courses)
+                @foreach (var course in Model.CurrentSemester.OfferedCourses)
                 {
                     var nWaiting = course.Course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
                     var nCount = course.Course.Occurrence.Subscriptions.Count;
@@ -95,7 +95,7 @@
                 }
                 <div class="list-group-item  list-group-item-secondary">Sprechstunden</div>
 
-                @foreach (var oh in Model.CurrentSemester.OfficeHours)
+                @foreach (var oh in Model.CurrentSemester.OfferedOfficeHours)
                 {
                     <div class="list-group-item d-flex justify-content-between align-items-center">
                         @oh.OfficeHour.Name

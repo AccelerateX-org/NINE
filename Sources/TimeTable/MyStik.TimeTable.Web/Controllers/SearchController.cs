@@ -97,7 +97,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Räume
             var rooms = Db.Rooms.Where(x => x.Number.Contains(searchText) || 
-                                            (string.IsNullOrEmpty(x.Name) && x.Name.Contains(searchText))).ToList();
+                                            (!string.IsNullOrEmpty(x.Name) && x.Name.Contains(searchText))).ToList();
 
             var model = new SearchViewModel
             {

@@ -25,6 +25,7 @@
                 @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                 {
                     <fieldset>
+                        @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true)
 
                         <div class="form-group">
@@ -58,7 +59,7 @@
 
                         <div class="form-group">
                             <div class="col-md-offset-4 col-md-10">
-                                <input type="submit" value="anlegen" class="btn btn-default" />
+                                <input type="submit" value="anlegen" class="btn btn-default"/>
                             </div>
                         </div>
                     </fieldset>

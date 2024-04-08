@@ -350,9 +350,13 @@ namespace MyStik.TimeTable.DataServices
             if (org == null)
                 return new List<Data.Semester>();
 
-            return
-                _db.Semesters.Where(
-                    x => x.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
+
+            var semList = _db.Activities.OfType<Course>().Where(x => 
+                x.Semester != null && x.Organiser != null && 
+                x.Organiser.Id == org.Id).Select(x => x.Semester).Distinct()
+                    .OrderByDescending(x => x.StartCourses).ToList();
+        
+            return semList ?? new List<Data.Semester>();
         }
 
         /// <summary>
@@ -379,10 +383,16 @@ namespace MyStik.TimeTable.DataServices
         public Semester GetNewestSemester(ActivityOrganiser org)
         {
             var sem =
+            _db.Activities.OfType<Course>().Where(x => x.Organiser.Id == org.Id).Select(x => x.Semester).Distinct()
+                .OrderByDescending(x => x.StartCourses).FirstOrDefault();
+
+            /*
+            var sem =
                 _db.Semesters
                     .Where(x => x.Groups.Any(g =>
                         g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                     .OrderByDescending(x => x.StartCourses).FirstOrDefault();
+            */
 
             return sem ?? GetSemester(DateTime.Today);
         }

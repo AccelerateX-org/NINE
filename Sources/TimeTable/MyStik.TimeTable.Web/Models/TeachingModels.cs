@@ -46,18 +46,20 @@ namespace MyStik.TimeTable.Web.Models
     {
         public TeachingSemesterSummaryModel()
         {
-            Modules = new List<TeachingModuleSemesterModel>();
-            Courses = new List<CourseSummaryModel>();
-            OfficeHours = new List<OfficeHourCharacteristicModel>();
+            SubscribedCourses = new List<CourseSummaryModel>();
+            OfferedCourses = new List<CourseSummaryModel>();
+            OfferedOfficeHours = new List<OfficeHourCharacteristicModel>();
         }
 
         public Semester Semester { get; set; }
 
-        public List<CourseSummaryModel> Courses { get; set;  }
+        public List<CourseSummaryModel> OfferedCourses { get; set;  }
+        public List<CourseSummaryModel> SubscribedCourses { get; set; }
 
-        public List<OfficeHourCharacteristicModel> OfficeHours { get; set;  }
+        public List<OfficeHourCharacteristicModel> OfferedOfficeHours { get; set;  }
 
-        public List<TeachingModuleSemesterModel> Modules { get; set; }
+
+
     }
 
     public class TeachingModuleSemesterModel

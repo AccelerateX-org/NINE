@@ -3,45 +3,83 @@
     ViewBag.Title = "Invitation";
 }
 
-<h2>Nur zum testen - es wird nichts gespeichert</h2>
-
-@using (Html.BeginForm("Invitation", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
-{
-    <fieldset>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Datei mit CIE-Daten</label>
-            <div class="col-md-10">
-                <div>
-                    <input type="file" name="Attachments" id="Attachment1" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Import CIE Daten</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <h5>Testimport - es wird nichts gespeichert</h5>
+                                @using (Html.BeginForm("Invitation", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                                {
+                                    <fieldset>
+                                        <div>
+                                            <label class="col-md-2 form-label">Datei mit CIE-Daten</label>
+                                            <div class="col-md-10">
+                                                <div>
+                                                    <input type="file" name="Attachments" id="Attachment1" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="offset-2 col-md-10">
+                                                <input type="submit" value="Hochladen" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                }
+                            </div>
+                            <div class="list-group-item list-group-item-danger">
+                                <h5>Importieren mit Speichern</h5>
+                                @using (Html.BeginForm("Import", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                                {
+                                    <fieldset>
+                                        <div>
+                                            <label class="col-md-2 form-label">Datei mit CIE-Daten</label>
+                                            <div class="col-md-10">
+                                                <div>
+                                                    <input type="file" name="Attachments" id="Attachment1" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="offset-2 col-md-10">
+                                                <input type="submit" value="Hochladen" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            Hinweise:
+                            <ul>
+                                <li>Die Belegungslisten werden vom International Office (IO) in Form von Excel-Tabellen geliefert.</li>
+                                <li>primuss verwendet andere Bezeichnungen für Studiengang und Lehrveranstaltungen.</li>
+                                <li>Für den Import muss eine Tabelle in folgender Form aufbereitet werden
+                                    <ul>
+                                        <li>Nachname (aus Tabelle primuss)</li>
+                                        <li>Vorname (aus Tabelle primuss)</li>
+                                        <li>E-Mail (aus Tabelle primuss)</li>
+                                        <li>Studiengang (aus Tabelle primuss - wird beim Import "übersetzt")</li>
+                                        <li>LV (Kurzbezeichnung des Kurses aus NINE 1:1, Groß- und Kleinschreibung beachten, wenn es mehrere Kurse mit gleicher Kurzbezeichnung gibt erfolgt Eintragung in jeden Kurs)</li>
+                                        <li>Semester (1:1 wie in NINE)</li>
+                                        <li>Status (TN: Teilnehmer, WL: Warteliste)</li>
+                                    </ul>
+                                </li>
+                                <li>Die Datei muss als CSV vorliegen, Trennzeichen ";". Die Datei enthält eine Kopfzeile / Überschriften.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Hochladen" class="btn btn-primary" />
-            </div>
-        </div>
-    </fieldset>
-}
-
-
-<h2>Importieren mit Speichern</h2>
-
-@using (Html.BeginForm("Import", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
-{
-    <fieldset>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Datei mit CIE-Daten</label>
-            <div class="col-md-10">
-                <div>
-                    <input type="file" name="Attachments" id="Attachment1" />
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Hochladen" class="btn btn-primary" />
-            </div>
-        </div>
-    </fieldset>
-}
+    </div>
+</div>

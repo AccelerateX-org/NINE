@@ -13,7 +13,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-            <li class="breadcrumb-item active" aria-current="page">Mein Wochenplan @Model.Semester.Name</li>
+            <li class="breadcrumb-item active" aria-current="page">Mein Stundenplan @Model.Semester.Name</li>
         </ol>
     </nav>
 
@@ -21,11 +21,26 @@
         <div class="card">
             <div class="card-header">
                 <h4>
-                    <i class="bi bi-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
+                    <i class="bi bi-calendar-week"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
                     <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                 </h4>
             </div>
             <div class="list-group">
+                @if (ViewBag.IsLecturer)
+                {
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a class="btn btn-outline-secondary" href="@Url.Action("OfficeHours", "Lecturer", new {id = Model.Semester.Id})"><i class="bi bi-people"></i> Sprechstunden</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("PersonalDates", "Lecturer", new {id = Model.Semester.Id})"><i class="bi bi-calendar-check"></i> Verfügbarkeiten</a>
+                            <a class="btn btn-outline-secondary"  href="@Url.Action("Responsibility", "Courses", new {id = Model.Semester.Id})"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Self", "Person")"><i class="bi bi-person-vcard"></i> Visitenkarte</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Index", "VirtualRoom")"><i class="bi bi-person-video"></i> Virtuelle Räume</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Index", "Advertisements")"><i class="bi bi-display"></i> Aushänge</a>
+                        </div>
+                    </div>
+                }
                 <div class="list-group-item">
                     <div id="calendar"></div>
                 </div>

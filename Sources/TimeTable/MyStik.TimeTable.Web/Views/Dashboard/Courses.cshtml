@@ -13,7 +13,7 @@
             </ol>
         </nav>
         <div class="row">
-            @foreach (var summary in Model.Courses)
+            @foreach (var summary in Model.OfferedCourses)
             {
                 var subscription = summary.GetSubscription(summary.User.Id);
                 var cardType = string.Empty;

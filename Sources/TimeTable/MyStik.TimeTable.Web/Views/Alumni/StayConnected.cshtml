@@ -31,6 +31,8 @@
             <div class="card-body">
                 @using (Html.BeginForm("RequestKeyInternal", null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
+
                     @Html.HiddenFor(m => m.Student.Id)
                     <div class="row">
                         <div class="col-md-8">

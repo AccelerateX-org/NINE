@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Ical.Net.Collections;
 using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -181,9 +183,15 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult AllStudents()
+        public ActionResult AllStudents(Guid id)
         {
+            var org = GetOrganisation(id);
+
             ViewBag.UserRight = GetUserRight();
+            var model = new OccurrenceMailingModel
+            {
+                OrgId = org.Id,
+            };
             return View();
         }
 
@@ -201,7 +209,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (ModelState.IsValid)
             {
                 var semester = SemesterService.GetSemester(DateTime.Today);
-                var org = GetMyOrganisation();
+                var org = GetOrganisation(model.OrgId);
 
                 /*
                 var backgroundMailModel = GetMailModel(model);
@@ -321,24 +329,25 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult StudentGroup()
+        public ActionResult StudentGroup(Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
             var semesterList = SemesterService.GetActiveSemester(org);
 
             ViewBag.SemesterList = semesterList.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
             {
                 Text = f.Name,
-                Value = f.Name,
+                Value = f.Id.ToString()
             });
 
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
             var model = new SemesterViewModel
             {
-                Semester = SemesterService.GetSemester(DateTime.Today)
+                Semester = SemesterService.GetSemester(DateTime.Today),
+                Organiser = org
             };
 
             return View(model);
@@ -351,31 +360,16 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="GroupIds"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult StudentGroupSelect(ICollection<Guid> GroupIds)
+        public PartialViewResult StudentGroupSelect(Guid semId, Guid orgId, ICollection<Guid> GroupIds)
         {
             if (GroupIds != null)
             {
-                
-                var groupList = new List<SemesterGroupViewModel>();
-
-                //var studentService = new StudentService(Db);
-
-                foreach (var groupId in GroupIds)
+                var model = new OccurrenceMailingModel()
                 {
-                    var group = Db.SemesterGroups.SingleOrDefault(g => g.Id == groupId);
+                    SemId = semId,
+                    OrgId = orgId
+                };
 
-                    var groupModel = new SemesterGroupViewModel
-                    {
-                        Group = group,
-                        //UserIds = studentService.GetStudents(group)
-                    };
-
-                    groupList.Add(groupModel);
-                }
-
-                
-                var model = new OccurrenceMailingModel();
-                model.GroupList = groupList;
                 model.GroupIdList = new List<string>();
                 foreach (var groupId in GroupIds)
                 {
@@ -398,34 +392,17 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="semId"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult GroupList(string semId)
+        public PartialViewResult GroupList(Guid semId, Guid orgId)
         {
             var semester = SemesterService.GetSemester(semId);
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(orgId);
 
             var model = new SemesterOverviewModel();
             model.Semester = semester;
+            model.Organiser = org;
+            model.Labels = new List<ItemLabel>();
 
-            // hier jetzt das ganze zu Fuss
-            // var studentService = new StudentService(Db);
-
-            var groups = semester.Groups
-                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
-                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
-                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name).ToList();
-
-            foreach (var group in groups)
-            {
-                var groupModel = new SemesterGroupViewModel
-                {
-                    Group = group,
-                    //UserIds = studentService.GetStudents(group)
-                };
-
-                model.SemesterGroups.Add(groupModel);
-            }
-
-
+            
             return PartialView("_StudentGroupSelect", model);
         }
 
@@ -442,71 +419,64 @@ namespace MyStik.TimeTable.Web.Controllers
             var ids = model.GroupIdList.First().Split(',');
 
 
-            //if (ModelState.IsValid)
+
+            var userList =  new List<ApplicationUser>();
+
+            // nur noch alle, die in LVs der Gruppen eingetrangen sind
+            var studentService = new StudentService(Db);
+            
+            // für den Namen der Liste
+            var sb = new StringBuilder();
+
+            List<string> userIds = new List<string>();
+            foreach (var semGroupId in ids)
             {
-                var groupList = new List<SemesterGroup>();
+                var id = Guid.Parse(semGroupId);
 
-                var userList =  new List<ApplicationUser>();
+                var label = Db.ItemLabels.SingleOrDefault(x => x.Id == id);
 
-                // nur noch alle, die in LVs der Gruppen eingetrangen sind
-                var studentService = new StudentService(Db);
-                var sb = new StringBuilder();
-                List<string> userIds = new List<string>();
-                foreach (var semGroupId in ids)
+                var courses = Db.Activities.OfType<Course>().Where(x => 
+                    x.Organiser != null && x.Semester != null && x.LabelSet != null &&
+                    x.Organiser.Id == model.OrgId && x.Semester.Id == model.SemId && x.LabelSet.ItemLabels.Any(l => l.Id == id)
+                ).Include(activity => activity.Occurrence.Subscriptions).ToList();
+
+                foreach (var course in courses)
                 {
-                    var id = Guid.Parse(semGroupId);
-                    var group = Db.SemesterGroups.SingleOrDefault(x => x.Id == id);
-                    groupList.Add(group);
-
-                    var groupIds = studentService.GetStudents(group);
-                    userIds.AddRange(groupIds);
-
-                    logger.InfoFormat("Students in group {0}: {1}", group.FullName, groupIds.Count);
+                    var subIds = course.Occurrence.Subscriptions.Select(x => x.UserId).ToList();
+                    userIds.AddRange(subIds);
                 }
 
-                logger.InfoFormat("Total entries {0}", userIds.Count);
-                var userIdsNoDuplicates = userIds.Distinct().ToList();
-                logger.InfoFormat("Total entries after reduction {0}", userIdsNoDuplicates.Count);
+                sb.Append(label.Name);
+                sb.Append(", ");
 
-                foreach (var userId in userIdsNoDuplicates)
-                {
-                    ApplicationUser user = UserManager.FindById(userId);
-                    if (user != null)
-                    {
-                        userList.Add(user);
-                    }
-                }
-
-                foreach (var group in groupList)
-                {
-                    sb.Append(group.FullName);
-                    if (group != groupList.Last())
-                    {
-                        sb.Append(", ");
-                    }
-                }
-
-                model.ListName = sb.ToString();
-                model.IsDistributionList = true;
-
-                logger.InfoFormat("UserList with {0} entires", userList.Count);
-
-                if (!User.IsInRole("SysAdmin"))
-                {
-                    SendMail(userList, model);
-                }
-                return View("ReceiverList", userList);
+                logger.InfoFormat("Students in group {0}: {1}", label.Name, userIds.Count);
             }
-            /*
-            else
+            
+            
+            logger.InfoFormat("Total entries {0}", userIds.Count);
+            var userIdsNoDuplicates = userIds.Distinct().ToList();
+            logger.InfoFormat("Total entries after reduction {0}", userIdsNoDuplicates.Count);
+
+            foreach (var userId in userIdsNoDuplicates)
             {
-                if (!ModelState.IsValid)
+                ApplicationUser user = UserManager.FindById(userId);
+                if (user != null)
                 {
-                    ViewBag.ErrorMessage = "Fehler im Formular: " + ModelState.ToString();
+                    userList.Add(user);
                 }
-                return View("InvalidModel");
             }
-            */
+
+            model.ListName = sb.ToString();
+            model.IsDistributionList = true;
+
+            logger.InfoFormat("UserList with {0} entires", userList.Count);
+
+            if (!User.IsInRole("SysAdmin"))
+            {
+                SendMail(userList, model);
+            }
+
+            return View("ReceiverList", userList);
         }
 
 
@@ -832,11 +802,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
-        public ActionResult Curriculum()
+        public ActionResult Curriculum(Guid id)
         {
-            var org = GetMyOrganisation();
-
-
+            var org = GetOrganisation(id);
 
             ViewBag.UserRight = GetUserRight();
 
@@ -903,9 +871,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult Curricula()
+        public ActionResult Curricula(Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
             ViewBag.UserRight = GetUserRight();
 

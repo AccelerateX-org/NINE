@@ -44,6 +44,16 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public DateTime End { get; set; }
 
+        /// <summary>
+        /// virtuelle Präsenz
+        /// </summary>
+        public bool? IsVirtual { get; set; }
+
+        /// <summary>
+        /// Physische Präsenz
+        /// </summary>
+        public bool? IsRealWorld { get; set; }
+
         public virtual Activity Activity { get; set; }
 
         public virtual Occurrence Occurrence { get; set; }

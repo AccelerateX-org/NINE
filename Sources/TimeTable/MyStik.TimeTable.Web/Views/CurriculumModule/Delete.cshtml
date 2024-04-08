@@ -1,0 +1,17 @@
+﻿@model MyStik.TimeTable.Data.CurriculumModule
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <a href="@Url.Action("DeleteConfirmed", "CurriculumModule", new { id = Model.Id })" class="btn btn-danger" aria-current="true">
+                    <i class="bi bi-trash"></i> Ja, ich will das Modul endgültig löschen
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

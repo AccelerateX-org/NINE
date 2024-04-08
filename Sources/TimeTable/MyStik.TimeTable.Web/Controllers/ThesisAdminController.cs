@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Linq;
@@ -476,7 +477,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id // Student zur Fakultät gehörend
-            ).ToList();
+            ).Include(thesis => thesis.Student).ToList();
 
             var model = new List<ThesisStateModel>();
 
@@ -1293,6 +1294,39 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+        public ActionResult DeleteAll(Guid orgId)
+        {
+            ViewBag.OrgId = orgId;
+            return View();
+        }
+
+        public ActionResult DeleteAllConfirmed(Guid orgId)
+        {
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == orgId // Student zur Fakultät gehörend
+            ).Include(thesis => thesis.Advisors).Include(thesis1 => thesis1.Supervisors).ToList();
+
+            foreach (var thesis in theses)
+            {
+                foreach (var advisor in thesis.Advisors.ToList())
+                {
+                    Db.Advisors.Remove(advisor);
+                }
+
+                foreach (var supervisor in thesis.Supervisors.ToList())
+                {
+                    Db.Supervisors.Remove(supervisor);
+                }
+
+                Db.Theses.Remove(thesis);
+            }
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Index", new { id = orgId });
         }
 
     }

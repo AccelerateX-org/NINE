@@ -3925,5 +3925,13 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult Copy(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+
+            return View(course);
+        }
+
     }
 }

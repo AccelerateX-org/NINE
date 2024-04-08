@@ -27,7 +27,7 @@
                     <p>@Html.Raw(Model.Date.Activity.Description)</p>
 
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Subscriptions")" class="btn btn-outline-primary">
+                        <a href="@Url.Action("Subscriptions", new {id = Model.Semester.Id})" class="btn btn-outline-primary">
                             <i class="bi bi-arrow-left"></i>
                             Zurück zu meinen Buchungen
                         </a>

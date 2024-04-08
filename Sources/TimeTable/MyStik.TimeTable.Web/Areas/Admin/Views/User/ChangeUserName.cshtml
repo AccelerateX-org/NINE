@@ -13,6 +13,7 @@
 {
     @Html.ValidationSummary(true)
     <fieldset>
+        @Html.AntiForgeryToken()
         @Html.ValidationSummary()
         @Html.HiddenFor(m => m.User.Id)
         <div class="form-group">

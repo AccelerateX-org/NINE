@@ -14,6 +14,7 @@
                 <div class="card-body">
                     @using (Html.BeginForm("StartCurriculum", null, FormMethod.Post, new { @role = "form" }))
                     {
+                        @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
                         @Html.HiddenFor(model => model.CurrId)
                         @Html.HiddenFor(model => model.SemId)

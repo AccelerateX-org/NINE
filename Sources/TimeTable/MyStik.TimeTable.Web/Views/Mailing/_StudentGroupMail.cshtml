@@ -36,44 +36,27 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="alert alert-info">
-                                <h5>Wichtige Hinweise zur Liste der Empfänger:</h5>
-                                <p>Die Mail soll an folgende Gruppen gesendet werden</p>
-                                @if (Model.GroupList != null)
-                                {
-                                    <ul>
-
-                                        @foreach (var group in Model.GroupList.Where(g => g.Group.CapacityGroup != null).OrderBy(g => g.Group.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.Group.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Group.Name))
-                                        {
-                                            <li>@group.Group.FullName</li>
-                                        }
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <div class="alert alert-danger">
-                                        <h4>Es sind keine Gruppen ausgewählt. Die Mail hat keine Empfänger!</h4>
-                                    </div>
-                                }
-                            </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            @using (Html.BeginForm("StudentGroup", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                            @using (Html.BeginForm("StudentGroup", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
                             {
+                                @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true)
                                 <fieldset>
                                     @Html.ValidationSummary()
                                     <input type="hidden" name="GroupIdList" value="@(string.Join(",", Model.GroupIdList))" />
+                                    @Html.HiddenFor(m => m.OrgId)
+                                    @Html.HiddenFor(m => m.SemId)
                                     <div class="form-group">
-                                        @Html.LabelFor(m => m.Subject, new { @class = "col-md-4 control-label" })
+                                        @Html.LabelFor(m => m.Subject, new { @class = "col-md-4 form-label" })
                                         <div class="col-md-8">
                                             @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(m => m.Body, new { @class = "col-md-4 control-label" })
+                                        @Html.LabelFor(m => m.Body, new { @class = "col-md-4 form-label" })
                                         <div class="col-md-8">
                                             @Html.TextAreaFor(m => m.Body, new { @class = "form-control", rows = "10" })
                                         </div>
@@ -105,7 +88,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-offset-4 col-md-8">
-                                            <input type="submit" value="Senden" class="btn btn-default" />
+                                            <input type="submit" value="Senden" class="btn btn-outline-primary" />
                                         </div>
                                     </div>
                                 </fieldset>

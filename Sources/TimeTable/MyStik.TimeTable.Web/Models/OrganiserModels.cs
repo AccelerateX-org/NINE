@@ -117,14 +117,11 @@ namespace MyStik.TimeTable.Web.Models
 
     public class SemesterOverviewModel
     {
-        public SemesterOverviewModel()
-        {
-            SemesterGroups = new List<SemesterGroupViewModel>();
-        }
-
         public Semester Semester { get; set; }
 
-        public List<SemesterGroupViewModel> SemesterGroups { get; }
+        public ActivityOrganiser Organiser { get; set; }
+
+        public List<ItemLabel> Labels { get; set;  }
     }
 
 

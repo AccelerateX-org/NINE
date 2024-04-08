@@ -5,59 +5,33 @@
 }
 @section styles
 {
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
 }
 
-
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>
-                        Tagesprogramm @ViewBag.Organiser.ShortName
-                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label for="myDate">Datum</label>
-                            <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-default">
-                                <i class="fa fa-calendar"></i> Als Kalender
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = ViewBag.Organiser.Id })">@ViewBag.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tagesprogramm</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
 
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Alle Aktivitäten</h4>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <label for="myDate">Datum</label>
+                    <input type="text" id="myDate" class="form-control datepicker" onchange="onDateChanged(value)" placeholder="Datum auswählen..." value="@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)">
+                    <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
                 </div>
-                <div id="roomPlan"></div>
             </div>
+            <div id="roomPlan"></div>
         </div>
     </div>
 </div>
@@ -66,14 +40,39 @@
 
 
 @section Scripts {
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
 
-        $(function() {
+        document.addEventListener('DOMContentLoaded',
+            function() {
+                initDatePickerTopLeft("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
+                onDateChanged("@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)");
+            });
 
-            loadPlan4Today();
+        function onDateChanged(value) {
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Programm")',
+                    data: {
+                        date: value,
+                        orgId: "@ViewBag.Organiser.Id.ToString()"
+                    },
+                    success: function(data, success, xhr) {
+                        $("#roomPlan").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        @*
+        $(function() {
 
 
             $('.datepicker').datepicker({
@@ -108,24 +107,7 @@
 
                     });
         });
-
-        function loadPlan4Today() {
-            $("#loading").show();
-            $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("Programm")',
-                    data: {
-                        date: null
-                    },
-                    success: function(data, success, xhr) {
-                        $("#roomPlan").html(data);
-                        $("#loading").hide();
-                    }
-                });
-
-        }
-
+            *@
 
     </script>
 }

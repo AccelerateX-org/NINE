@@ -1,0 +1,33 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CopyCourseModel
+@{
+    var course = Model.OriginCourse;
+    var subject2 = Model.Subject;
+    var courseService = new CourseService();
+    var summary = courseService.GetCourseSummary(course);
+
+}
+
+
+<div class="card-body">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="card-title">
+                @subject2.Module.Catalog.Tag @subject2.Module.Tag @course.ShortName @course.Name @Html.LabelList(course)
+            </h5>
+            <h6 class="card-subtitle">
+                @foreach (var accr in subject2.SubjectAccreditations)
+                {
+                    <span>@accr.Slot.AreaOption.Area.Curriculum.ShortName @accr.Slot.Tag</span>
+                }
+            </h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="alert alert-success">
+            <h4><i class="bi bi-check"></i> Kurs wurde ins @Model.DestSemester.Name kopiert</h4>
+        </div>
+    </div>
+</div>
+

@@ -30,31 +30,39 @@
             </div>
             <table class="table table-bordered">
                 <thead>
-                <tr>
-                    <th>Bezeichnung</th>
-                    <th>Zeitraum</th>
-                    <th>Bemerkung</th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th>Zeitraum</th>
+                        <th>Ebene</th>
+                        <th>Art</th>
+                        <th>Bezeichnung</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
                 @foreach (var item in Model.Dates.OrderBy(x=>x.From))
                 {
                     <tr>
-                        <td>@item.Description</td>
                         <td>@Html.TimeSpan(item)</td>
-
-                        @if (item.HasCourses == false)
+                        @if (item.Organiser == null)
                         {
-                        <td> <i>(Vorlesungsfrei)</i></td>
+                            <td>hochschulweit</td>
                         }
                         else
                         {
-                            <td> </td>
+                            <td>@item.Organiser.ShortName</td>
                         }
+                        @if (item.HasCourses == false)
+                        {
+                            <td> <i>(Vorlesungsfrei)</i></td>
+                        }
+                        else
+                        {
+                            <td>mit Lehrveranstaltungen</td>
+                        }
+                        <td>@item.Description</td>
                         <td>
                             @Html.ActionButton("fa-pencil text-danger", "bearbeiten", "EditDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                            @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "Semester", new {id = item.Id}, new { @class = "btn btn-default btn-xs text-danger"})
+                            @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs text-danger" })
                         </td>
                     </tr>
                 }

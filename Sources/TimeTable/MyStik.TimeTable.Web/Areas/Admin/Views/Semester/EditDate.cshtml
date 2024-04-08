@@ -19,6 +19,7 @@
                 @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                 {
                     <fieldset>
+                        @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true)
                         @Html.HiddenFor(m => m.SemesterId)
                         @Html.HiddenFor(m => m.DateId)
@@ -51,32 +52,32 @@
 
                         <div class="checkbox">
                             @Html.CheckBoxFor(m => m.HasCourses)
-                            
+
                             <label for="HasCourses">Vorlesungszeit</label>
                         </div>
 
                         <div class="checkbox">
                             @Html.CheckBoxFor(m => m.Wichtig)
-                            
+
                             <label for="Wichtig">Ist wichtig</label>
                         </div>
 
                         <div class="checkbox">
                             @Html.CheckBoxFor(m => m.Eintaegig)
-                            
+
                             <label for="Eintaegig">Eintaegig</label>
                         </div>
 
                         <div class="checkbox">
                             @Html.CheckBoxFor(m => m.Terminstehtnochnichtfest)
-                         
+
                             <label for="Terminstehtnochnichtfest">Termin steht noch nicht fest</label>
                         </div>
 
 
                         <div class="form-group">
                             <div class="col-md-offset-4 col-md-10">
-                                <input type="submit" value="übernehmen" class="btn btn-success" />
+                                <input type="submit" value="übernehmen" class="btn btn-success"/>
                             </div>
                         </div>
                     </fieldset>

@@ -1,0 +1,91 @@
+﻿@model MyStik.TimeTable.Web.Models.LecturerSummaryModel
+@{
+    // Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Sprechstunden";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabDates').DataTable(
+                {
+                    "paging": false,
+                    "columnDefs": [
+                        {
+                            "type": "de_time",
+                            "targets": [1, 2]
+                        }],
+                    "order": [[0, 'asc']]
+                }
+            );
+        });
+
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Meine Sprechstunden</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        @foreach (var member in Model.Memberships)
+                        {
+                            <a class="btn btn-outline-primary" href="@Url.Action("Create", "OfficeHour", new {semId=ViewBag.ThisSemester.Id, memberId = member.Id} )"><i class="bi bi-folder-plus"></i> @ViewBag.ThisSemester.Name (@member.ShortName / @member.Organiser.ShortName)</a>
+                        }
+                    </div>
+                    <div class="btn-group">
+                        @foreach (var member in Model.Memberships)
+                        {
+                            if (ViewBag.NextSemester != null)
+                            {
+                                <a class="btn btn-outline-primary" href="@Url.Action("Create", "OfficeHour", new {semId = ViewBag.NextSemester.Id, memberId = member.Id})"><i class="bi bi-folder-plus"></i> @ViewBag.NextSemester.Name (@member.ShortName / @member.Organiser.ShortName)</a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <table id="tabDates" class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Besitzer</th>
+                        <th>Semester</th>
+                        <th>Gesamtzahl Termine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var date in Model.OfficeHours)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("OfficeHour", "Lecturer", new {id = date.OfficeHour.Id})">@date.OfficeHour.Name</a></td>
+                            <td>
+                                @foreach (var owner in date.OfficeHour.Owners)
+                                {
+                                    <div>@owner.Member.ShortName</div>
+                                }
+                            </td>
+                            <td>@date.OfficeHour.Semester.Name</td>
+                            <td>@date.OfficeHour.Dates.Count</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

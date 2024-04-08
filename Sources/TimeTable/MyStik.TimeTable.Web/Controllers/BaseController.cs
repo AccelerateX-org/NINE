@@ -248,16 +248,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
                     // member ist Modulverantwortlicher
-                    /*
-                    var modules = Db.CurriculumModules.Where(x =>
-                        x.MV.Id == member.Id && 
-                        x.ModuleCourses.Any(c => c.Nexus.Any(n => n.Course.Id == activity.Id))).ToList();
-
-                    if (modules.Any())
+                    if (activity is Course)
                     {
-                        userRight.IsHost = true;
+                        var course = activity as Course;
+                        foreach (var teaching in course.SubjectTeachings)
+                        {
+                            // Modulverantwortlicher
+                            var isMV = teaching.Subject.Module.ModuleResponsibilities.Any(x => x.Member.Id == member.Id);
+                            if (isMV)
+                            {
+                                userRight.IsOwner = true;
+                            }
+
+                            var isCV = teaching.Subject.Module.Catalog.CatalogResponsibilities.Any(x => x.Member.Id == member.Id);
+                            if (isCV)
+                            {
+                                userRight.IsOwner = true;
+                            }
+                        }
                     }
-                    */
                 }
                 else
                 {

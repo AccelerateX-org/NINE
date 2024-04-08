@@ -39,6 +39,7 @@
                 <div class="panel-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal", @role = "form"}))
                     {
+                        @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
                         @Html.HiddenFor(m => m.Student.Id)
                     <fieldset>

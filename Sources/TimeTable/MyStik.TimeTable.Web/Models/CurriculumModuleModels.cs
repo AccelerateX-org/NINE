@@ -274,4 +274,17 @@ namespace MyStik.TimeTable.Web.Models
 
         public ActivityOrganiser Organiser { get; set; }
     }
+
+    public class ModuleCopyModel
+    {
+        public CurriculumModule Module { get; set; }
+
+        public Semester SourceSemester { get; set; }
+
+        public Semester DestSemester { get; set; }
+
+        public Semester BackSemester { get; set; }
+
+    }
+
 }

@@ -38,6 +38,8 @@ namespace MyStik.TimeTable.Data
         [Display(Name = "Beschreibung")]
         public string Description { get; set; }
 
+        public string Comment { get; set; }
+
         /// <summary>
         /// wird unterschiedlich verwendet
         /// Course: "gesperrt"

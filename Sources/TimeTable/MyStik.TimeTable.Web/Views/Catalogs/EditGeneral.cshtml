@@ -12,6 +12,8 @@
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
+
                     @Html.HiddenFor(m => m.catalogId)
                     <div class="row">
                         <label for="Tag" class="col-sm-2 col-form-label">Tag (muss innerhalb der Organisation eindeutig sein)</label>

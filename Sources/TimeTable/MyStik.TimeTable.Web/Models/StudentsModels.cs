@@ -203,6 +203,14 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string Email { get; set; }
 
+        public string CurrName { get; set; }
+
+        public string CourseName { get; set; }
+
+        public string SemesterName { get; set; }
+
+        public string StateName { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

@@ -19,6 +19,7 @@
                 </div>
                 @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
+                    @Html.AntiForgeryToken()
                     @Html.HiddenFor(m => m.Stage.Id)
                     <div class="form-group row">
                         <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>

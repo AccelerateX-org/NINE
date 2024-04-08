@@ -12,6 +12,7 @@
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
                     @Html.HiddenFor(m => m.Id)
                     <div class="form-group row">
                         <div class="col-sm-12">

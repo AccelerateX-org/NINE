@@ -164,12 +164,12 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var alumni = Db.Alumnae.SingleOrDefault(x => x.Id == model.Id);
 
-            if (alumni != null &&
-                alumni.CodeExpiryDateTime >= DateTime.Now)
+            if (alumni != null)
             {
                 var org = Db.Organisers.SingleOrDefault(x => x.Id == model.OrgId);
                 var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
 
+                alumni.Email = model.Email;
                 alumni.Gender = model.Gender;
                 alumni.Title = model.Title;
                 alumni.FirstName = model.FirstName;

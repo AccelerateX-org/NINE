@@ -30,6 +30,7 @@
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                     {
                         <fieldset>
+                            @Html.AntiForgeryToken()
                             @Html.ValidationSummary()
                             @Html.HiddenFor(m => m.ActivityId)
                             @Html.HiddenFor(m => m.ActivityDateId)

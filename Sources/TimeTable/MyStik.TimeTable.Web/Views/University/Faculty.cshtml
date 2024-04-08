@@ -33,110 +33,114 @@
                 <li class="breadcrumb-item active" aria-current="page">@Model.ShortName</li>
             </ol>
         </nav>
-        <div class="row">
-            <div class="col-sm-6 col-md-3">
-                <div class="card border-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">
-                            <i class="bi bi-book"></i><br />
-                            Angebote
-                        </h5>
-                    </div>
-                    <div class="list-group">
-                        @if (!isStudent)
-                        {
-                            <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
-                            <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
-                        }
-                        <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
-                        @if (nSem != null)
-                        {
-                            <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = nSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @nSem.Name</a>
-                        }
-                        <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = cSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @cSem.Name</a>
-                        <a href="@Url.Action("Organiser", "Events", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungsverzeichnis</a>
+    </div>
+</div>
 
-                        @if (!isStudent)
-                        {
-                            <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action">Newsletter</a>
-                        }
-                    </div>
-                </div>
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-center">
+                    <i class="bi bi-book"></i><br />
+                    Angebote
+                </h5>
             </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card border-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">
-                            <i class="bi bi-building"></i><br/>
-                            Räume
-                        </h5>
-                    </div>
-                    <div class="list-group">
-                        @if (!isStudent)
-                        {
-                            <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumreservierungen</a>
-                            <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Raumverzeichnis</a>
-                            <a href="@Url.Action("LookupDate", "Room", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumsuche</a>
-                            <a href="@Url.Action("Reports", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Auswertungen und Berichte</a>
-                            <a href="@Url.Action("Today", "Activity", new { id = Model.Id })" class="list-group-item list-group-item-action">Tagesprogramm</a>
-                            <a href="@Url.Action("DailyRota", "Activity", new {id=Model.Id})" class="list-group-item list-group-item-action">Raumbelegungen</a>
-                            <a href="@Url.Action("Index", "Advertisements", new {id = Model.Id})" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
-                            <a href="#" class="list-group-item list-group-item-action disabled">Infoscreens</a>
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card border-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">
-                            <i class="bi bi-people"></i><br/>
-                            Personen
-                        </h5>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Organiser", "Lecturer", new {id=Model.Id})" class="list-group-item list-group-item-action">Lehrende</a>
-                        @if (!isStudent)
-                        {
-                            <a href="@Url.Action("Index", "Students", new {id = Model.Id})" class="list-group-item list-group-item-action">Studierende</a>
-                            <a href="@Url.Action("List", "Alumni", new {id = Model.Id})" class="list-group-item list-group-item-action">Alumni</a>
-                            <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Externe Partner</a>
-                            <a href="@Url.Action("Index", "Autonomy", new {id = Model.Id})" class="list-group-item list-group-item-action">Gremien</a>
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card border-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">
-                            <i class="bi bi-gear"></i><br/>
-                            Workflows
-                        </h5>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action">Abschlussarbeiten</a>
-                        <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
-                        @if (!isStudent)
-                        {
-                            <a href="@Url.Action("CreateCoursePortal", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
-                            <a href="@Url.Action("CreateEvent", "Event", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltung anlegen</a>
-                            <a href="@Url.Action("Index", "InternshipAdmin", new { id = Model.Id })" class="list-group-item list-group-item-action disabled">Praxissemester</a>
-                            <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>
-                            <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
-                            <a href="@Url.Action("Index", "ScriptOrders", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>
-                            <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action">Mailverteiler</a>
-                            <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action">Rechte & Rollen</a>
-                        }
-                        else
-                        {
+            <div class="list-group">
+                @if (!isStudent)
+                {
+                    <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
+                    <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
+                }
+                <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
+                @if (nSem != null)
+                {
+                    <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = nSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @nSem.Name</a>
+                }
+                <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = cSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @cSem.Name</a>
+                <a href="@Url.Action("Organiser", "Events", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungsverzeichnis</a>
 
-                        }
-                    </div>
-                </div>
+                @if (!isStudent)
+                {
+                    <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action">Newsletter</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-center">
+                    <i class="bi bi-building"></i><br/>
+                    Räume
+                </h5>
+            </div>
+            <div class="list-group">
+                @if (!isStudent)
+                {
+                    <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumreservierungen</a>
+                    <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Raumverzeichnis</a>
+                    <a href="@Url.Action("LookupDate", "Room", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumsuche</a>
+                    <a href="@Url.Action("Reports", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Auswertungen und Berichte</a>
+                    <a href="@Url.Action("Today", "Activity", new { id = Model.Id })" class="list-group-item list-group-item-action">Tagesprogramm</a>
+                    <a href="@Url.Action("DailyRota", "Activity", new {id=Model.Id})" class="list-group-item list-group-item-action">Raumbelegungen</a>
+                    <a href="@Url.Action("Index", "Advertisements", new {id = Model.Id})" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
+                    <a href="#" class="list-group-item list-group-item-action disabled">Infoscreens</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-center">
+                    <i class="bi bi-people"></i><br/>
+                    Personen
+                </h5>
+            </div>
+            <div class="list-group">
+                <a href="@Url.Action("Organiser", "Lecturer", new {id=Model.Id})" class="list-group-item list-group-item-action">Lehrende</a>
+                @if (!isStudent)
+                {
+                    <a href="@Url.Action("Index", "Students", new {id = Model.Id})" class="list-group-item list-group-item-action">Studierende</a>
+                    <a href="@Url.Action("List", "Alumni", new {id = Model.Id})" class="list-group-item list-group-item-action">Alumni</a>
+                    <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Externe Partner</a>
+                    <a href="@Url.Action("Index", "Autonomy", new {id = Model.Id})" class="list-group-item list-group-item-action">Gremien</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-center">
+                    <i class="bi bi-gear"></i><br/>
+                    Workflows
+                </h5>
+            </div>
+            <div class="list-group">
+                <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action">Abschlussarbeiten</a>
+                <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
+                @if (!isStudent)
+                {
+                    <a href="@Url.Action("CreateCoursePortal", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
+                    <a href="@Url.Action("CreateEvent", "Event", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltung anlegen</a>
+                    <a href="@Url.Action("Index", "InternshipAdmin", new { id = Model.Id })" class="list-group-item list-group-item-action disabled">Praxissemester</a>
+                    <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>
+                    <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
+                                                                                                                                  @*
+                    <a href="@Url.Action("Index", "ScriptOrders", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>
+                                                                                                                                      *@
+                    <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action">Mailverteiler</a>
+                    <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action">Rechte & Rollen</a>
+                }
+                else
+                {
+
+                }
             </div>
         </div>
     </div>
 </div>
+
 
 
