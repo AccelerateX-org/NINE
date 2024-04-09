@@ -54,7 +54,7 @@
 
 
 
-                    if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                    if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                     {
                         <div class="btn-group pull-right" role="group">
                             @Ajax.ActionButton("fa-recycle", "reaktivieren", "ReactivateDate2", "Course",
@@ -177,7 +177,7 @@
                     <td>
                         @if (date.End >= DateTime.Now)
                         {
-                            if (Model.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
+                            if (Model.IsInternal && !(ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner))
                             {
                                 <div class="btn-group pull-right" role="group">
                                     @Html.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
@@ -188,7 +188,7 @@
                             }
 
 
-                            if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                            if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                             {
                                 <div class="btn-group pull-right" role="group">
                                     @Ajax.ActionButton("fa-times", "absagen", "CancelDate2", "Course",
@@ -211,7 +211,7 @@
                         }
                         else
                         {
-                            if (ViewBag.UserRight.IsCourseAdmin)
+                            if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                             {
                                 @Html.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
                                     new { dateId = date.Id },

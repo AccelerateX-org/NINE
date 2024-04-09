@@ -1,12 +1,12 @@
 ﻿@model MyStik.TimeTable.Web.Models.CourseLabelViewModel
 @{
-    ViewBag.Title = "Labels auswählen";
+    ViewBag.Title = "Kohorten auswählen";
 }
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Zuordnung Labels</h4>
+                <h4>Zuordnung Kohorten</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -20,8 +20,20 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <h5>Hinweis zur Verwendung</h5>
+                            <ol>
+                                <li>Einrichtung auswählen</li>
+                                <li>Studiengang auswählen</li>
+                                <li>Die Liste der aufgeführten Kohorten enthält dann alle für diesen Studiengang verfügbaren Kohorten bezogen auf die drei Ebenen Studiengang, Einrichtung, Hochschule.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-5">
-                        <h5>Aus diesem Katalogen kommen die Labels</h5>
+                        <h5>Aus diesem Katalogen kommen die Kohorten</h5>
 
                         <div class="row">
                             <div class="col-4">Einrichtung</div>

@@ -3,7 +3,7 @@
 @using MyStik.TimeTable.Data
 
 @{
-    ViewBag.Title = "Responsibility";
+    ViewBag.Title = "Verantwortungsbereich";
 
 
     var semester = Model.CurrentSemester.Semester;
@@ -104,14 +104,37 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Übernehmen aus
+                                        Planungsaktion
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><h6 class="dropdown-header">Übernehmen aus</h6></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = ViewBag.PrevSemester.Id, destSemId = Model.CurrentSemester.Semester.Id, backSemId = Model.CurrentSemester.Semester.Id })">@ViewBag.PrevSemester.Name (letztes Semester)</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = ViewBag.YearSemester.Id, destSemId = Model.CurrentSemester.Semester.Id, backSemId = Model.CurrentSemester.Semester.Id })">@ViewBag.YearSemester.Name (vorletzes Semester)</a></li>
                                         <li><h6 class="dropdown-header">Neues Kursangebot</h6></li>
+                                        @*
                                         <li><a class="dropdown-item" href="@Url.Action("CreateCourse", "CurriculumModule", new { subjectId = subject.Id, destSemId = ViewBag.CurrentSemester.Id })">@ViewBag.CurrentSemester.Name (aktuelles Semester)</a></li>
+                                        *@
+                                            
+                                        @if (subject.SubjectAccreditations.Any())
+                                        {
+                                            foreach (var subjectAccreditation in subject.SubjectAccreditations)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("CreateCourseSubject", "Course", new { subjectId = subject.Id, semId = ViewBag.CurrentSemester.Id, orgId = subjectAccreditation.Slot.AreaOption.Area.Curriculum.Organiser.Id })" class="dropdown-item">
+                                                        @subject.Name (@subject.TeachingFormat.Tag): in @subjectAccreditation.Slot.AreaOption.Area.Curriculum.ShortName
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("CreateCourseSubject", "Course", new { subjectId = subject.Id, semId = ViewBag.CurrentSemester.Id, orgId = subject.Module.Catalog.Organiser.Id })" class="dropdown-item">
+                                                    @subject.Name (@subject.TeachingFormat.Tag): OHNE Studiengang
+                                                </a>
+                                            </li>
+                                        }
+
                                     </ul>
                                 </div>                               
                             </td>

@@ -2912,7 +2912,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             }
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, course);
 
             return PartialView("_SubscriptionProfile", model);
         }
@@ -3698,7 +3698,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             }
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, course);
 
 
             return View(model);
@@ -3745,7 +3745,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CourseLabelViewModel()
             {
                 Course = course,
-                Organisers = Db.Organisers.Where(x => x.LabelSet != null).OrderBy(x => x.ShortName).ToList()
+                Organisers = Db.Organisers.Where(x => x.LabelSet != null && !x.IsStudent && x.Curricula.Any()).OrderBy(x => x.ShortName).ToList()
             };
 
             return View(model);
@@ -3878,7 +3878,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 projected = course.IsProjected ? 1 : 0
             };
 
-            ViewBag.UserRight = GetUserRight(course.Organiser);
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, course);
 
             return View(model);
         }

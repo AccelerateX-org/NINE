@@ -8,7 +8,7 @@
 @Html.Partial("_CourseSummaryHeader", Model.Summary)
 
 
-@if (Model.Course.IsInternal)
+@if (Model.Course.IsInternal && !(ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
 {
     <div class="row">
         <div class="col-md-12">
@@ -33,7 +33,7 @@
                         <div class="btn-group me-2">
                             <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
                         </div>
-                        @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                        @if (!Model.Summary.Course.IsInternal || (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
                         {
                             <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
                                 <i class="fa fa-plus-circle"></i> Termin anlegen

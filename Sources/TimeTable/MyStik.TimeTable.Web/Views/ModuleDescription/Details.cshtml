@@ -28,6 +28,7 @@
 
     var slots = (from subject in Model.ModuleSubjects.ToList() from subjectAccreditation in subject.SubjectAccreditations.ToList() select subjectAccreditation.Slot).Distinct().ToList();
 
+    var showMenu = ViewBag.UserRight.IsCurriculumAdmin || itsMe;
 
 }
 

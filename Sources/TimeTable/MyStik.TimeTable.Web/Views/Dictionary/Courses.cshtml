@@ -96,9 +96,9 @@
                     <tr>
                         <th>Kurzname</th>
                         <th>Titel</th>
-                        <th>Fach</th>
                         <th>Module</th>
                         <th>Kohorten</th>
+                        <th>Art</th>
                         <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
                     </tr>
@@ -126,18 +126,12 @@
                                     <td>
                                         @foreach (var teaching in teachings)
                                         {
-                                            <div>@teaching.Subject.Name</div>
-                                        }
-                                    </td>
-                                    <td>
-                                        @foreach (var teaching in teachings)
-                                        {
                                             var accreditations = teaching.Subject.SubjectAccreditations.ToList();
                                             if (accreditations.Any())
                                             {
                                                 foreach (var accreditation in accreditations)
                                                 {
-                                                    <div>@accreditation.Slot.AreaOption.Area.Curriculum.ShortName: @accreditation.Slot.Tag</div>
+                                                    <div>@accreditation.Slot.AreaOption.Area.Curriculum.ShortName: @accreditation.Slot.Tag (@teaching.Subject.Name)</div>
                                                 }
                                             }
                                         }
@@ -146,12 +140,27 @@
                                 else
                                 {
                                     <td></td>
-                                    <td></td>
                                 }
 
                                 <td>
                                     @Html.LabelList(c.Course)
                                 </td>
+                                @if (c.IsPureBlock())
+                                {
+                                    <td>Blockkurs</td>
+                                }
+                                else if (c.IsPureRegular())
+                                {
+                                    <td>Regelmäßig</td>
+                                }
+                                else if (c.IsPureWeekEndCourse())
+                                {
+                                    <td>Wochenendkurs</td>
+                                }
+                                else
+                                {
+                                    <td>Einzeltermine</td>
+                                }
                                 <td>
                                     @Html.RoomList(c.Rooms)
                                 </td>

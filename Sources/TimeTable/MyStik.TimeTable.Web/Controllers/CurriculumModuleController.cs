@@ -359,7 +359,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             try
             {
-
                 var planCourse = new Course
                 {
                     ShortName = course.ShortName,
@@ -608,6 +607,121 @@ namespace MyStik.TimeTable.Web.Controllers
                                 // es werden keine Termine angelegt, wenn es kein Segment gibt
                             }
                         }
+                    }
+                    else if (summary.IsPureBlock())
+                    {
+                        var ordereDates = course.Dates.OrderBy(x => x.Begin).ToList();
+
+                        var segment = sourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                                           (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                                                                           x.From.Date.DayOfWeek == DayOfWeek.Monday &&
+                                                                           x.To.Date.DayOfWeek == DayOfWeek.Saturday &&
+                                                                           x.From.Date == ordereDates.First().Begin.Date &&
+                                                                           (x.To.Date == ordereDates.Last().Begin.Date || x.To.Date == ordereDates.Last().Begin.AddDays(1).Date));
+
+                        if (segment != null)
+                        {
+                            var planSegment = destSemester.Dates.FirstOrDefault(x =>
+                                x.HasCourses &&
+                                (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                                x.Description.Equals(segment.Description));
+
+                            if (planSegment != null)
+                            {
+                                var room = summary.GetFavoriteRoom();
+                                var host = summary.GetFavoriteHost();
+
+                                // auf den richtigen EntityTracker holen
+                                if (room != null)
+                                {
+                                    var r = Db.Rooms.SingleOrDefault(x => x.Id == room.Id);
+                                    favRooms.Add(r);
+                                }
+
+                                if (host != null)
+                                {
+                                    var h = Db.Members.SingleOrDefault(x => x.Id == host.Id);
+                                    favHosts.Add(h);
+                                }
+
+
+                                var nDates = course.Dates.Count();
+
+
+                                var refDate = course.Dates.First();
+
+                                var occDate = planSegment.From.Date;
+                                var lastDate = occDate.AddDays(nDates - 1);
+
+
+                                //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+                                var numOcc = 0;
+                                while (occDate <= lastDate)
+                                {
+                                    var isVorlesung = true;
+                                    foreach (var sd in destSemester.Dates)
+                                    {
+                                        // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                                        if (sd.From.Date <= occDate.Date &&
+                                            occDate.Date <= sd.To.Date &&
+                                            sd.HasCourses == false)
+                                        {
+                                            isVorlesung = false;
+                                        }
+                                    }
+
+                                    if (isVorlesung)
+                                    {
+                                        var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day,
+                                            refDate.Begin.Hour,
+                                            refDate.Begin.Minute, refDate.Begin.Second);
+                                        var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day,
+                                            refDate.End.Hour,
+                                            refDate.End.Minute, refDate.End.Second);
+
+                                        var occ = new ActivityDate
+                                        {
+                                            Activity = planCourse,
+                                            Begin = ocStart,
+                                            End = ocEnd,
+                                            Occurrence = new Occurrence
+                                            {
+                                                Capacity = -1,
+                                                IsAvailable = true,
+                                                FromIsRestricted = false,
+                                                UntilIsRestricted = false,
+                                                IsCanceled = false,
+                                                IsMoved = false,
+                                                UseGroups = false,
+                                            },
+                                        };
+
+
+                                        foreach (var favRoom in favRooms)
+                                        {
+                                            occ.Rooms.Add(favRoom);
+                                        }
+
+                                        foreach (var favHost in favHosts)
+                                        {
+                                            occ.Hosts.Add(favHost);
+                                        }
+
+                                        planCourse.Dates.Add(occ);
+                                        Db.ActivityDates.Add(occ);
+                                        numOcc++;
+                                    }
+
+                                    occDate = occDate.AddDays(1);
+                                }
+
+                            }
+                            else
+                            {
+                                // es werden keine Termine angelegt, wenn es kein Segment gibt
+                            }
+                        }
+
                     }
                 }
 

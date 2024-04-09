@@ -8,6 +8,7 @@
     }
 
     ViewBag.Title = "Vorlesungsverzeichnis";
+
 }
 
 
@@ -72,17 +73,38 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card">
+        <div class="list-group mb-3">
+            <div class="list-group-item list-group-item-light">
+                <h4>Allgemein</h4>
+            </div>
             <div class="list-group">
-                <div class="list-group-item list-group-item-light">
-                    <h4>Allgemein</h4>
-                </div>
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Semester", "Courses", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
                     Das komplette Lehrangebot in einer Tabelle
                 </a>
                 <div class="list-group-item list-group-item-action disabled">
                     Beraten lassen mit dem Chatbot Buddy
                 </div>
+            </div>
+        </div>
+        <div class="list-group mb-3">
+            <div class="list-group-item list-group-item-light">
+                <h4>Studiengangübergreifende Angebote</h4>
+            </div>
+            <div class="list-group">
+               
+                @{
+                    var inst = Model.Organiser.Institution;
+                    if (inst != null && inst.LabelSet != null)
+                    {
+                        foreach (var label in inst.LabelSet.ItemLabels.OrderBy(x => x.Name))
+                        {
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, labelId = label.Id })">
+                                @label.Name
+                            </a>
+                        }
+                    }
+                }
+
             </div>
         </div>
     </div>

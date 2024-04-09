@@ -90,41 +90,6 @@
                                     }
                                 }
                             </div>
-                                @{
-                                    var inst = Model.Curriculum.Organiser.Institution;
-                                    if (inst != null && inst.LabelSet != null)
-                                    {
-                                        <div class="row">
-                                            @foreach (var label in inst.LabelSet.ItemLabels.OrderBy(x => x.Name))
-                                            {
-                                                var nCourses = 0;
-                                                if (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null)
-                                                {
-                                                    nCourses = db.Activities.OfType<Course>()
-                                                        .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
-                                                }
-                                                else
-                                                {
-                                                    nCourses = db.Activities.OfType<Course>()
-                                                        .Count(x => x.Organiser.Id == Model.Organiser.Id && x.Semester.Id == Model.Semester.Id && !x.IsProjected && x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
-                                                }
-
-                                                if (nCourses > 0)
-                                                {
-                                                    <div class="col-2">
-                                                        <a href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = Model.Curriculum.Id, labelId = label.Id })"
-                                                           class="btn btn-outline-secondary d-flex justify-content-between align-items-start">
-                                                            <div class="ms-2 me-auto">
-                                                                <div class="fw-bold">@label.Name</div>
-                                                            </div>
-                                                            <span class="badge bg-secondary rounded-pill">@nCourses</span>
-                                                        </a>
-                                                    </div>
-                                                }
-                                            }
-                                        </div>
-                                    }
-                                }
                         </div>
                     </div>
                 </div>

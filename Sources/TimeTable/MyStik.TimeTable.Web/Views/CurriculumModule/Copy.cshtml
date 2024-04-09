@@ -32,15 +32,15 @@
                     <p>Was geht</p>
                     <ul>
                         <li>Der Ablauf der Bedienung</li>
-                        <li>Vorschau für wöchentlich stattfindende Kurse</li>
+                        <li>Vorschau und Anlegen der Termine für wöchentlich stattfindende Kurse mit 1 Termin pro Woche und Blockkurse (Mo-Fr/Sa)</li>
+                        <li>Kurs ohne Termin anlegen</li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <p>Was geht noch nicht</p>
                     <ul>
-                        <li>Speichern, d.h. anlegen der Kurse</li>
-                        <li>Vorschau für Blockkurse (Mo-Fr)</li>
-                        <li>Vorschau für Wochenendkurse (Fr-Sa)</li>
+                        <li>Vorschau und Anlegen von Terminen für Wochenendkurse (Fr-Sa)</li>
+                        <li>Vorschau und Anlegen von Terminen für wöchentlich stattfindende Kurse mit mehreren Terminen pro Woche</li>
                     </ul>
                 </div>
             </div>
@@ -95,12 +95,12 @@
         List<Room> favRooms = new List<Room>();
         List<OrganiserMember> favHosts = new List<OrganiserMember>();
 
+        SemesterDate segment = null;
 
         if (summary.IsPureRegular())
         {
-
             var ordereDates = course.Dates.OrderBy(x => x.Begin).ToList();
-            var segment = Model.SourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+            segment = Model.SourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
                                                                          (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
                                                                          x.From.Date <= ordereDates.First().Begin.Date &&
                                                                          ordereDates.Last().Begin.Date <= x.To.Date);
@@ -196,6 +196,106 @@
                 }
             }
         }
+        else if (summary.IsPureBlock())
+        {
+            var ordereDates = course.Dates.OrderBy(x => x.Begin).ToList();
+            segment = Model.SourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                                     (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                                                                     x.From.Date.DayOfWeek == DayOfWeek.Monday &&
+                                                                     x.To.Date.DayOfWeek == DayOfWeek.Saturday &&
+                                                                     x.From.Date == ordereDates.First().Begin.Date &&
+                                                                     (x.To.Date == ordereDates.Last().Begin.Date || x.To.Date == ordereDates.Last().Begin.AddDays(1).Date));
+
+
+            if (segment != null)
+            {
+                var planSegment = Model.DestSemester.Dates.FirstOrDefault(x =>
+                    x.HasCourses &&
+                    (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                    x.Description.Equals(segment.Description));
+
+                if (planSegment != null)
+                {
+                    var room = summary.GetFavoriteRoom();
+                    var host = summary.GetFavoriteHost();
+
+                    if (room != null)
+                    {
+                        favRooms.Add(room);
+                    }
+
+                    if (host != null)
+                    {
+                        favHosts.Add(host);
+                    }
+
+                    var nDates = course.Dates.Count();
+
+
+                    var refDate = course.Dates.First();
+
+                    var occDate = planSegment.From.Date;
+                    var lastDate = occDate.AddDays(nDates - 1);
+
+
+                    //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+                    int numOcc = 0;
+                    while (occDate <= lastDate)
+                    {
+                        bool isVorlesung = true;
+                        foreach (var sd in Model.DestSemester.Dates)
+                        {
+                            // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                            if (sd.From.Date <= occDate.Date &&
+                                occDate.Date <= sd.To.Date &&
+                                sd.HasCourses == false)
+                            {
+                                isVorlesung = false;
+                            }
+                        }
+
+                        if (isVorlesung)
+                        {
+                            var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day, refDate.Begin.Hour,
+                                refDate.Begin.Minute, refDate.Begin.Second);
+                            var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day, refDate.End.Hour,
+                                refDate.End.Minute, refDate.End.Second);
+
+                            var occ = new ActivityDate
+                            {
+                                Id = Guid.NewGuid(),
+                                Begin = ocStart,
+                                End = ocEnd,
+                                Activity = planCourse,
+                                Occurrence = new Occurrence(),
+                            };
+
+
+                            foreach (var favRoom in favRooms)
+                            {
+                                occ.Rooms.Add(favRoom);
+                            }
+
+                            foreach (var favHost in favHosts)
+                            {
+                                occ.Hosts.Add(favHost);
+                            }
+
+                            planCourse.Dates.Add(occ);
+                            numOcc++;
+                        }
+
+                        occDate = occDate.AddDays(1);
+                    }
+
+                }
+                else
+                {
+                }
+            }
+
+
+        }
 
         var planSummary = courseService.GetCourseSummary(planCourse);
 
@@ -227,15 +327,9 @@
                                             <ul>
                                                 @if (summary.IsPureRegular())
                                                 {
-                                                    var ordereDates = course.Dates.OrderBy(x => x.Begin).ToList();
-                                                    var segment = Model.SourceSemester.Dates.FirstOrDefault(x => x.HasCourses &&
-                                                                                                                 (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
-                                                                                                                 x.From.Date <= ordereDates.First().Begin.Date &&
-                                                                                                                 ordereDates.Last().Begin.Date < x.To.AddDays(1).Date);
-
                                                     if (segment != null)
                                                     {
-                                                        <li>Im Abschnitt @segment.Description @course.Dates.Count Terminen <br />@Html.DateList(summary.Dates)</li>
+                                                        <li>Im Abschnitt <strong>@segment.Description</strong> @course.Dates.Count Terminen <br />@Html.DateList(summary.Dates)</li>
                                                     }
                                                     else
                                                     {
@@ -244,7 +338,14 @@
                                                 }
                                                 else if (summary.IsPureBlock())
                                                 {
-                                                    <li>Blockveranstaltung mit @course.Dates.Count Terminen</li>
+                                                    if (segment != null)
+                                                    {
+                                                        <li>Blockveranstaltung im Abschnitt <strong>@segment.Description</strong> mit @course.Dates.Count Terminen</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>Blockveranstaltung mit @course.Dates.Count Terminen</li>
+                                                    }
                                                 }
                                                 else if (summary.IsPureWeekEndCourse())
                                                 {
@@ -319,12 +420,12 @@
                                                         i++;
                                                     }
 
-                                                    var segment = Model.DestSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                    var planSegment = Model.DestSemester.Dates.FirstOrDefault(x => x.HasCourses &&
                                                                                                                (x.Organiser != null && x.Organiser.Id == planCourse.Organiser.Id) &&
                                                                                                                x.From.Date <= firstDate.Date &&
                                                                                                                lastDate.Date <= x.To.Date);
 
-                                                    if (segment != null)
+                                                    if (planSegment != null)
                                                     {
                                                         <li>Im Abschnitt @segment.Description @planCourse.Dates.Count Terminen <br />@Html.DateList(planSummary.Dates)</li>
                                                     }
@@ -335,7 +436,23 @@
                                                 }
                                                 else if (planSummary.IsPureBlock())
                                                 {
-                                                    <li>Blockveranstaltung mit @planCourse.Dates.Count Terminen @planSummary.Blocks.Count Blöcke</li>
+                                                    var ordereDates = planCourse.Dates.OrderBy(x => x.Begin).ToList();
+                                                    var planSegment = Model.DestSemester.Dates.FirstOrDefault(x => x.HasCourses &&
+                                                                                                                                         (x.Organiser != null && x.Organiser.Id == course.Organiser.Id) &&
+                                                                                                                                         x.From.Date.DayOfWeek == DayOfWeek.Monday &&
+                                                                                                                                         x.To.Date.DayOfWeek == DayOfWeek.Saturday &&
+                                                                                                                                         x.From.Date == ordereDates.First().Begin.Date &&
+                                                                                                                                         (x.To.Date == ordereDates.Last().Begin.Date || x.To.Date == ordereDates.Last().Begin.AddDays(1).Date));
+
+
+                                                    if (planSegment != null)
+                                                    {
+                                                        <li>Blockveranstaltung im Abschnitt <strong>@planSegment.Description</strong> mit @planCourse.Dates.Count Terminen</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>Blockveranstaltung mit @planCourse.Dates.Count Terminen</li>
+                                                    }
                                                 }
                                                 else if (planSummary.IsPureWeekEndCourse())
                                                 {

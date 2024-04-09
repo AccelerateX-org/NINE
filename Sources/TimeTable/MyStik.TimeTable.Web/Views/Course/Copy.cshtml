@@ -1,6 +1,13 @@
-﻿@model MyStik.TimeTable.Data.Course
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@model MyStik.TimeTable.Data.Course
 @{
     ViewBag.Title = "Lehrveranstaltung kopieren";
+
+    var modules = Model.SubjectTeachings.Select(x => x.Subject.Module).Distinct();
+    var currentSemester = Model.Semester;
+    var nextSemester = new SemesterService().GetNextSemester(currentSemester);
+
 }
 
 
@@ -22,6 +29,19 @@
                 <p class="card-text">
                     Für zukünftiges Semester Lehrveranstaltung anlegen bzw. fortschreiben. Angaben zu Modulem, Kohorten, Platzkontingenten werdem übernommen.
                 </p>
+                @foreach (var module in modules)
+                {
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Planungsaktion
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">Übertragen nach</h6></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId =currentSemester.Id, destSemId = currentSemester.Id, backSemId = currentSemester.Id })">@currentSemester.Name (aktuelle Semester)</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = currentSemester.Id, destSemId = nextSemester.Id, backSemId = currentSemester.Id })">@nextSemester.Name (nächste Semester)</a></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </div>
     </div>
