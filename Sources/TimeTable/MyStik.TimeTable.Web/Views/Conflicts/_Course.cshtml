@@ -1,0 +1,19 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Course
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.ShortName</h5>
+        <h6 class="card-subtitle">@Model.Name</h6>
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Suche nach Alternativen für</h6>
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Id })">zur Terminverwaltung des Kurses gehen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

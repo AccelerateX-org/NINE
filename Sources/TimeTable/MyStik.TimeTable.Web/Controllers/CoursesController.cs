@@ -1084,13 +1084,15 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Responsibility(Guid id)
+        public ActionResult Responsibility(Guid id, Guid? memberId)
         {
             var user = GetCurrentUser();
             var semester = SemesterService.GetSemester(id);
 
             var model = new TeachingOverviewModel();
-            var members = MemberService.GetMemberships(user.Id).ToList();
+            var members = memberId == null
+                ? MemberService.GetMemberships(user.Id).ToList()
+                : MemberService.GetMembers(memberId.Value);
 
             model.Members = members;
             model.Organisers = members.Select(x => x.Organiser).Distinct().ToList();
@@ -1110,6 +1112,12 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.CurrentSemester = currentSemester;
             ViewBag.NextSemester = nextSemester;
 
+            if (memberId != null)
+            {
+                ViewBag.MemberId = memberId.Value;
+            }
+
+            /*
             if (semester.StartCourses > DateTime.Today)
             {
                 return View("Future", model);
@@ -1118,10 +1126,10 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 return View("History", model);
             }
+            */
 
             return View(model);
         }
-
 
     }
 }

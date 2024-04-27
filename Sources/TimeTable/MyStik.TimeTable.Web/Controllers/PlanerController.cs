@@ -497,7 +497,6 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var course in coursesInTime)
             {
                 var summary = courseService.GetCourseSummary(course);
-                summary.SemesterGroup = course.SemesterGroups.FirstOrDefault();
                 summary.State = ActivityService.GetActivityState(course.Occurrence, user);
                 summary.Summary = new ActivitySummary(course);
                 summary.Lottery =
@@ -939,166 +938,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="semGroupId"></param>
-        /// <param name="topicId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult CourseListByProgram(Guid semGroupId, Guid? topicId)
-        {
-            var user = AppUser;
-            var courseService = new CourseService(Db);
 
-            var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Id == semGroupId);
-            if (semGroup == null)
-            {
-                var model = new List<CourseSummaryModel>();
-                return PartialView("_CourseList", model);
-            }
-
-
-            var allTopics = Db.SemesterTopics.Where(x => x.Activities.Any(s => s.SemesterGroups.Any(g => g.Id == semGroupId))).ToList();
-            var semester = semGroup.Semester;
-
-            if (allTopics.Any())
-            {
-                var model = new List<TopicSummaryModel>();
-
-                foreach (var topic in allTopics)
-                {
-                    var courses = topic.Activities.OfType<Course>().ToList();
-
-                    var model2 = new List<CourseSummaryModel>();
-
-
-                    foreach (var course in courses)
-                    {
-                        var summary = courseService.GetCourseSummary(course);
-
-                        summary.State = ActivityService.GetActivityState(course.Occurrence, user);
-                        summary.SemesterGroup = semGroup;
-                        summary.Summary = new ActivitySummary(course);
-
-                        summary.Lottery =
-                            Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
-
-                        model2.Add(summary);
-                    }
-
-                    model.Add(new TopicSummaryModel
-                    {
-                        Topic = topic,
-                        Courses = model2
-                    });
-
-                }
-
-                // jetzt noch die ohne Topics
-                var withoutTopic = semGroup.Activities.OfType<Course>().Where(x => !x.SemesterTopics.Any()).ToList();
-
-                if (withoutTopic.Any())
-                {
-                    var model2 = new List<CourseSummaryModel>();
-
-                    foreach (var course in withoutTopic)
-                    {
-                        var summary = courseService.GetCourseSummary(course);
-
-                        summary.State = ActivityService.GetActivityState(course.Occurrence, user);
-                        summary.SemesterGroup = semGroup;
-                        summary.Summary = new ActivitySummary(course);
-
-                        summary.Lottery =
-                            Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
-
-                        model2.Add(summary);
-                    }
-
-                    model.Add(new TopicSummaryModel
-                    {
-                        Topic = null,
-                        Courses = model2
-                    });
-                }
-
-
-                return PartialView("_CourseListByTopics", model);
-            }
-            else
-            {
-                var courses = semGroup.Activities.OfType<Course>().ToList();
-
-                var model = new List<CourseSummaryModel>();
-
-                foreach (var course in courses)
-                {
-                    var summary = courseService.GetCourseSummary(course);
-
-                    summary.State = ActivityService.GetActivityState(course.Occurrence, user);
-                    summary.SemesterGroup = semGroup;
-                    summary.Summary = new ActivitySummary(course);
-
-                    summary.Lottery =
-                        Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
-                    model.Add(summary);
-                }
-
-                return PartialView("_CourseList", model);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="orgId"></param>
-        /// <param name="semId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult CourseListByFaculty(Guid orgId, Guid semId)
-        {
-            var semester = SemesterService.GetSemester(semId);
-            var user = AppUser;
-            var courseService = new CourseService(Db);
-
-            var model = new List<CourseSummaryModel>();
-
-            var org = GetOrganiser(orgId);
-            foreach (var curriculum in org.Curricula)
-            {
-                var groups = Db.SemesterGroups
-                    .Where(g => g.Semester.Id == semId &&
-                                g.CapacityGroup.CurriculumGroup.Curriculum.Id == curriculum.Id).ToList();
-
-                foreach (var semesterGroup in groups)
-                {
-                    var courses = semesterGroup.Activities.OfType<Course>().ToList();
-
-                    foreach (var course in courses)
-                    {
-                        var summary = courseService.GetCourseSummary(course);
-
-                        summary.State = ActivityService.GetActivityState(course.Occurrence, user);
-                        summary.SemesterGroup = semesterGroup;
-                        summary.Summary = new ActivitySummary(course);
-
-                        summary.Lottery =
-                            Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
-
-
-                        model.Add(summary);
-                    }
-                }
-            }
-
-
-            return PartialView("_CourseListComplete", model);
-        }
 
 
 
@@ -1116,7 +956,6 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var course in courses)
             {
                 var summary = courseService.GetCourseSummary(course);
-                summary.SemesterGroup = course.SemesterGroups.FirstOrDefault();
                 summary.State = ActivityService.GetActivityState(course.Occurrence, user);
                 summary.Subscription = summary.State.Subscription;
                 summary.User = user;

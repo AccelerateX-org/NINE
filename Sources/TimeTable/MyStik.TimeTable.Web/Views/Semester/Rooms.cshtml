@@ -1,0 +1,153 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.SemesterViewModel
+
+@{
+    ViewBag.Title = "Raumbelegung";
+
+    var db = new TimeTableDbContext();
+
+    var sem = Model.Semester;
+    var org = Model.Organiser;
+
+    var from = sem.StartCourses.Date;
+    var until = from.AddDays(120);
+
+    var rooms = db.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == org.Id)).OrderBy(x => x.Number).ToList();
+
+
+
+
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+
+    <style>
+        .vertical-text {
+            transform: rotate(270deg);
+            transform-origin: left bottom 20;
+        }
+    </style>
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.fn.dataTable.moment('DD.MM.YYYY');
+            $.fn.dataTable.moment('(DD.MM.YYYY)');
+
+
+            $('#tabRooms').DataTable({
+                "paging": false,
+                "order": [[1, 'asc']]
+            });
+        });
+    </script>
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Semester", new {id=Model.Organiser.Id})">Semesterplanung</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Semester", new {orgId=Model.Organiser.Id, semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Raumplanung</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Raumbelegungen</h5>
+            </div>
+            <table id="tabRooms" class="table">
+                <thead>
+                    <tr style="height:100px">
+                        <th>Tag</th>
+                        <th>Datum</th>
+                        @foreach (var room in rooms)
+                        {
+                            var name = room.Number.Length < 6 ? room.Number : room.Number.Substring(0, 6);
+                            <th>
+                                <div class="vertical-text text-nowrap text-truncate">@name</div>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @while (from <= until)
+                    {
+                        var formatedDay = from.ToString("yyyy-MM-dd", new CultureInfo("de-DE"));
+                        <tr>
+                            <td>
+                                @string.Format("{0:ddd}", from)
+                            </td>
+                            <td>@from.ToShortDateString()</td>
+                            @foreach (var room in rooms)
+                            {
+                                var dates = room.Dates.Where(x => x.Begin.Date == from).ToList();
+
+                                if (!dates.Any())
+                                {
+                                    <td class="bg-success"></td>
+                                }
+                                else if (dates.Count() == 1)
+                                {
+                                    <td class="bg-success-subtle">
+                                        <a target="_blank" href="@Url.Action("Rooms", "Conflicts", new {id=room.Id, day=formatedDay})">1</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    var nConflicts = 0;
+                                    foreach (var date in dates)
+                                    {
+                                        var conflictingDates = dates.Where(x =>
+                                            x.Id != date.Id 
+                                            &&
+                                            (
+                                                    (x.End > date.Begin && x.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                                    (x.Begin >= date.Begin && x.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                                    (x.Begin <= date.Begin && x.End >= date.End)) // Veranstaltung zieht sich über gesamten Zeitraum
+                                            ).ToList();
+                                        nConflicts += conflictingDates.Count();
+                                    }
+
+                                    if (nConflicts == 0)
+                                    {
+                                        <td class="bg-success-subtle">
+                                            <a target="_blank" href="@Url.Action("Rooms", "Conflicts", new {id=room.Id, day=formatedDay})">@dates.Count()</a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="bg-warning">
+                                            <a target="_blank" href="@Url.Action("Rooms", "Conflicts", new {id=room.Id, day=formatedDay})">@dates.Count() | @nConflicts</a>
+                                        </td>
+                                    }
+                                }
+                            }
+                        </tr>
+
+                        from = from.AddDays(1);
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

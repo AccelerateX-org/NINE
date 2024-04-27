@@ -31,14 +31,32 @@
                     <div class="list-group-item">
                         <a class="btn btn-outline-primary" href="@Url.Action("CreateTeaching", new { id = Model.Id })"><i class="bi bi-link"></i> Mit Modul / Fach verknüpfen</a>
                     </div>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Modul</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     @foreach (var teaching in Model.SubjectTeachings)
                     {
-                        <a class="list-group-item list-group-item-action"
-                           href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = Model.Semester.Id })">
-                            @teaching.Subject.Module.Name (@teaching.Subject.Module.Catalog.Name)
-                        </a>
+                        <tr>
+                            <td>
+                                <a 
+                                   href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = Model.Semester.Id })">
+                                    @teaching.Subject.Module.Name (@teaching.Subject.Module.Catalog.Name)
+                                </a>
+                            </td>
+                            <td>
+                                <a class="btn btn-danger" href="@Url.Action("DeleteTeaching", new {id=teaching.Id})"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
                     }
-                </div>
+
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="col-md-6">

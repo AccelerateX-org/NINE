@@ -72,7 +72,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Details(Guid id)
+        public ActionResult Details(Guid id, string day)
         {
             var user = GetCurrentUser();
 
@@ -91,6 +91,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = GetUserRight(org);
             ViewBag.Organiser = org;
+            ViewBag.Day = day;
 
             return View(model);
         }

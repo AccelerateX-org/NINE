@@ -106,7 +106,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public SemesterGroup SemesterGroup { get; set; }
+        // public SemesterGroup SemesterGroup { get; set; }
 
         /// <summary>
         /// 
@@ -135,6 +135,12 @@ namespace MyStik.TimeTable.Web.Models
 
             }
         }
+
+        public CourseDateModel GetDefaultDate()
+        {
+            return Dates.OrderByDescending(x => x.Dates.Count).FirstOrDefault();
+        }
+
 
         /// <summary>
         /// 
@@ -414,7 +420,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public DateTime DefaultDate { get; set; }
+        public DateTime DefaultDate => Dates.First().Begin;
 
         /// <summary>
         /// Liste der konkreten Termine

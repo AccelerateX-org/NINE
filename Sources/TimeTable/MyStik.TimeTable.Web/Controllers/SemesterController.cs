@@ -99,7 +99,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SemesterDates.Add(segment);
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { orgId = org.Id, semId = sem.Id });
+            return RedirectToAction("Segments", new { orgId = org.Id, semId = sem.Id });
         }
 
         public ActionResult EditDate(Guid id)
@@ -135,7 +135,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { orgId = date.Organiser.Id, semId = date.Semester.Id });
+            return RedirectToAction("Segments", new { orgId = date.Organiser.Id, semId = date.Semester.Id });
         }
 
         public ActionResult DeleteDate(Guid id)
@@ -153,7 +153,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SemesterDates.Remove(date);
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { orgId = org.Id, semId = sem.Id });
+            return RedirectToAction("Segments", new { orgId = org.Id, semId = sem.Id });
         }
 
         /// <summary>
@@ -234,5 +234,73 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { orgId = org.Id, semId = sem.Id });
         }
+
+        public ActionResult Segments(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult Rooms(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult Lecturer(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+
+        public ActionResult Curriculum(Guid orgId, Guid semId, Guid currId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem,
+                Curriculum = curr
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
     }
 }

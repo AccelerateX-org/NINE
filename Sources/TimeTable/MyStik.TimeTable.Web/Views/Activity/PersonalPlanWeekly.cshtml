@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.ActivityPlanModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.ActivityPlanModel
 
 @{
     ViewBag.Title = Resources.MyCalendar;
@@ -16,13 +17,15 @@
             <li class="breadcrumb-item active" aria-current="page">Mein Stundenplan @Model.Semester.Name</li>
         </ol>
     </nav>
+</div>
 
+<div class="row">
     <div id="panelCalendar" class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h4>
                     <i class="bi bi-calendar-week"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
-                    <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    <span id="loading" class="spinner-border"></span>
                 </h4>
             </div>
             <div class="list-group">
@@ -32,7 +35,7 @@
                         <div class="btn-group">
                             <a class="btn btn-outline-secondary" href="@Url.Action("OfficeHours", "Lecturer", new {id = Model.Semester.Id})"><i class="bi bi-people"></i> Sprechstunden</a>
                             <a class="btn btn-outline-secondary" href="@Url.Action("PersonalDates", "Lecturer", new {id = Model.Semester.Id})"><i class="bi bi-calendar-check"></i> Verfügbarkeiten</a>
-                            <a class="btn btn-outline-secondary"  href="@Url.Action("Responsibility", "Courses", new {id = Model.Semester.Id})"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Responsibility", "Courses", new {id = Model.Semester.Id})"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
                         </div>
                         <div class="btn-group">
                             <a class="btn btn-outline-secondary" href="@Url.Action("Self", "Person")"><i class="bi bi-person-vcard"></i> Visitenkarte</a>
@@ -41,16 +44,57 @@
                         </div>
                     </div>
                 }
-                <div class="list-group-item">
-                    <div id="calendar"></div>
-                </div>
             </div>
-        </div>
-    </div>
-    <div id="panelDetails" class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group me-2" role="group" aria-label="First group">
+                                        <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                                        <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                                    </div>
+                                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                                        <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
+                                        <a id="btnWeekDay" href="javascript:toggleWeekDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
+                                    </div>
+                                    @if (ViewBag.IsLecturer)
+                                    {
+                                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                                            <a id="btnAvailable" href="javascript:toggleAvailable()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-check"></i></a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="list-group">
+                                @foreach (var summary in Model.Courses)
+                                {
+                                    <a id="@summary.Course.Id.ToString()" class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
+                                        <div class="card-title">
+                                            @summary.Course.ShortName
+                                            @Html.LabelList(summary.Course)
+                                        </div>
+                                        <div class="card-text">@summary.Course.Name</div>
+                                        <div class="row">
+                                            <div class="col-md-8">@Html.DateList(summary.Dates)</div>
+                                            <div class="col-md-4">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -58,20 +102,164 @@
 
 
 
-    @section scripts
-    {
-        <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
-        <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
-        <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
-        <script type="text/javascript">
+@section scripts
+    {
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
 
             var myId;
             var myCalendar = null;
+            var mySelection = "";
+            var showWeekend = false;
+            var showPersonal = false;
+            var showWeekDay = true;
+            var showAvailable = false;
+
+            var semId = "@Model.Semester.Id";
+
+
 
             $(document).ready(function() {
-                updateCalendar(false);
+                showWeekDayCalendar();
+                showWeekendDays();
             });
+
+            function onPrev() {
+                myCalendar.prev();
+            }
+
+            function onNext() {
+                myCalendar.next();
+            }
+
+            function toggleWeekend() {
+                showWeekend = !showWeekend;
+                showWeekendDays();
+            }
+
+        function toggleWeekDay() {
+            showWeekDay = !showWeekDay;
+
+            if (showWeekDay) {
+                showWeekDayCalendar();
+                showWeekendDays();
+                $("#btnWeekDay").addClass("active");
+            } else {
+                showWeekCalendar();
+                showWeekendDays();
+                $("#btnWeekDay").removeClass("active");
+            }
+        }
+
+        function showWeekendDays() {
+            myCalendar.setOption("weekends", showWeekend);
+            if (showWeekend) {
+                $("#btnWeekend").addClass("active");
+            } else {
+                $("#btnWeekend").removeClass("active");
+            }
+        }
+
+        function showLabelDates() {
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: '@Model.Semester.Id',
+                            showWaiting: false
+                        },
+                        success: function(data, success, xhr) {
+                            $('#calendarList').html(data);
+                            $('#calendarList').show();
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("ActivityPlan", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                        },
+                        success: function (data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+        }
+
+
+
+            function showWeekCalendar() {
+                try {
+                    $('#loading').show();
+
+                    $('#calendar').html('');
+                    myCalendar = initDayCalendar("calendar");
+                    myCalendar.setOption("headerToolbar", false);
+
+                    $("#btnPrev").removeClass("disabled");
+                    $("#btnNext").removeClass("disabled");
+
+
+                    showLabelDates();
+
+                } catch (err) {
+                    var strMessage =
+                        "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                    strMessage += "<p>Grund: " + err + "</p>";
+                    strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                    strMessage += "</div>";
+
+                    $('#calendar').html(strMessage);
+                    $('#loading').hide();
+                }
+
+            }
+
+            function showWeekDayCalendar() {
+                try {
+
+                    $('#loading').show();
+
+                    $('#calendar').html('');
+                    myCalendar = initWeekCalendar("calendar");
+                    myCalendar.setOption("headerToolbar", false);
+
+                    $("#btnPrev").addClass("disabled");
+                    $("#btnNext").addClass("disabled");
+
+                    showLabelDates();
+
+                } catch (err) {
+                    var strMessage =
+                        "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                    strMessage += "<p>Grund: " + err + "</p>";
+                    strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                    strMessage += "</div>";
+
+                    $('#calendar').html(strMessage);
+                    $('#loading').hide();
+                }
+            }
+
+
 
             function onToogleWaiting() {
                 if ($('#btnWaiting').hasClass("active")) {
@@ -87,12 +275,28 @@
                 }
             }
 
+        function toggleAvailable() {
+            showAvailable = !showAvailable;
+
+            if (showAvailable) {
+                $('#loading').show();
+                $("#btnAvailable").addClass("active");
+                showAvailability();
+            } else {
+                var source = myCalendar.getEventSourceById("available");
+                $("#btnAvailable").removeClass("active");
+                if (source != null) {
+                    source.remove();
+                }
+            }
+        }
+
+
             function updateCalendar(showWL) {
                 try {
                     $('#loading').show();
 
                     myCalendar = initWeekCalendar("calendar");
-
 
                     myCalendar.addEventSource(
                         {
@@ -127,74 +331,55 @@
             }
 
             function onShowEventInfo(id) {
-                $('#panelCalendar').removeClass('col-md-12');
-                $('#panelCalendar').addClass('col-md-8');
-                $("#panelDetails").html('<div class="card"><div class="card-header"><h4>Lade Details <span id="loading2"><i class="fas fa-spinner fa-spin text-muted"></i></span></h4></div></div>');
-                $('#panelDetails').show();
-                myCalendar.updateSize();
+                if (mySelection !== "") {
+                    $("#" + mySelection).removeClass("active");
+                }
+                $("#" + id).addClass("active");
+                mySelection = id;
+           }
 
-                myId = id;
-
-                $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("SelectCourse", "Dictionary")',
-                        data: {
-                            Id: id
-                        },
-                        success: function(data, success, xhr) {
-                            $("#panelDetails").html(data);
+            function showAvailability() {
+                if (showWeekDay) {
+                    myCalendar.addEventSource(
+                        {
+                            id: 'available',
+                            url: '@Url.Action("PersonalAvailabilityWeekly", "Calendar")',
+                            method: 'POST',
+                            extraParams: {
+                                semId: '@Model.Semester.Id',
+                            },
+                            success: function(data, success, xhr) {
+                                $('#calendarList').html(data);
+                                $('#calendarList').show();
+                                $('#loading').hide();
+                            },
+                            failure: function(data, type, ex) {
+                                alert("Fehler beim laden der Daten." + ex);
+                                $('#loading').hide();
+                            }
                         }
-                    });
-
-            }
-
-            function onCloseDetails() {
-                $('#panelCalendar').removeClass('col-md-8');
-                $('#panelCalendar').addClass('col-md-12');
-                $('#panelDetails').html('');
-                $('#panelDetails').hide();
-
-                // update nur, wenn auch gebucht wurde
-                //showCalendar();
-
-                /* wäre schön, gehtaber nicht
-                 am Ende ist es das UpdateEvent, das die Anzeige nicht ändert
-                //alert(myId);
-                var event = $("#calendar").fullCalendar('clientEvents', myId)[0];
-                alert(event.title);
-    
-                //event._borderColor = "#000";
-                event.title = "Hallo";
-    
-                $("#calendar").fullcalendar('updateEvent', event);
-                */
-            }
-
-            function onSubscribe(e) {
-                //alert('#'+e);
-                $('#bookingBox').addClass('disabled');
-                $('#bookingBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
-
-                $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("Subscribe", "Dictionary")',
-                        data: {
-                            Id: e
-                        },
-                        success: function(data, success, xhr) {
-                            $('#bookingBox').html(data);
-                            $('#bookingBox').removeClass('disabled');
-                            refreshCalendar();
+                    );
+                } else {
+                    myCalendar.addEventSource(
+                        {
+                            id: 'available',
+                            url: '@Url.Action("PersonalAvailability", "Calendar")',
+                            method: 'POST',
+                            extraParams: {
+                            },
+                            success: function (data, success, xhr) {
+                                $('#loading').hide();
+                            },
+                            failure: function (data, type, ex) {
+                                alert("Fehler beim laden der Daten." + ex);
+                                $('#loading').hide();
+                            }
                         }
-                    });
-
+                    );
+                }
             }
 
-            function refreshCalendar() {
-                updateCalendar();
-            }
 
-        </script>
-    }
+
+    </script>
+}

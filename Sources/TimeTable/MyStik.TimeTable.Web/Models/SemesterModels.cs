@@ -86,6 +86,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public Semester NextSemester { get; set; }
 
+        public Curriculum Curriculum { get; set; }
 
     }
 

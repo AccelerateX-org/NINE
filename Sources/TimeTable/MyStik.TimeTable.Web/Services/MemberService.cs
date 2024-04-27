@@ -50,6 +50,12 @@ namespace MyStik.TimeTable.Web.Services
             return member;
         }
 
+        public List<OrganiserMember> GetMembers(Guid id)
+        {
+            var member = db.Members.Where(m => m.Id == id).ToList();
+            return member;
+        }
+
 
         /// <summary>
         /// 

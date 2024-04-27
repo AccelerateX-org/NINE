@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using System.Web.ModelBinding
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 
 @{
@@ -61,8 +62,7 @@
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
                         <a href="@Url.Action("Allocation")" class="btn btn-outline-primary">Allokation</a>
-                        <a href="@Url.Action("List", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-list"></i> Liste</a>
-                        <a href="@Url.Action("AddGroup", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-plus"></i> Neue Raumgruppe</a>
+                        <a href="@Url.Action("Groups", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-list"></i> Raumgruppen</a>
                         <a href="@Url.Action("Labels", "Room", new { orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-qr-code"></i> Türschilder</a>
                         <a href="@Url.Action("LookupDate", "Room", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-search"></i> Raumsuche</a>
                     </div>
@@ -76,6 +76,7 @@
                     <th>Nummer</th>
                     <th>Bezeichnung</th>
                     <th>Plätze</th>
+                    <th>Buchbar</th>
                     <th>Beschreibung</th>
                     <th>Zuordnungen</th>
                 </tr>
@@ -83,6 +84,8 @@
                 <tbody>
                 @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
                 {
+                    var myAssign = room.Assignments.FirstOrDefault(x => x.Organiser.Id == Model.Organiser.Id);
+
                     <tr>
                         <td></td>
                         <td>
@@ -92,9 +95,24 @@
                         </td>
                         <td>@room.Name</td>
                         <td>@room.Capacity</td>
+                        @if (myAssign != null)
+                        {
+                            if (myAssign.InternalNeedConfirmation)
+                            {
+                                <td>Nur Admins</td>
+                            }
+                            else
+                            {
+                                <td>Allgemein verfügbar</td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
                         <td>@room.Description</td>
                         <td>
-                            @foreach (var assign in room.Assignments)
+                            @foreach (var assign in room.Assignments.Where(x => x.Organiser.Id != Model.Organiser.Id))
                             {
                                 <div>@Html.FacultyLabel(assign.Organiser)</div>
                             }

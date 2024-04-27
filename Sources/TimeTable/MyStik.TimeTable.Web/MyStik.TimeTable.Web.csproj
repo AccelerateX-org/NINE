@@ -543,6 +543,7 @@
     <Compile Include="Controllers\CatalogsController.cs" />
     <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\CommitteeController.cs" />
+    <Compile Include="Controllers\ConflictsController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\CoursePlanController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
@@ -577,6 +578,7 @@
     <Compile Include="Controllers\RoomReportController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
+    <Compile Include="Controllers\SchedulingController.cs" />
     <Compile Include="Controllers\ScriptOrdersController.cs" />
     <Compile Include="Controllers\ScriptPublishingController.cs" />
     <Compile Include="Controllers\ScriptDocumentsController.cs" />
@@ -4749,6 +4751,27 @@
     <Content Include="Views\ThesisAdmin\DeleteAll.cshtml" />
     <Content Include="Views\CurriculumModule\Delete.cshtml" />
     <Content Include="Views\CurriculumModule\_Error.cshtml" />
+    <Content Include="Views\Rooms\Groups.cshtml" />
+    <Content Include="Views\Lecturer\_SegmentSelect.cshtml" />
+    <Content Include="Views\Scheduling\Label.cshtml" />
+    <Content Include="Views\Scheduling\_SegmentSelect.cshtml" />
+    <Content Include="Views\Scheduling\_LabelList.cshtml" />
+    <Content Include="Views\Activity\MemberPlanWeekly.cshtml" />
+    <Content Include="Views\Semester\Segments.cshtml" />
+    <Content Include="Views\Semester\Rooms.cshtml" />
+    <Content Include="Views\Semester\Lecturer.cshtml" />
+    <Content Include="Views\Conflicts\Rooms.cshtml" />
+    <Content Include="Views\Conflicts\_Date.cshtml" />
+    <Content Include="Views\Semester\Curriculum.cshtml" />
+    <Content Include="Views\Conflicts\Label.cshtml" />
+    <Content Include="Views\Lecturer\CreatePersonalDates.cshtml" />
+    <Content Include="Views\Conflicts\_SegmentSelectList.cshtml" />
+    <Content Include="Views\Conflicts\_CurriculaSelectList.cshtml" />
+    <Content Include="Views\Conflicts\_LabelSelectList.cshtml" />
+    <Content Include="Views\Conflicts\_PlanGrid.cshtml" />
+    <Content Include="Views\Conflicts\_Course.cshtml" />
+    <Content Include="Views\Conflicts\_NotFound.cshtml" />
+    <Content Include="Views\Conflicts\Catalog.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

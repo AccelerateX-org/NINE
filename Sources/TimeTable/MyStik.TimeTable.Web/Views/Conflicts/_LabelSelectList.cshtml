@@ -1,0 +1,6 @@
+﻿@model ICollection<MyStik.TimeTable.Data.ItemLabel>
+
+@foreach (var date in Model)
+{
+    <option value="@date.Id">@date.Name</option>
+}

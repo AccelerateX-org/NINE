@@ -953,53 +953,6 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="semGroupId"></param>
-        /// <param name="compact"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult CourseListByProgram(Guid semGroupId, bool compact = false)
-        {
-            var user = AppUser;
-
-            var courses = Db.Activities.OfType<Course>().Where(c => c.SemesterGroups.Any(g =>
-                g.Id == semGroupId)).OrderBy(c => c.Name).ToList();
-
-            var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Id == semGroupId);
-            var semester = semGroup.Semester;
-
-            var model = new List<CourseSummaryModel>();
-
-            var courseService = new CourseService(Db);
-
-            foreach (var course in courses)
-            {
-                var summary = courseService.GetCourseSummary(course);
-
-                summary.State = ActivityService.GetActivityState(course.Occurrence, user);
-                summary.SemesterGroup = semGroup;
-
-                var subscriptions = course.Occurrence.Subscriptions.ToList();
-                summary.SubscriptionCountFit = 0;
-                foreach (var subscription in subscriptions)
-                {
-                    var isInGroup = Db.Subscriptions.OfType<SemesterSubscription>()
-                        .Any(s => s.UserId.Equals(subscription.UserId) && s.SemesterGroup.Id == semGroupId);
-
-                    if (isInGroup)
-                        summary.SubscriptionCountFit++;
-                }
-
-                model.Add(summary);
-            }
-
-            if (compact)
-                return PartialView("_CourseListSummaryCompact", model);
-
-            return PartialView("_CourseListSummary", model);
-        }
 
         /// <summary>
         /// 

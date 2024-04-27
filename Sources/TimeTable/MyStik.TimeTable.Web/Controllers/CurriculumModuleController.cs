@@ -461,10 +461,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 // Owner sind alle Dozenten sowie der Anleger
                 var member = MemberService.GetMember(user.Id, course.Organiser.Id);
-                OrganiserMember owner = null;
+                ActivityOwner owner = null;
                 if (member != null)
                 {
-                    owner = course.Owners.Where(x => x.Member.Id == member.Id).Select(x => x.Member).FirstOrDefault();
+                    owner = course.Owners.FirstOrDefault(x => x.Member.Id == member.Id);
                 }
 
                 foreach (var courseOwner in course.Owners)
@@ -474,19 +474,21 @@ namespace MyStik.TimeTable.Web.Controllers
                         Activity = planCourse,
                         Member = courseOwner.Member
                     };
-
+                    planCourse.Owners.Add(planOwner);
+                    Db.ActivityOwners.Add(planOwner);
                 }
 
                 // sollte der aktuelle User kein Owner sein => dazufügen
-                if (owner != null && planCourse.Owners.All(x => x.Member.Id != owner.Id))
+                if (owner == null && member != null)
                 {
                     var planOwner = new ActivityOwner()
                     {
                         Activity = planCourse,
-                        Member = owner
+                        Member = member
                     };
+                    planCourse.Owners.Add(planOwner);
+                    Db.ActivityOwners.Add(planOwner);
                 }
-
 
                 if (copyDates)
                 {
@@ -727,6 +729,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.Activities.Add(planCourse);
                 Db.SaveChanges();
+
+                var model = new CopyCourseModel()
+                {
+                    Subject = subject,
+                    OriginCourse = course,
+                    Clone = planCourse,
+                    SourceSemester = sourceSemester,
+                    DestSemester = destSemester,
+                    WithDates = copyDates
+                };
+
+                return PartialView("_CourseCopied", model);
+
             }
             catch (Exception ex)
             {
@@ -737,16 +752,6 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var model = new CopyCourseModel()
-            {
-                Subject = subject,
-                OriginCourse = course,
-                SourceSemester = sourceSemester,
-                DestSemester = destSemester,
-                WithDates = copyDates
-            };
-
-            return PartialView("_CourseCopied", model);
         }
 
         public ActionResult CreateCourse(Guid subjectId, Guid destSemId)

@@ -5,9 +5,11 @@
     ViewBag.Title = "Lehrveranstaltung kopieren";
 
     var modules = Model.SubjectTeachings.Select(x => x.Subject.Module).Distinct();
-    var currentSemester = Model.Semester;
-    var nextSemester = new SemesterService().GetNextSemester(currentSemester);
+    var semesterService = new SemesterService();
 
+    var todaySemester = semesterService.GetSemester(DateTime.Today);
+    var planingSemester = semesterService.GetNextSemester(todaySemester);
+    var courseSemester = Model.Semester;
 }
 
 
@@ -33,12 +35,31 @@
                 {
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Planungsaktion
+                            Planungsaktion für Modul @module.FullTag
                         </button>
                         <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header">Übertragen nach</h6></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId =currentSemester.Id, destSemId = currentSemester.Id, backSemId = currentSemester.Id })">@currentSemester.Name (aktuelle Semester)</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = currentSemester.Id, destSemId = nextSemester.Id, backSemId = currentSemester.Id })">@nextSemester.Name (nächste Semester)</a></li>
+                            @if (courseSemester.StartCourses < todaySemester.StartCourses)
+                            {
+                                // das Semester des Kurses liegt in der Vergangenheit
+                                // ins tagesaktuelle Semester kopieren
+                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = todaySemester.Id, backSemId = courseSemester.Id })">ins aktuelle Semester <strong>@todaySemester.Name</strong> kopieren</a></li>
+                                // ins planungssemester kopieren
+                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = planingSemester.Id, backSemId = courseSemester.Id })">ins Planungssemester <strong>@planingSemester.Name</strong> kopieren</a></li>
+                            }
+                            else if (courseSemester.StartCourses > todaySemester.StartCourses)
+                            {
+                                // das Semester des Kurses liegt in der Zukunft
+                                // ins planungssemester kopieren
+                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = planingSemester.Id, backSemId = courseSemester.Id })">ins Planungssemester <strong>@planingSemester.Name</strong> kopieren</a></li>
+                            }
+                            else
+                            {
+                                // das Semester des Kurses ist das tagesaktuelle Semeater
+                                // im aktuellen Semester kopieren
+                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = todaySemester.Id, backSemId = courseSemester.Id })">Eine Kopie für das aktuelle Semester <strong>@todaySemester.Name</strong> erstellen</a></li>
+                                // ins planungssemester kopieren
+                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = planingSemester.Id, backSemId = courseSemester.Id })">ins Planungssemester <strong>@planingSemester.Name</strong> kopieren</a></li>
+                            }
                         </ul>
                     </div>
                 }

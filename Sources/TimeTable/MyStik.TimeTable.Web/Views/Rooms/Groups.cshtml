@@ -1,0 +1,45 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Raumgruppen"
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="bi-card-heading">
+                <h5 class="card-title">Raumgruppen @Model.Organiser.ShortName</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("AddGroup", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-plus"></i> Neue Raumgruppe</a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Beschreibung</th>
+                    <th>Räume</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var group in Model.Organiser.RoomAllocationGroups)
+                {
+                    <tr>
+                        <td>@group.Name</td>
+                        <td>@group.Description</td>
+                        <td>
+                            @foreach (var allocation in group.RoomAllocations)
+                            {
+                                <div>@allocation.Room.Number</div>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

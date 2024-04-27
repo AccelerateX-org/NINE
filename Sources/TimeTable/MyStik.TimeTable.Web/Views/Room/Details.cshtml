@@ -7,6 +7,13 @@
 
 @{
     var assignment = Model.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);
+
+    var initialDay = string.Empty;
+    if (!string.IsNullOrEmpty(ViewBag.Day))
+    {
+        initialDay = ViewBag.Day;
+    }
+
 }
 
 <div class="row">
@@ -94,31 +101,37 @@
 
     <script type="text/javascript">
 
-    $(document).ready(function () {
-        $('#loading').hide();
+        $(document).ready(function() {
+            $('#loading').hide();
 
-        var myCalendar = initDayCalendar("calendar");
-
-        myCalendar.addEventSource(
-            {
-                url: '@Url.Action("CourseEventsByRoom", "Calendar")',
-                method: 'POST',
-                extraParams: {
-                    roomId: "@Model.Id",
-                    showPersonalDates: false
-                },
-                success: function (data, success, xhr) {
-                    $('#loading').hide();
-                },
-                failure: function (data, type, ex) {
-                    alert("Fehler beim laden der Daten." + ex);
-                    $('#loading').hide();
-                }
+            var myCalendar = initDayCalendar("calendar");
+            //myCalendar.setOption("initialDate", "2024-04-22");
+            var day = "@initialDay";
+            if (day != "") {
+                myCalendar.gotoDate(day);
             }
-        );
 
 
-        @*
+            myCalendar.addEventSource(
+                {
+                    url: '@Url.Action("CourseEventsByRoom", "Calendar")',
+                    method: 'POST',
+                    extraParams: {
+                        roomId: "@Model.Id",
+                        showPersonalDates: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#loading').hide();
+                    },
+                    failure: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                }
+            );
+
+
+            @*
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',

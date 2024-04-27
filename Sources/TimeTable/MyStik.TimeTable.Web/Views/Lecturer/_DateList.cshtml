@@ -1,9 +1,11 @@
-﻿@model MyStik.TimeTable.Web.Models.PersonalDateCreateModel
+﻿@using System.Globalization
+@model MyStik.TimeTable.Web.Models.PersonalDateCreateModel
 
 
-<table class="table">
+<table id="tabDates" class="table">
     <thead>
     <tr>
+        <th>Wochentag</th>
         <th>Datum</th>
         <th>Von</th>
         <th>Bis</th>
@@ -16,6 +18,7 @@
         foreach (var date in Model.PersonalDate.Dates)
         {
             <tr id="@date.Id">
+                <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
                 <td>@date.Begin.Date.ToShortDateString()</td>
                 <td>@date.Begin.ToShortTimeString()</td>
                 <td>@date.End.ToShortTimeString()</td>

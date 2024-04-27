@@ -1,0 +1,514 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+
+@{
+    ViewBag.Title = "Planung Kohorte";
+}
+
+
+@section styles
+{
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Planung für eine Kohorte</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Organiser.Id, (IEnumerable<SelectListItem>)ViewBag.Organisers, new { @class = "form-control", onchange = "onOrgChanged()" })
+                                <label for="Organiser.Id">Einrichtung</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Semester.Id, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control", onchange = "onSemChanged()" })
+                                <label for="Semester.Id">Semester</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Segment.Id, (IEnumerable<SelectListItem>)ViewBag.Segments, new { @class = "form-control", onchange = "onSegmentChanged()" })
+                                <label for="Segment.Id">Abschnitt</label>
+                            </div>
+
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="selectCat" onchange="onCatalogChanged()" disabled>
+                                </select>
+                                <label for="selectCat">Modulkatalog</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Curriculum.Id, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                                <label for="Curriculum.Id">Studiengang</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Label.Id, (IEnumerable<SelectListItem>)ViewBag.Labels, new { @class = "form-control", onchange = "onLabelChanged()" })
+                                <label for="Label.Id">Kohorte</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span id="loading" class="spinner-border"></span>
+            </div>
+            <div id="planGrid" class="card-body">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts
+{
+    <!--
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    -->
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script>
+        var myCalendar = null;
+        var showWeekend = false;
+        var showWeekDay = true;
+
+
+        $(document).ready(function() {
+            loadPlanGrid();
+        });
+
+        function initCalendar() {
+            if (showWeekDay) {
+                try {
+
+                    $('#loading').show();
+
+                    $('#calendar').html('');
+                    myCalendar = initWeekCalendar("calendar");
+                    myCalendar.setOption("headerToolbar", false);
+
+                    $("#btnPrev").addClass("disabled");
+                    $("#btnNext").addClass("disabled");
+
+                    showWeekendDays();
+                    showLabelDates();
+
+                } catch (err) {
+                    var strMessage =
+                        "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                    strMessage += "<p>Grund: " + err + "</p>";
+                    strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                    strMessage += "</div>";
+
+                    $('#calendar').html(strMessage);
+                    $('#loading').hide();
+                }
+            } else {
+                try {
+                    $('#loading').show();
+
+                    $('#calendar').html('');
+                    myCalendar = initDayCalendar("calendar");
+                    myCalendar.setOption("headerToolbar", false);
+
+                    $("#btnPrev").removeClass("disabled");
+                    $("#btnNext").removeClass("disabled");
+
+
+                    showWeekendDays();
+                    showLabelDates();
+
+                } catch (err) {
+                    var strMessage =
+                        "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                    strMessage += "<p>Grund: " + err + "</p>";
+                    strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                    strMessage += "</div>";
+
+                    $('#calendar').html(strMessage);
+                    $('#loading').hide();
+                }
+            }
+
+        }
+
+
+        function onShowEventInfo(courseId, dateId) {
+            if (dateId != null) {
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("Date")',
+                        data: {
+                            dateId: dateId,
+                        },
+                        success: function(data, success, xhr) {
+                            $('#conflictArea').html(data);
+                            $("#loading").hide();
+                        }
+                    });
+            }
+        }
+
+        function onPrev() {
+            myCalendar.prev();
+        }
+
+        function onNext() {
+            myCalendar.next();
+        }
+
+        function toggleWeekend() {
+            showWeekend = !showWeekend;
+            showWeekendDays();
+        }
+
+
+        function toggleWeekDay() {
+            showWeekDay = !showWeekDay;
+
+            if (showWeekDay) {
+                initCalendar();
+                $("#btnWeekDay").addClass("active");
+            } else {
+                initCalendar();
+                $("#btnWeekDay").removeClass("active");
+            }
+        }
+
+        function showWeekendDays() {
+            myCalendar.setOption("weekends", showWeekend);
+            if (showWeekend) {
+                $("#btnWeekend").addClass("active");
+            } else {
+                $("#btnWeekend").removeClass("active");
+            }
+        }
+
+        function showLabelDates() {
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+            var segId = $("#Segment_Id").val();
+            var currId = $("#Curriculum_Id").val();
+            var labelId = $("#Label_Id").val();
+
+
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: "courses",
+                        url: '@Url.Action("LabelEventsWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            orgId: orgId,
+                            labelId: labelId,
+                            currId: currId
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: "courses",
+                        url: '@Url.Action("LabelEvents", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            orgId: orgId,
+                            labelId: labelId,
+                            currId: currId
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+        }
+
+        function onShowLecturer(memberId) {
+
+            var seriesId = "c-" + memberId;
+            var source = myCalendar.getEventSourceById(seriesId);
+            if (source != null) {
+                $("#" + seriesId).removeClass("active");
+                source.remove();
+                return;
+            }
+            var semId = $("#Semester_Id").val();
+
+            $("#" + seriesId).addClass("active");
+
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("MemberPlanWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            memberId: memberId,
+                        },
+                        success: function(data, success, xhr) {
+                            $('#calendarList').html(data);
+                            $('#calendarList').show();
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("MemberActivityPlan", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            memberId: memberId
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+
+        }
+
+        function onShowAvailability(memberId) {
+
+            var seriesId = "a-" + memberId;
+            var source = myCalendar.getEventSourceById(seriesId);
+            if (source != null) {
+                $("#" + seriesId).removeClass("active");
+                source.remove();
+                return;
+            }
+
+            $("#" + seriesId).addClass("active");
+
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+            var segId = $("#Segment_Id").val();
+            var currId = $("#Curriculum_Id").val();
+            var labelId = $("#Label_Id").val();
+
+
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("MemberAvailabilityWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            segId: segId,
+                            memberId: memberId,
+                        },
+                        success: function(data, success, xhr) {
+                            $('#calendarList').html(data);
+                            $('#calendarList').show();
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("MemberAvailability", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            memberId: memberId
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+        }
+
+        function onOrgChanged() {
+            // Segmente laden
+            loadSegments();
+
+            // Studiengänge laden
+            loadCurricula();
+        }
+
+        function onSemChanged() {
+            // neue Segemente laden
+            loadSegments();
+        }
+
+        function onSegmentChanged() {
+            // Jetzt den Kalender neu aufbauen
+            loadPlanGrid();
+        }
+
+        function onCurriculumChanged() {
+            // Jetzt den Kalender neu aufbauen
+            loadLabels();
+        }
+
+        function onLabelChanged() {
+            // Jetzt den Kalender neu aufbauen
+            loadPlanGrid();
+        }
+
+
+        function loadSegments() {
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetSegments")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#Segment_Id").html(data);
+                        onSegmentChanged();
+                    }
+                });
+        }
+
+        function loadCurricula() {
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCurricula")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#Curriculum_Id").html(data);
+                        onCurriculumChanged();
+                    }
+                });
+        }
+
+
+        function loadLabels() {
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+            var currId = $("#Curriculum_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabels")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId,
+                        currId: currId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#Label_Id").html(data);
+                        onLabelChanged();
+                    }
+                });
+        }
+
+
+        function loadPlanGrid() {
+            $("#planGrid").html("");
+            $('#loading').show();
+
+
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+            var segId = $("#Segment_Id").val();
+            var currId = $("#Curriculum_Id").val();
+            var labelId = $("#Label_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetPlanGridLabel")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId,
+                        segId: segId,
+                        currId: currId,
+                        labelId: labelId,
+                    },
+                    success: function(data, success, xhr) {
+                        $("#planGrid").html(data);
+                        $('#loading').hide();
+                        initCalendar();
+                    }
+                });
+
+        }
+
+
+    </script>
+}

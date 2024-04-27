@@ -1,0 +1,24 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.ActivityDate
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Activity.ShortName</h5>
+        <h6 class="card-subtitle">@Model.Activity.Name</h6>
+        <p class="card-text">Termin <strong>@Html.TimeSpanWithDate(Model)</strong></p>
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Suche nach Alternativen für</h6>
+                <div class="list-group">
+                    <div class="list-group-item">... nur für Termin am @Model.Begin.ToShortDateString()</div>
+                    <div class="list-group-item">... alle Termine des Kurses am @DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(Model.Begin.DayOfWeek)</div>
+                    <div class="list-group-item">... alle Termine des Kurses (egal welcher Wochentag / Uhrzeit)</div>
+                    <a class="list-group-item list-group-item-action" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Activity.Id })">zur Terminverwaltung des Kurses gehen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

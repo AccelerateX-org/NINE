@@ -1,0 +1,142 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+
+@{
+
+    var allLecturers = new List<OrganiserMember>();
+    var allRooms = new List<Room>();
+    var allLabels = new List<ItemLabel>();
+
+    foreach (var summary in Model.Courses)
+    {
+        allLecturers.AddRange(summary.Lecturers);
+        allRooms.AddRange(summary.Rooms);
+        allLabels.AddRange(summary.Course.LabelSet.ItemLabels);
+    }
+
+    allLecturers = allLecturers.Distinct().ToList();
+    allRooms = allRooms.Distinct().ToList();
+    allLabels = allLabels.Distinct().ToList();
+
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <button class="nav-link active" id="nav-lec-tab" data-bs-toggle="tab" data-bs-target="#nav-lec" type="button" role="tab" aria-controls="nav-lec" aria-selected="true">Lehrende</button>
+                                <button class="nav-link" id="nav-room-tab" data-bs-toggle="tab" data-bs-target="#nav-room" type="button" role="tab" aria-controls="nav-room" aria-selected="false">Räume</button>
+                                <button class="nav-link" id="nav-label-tab" data-bs-toggle="tab" data-bs-target="#nav-label" type="button" role="tab" aria-controls="nav-label" aria-selected="false">Kohorten</button>
+                            </div>
+                        </nav>
+                       
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-lec" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                                <div class="card mb-3">
+                                    <div class="list-group">
+                                        @foreach (var lec in allLecturers)
+                                        {
+                                            <div class="list-group-item">
+                                                @lec.FullName
+                                                <span>
+                                                    <a id="c-@lec.Id" href="javascript:onShowLecturer('@lec.Id')" class="btn btn-sm btn-outline-primary"><i class="bi bi-calendar-week"></i></a>
+                                                </span>
+                                                <span><a id="a-@lec.Id" href="javascript:onShowAvailability('@lec.Id')" class="btn btn-sm btn-outline-success"><i class="bi bi-calendar-check"></i></a></span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="nav-room" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                                <div class="card mb-3">
+                                    <div class="list-group">
+                                        @foreach (var room in allRooms)
+                                        {
+                                            <div class="list-group-item">
+                                                @room.Number
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="nav-label" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+                                <div class="card mb-3">
+                                    <div class="list-group">
+                                        @foreach (var label in allLabels)
+                                        {
+                                            <div class="list-group-item">
+                                                @label.Name
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="list-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group me-2" role="group" aria-label="First group">
+                                        <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                                        <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                                    </div>
+                                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                                        <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
+                                        <a id="btnWeekDay" href="javascript:toggleWeekDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="calendar"></div>
+                    
+                    
+                    <div class="col-md-12">
+                        <div class="list-group">
+                            @foreach (var summary in Model.Courses)
+                            {
+                                var show = !summary.Course.IsProjected || (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null);
+
+                                if (show)
+                                {
+                                    <a id="@summary.Course.Id.ToString()" class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
+                                        <div class="card-title">
+                                            @summary.Course.ShortName
+                                            @Html.LabelList(summary.Course)
+                                        </div>
+                                        <div class="card-text">@summary.Course.Name</div>
+                                        <div class="row">
+                                            <div class="col-md-8">@Html.DateList(summary.Dates)</div>
+                                            <div class="col-md-4">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="conflictArea" class="col-md-3">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,12 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+
+<div class="list-group">
+    @foreach (var label in Model.LabelSet.ItemLabels)
+    {
+        <div class="list-group-item">
+            @label.Name
+        </div>
+    }
+</div>
+
+

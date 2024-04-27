@@ -153,9 +153,10 @@
                         <h5>Beschreibung</h5>
                         <div class="row">
                             <div class="col-12">
-                                <md-block>
-                                    @Model.Curriculum.Description
-                                </md-block>
+                                @if (!string.IsNullOrEmpty(Model.Curriculum.Description))
+                                {
+                                    @Html.Raw(Model.Curriculum.Description.Trim())
+                                }
                             </div>
                         </div>
                     </div>

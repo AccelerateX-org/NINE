@@ -1,0 +1,168 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Raumkonflikte";
+}
+
+
+@{
+    var assignment = Model.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);
+
+    var initialDay = string.Empty;
+    if (!string.IsNullOrEmpty(ViewBag.Day))
+    {
+        initialDay = ViewBag.Day;
+    }
+
+}
+
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Rooms", new {id=ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Details", "Room", new {id=Model.Id})">@Model.Number</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Belegungskonflikte</li>
+        </ol>
+    </nav>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    Belegung 
+                    <span id="loading" class="spinner-border"></span>
+                </h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2" role="group" aria-label="First group">
+                            <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                            <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                            <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div id="calendar"></div>
+                        </div>
+                        <div id="conflictArea" class="col-md-4">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section styles
+{
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
+}
+
+
+@section scripts
+{
+    <!--
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    -->
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        var myCalendar = null;
+        var showWeekend = true;
+
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            myCalendar = initDayCalendar("calendar");
+            myCalendar.setOption("headerToolbar", false);
+            var day = "@initialDay";
+            if (day != "") {
+                myCalendar.gotoDate(day);
+            }
+
+
+            myCalendar.addEventSource(
+                {
+                    url: '@Url.Action("CourseEventsByRoom", "Calendar")',
+                    method: 'POST',
+                    extraParams: {
+                        roomId: "@Model.Id",
+                        showPersonalDates: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#loading').hide();
+                    },
+                    failure: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                }
+            );
+
+
+        });
+
+        function onPrev() {
+            myCalendar.prev();
+        }
+
+        function onNext() {
+            myCalendar.next();
+        }
+
+        function toggleWeekend() {
+            showWeekend = !showWeekend;
+            showWeekendDays();
+        }
+
+        function showWeekendDays() {
+            myCalendar.setOption("weekends", showWeekend);
+            if (showWeekend) {
+                $("#btnWeekend").addClass("active");
+            } else {
+                $("#btnWeekend").removeClass("active");
+            }
+        }
+
+
+        function onShowEventInfo(courseId, dateId) {
+            if (dateId != null) {
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("Date")',
+                        data: {
+                            dateId: dateId,
+                        },
+                        success: function(data, success, xhr) {
+                            $('#conflictArea').html(data);
+                            $("#loading").hide();
+                        }
+                    });
+
+
+            }
+
+        }
+
+
+    </script>
+}

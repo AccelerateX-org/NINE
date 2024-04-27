@@ -44,7 +44,7 @@
         eventClick: function (calEvent, jsEvent, view) {
             calEvent.jsEvent.preventDefault(); // don't let the browser navigate
             //calEvent.el.style.borderColor = 'red';
-            onShowEventInfo(calEvent.event.extendedProps.courseId);
+            onShowEventInfo(calEvent.event.extendedProps.courseId, calEvent.event.id);
         },
     });
     calendar.render();
@@ -128,7 +128,7 @@ function initWeekCalendar(idCal, defaultDate) {
         */
         eventClick: function (calEvent, jsEvent, view) {
             calEvent.jsEvent.preventDefault(); // don't let the browser navigate
-            onShowEventInfo(calEvent.event.extendedProps.courseId);
+            onShowEventInfo(calEvent.event.extendedProps.courseId, calEvent.event.id);
         },
     });
     calendar.render();

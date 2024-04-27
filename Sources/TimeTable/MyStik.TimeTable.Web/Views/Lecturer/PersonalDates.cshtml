@@ -1,10 +1,13 @@
-﻿@model MyStik.TimeTable.Web.Models.LecturerSummaryModel
+﻿@using System.Globalization
+@model MyStik.TimeTable.Web.Models.LecturerSummaryModel
 @{
     ViewBag.Title = "Persönliche Termine";
 }
 
 @section styles
 {
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
@@ -24,254 +27,63 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <div class="alert alert-info">
-                        <h5>Hinweise</h5>
-                        <ul>
-                            <li>Pro Tag können maximal 3 Zeiträume angegeben werden. Überschneidungen werden nicht geprüft.</li>
-                            <li>Alle Zeitangaben mit Beginn und Ende 00:00 werden ignoriert.</li>
-                            <li>Falsche Angaben bzw. unvollständige Zeitangaben werden ignoriert.</li>
-                            <li>Bei Änderungen oder versehentlich gemachten Angaben wird empfohlen alle Termine zu löschen und neu anzulegen.</li>
-                            <li>Die Angaben können aktuell noch jederzeit geändert werden. Während der Planungsphase ist es nicht möglich die Angaben zu ändern.</li>
-                        </ul>
+                    <div class="btn btn-group">
+                        <a class="btn btn-outline-primary" href="@Url.Action("CreatePersonalDates", new {id = Model.Semester.Id})"><i class="bi bi-plus"></i> Neue Verfügbarkeiten anlegen</a>
+                        <a class="btn btn-outline-danger" href="javascript:deleteAllDates()"><i class="bi bi-trash"></i> Alle Verfügbarkeiten löschen</a>
                     </div>
                 </div>
             </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        @Html.DropDownListFor(m => m.SegmentId, (IEnumerable<SelectListItem>)ViewBag.Segments, new { @class = "form-select" })
-                        <label for="SemesterId">Segment auswählen</label>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @id = "organiserId", @class = "form-select", onchange = "onOrganiserChanged()" })
+                            <label for="OrganiserId">Fakultät auswählen</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            @Html.DropDownListFor(m => m.SegmentId, (IEnumerable<SelectListItem>)ViewBag.Segments, new { @id = "segmentId", @class = "form-select", onchange = "onSegmentChanged()" })
+                            <label for="SemesterId">Segment auswählen</label>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-select", onchange = "onOrganiserChanged()" })
-                        <label for="OrganiserId">Fakultät auswählen</label>
-                    </div>
-                </div>
-            </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="dateTable">
+                            <table id="tabDates" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Wochentag</th>
+                                        <th>Datum</th>
+                                        <th>Von</th>
+                                        <th>Bis</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pd in Model.Dates)
+                                    {
+                                        foreach (var date in pd.Dates.OrderBy(x => x.Begin))
+                                        {
+                                            <tr id="@date.Id">
+                                                <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
+                                                <td>@date.Begin.Date.ToShortDateString()</td>
+                                                <td>@date.Begin.ToShortTimeString()</td>
+                                                <td>@date.End.ToShortTimeString()</td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-outline-danger" href="javascript:deleteRow('@date.Id')"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
 
-            <div class="row">
-                <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-2"></div>
-                        <div class="col-md-2">Mo</div>
-                        <div class="col-md-2">Di</div>
-                        <div class="col-md-2">Mi</div>
-                        <div class="col-md-2">Do</div>
-                        <div class="col-md-2">Fr</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">Zeitraum 1</div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b1max"/>
-                                </div>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-2">Zeitraum 2</div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b2max"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">Zeitraum 3</div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3max"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3min"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="mytime" class="form-control timepicker timepicker-24 b3max"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="btn-group">
-                                <a class="btn btn-outline-secondary" href="javascript:onClearDates()"><i class="bi bi-x"></i> Nicht verfügbar</a>
-                                <a class="btn btn-outline-secondary" href="javascript:onDay()"><i class="bi bi-calendar-day"></i> Ganztags</a>
-                                <a class="btn btn-outline-secondary" href="javascript:onAM()"><i class="bi bi-calendar-day"></i> Nur Vormittag</a>
-                                <a class="btn btn-outline-secondary" href="javascript:onPM()"><i class="bi bi-calendar-day"></i> Nur Nachmittag</a>
-                            </div>
-                            <div class="btn-group">
-                                <a class="btn btn-outline-primary" href="javascript:onCreateDates()"><i class="bi bi-save"></i> Verfügbarkeiten anlegen</a>
-                                <span id="loading" class="spinner-border"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <div class="col-md-3">
-                <div>
-                    <a class="btn btn-outline-danger" href="javascript:deleteAllDates()"><i class="bi bi-trash"></i> Alle Termine löschen</a>
-                </div>
-                <div id="dateTable">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Datum</th>
-                            <th>Von</th>
-                            <th>Bis</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var pd in Model.Dates)
-                        {
-                            foreach (var date in pd.Dates)
-                            {
-                                <tr id="@date.Id">
-                                    <td>@date.Begin.Date.ToShortDateString()</td>
-                                    <td>@date.Begin.ToShortTimeString()</td>
-                                    <td>@date.End.ToShortTimeString()</td>
-                                    <td>
-                                        <a class="btn btn-sm btn-outline-danger" href="javascript:deleteRow('@date.Id')"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                            }
-                        }
-
-                        </tbody>
-                    </table>
                 </div>
             </div>
-            </div>
-        </div>
         </div>
     </div>
 </div>
@@ -280,9 +92,15 @@
 
 @section Scripts {
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
+            $.fn.dataTable.moment('DD.MM.YYYY');
+            $.fn.dataTable.moment('(DD.MM.YYYY)');
+
             $('#loading').hide();
 
             $('.timepicker-24').timepicker({
@@ -300,8 +118,63 @@
                 });
 
             onDay();
-
+            onOrganiserChanged();
         });
+
+        function initDateTable() {
+            $('#tabDates').DataTable({
+                "paging": false,
+                "order": [[1, 'asc']]
+            });
+        }
+
+
+        function onOrganiserChanged() {
+            $('#loading').show();
+
+            var orgId = $("#organiserId option:selected").val();
+            var semId = "@Model.Semester.Id.ToString()";
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetSegments")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#segmentId").html(data);
+                        $('#loading').hide();
+                        onSegmentChanged();
+                    }
+                });
+        }
+
+
+        function onSegmentChanged() {
+            $('#loading').show();
+
+            var orgId = $("#organiserId option:selected").val();
+            var segmentId = $("#segmentId option:selected").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetPersonalDates")',
+                    data: {
+                        orgId: orgId,
+                        segmentId: segmentId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#dateTable").html(data);
+                        $('#loading').hide();
+                        initDateTable();
+                    }
+                });
+        }
+
+
 
         function onCreateDates() {
             $('#loading').show();
@@ -310,8 +183,8 @@
                 .map(function () { return $(this).val(); }).get();
             var n = values.length;
 
-            var orgId = $("#OrganiserId option:selected").val();
-            var segmentId = $("#SegmentId option:selected").val();
+            var orgId = $("#organiserId option:selected").val();
+            var segmentId = $("#segmentId option:selected").val();
 
             $.ajax(
                 {
@@ -374,8 +247,8 @@
         function deleteAllDates() {
             $('#loading').show();
 
-            var orgId = $("#OrganiserId option:selected").val();
-            var segmentId = $("#SegmentId option:selected").val();
+            var orgId = $("#organiserId option:selected").val();
+            var segmentId = $("#segmentId option:selected").val();
 
             $.ajax(
                 {

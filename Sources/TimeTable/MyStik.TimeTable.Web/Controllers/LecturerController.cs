@@ -102,6 +102,53 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(summaryModel);
         }
 
+        public ActionResult CreatePersonalDates(Guid id)
+        {
+            var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(id);
+
+            var members = MemberService.GetFacultyMemberships(user.Id);
+            var orgs = members.Select(x => x.Organiser).Distinct().ToList();
+
+
+            var org = orgs.FirstOrDefault();
+            var member = MemberService.GetMember(user.Id, org.Id);
+
+            var segment =
+                semester.Dates.FirstOrDefault(x => x.HasCourses && x.Organiser != null && x.Organiser.Id == orgs.First().Id);
+            var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
+                x.Organiser.Id == org.Id && x.Segment.Id == segment.Id &&
+                x.Owners.Any(o => o.Member.Id == member.Id));
+
+
+            var summaryModel = new LecturerSummaryModel()
+            {
+                Memberships = members,
+                Semester = semester,
+                Dates = new List<PersonalDate>(),
+            };
+            if (personalDate != null)
+            {
+                summaryModel.Dates.Add(personalDate);
+            }
+
+            ViewBag.Segments = semester.Dates.Where(x => x.HasCourses && x.Organiser != null && x.Organiser.Id == orgs.First().Id).Select(c => new SelectListItem
+            {
+                Text = c.Description,
+                Value = c.Id.ToString(),
+            });
+
+            ViewBag.Organiser = orgs.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
+            return View(summaryModel);
+        }
+
+
         [HttpPost]
         public PartialViewResult CreateDates(string[] timeArray, Guid orgId, Guid segmentId)
         {
@@ -462,6 +509,47 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.NextSemester = SemesterService.GetNextSemester(semester);
 
             return View(summaryModel);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult GetSegments(Guid orgId, Guid semid)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semid);
+
+            ViewBag.Segments = semester.Dates.Where(x => x.HasCourses && x.Organiser != null && x.Organiser.Id == org.Id).Select(c => new SelectListItem
+            {
+                Text = c.Description,
+                Value = c.Id.ToString(),
+            });
+
+
+            return PartialView("_SegmentSelect");
+        }
+
+
+        [HttpPost]
+        public PartialViewResult GetPersonalDates(Guid orgId, Guid segmentId)
+        {
+            var user = GetCurrentUser();
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            var segment = Db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var member = MemberService.GetMember(user.Id, org.Id);
+
+            var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
+                x.Organiser.Id == org.Id && x.Segment.Id == segment.Id &&
+                x.Owners.Any(o => o.Member.Id == member.Id));
+
+            var model = new PersonalDateCreateModel
+            {
+                Organiser = org,
+                Segment = segment,
+                PersonalDate = personalDate,
+            };
+
+            return PartialView("_DateList", model);
         }
     }
 }

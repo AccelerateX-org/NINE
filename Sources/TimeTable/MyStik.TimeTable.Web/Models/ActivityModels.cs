@@ -35,6 +35,7 @@ namespace MyStik.TimeTable.Web.Models
         {
             MyActivities = new List<ActivitySummary>();
             MySubscriptions = new List<ActivitySubscriptionModel>();
+            Courses = new List<CourseSummaryModel>();
         }
 
         /// <summary>
@@ -60,6 +61,9 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public bool IsDuringLottery { get; set; }
+
+        public List<CourseSummaryModel> Courses { get; set; }
+
     }
 
     /// <summary>

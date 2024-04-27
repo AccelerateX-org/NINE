@@ -146,32 +146,36 @@
                         </tr>
                         </thead>
                         <tbody id="linkList">
-                        @foreach (var link in Model.Assignments.Where(x => x.Id != assignment.Id))
+                        @if (assignment != null)
                         {
-                            <tr id="@link.Id">
-                                @if (link.InternalNeedConfirmation)
-                                {
+
+                            foreach (var link in Model.Assignments.Where(x => x.Id != assignment.Id))
+                            {
+                                <tr id="@link.Id">
+                                    @if (link.InternalNeedConfirmation)
+                                    {
+                                        <td>
+                                            <i class="fa fa-lock"></i>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>@link.Organiser.ShortName</td>
                                     <td>
-                                        <i class="fa fa-lock"></i>
+                                        @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteLink", "Room",
+                                            new { id = link.Id },
+                                            new AjaxOptions
+                                            {
+                                                HttpMethod = "Post",
+                                                InsertionMode = InsertionMode.Replace,
+                                                UpdateTargetId = link.Id.ToString()
+                                            },
+                                            null)
                                     </td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                <td>@link.Organiser.ShortName</td>
-                                <td>
-                                    @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteLink", "Room",
-                                        new {id = link.Id},
-                                        new AjaxOptions
-                                        {
-                                            HttpMethod = "Post",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = link.Id.ToString()
-                                        },
-                                        null)
-                                </td>
-                            </tr>
+                                </tr>
+                            }
                         }
                         </tbody>
                     </table>

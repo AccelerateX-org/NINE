@@ -5,14 +5,7 @@
 
 @section styles
 {
-    @if (Model.DescriptionText.StartsWith("#"))
-    {
-        <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/simplemde/simplemde.min.css")" />
-    }
-    else
-    {
-        <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
-    }
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
 
 }
 
@@ -75,27 +68,6 @@
                             <div class="col-10">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="alert alert-info">
-                                            <ul>
-                                                <li>Der Editor rechts verfügt über undo/redo Funktionen.</li>
-                                                <li>Der Editor verwendet Markdown. Diese einfache Sprache erlaubt einheitliche Formatierungen.</li>
-                                                <li>Beim Einfügen gehen alle Formatierungen verloren.</li>
-                                                <li>Es wird empfohlen als oberste Ebene einer Überschrift "#####" zu verwenden.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h5>Unformatierter Text / HTML</h5>
-                                        <div class="card">
-                                            <div class="card-body">
-                                                @Html.Raw(Model.DescriptionText)
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5>Editor</h5>
                                         @Html.TextAreaFor(m => m.DescriptionText, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
                                     </div>
                                 </div>
@@ -109,16 +81,7 @@
                             </div>
                             <div class="col-10">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <h5>Unformatierter Text / HTML</h5>
-                                        <div class="card">
-                                            <div class="card-body">
-                                                @Html.Raw(Model.DescriptionTextEn)
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5>Editor</h5>
+                                    <div class="col-md-12">
                                         @Html.TextAreaFor(m => m.DescriptionTextEn, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
                                     </div>
                                 </div>
@@ -141,22 +104,6 @@
 
 @section scripts
 {
-    @if (Model.DescriptionText.StartsWith("#"))
-    {
-        <script type="text/javascript" src="@Url.Content("~/Assets/libs/simplemde/simplemde.min.js")" type="text/javascript"></script>
-
-        <script>
-            $(document).ready(function () {
-
-                var simplemdeDe = new SimpleMDE({ element: document.getElementById("DescriptionText"), spellChecker: false });
-                var simplemdeEn = new SimpleMDE({ element: document.getElementById("DescriptionTextEn"), spellChecker: false });
-            });
-
-        </script>
-
-    }
-    else
-    {
         <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
 
         <script>
@@ -167,6 +114,4 @@
             });
 
         </script>
-    }
-
 }

@@ -131,13 +131,7 @@
                                 <h5>Beschreibungstext</h5>
                             </div>
                             <div>
-                                @if (!string.IsNullOrEmpty(Model.OfficeHour.Description) && Model.OfficeHour.Description.StartsWith("#"))
-                                {
-                                    <md-block>
-                                        @Model.OfficeHour.Description
-                                    </md-block>
-                                }
-                                else
+                                @if (!string.IsNullOrEmpty(Model.OfficeHour.Description))
                                 {
                                     @Html.Raw(Model.OfficeHour.Description)
                                 }

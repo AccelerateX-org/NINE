@@ -3453,12 +3453,12 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddQuota(Guid courseId, Guid currid, int capa)
+        public ActionResult AddQuota(Guid courseId, Guid currid, int? capa)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currid);
 
-            int cpacity = capa == -1 ? int.MaxValue : capa;
+            int cpacity = (!capa.HasValue || capa.Value == -1) ? int.MaxValue : capa.Value;
 
             if (curr != null)
             {
@@ -3775,11 +3775,23 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
 
-
-
-
             return View(course);
         }
+
+        public ActionResult DeleteTeaching(Guid id)
+        {
+            var teaching = Db.SubjectTeachings.SingleOrDefault(x => x.Id == id);
+
+            var course = teaching.Course;
+
+            Db.SubjectTeachings.Remove(teaching);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("AdminNewSubjects", new { id = course.Id });
+        }
+
+
 
         public ActionResult CreateTeaching(Guid id)
         {

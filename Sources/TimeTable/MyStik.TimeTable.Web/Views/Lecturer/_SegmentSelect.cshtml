@@ -1,0 +1,8 @@
+﻿
+
+<select id="segmentId" class="form-select">
+    @foreach (var seg in ViewBag.Segments)
+    {
+        <option value="@seg.Value">@seg.Text</option>
+    }
+</select>

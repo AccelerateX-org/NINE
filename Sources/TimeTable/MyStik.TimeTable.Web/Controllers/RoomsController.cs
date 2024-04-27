@@ -68,5 +68,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View();
         }
+
+        public ActionResult Groups(Guid id)
+        {
+            var org = GetOrganiser(id);
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = org
+            };
+
+            model.Rooms = Db.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == id)).ToList();
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
     }
 }

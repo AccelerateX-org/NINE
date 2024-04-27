@@ -44,8 +44,10 @@ if (ViewBag.UserRight.User != null)
 var slots = (from subject in Model.CurriculumModule.ModuleSubjects.ToList() from subjectAccreditation in subject.SubjectAccreditations.ToList() select subjectAccreditation.Slot).Distinct().ToList();
 
 
-var dateOffset = DateTime.Today - Model.Semester.StartCourses;
-var isEditable = dateOffset.Days < 28;
+//var dateOffset = DateTime.Today - Model.Semester.StartCourses;
+//var isEditable = dateOffset.Days < 28;
+var isEditable = true;
+
 
 var userService = new UserInfoService();
 
@@ -482,13 +484,7 @@ if (showMenu)
                                                             <div class="tab-pane fade @activeDe" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        @if (Model.ModuleDescription.Description.Trim().StartsWith("#"))
-                                                                        {
-                                                                            <md-block>
-                                                                                @Model.ModuleDescription.Description.Trim()
-                                                                            </md-block>
-                                                                        }
-                                                                        else
+                                                                        @if (!string.IsNullOrEmpty(Model.ModuleDescription.Description))
                                                                         {
                                                                             @Html.Raw(Model.ModuleDescription.Description.Trim())
                                                                         }
@@ -500,13 +496,7 @@ if (showMenu)
                                                         {
                                                             <div class="tab-pane fade @activeEn" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
                                                                 <div class="col-md-12">
-                                                                    @if (Model.ModuleDescription.DescriptionEn.Trim().StartsWith("#"))
-                                                                    {
-                                                                        <md-block>
-                                                                            @Model.ModuleDescription.DescriptionEn.Trim()
-                                                                        </md-block>
-                                                                    }
-                                                                    else
+                                                                    @if (!string.IsNullOrEmpty(Model.ModuleDescription.DescriptionEn))
                                                                     {
                                                                         @Html.Raw(Model.ModuleDescription.DescriptionEn.Trim())
                                                                     }
@@ -520,7 +510,6 @@ if (showMenu)
                                             {
                                                 <div>Es liegt keine Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
                                             }
-
                                         </div>
                                     </div>
                                 </div>

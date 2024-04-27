@@ -1,0 +1,6 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+
+@foreach (var date in Model)
+{
+    <option value="@date.Id">@date.ShortName</option>
+}

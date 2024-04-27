@@ -5,7 +5,7 @@
 
 @section styles
 {
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/simplemde/simplemde.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
@@ -114,11 +114,11 @@
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/libs/simplemde/simplemde.min.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
 
     <script>
-                $(function () {
-                    var simplemdeDe = new SimpleMDE({ element: document.getElementById("Description"), spellChecker: false });
+        $(function () {
+            $("#Description").cleditor();
 
                     $('#DozId').autocomplete({
                         source: function (request, response) {

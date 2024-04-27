@@ -141,6 +141,10 @@
                 myCalendar = initDayCalendar("calendar");
                 myCalendar.setOption("headerToolbar", false);
 
+                $("#btnPrev").removeClass("disabled");
+                $("#btnNext").removeClass("disabled");
+
+
                 showLabelDates();
 
             } catch (err) {
@@ -164,6 +168,10 @@
                 $('#calendar').html('');
                 myCalendar = initWeekCalendar("calendar");
                 myCalendar.setOption("headerToolbar", false);
+
+                $("#btnPrev").addClass("disabled");
+                $("#btnNext").addClass("disabled");
+
                 showLabelDates();
 
             } catch (err) {

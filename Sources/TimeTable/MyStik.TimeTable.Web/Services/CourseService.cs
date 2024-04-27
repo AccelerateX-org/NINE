@@ -505,6 +505,9 @@ namespace MyStik.TimeTable.Web.Services
         {
             var summary = new CourseSummaryModel { Course = course };
 
+            AppendBlocks(course, summary);
+
+
             var days = (from occ in course.Dates
                 select
                     new
@@ -516,14 +519,17 @@ namespace MyStik.TimeTable.Web.Services
 
             foreach (var day in days)
             {
-                var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
+                var defaultDays = course.Dates.Where(d => 
+                    d.Begin.DayOfWeek == day.Day &&
+                    d.Begin.TimeOfDay == day.Begin &&
+                    d.End.TimeOfDay == day.End).ToList();
 
                 var courseDate = new CourseDateModel
                 {
                     DayOfWeek = day.Day,
                     StartTime = day.Begin,
                     EndTime = day.End,
-                    DefaultDate = defaultDay.Begin
+                    Dates = defaultDays
                 };
                 summary.Dates.Add(courseDate);
             }
@@ -541,19 +547,9 @@ namespace MyStik.TimeTable.Web.Services
             summary.VirtualRooms.AddRange(vRooms);
 
 
-
             summary.Lottery =
                 Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
 
-            foreach (var semesterGroup in course.SemesterGroups)
-            {
-                if (!summary.Curricula.Contains(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum))
-                {
-                    summary.Curricula.Add(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum);
-                }
-            }
-
-            AppendBlocks(course, summary);
 
             return summary;
         }

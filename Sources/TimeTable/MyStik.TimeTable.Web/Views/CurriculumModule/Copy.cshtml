@@ -25,61 +25,67 @@
 </div>
 <div class="list-group">
     <div class="list-group-item">
-        <div class="alert alert-info">
-            <h5>Achtung experimentell</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <p>Was geht</p>
-                    <ul>
-                        <li>Der Ablauf der Bedienung</li>
-                        <li>Vorschau und Anlegen der Termine für wöchentlich stattfindende Kurse mit 1 Termin pro Woche und Blockkurse (Mo-Fr/Sa)</li>
-                        <li>Kurs ohne Termin anlegen</li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <p>Was geht noch nicht</p>
-                    <ul>
-                        <li>Vorschau und Anlegen von Terminen für Wochenendkurse (Fr-Sa)</li>
-                        <li>Vorschau und Anlegen von Terminen für wöchentlich stattfindende Kurse mit mehreren Terminen pro Woche</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="list-group-item">
         <div class="btn-group">
             <a class="btn btn-outline-primary" href="@Url.Action("Responsibility", "Courses", new { id = Model.BackSemester.Id })"><i class="bi bi-chevron-left"></i> Zurück</a>
             <span id="loading" class="spinner-border"></span>
         </div>
     </div>
-    @if (existingCourses.Any())
-    {
-        <div id="courseAlert" class="list-group-item">
-            <div class="alert alert-info">
-                <h5>Zu diesem Modul gibt es im @Model.DestSemester.Name bereits folgende Kurse</h5>
-                <ul>
-                    @foreach (var course in existingCourses)
-                    {
-                        <li>@course.Name</li>
-                    }
-                </ul>
+    <div class="list-group-item">
+        <div class="row">
+            <div class="col-md-6">
+                @if (existingCourses.Any())
+                {
+                    <div id="courseAlert">
+                        <div class="alert alert-warning">
+                            <h5>Zu diesem Modul gibt es im @Model.DestSemester.Name bereits folgende Kurse</h5>
+                            <ul>
+                                @foreach (var course in existingCourses)
+                                {
+                                    <li>@course.Name</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div id="courseAlert">
+                        <div class="alert alert-success">
+                            <h5>Zu diesem Modul gibt es im @Model.DestSemester.Name bisher kein Kursangebot</h5>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    <h5>Achtung experimentell</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>Was geht</p>
+                            <ul>
+                                <li>Der Ablauf der Bedienung</li>
+                                <li>Vorschau und Anlegen der Termine für wöchentlich stattfindende Kurse mit 1 Termin pro Woche und Blockkurse (Mo-Fr/Sa)</li>
+                                <li>Kurs ohne Termin anlegen</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p>Was geht noch nicht</p>
+                            <ul>
+                                <li>Vorschau und Anlegen von Terminen für Wochenendkurse (Fr-Sa)</li>
+                                <li>Vorschau und Anlegen von Terminen für wöchentlich stattfindende Kurse mit mehreren Terminen pro Woche</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    }
-    else
-    {
-        <div id="courseAlert" class="list-group-item">
-            <div class="alert alert-success">
-                <h5>Zu diesem Modul gibt es im @Model.DestSemester.Name bisher kein Kursangebot</h5>
-            </div>
-        </div>
-
-    }
+    </div>
 </div>
 <div id="courseArea" class="card-body">
 @foreach (var subject in Model.Module.ModuleSubjects.ToList())
 {
-    var courses = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.SourceSemester.Id).Select(x => x.Course).ToList();
+    var courses = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.SourceSemester.Id &&
+                                                      x.Course.Dates.Any()).Select(x => x.Course).ToList();
     foreach (var course in courses)
     {
         var summary = courseService.GetCourseSummary(course);
@@ -333,7 +339,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <li>Verteilt @course.Dates.Count Terminen <br />@Html.DateList(summary.Dates)</li>
+                                                        <li>Regelmäßig, außerhalb der definierten Segemente der Vorlesungszeiten. Verteilt @course.Dates.Count Terminen <br />@Html.DateList(summary.Dates)</li>
                                                     }
                                                 }
                                                 else if (summary.IsPureBlock())
@@ -344,7 +350,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <li>Blockveranstaltung mit @course.Dates.Count Terminen</li>
+                                            <li>Blockveranstaltung mit @course.Dates.Count Terminen, außerhalb der definierten Segemente der Vorlesungszeiten.</li>
                                                     }
                                                 }
                                                 else if (summary.IsPureWeekEndCourse())
@@ -353,7 +359,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <li>@course.Dates.Count Termine in @summary.Blocks.Count Blöcken</li>
+                                            <li>@course.Dates.Count Termine in @summary.Blocks.Count Blöcken, außerhalb der definierten Segemente der Vorlesungszeiten.</li>
                                                 }
                                                 <li>@Html.LecturerList(summary.Lecturers)</li>
                                                 <li>@Html.RoomList(summary.Rooms)</li>

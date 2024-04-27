@@ -227,17 +227,104 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         public ActionResult PersonalPlanWeekly(Guid id)
         {
+            var courseService = new CourseService(Db);
+
             var model = new ActivityPlanModel();
 
             var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(id);
             var members = MemberService.GetFacultyMemberships(user.Id);
 
             ViewBag.IsLecturer = members.Count > 0;
 
-            model.Semester = SemesterService.GetSemester(id);
+            model.Semester = semester;
+
+            var courses = new List<Course>();
+
+            var mylisten =
+                Db.Activities.OfType<Course>()
+                    .Where(c =>
+                        c.Semester.Id == semester.Id &&
+                        c.Occurrence.Subscriptions.Any(x => x.UserId == user.Id))
+                    .ToList();
+
+            courses.AddRange(mylisten);
+
+            var member = members.FirstOrDefault();
+            if (member != null)
+            {
+                var mylecture =
+                    Db.Activities.OfType<Course>()
+                        .Where(c =>
+                            c.Semester.Id == semester.Id &&
+                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == member.Id)))
+                        .ToList();
+                foreach (var lectureCourse in mylecture)
+                {
+                    if (!courses.Contains(lectureCourse))
+                    {
+                        courses.Add(lectureCourse);
+                    }
+                }
+            }
+
+            foreach (var course in courses)
+            {
+                var summary = courseService.GetCourseSummary(course);
+                model.Courses.Add(summary);
+            }
+
 
             return View(model);
         }
+
+        public ActionResult MemberPlanWeekly(Guid id, Guid memberId)
+        {
+            var courseService = new CourseService(Db);
+
+            var model = new ActivityPlanModel();
+
+            var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(id);
+            var members = MemberService.GetFacultyMemberships(user.Id);
+
+            ViewBag.IsLecturer = members.Count > 0;
+            ViewBag.Member = MemberService.GetMember(memberId);
+
+            model.Semester = semester;
+
+
+            var courses = new List<Course>();
+
+            // Alle Vorlesungen, die ich halte
+            var member = MemberService.GetMember(memberId);
+            if (member != null)
+            {
+                var mylecture =
+                    Db.Activities.OfType<Course>()
+                        .Where(c =>
+                            c.Semester.Id == semester.Id &&
+                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == member.Id)))
+                        .ToList();
+                foreach (var lectureCourse in mylecture)
+                {
+                    if (!courses.Contains(lectureCourse))
+                    {
+                        courses.Add(lectureCourse);
+                    }
+                }
+            }
+
+            foreach (var course in courses)
+            {
+                var summary = courseService.GetCourseSummary(course);
+                model.Courses.Add(summary);
+            }
+
+
+            return View(model);
+        }
+
 
         /// <summary>
         /// 

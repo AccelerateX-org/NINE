@@ -63,6 +63,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public Semester Semester { get; set; }
 
+        public SemesterDate Segment { get; set; }
+
         public ApplicationUser User { get; set; }
 
         public ICollection<ActivityOrganiser> Organisers { get; set; }
@@ -72,6 +74,8 @@ namespace MyStik.TimeTable.Web.Models
         public ActivityOrganiser Organiser { get; set; }
 
         public Curriculum Curriculum { get; set; }
+
+        public CurriculumModuleCatalog Catalog { get; set; }
 
         public CapacityGroup CapacityGroup { get; set; }
 
