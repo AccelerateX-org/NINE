@@ -76,16 +76,16 @@
                         <h5 class="card-title">Prüfungsplanung</h5>
                     </div>
                     <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action">
+                        <a href="#" class="list-group-item list-group-item-action disabled">
                             Angebote
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action">
+                        <a href="#" class="list-group-item list-group-item-action disabled">
                             Aufsichten
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action">
+                        <a href="#" class="list-group-item list-group-item-action disabled">
                             Räume
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action">
+                        <a href="#" class="list-group-item list-group-item-action disabled">
                             Studierende
                         </a>
                     </div>
@@ -100,7 +100,7 @@
                         <h5 class="card-title">Administration</h5>
                     </div>
                     <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action">
+                        <a href="@Url.Action("Index", "Import", new {orgId=Model.Organiser.Id, semId = Model.Semester.Id})" class="list-group-item list-group-item-action">
                             Datenimport / -export
                         </a>
                     </div>
@@ -188,7 +188,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">
-                            Überschneidungen nach Studiengängen
+                            Überschneidungen der Stundenpläne von Kohorten nach Studiengängen
                         </h5>
                     </div>
                     <div class="list-group">

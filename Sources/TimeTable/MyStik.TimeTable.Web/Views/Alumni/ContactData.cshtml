@@ -130,24 +130,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div id="misc" class="row mb-1">
-                            <div class="col-md-3">
-                                <label>Alternative Angabe zum Studienabschluss</label>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-floating">
-                                    @Html.EditorFor(model => model.CurrName, new { htmlAttributes = new { @class = "form-control" } })
-                                    <label for="CurrName">Studiengang</label>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-floating">
-                                    @Html.EditorFor(model => model.Degree, new { htmlAttributes = new { @class = "form-control" } })
-                                    <label for="Degree">Abschluss</label>
-                                </div>
-                            </div>
-                        </div>
                     }
                     if (Model.Alumni.Semester == null)
                     {
@@ -169,7 +151,7 @@
                             <div class="col-md-2">
                                 <div class="form-floating mb-2">
                                     <select id="Semester" name="Semester" class="form-select" id="floatingSelect">
-                                        <option value="WiSe" selected>Wintersenester</option>
+                                        <option value="WiSe" selected>Wintersemester</option>
                                         <option value="SoSe">Sommersemester</option>
                                     </select>
                                     <label for="Semester">Semester</label>

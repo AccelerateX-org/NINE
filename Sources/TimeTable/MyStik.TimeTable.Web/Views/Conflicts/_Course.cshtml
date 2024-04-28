@@ -1,18 +1,90 @@
 ﻿@using System.Globalization
 @using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Course
+
+@{
+    var courseService = new CourseService();
+    var summary = courseService.GetCourseSummary(Model);
+}
 
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">@Model.ShortName</h5>
-        <h6 class="card-subtitle">@Model.Name</h6>
+        <div class="card-title">
+            @summary.Course.ShortName
+            @Html.LabelList(summary.Course)
+        </div>
+        <div class="card-subtitle">@summary.Course.Name</div>
         <div class="row">
-            <div class="col-md-6">
-                <h6>Suche nach Alternativen für</h6>
-                <div class="list-group">
-                    <a class="list-group-item list-group-item-action" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Id })">zur Terminverwaltung des Kurses gehen</a>
-                </div>
+            <div class="col-md-4">Lehrende</div>
+            <div class="col-md-8">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">Termine</div>
+            <div class="col-md-8">@Html.DateList(summary.Dates)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">Räume</div>
+            <div class="col-md-8">@Html.RoomList(summary.Rooms, showLinks: false)</div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">Alternativer Termin (Soll)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <select class="form-select">
+                    <option value="1" selected>Mo</option>
+                    <option value="2">Di</option>
+                    <option value="3">Mi</option>
+                    <option value="4">Do</option>
+                    <option value="5">Fr</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control timepicker timepicker-24" id="NewBegin" name="NewBegin" value="09:00" />
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control timepicker timepicker-24" id="NewEnd" name="NewEnd" value="12:00" />
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                Konflikte
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Kategorie</div>
+            <div class="col-md-3">Ist</div>
+            <div class="col-md-3">Soll</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Raum</div>
+            <div class="col-md-3">0</div>
+            <div class="col-md-3">0</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Kohorte</div>
+            <div class="col-md-3">0</div>
+            <div class="col-md-3">0</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Person (Einsatz)</div>
+            <div class="col-md-3">0</div>
+            <div class="col-md-3">0</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">Person (Verfügbarkeit)</div>
+            <div class="col-md-3">0</div>
+            <div class="col-md-3">0</div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <a class="btn btn-outline-primary disabled"><i class="bi bi-arrow-clockwise"></i> Aktualisieren</a>
+                <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Id })"><i class="bi box-arrow-up-right"></i> zum Kurs</a>
             </div>
         </div>
     </div>

@@ -521,7 +521,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
-            var currs = org.Curricula.ToList();
+            var currs = org.Curricula.Where(x => !x.IsDeprecated).ToList();
 
             var model = currs
                 .OrderBy(g => g.ShortName)

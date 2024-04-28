@@ -823,6 +823,7 @@
     <Content Include="Assets\fillter\img\selectable.svg" />
     <Content Include="Assets\fillter\img\selected.svg" />
     <Content Include="Assets\fillter\img\white.gif" />
+    <Content Include="Assets\fillter\scripts\planer.js" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
     <Content Include="Assets\fillter\scripts\datepicker.js" />
     <Content Include="Assets\img\cap\HM_Logo_RGB.png" />

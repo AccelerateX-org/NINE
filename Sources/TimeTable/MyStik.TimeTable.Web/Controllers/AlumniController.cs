@@ -28,9 +28,6 @@ namespace MyStik.TimeTable.Web.Controllers
         public Guid OrgId { get; set; }
         public Guid CurrId { get; set; }
 
-        public string CurrName { get; set; }
-        public string Degree { get; set; }
-
 
         public string Semester { get; set; }
         public string Year { get; set; }
@@ -128,8 +125,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 LastName = alumni.LastName,
                 Title = alumni.Title,
                 Gender = alumni.Gender,
-                CurrName = alumni.Program,
-                Degree = alumni.Degree,
             };
 
             ViewBag.Organisers = Db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).OrderBy(x => x.ShortName)
@@ -181,34 +176,26 @@ namespace MyStik.TimeTable.Web.Controllers
                     alumni.FinishingSemester = sem;
                 }
 
-                if (alumni.Organiser == null && alumni.Curriculum == null)
+                if (org != null)
                 {
-                    if (org != null)
-                    {
-                        alumni.Faculty = org.ShortName;
-                        alumni.Organiser = org;
-                    }
-                    else
-                    {
-                        alumni.Faculty = model.CurrName;
-                    }
-
-                    if (curr != null)
-                    {
-                        alumni.Program = curr.Tag;
-                        alumni.Degree = curr.Degree.ShortName;
-                        alumni.Curriculum = curr;
-                    }
-                    else
-                    {
-                        alumni.Program = model.CurrName;
-                        alumni.Degree = model.Degree;
-                    }
+                    alumni.Faculty = $"{org.ShortName} {org.Name}";
+                    alumni.Organiser = org;
                 }
                 else
                 {
-                    alumni.Faculty = alumni.Curriculum.Organiser.ShortName;
-                    alumni.Program = alumni.Curriculum.Tag;
+                    alumni.Faculty = "andere";
+                }
+
+                if (curr != null)
+                {
+                    alumni.Program = curr.Tag;
+                    alumni.Degree = curr.Degree.ShortName;
+                    alumni.Curriculum = curr;
+                }
+                else
+                {
+                    alumni.Program = "anderer Studiengang";
+                    alumni.Degree = "anderer Abschluss";
                 }
 
                 alumni.Created = DateTime.Now;
@@ -306,8 +293,28 @@ namespace MyStik.TimeTable.Web.Controllers
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms, Encoding.Default);
 
-            writer.Write(
-                "Name;Vorname;Studiengang;Semester;E-Mail");
+            var sbTitle = new StringBuilder();
+            sbTitle.Append("Anrede;");
+            sbTitle.Append("Vorname;");
+            sbTitle.Append("Nachname;");
+            sbTitle.Append("Titel;");
+            sbTitle.Append("Firma;");
+            sbTitle.Append("E-Mail;");
+            sbTitle.Append("Telefon Büro;");
+            sbTitle.Append("Mobil-telefon;");
+            sbTitle.Append("Status;");
+            sbTitle.Append("Status Beschreibung;");
+            sbTitle.Append("Interessent Quelle;");
+            sbTitle.Append("Interessent Herkunftsbeschreibung;");
+            sbTitle.Append("Beziehung zu FK;");
+            sbTitle.Append("Studiengang 1;");
+            sbTitle.Append("Abschluss-Semester 1;");
+            sbTitle.Append("Studiengang 2;");
+            sbTitle.Append("Abschluss-Semester 2;");
+            sbTitle.Append("Abschluss Fakultäten;");
+            sbTitle.Append("Perspektive");
+
+            writer.Write(sbTitle.ToString());
 
             writer.Write(Environment.NewLine);
 
@@ -318,10 +325,28 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (user != null)
                 {
-                    writer.Write("{0};{1};{2};{3};{4}",
-                        user.LastName, user.FirstName,
-                        alumnus.Curriculum.ShortName, alumnus.Semester.Name,
-                        user.Email);
+                    var sbEntry = new StringBuilder();
+                    sbEntry.AppendFormat("{0};", alumnus.Gender);
+                    sbEntry.AppendFormat("{0};", alumnus.FirstName);
+                    sbEntry.AppendFormat("{0};", alumnus.LastName);
+                    sbEntry.AppendFormat("{0};", alumnus.Title);
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", user.Email);
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", "Neu");
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", "Alumni");
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", alumnus.Program);
+                    sbEntry.AppendFormat("{0};", alumnus.FinishingSemester);
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", string.Empty);
+                    sbEntry.AppendFormat("{0};", alumnus.Faculty);
+                    sbEntry.AppendFormat("{0}",  string.Empty);
+
+                    writer.Write(sbEntry.ToString());
                     writer.Write(Environment.NewLine);
                 }
             }
