@@ -681,5 +681,138 @@ namespace MyStik.TimeTable.Web.Services
             return model;
         }
 
+        public void AddConflicts(CourseSummaryModel model)
+        {
+            var conflicts = GetConflicts(model.Course);
+            model.Conflicts.AddRange(conflicts);
+        }
+
+        public List<CourseConflictModel> GetConflicts(Course course, List<ActivityDate> dates)
+        {
+            var conflicts = new List<CourseConflictModel>();
+
+            if (dates == null)
+            {
+                dates = course.Dates;
+            }
+
+            foreach (var date in dates)
+            {
+                var collisions = GetCollisions(course, date);
+                // hole alle Kollisionen
+
+                // suche die relevanten
+                // Raumkonflikte
+                foreach (var room in date.Rooms)
+                {
+                    var roomCollisons = collisions.Where(x => x.Rooms.Any(r => r.Id == room.Id)).ToList();
+                    // aufheben
+                    // der Termin
+                    // den Raum
+                    // die anderen Termine
+                    if (roomCollisons.Any())
+                    {
+                        var conflict = new CourseConflictModel
+                        {
+                            Date = date,
+                            Collisions = roomCollisons,
+                            Room = room
+                        };
+
+                        conflicts.Add(conflict);
+                    }
+                }
+
+                // Stundenplankonflikte
+                foreach (var host in date.Hosts)
+                {
+                    if (string.isNullOrEmpty(host.UserId))
+                    {
+                        // nur den Member suchen
+                        var memberCollisons = collisions.Where(x => x.Hosts.Any(r => r.Id == host.Id)).ToList();
+                        if (memberCollisons.Any())
+                        {
+                            var conflict = new CourseConflictModel
+                            {
+                                Date = date,
+                                Collisions = memberCollisons,
+                                Member = host
+                            };
+
+                            conflicts.Add(conflict);
+                        }
+                    }
+                    else
+                    {
+                        // nach dem User suchen
+                        var userCollisons = collisions.Where(x => x.Hosts.Any(r => r.UserId == host.UserId)).ToList();
+                        if (userCollisons.Any())
+                        {
+                            var conflict = new CourseConflictModel
+                            {
+                                Date = date,
+                                Collisions = userCollisons,
+                                Member = host
+                            };
+
+                            conflicts.Add(conflict);
+                        }
+                    }
+                }
+
+                // Verfügbarkeitsproblem
+                // => das bezieht sich auf den Ausgangstermin an sich bzw. die Referenzzeit
+
+                // Kohorte
+                foreach (var label in date.Activity.LabelSet.ItemLabels)
+                {
+                    var labelCollisions = collisions.Where(x => x.Activity.LabelSet.ItemLabels.Any(l => l.Id == label.Id)).ToList();
+                    if (labelCollisions.Any())
+                    {
+                        var conflict = new CourseConflictModel
+                        {
+                            Date = date,
+                            Collisions = labelCollisions,
+                            Label = label
+                        };
+
+                        conflicts.Add(conflict);
+                    }
+                }
+
+            }
+
+            return conflicts;
+        }
+
+        /// <summary>
+        /// Alle Kollisionen des Termins
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public List<ActivityDate> GetGollisions(Course course, ActivityDate date)
+        {
+            // Das Date kann irgendwas sein, also auch ohne Zugehörigkeit zu einer Aktivität
+            return GetGollisions(course, date.Begin, date.End);
+        }
+
+        /// <summary>
+        /// Alle Kollissionen eines Termins mit alternativem Zeitraum
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public List<ActivityDate> GetGollisions(Course course, DateTime begin, DateTime end)
+        {
+            var collisions = Db.ActivityDates.Where(x => x.Activity.Id != course.Id &&
+                            (x.End > begin && x.End <= end) || // Veranstaltung endet im Zeitraum
+                            (x.Begin >= begin && x.Begin < end) || // Veranstaltung beginnt im Zeitraum
+                            (x.Begin <= begin && x.End >= end) // Veranstaltung zieht sich über gesamten Zeitraum
+            ).ToList();
+
+            return collisions;
+        }
+
     }
 }

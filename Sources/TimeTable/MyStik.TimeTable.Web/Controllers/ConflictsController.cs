@@ -1,4 +1,5 @@
 ﻿using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Areas.HelpPage;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using System;
@@ -340,6 +341,41 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_LabelSelectList", new List<ItemLabel>());
 
         }
+
+        /// <summary>
+        /// Calculates the conflicts for the course
+        /// optional against a given sequence of regular time span
+        /// </summary>
+        /// <param name="courseId">Course the conflicts should be calculated</param>
+        /// <param name="dayOfWeek"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult GetConflicts(Guid courseId, Guid? segId, int? dayOfWeek, string begin, string end)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+
+            var courseService = new CourseService(course);
+
+            var ownConflicts = courseService.GetConflicts(course);
+
+            // Berechnung der neuen Termine aus Segement und Wochentag
+            var altDates = courseService.GetDatesNextWeek(segment, dayOfWeek, begin, end);
+            var altConflicts  = courseService.GetConflicts(course, altDates);
+
+            var model = new ConflictSummaryModel
+            {
+                Course = course,
+                OwnConflicts = ownConflicts,
+                AltConflicts = altConflicts
+            };
+            
+
+            return PartialView("_ConflictGrid", summary);
+
+        }
+
 
 
     }
