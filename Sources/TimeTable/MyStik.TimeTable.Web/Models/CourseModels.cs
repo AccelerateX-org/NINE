@@ -42,6 +42,7 @@ namespace MyStik.TimeTable.Web.Models
             Curricula = new List<Curriculum>();
             ConflictingDates = new Dictionary<ActivityDate, List<ActivityDate>>();
             Blocks = new List<CourseBlockModel>();
+            Conflicts = new List<CourseConflictModel>();
         }
 
         /// <summary>
@@ -262,6 +263,7 @@ namespace MyStik.TimeTable.Web.Models
         }
 
         public List<CourseBlockModel> Blocks { get; set; }
+        public List<CourseConflictModel> Conflicts { get; set; }
 
         public bool IsPureBlock()
         {
@@ -347,6 +349,40 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<ActivityDate> Dates { get; set; }
     
+    }
+
+    public class CourseConflictModel
+    {
+        public CourseConflictModel()
+        {
+            Collisions = new List<ActivityDate>();
+        }
+
+        /// <summary>
+        /// Der Termin
+        /// </summary>
+        public ActivityDate Date { get; set; }
+
+        /// <summary>
+        /// Der Raum
+        /// </summary>
+        public Room Room { get; set; }
+
+        /// <summary>
+        /// Der Member bzw. User
+        /// </summary>
+        public OrganiserMember Member { get; set; }
+
+        /// <summary>
+        /// Die Kohorte
+        /// </summary>
+        public ItemLabel Label { get; set; }
+
+        /// <summary>
+        /// Alle Kollissionen
+        /// </summary>
+        public List<ActivityDate> Collisions { get; set; }
+
     }
 
 
@@ -1297,5 +1333,22 @@ namespace MyStik.TimeTable.Web.Models
 
         public Course DestCourse { get; set; }
 
+    }
+
+    public class ConflictOptionModel
+    {
+        public ActivityDate Date { get; set; }
+        public Course Course { get; set; }
+        
+        public WeeklyDateSeries WeeklyDateSeries { get; set; }
+    }
+
+    public class WeeklyDateSeries
+    {
+        public DayOfWeek DayOfWeek { get; set; }
+        
+        public DateTime Begin { get; set;}
+
+        public DateTime End { get; set; }
     }
 }
