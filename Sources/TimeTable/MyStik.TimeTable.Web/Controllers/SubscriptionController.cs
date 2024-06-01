@@ -22,9 +22,9 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             // Alle Semester mit Stundenplänen, die in der Zukunft enden
-            var semesterList = Db.Semesters.Where(x => 
-            x.EndCourses >= DateTime.Today &&
-            x.Groups.Any(g => g.IsAvailable)).ToList();
+            var semesterList = Db.Semesters.Where(x =>
+                x.EndCourses >= DateTime.Today &&
+                x.Groups.Any(g => g.IsAvailable)).ToList();
 
             var semSubService = new SemesterSubscriptionService(Db);
 
@@ -139,9 +139,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 var myCurr = activecurr.First();
 
                 var semesterGroups = Db.SemesterGroups.Where(g =>
-                    g.Semester.Id == semester.Id &&
-                    g.IsAvailable &&
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Id == myCurr.Id).OrderBy(g => g.CapacityGroup.CurriculumGroup.Name).ToList();
+                        g.Semester.Id == semester.Id &&
+                        g.IsAvailable &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Id == myCurr.Id)
+                    .OrderBy(g => g.CapacityGroup.CurriculumGroup.Name).ToList();
 
 
                 var semGroups = semesterGroups.Select(s => new SelectListItem
@@ -235,7 +236,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var orgSelect = new List<SelectListItem>
             {
-                new SelectListItem {Text = "Fakultät wählen", Value = Guid.Empty.ToString()}
+                new SelectListItem { Text = "Fakultät wählen", Value = Guid.Empty.ToString() }
             };
             orgSelect.AddRange(orgs.Select(f => new SelectListItem
             {
@@ -271,7 +272,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 .Take(8).ToList();
 
             var semSelect = new List<SelectListItem>();
-            semSelect.Add(new SelectListItem {Text="Semester wählen", Value = Guid.Empty.ToString()});
+            semSelect.Add(new SelectListItem { Text = "Semester wählen", Value = Guid.Empty.ToString() });
             semSelect.AddRange(semesters.Select(f => new SelectListItem
             {
                 Text = f.Name,
@@ -439,10 +440,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= nextDate).OrderByDescending(x => x.EndCourses)
                 .Select(f => new SelectListItem
-                {
-                    Text = f.Name,
-                    Value = f.Id.ToString(),
-                }
+                    {
+                        Text = f.Name,
+                        Value = f.Id.ToString(),
+                    }
                 );
 
 
@@ -473,6 +474,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return View(student);
+        }
+
+        public ActionResult LeaveCurriculum(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+            return View(student);
+        }
+
+        public ActionResult EndCurriculum(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+            student.LastSemester = SemesterService.GetSemester(DateTime.Today);
+            student.HasCompleted = true;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", "Dashboard");
         }
 
     }

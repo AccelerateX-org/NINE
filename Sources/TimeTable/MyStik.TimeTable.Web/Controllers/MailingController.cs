@@ -187,12 +187,13 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetOrganisation(id);
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Organiser = org;
             var model = new OccurrenceMailingModel
             {
                 OrgId = org.Id,
             };
-            return View();
+            return View(model);
         }
 
         /// <summary>
@@ -211,27 +212,19 @@ namespace MyStik.TimeTable.Web.Controllers
                 var semester = SemesterService.GetSemester(DateTime.Today);
                 var org = GetOrganisation(model.OrgId);
 
-                /*
-                var backgroundMailModel = GetMailModel(model);
-                backgroundMailModel.OrgId = org.Id;
-                backgroundMailModel.SemesterId = semester.Id;
-                backgroundMailModel.SenderId = UserManager.FindByName(User.Identity.Name).Id;
-                backgroundMailModel.IsImportant = model.IsImportant;
-                backgroundMailModel.ListName = "Alle Studierende";
-                backgroundMailModel.IsDistributionList = true;
-
-                BackgroundJob.Enqueue<MailService>(x => x.SendAll(backgroundMailModel));
-                */
-
 
                 // Alle Studierenden in Studiengängen des Veranstalters
                 ICollection<ApplicationUser> userList = new List<ApplicationUser>();
 
                 // nur die aktiven
-                var allStudents = Db.Students.Where(x => x.Curriculum.Organiser.Id == org.Id && x.LastSemester == null).ToList();
+                var allStudents = Db.Students.Where(x => 
+                    x.Curriculum != null && 
+                    x.Curriculum.Organiser != null && 
+                    x.Curriculum.Organiser.Id == org.Id && 
+                    x.LastSemester == null).ToList();
+
                 // ggf. doppelt vorhandene rauswerfen
                 var allUserIds = allStudents.Select(s => s.UserId).Distinct().ToList();
-
 
                 // als Empfänger kommen nur existierende User in Frage
                 foreach (var userId in allUserIds)

@@ -2,6 +2,11 @@
 @using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Data.Course
+
+@{
+    var db = new TimeTableDbContext();
+}
+
 <table class="table table-condensed">
     <thead>
         <tr>
@@ -13,6 +18,7 @@
             <th>Zeitraum</th>
             <th>Ort(e)</th>
             <th>Raumkonflikte</th>
+            <th>Kohortenkonflikte</th>
             <th>Dozent</th>
             <th>Titel/Beschreibung</th>
             <th></th>
@@ -38,7 +44,7 @@
             <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
             <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
             <td><del>@Html.TimeSpan(date)</del></td>
-            <td colspan="4">abgesagt</td>
+            <td colspan="5">abgesagt</td>
             <td>
                 @if (date.End >= DateTime.Now)
                 {
@@ -111,7 +117,21 @@
                     allConflicts.AddRange(roomConflicts);
                 }
 
+                var allLabelConflicts = new Dictionary<ItemLabel, List<ActivityDate>>();
+                var labels = date.Activity.LabelSet.ItemLabels.ToList();
 
+                foreach (var label in labels)
+                {
+                    var labelConflicts = db.ActivityDates.Where(d => (d.End > date.Begin && d.End <= date.End ||
+                                                               d.Begin >= date.Begin && d.Begin < date.End ||
+                                                               d.Begin <= date.Begin && d.End >= date.End) &&
+                                                              d.Activity.Id != date.Activity.Id && 
+                                                              d.Activity.Semester.Id == date.Activity.Semester.Id &&
+                                                              d.Activity.LabelSet != null && d.Activity.LabelSet.ItemLabels.Any(l => l.Id == label.Id)
+                                                              ).ToList();
+
+                    allLabelConflicts[label] = labelConflicts;
+                }
 
                 <tr @histAttr>
                     <td>
@@ -158,6 +178,22 @@
                     {
                         <td></td>
                     }
+                    <td>
+                        @foreach (var c in allLabelConflicts)
+                        {
+                            if (c.Value.Any())
+                            {
+                                <div>@c.Key.Name</div>
+                                <ul>
+                                    @foreach (var d in c.Value)
+                                    {
+                                        <li><a href="@Url.Action("Details", new { id = d.Activity.Id })">@d.Activity.ShortName (@Html.TimeSpan(d))</a></li>
+                                    }
+                                </ul>
+                            }
+                        }
+
+                    </td>
                     <td>@Html.LecturerList(date.Hosts)</td>
                     <td>
                         @if (!string.IsNullOrEmpty(date.Title))

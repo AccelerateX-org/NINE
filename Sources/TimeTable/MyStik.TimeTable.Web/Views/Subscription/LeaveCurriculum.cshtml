@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Data.Student
+@{
+    ViewBag.Title = "Studiengang beenden";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Studiengang @Model.Curriculum.ShortName beenden</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    Die Angaben hier sind rein nachrichtlicher Natur. Es hat nichts mit dem offiziellen Status zu tun. Diese ist in primuss hinterlegt.
+                    <ul>
+                        <li>Ohne Angabe eines Studiengangs kann ich mich ggf. nicht in Lehrveranstaltungen eintragen und / oder an Wahlverfahren teilnehmen.</li>
+                        <li>Ohne Angabe eines Studiengangs kann ich über NINE keine Abschlussarbeit anmelden.</li>
+                        <li>Über das Hauptmenü kann ich jederzeit wieder Angaben zu einem Studiengang machen.</li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <a href="@Url.Action("EndCurriculum", new { id = Model.Id })" class="btn btn-outline-primary">Studiengang beenden</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

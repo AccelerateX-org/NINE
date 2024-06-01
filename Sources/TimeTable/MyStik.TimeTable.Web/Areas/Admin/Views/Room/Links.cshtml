@@ -34,15 +34,38 @@
 <table class="table table-condensed">
     <thead>
     <tr>
-        <th>Fakultät</th>
+        <th>Einrichtung</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
     @foreach (var link in Model.Assignments)
     {
         <tr>
-            <td>@link.Organiser.ShortName</td>
-            <td><a href="@Url.Action("DeleteLink", new {id=link.Id})" class="btn btn-danger"><i class="fa fa-trash-o"></i></a></td>
+            <td>
+                @if (link.IsOwner)
+                {
+                    @link.Organiser.ShortName <i class="bi bi-building-exclamation"></i>
+                }
+                else
+                {
+                    @link.Organiser.ShortName 
+                }
+            </td>
+            <td>
+                <div class="btn-group">
+                    @if (link.IsOwner)
+                    {
+                        <a href="@Url.Action("RemoveOwner", new { id = link.Id })" class="btn btn-outline-danger"><i class="bi bi-building-x"></i></a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("MakeOwner", new { id = link.Id })" class="btn btn-outline-primary"><i class="bi bi-building-exclamation"></i></a>
+
+                    }
+                    <a href="@Url.Action("DeleteLink", new { id = link.Id })" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                </div>
+            </td>
         </tr>
     }
     </tbody>

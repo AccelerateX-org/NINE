@@ -46,7 +46,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.SemesterList = semesterList;
 
 
-            return View(module);
+            return RedirectToAction("Semester", new { moduleId = module.Id, semId = semester.Id });
         }
 
         [HttpPost]
@@ -116,6 +116,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
             var semester = SemesterService.GetSemester(semId);
 
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
 
             // die aktuell veröffentlichte Fassung
             var lastPublished = module.Descriptions
@@ -144,6 +148,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 ModuleDescription = lastPublished,
                 Exams = exams
             };
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
 
             return View("Semester", model);
@@ -981,6 +989,11 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var accr in subject.SubjectAccreditations.ToList())
             {
                 Db.SubjectAccreditations.Remove(accr);
+            }
+
+            foreach (var teaching in subject.SubjectTeachings.ToList())
+            {
+                Db.SubjectTeachings.Remove(teaching);
             }
 
             Db.ModuleCourses.Remove(subject);

@@ -90,7 +90,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 org = GetMyOrganisation();
 
             ViewBag.UserRight = GetUserRight(org);
-            ViewBag.Organiser = org;
             ViewBag.Day = day;
 
             return View(model);
@@ -103,18 +102,42 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Rules(Guid id)
         {
+            var user = GetCurrentUser();
+
             var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
 
-            var org = GetMyOrganisation();
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
-            ViewBag.Organiser = org;
+            var owner = model.Assignments.FirstOrDefault(x => x.IsOwner);
+            
+            if (owner == null)
+                return RedirectToAction("Details", new {id = id});
 
-            ViewBag.Admins = org.Members.Where(x => x.IsRoomAdmin);
+            ViewBag.UserRight = GetUserRight(owner.Organiser);
+            ViewBag.Organiser = owner.Organiser;
+            ViewBag.Admins = owner.Organiser.Members.Where(x => x.IsRoomAdmin);
 
             return View(model);
         }
 
 
+        public ActionResult LockRoomExternal(Guid id)
+        {
+            var model = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            model.ExternalNeedConfirmation = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Rules", new { id = model.Room.Id });
+        }
+
+        public ActionResult UnLockRoomExternal(Guid id)
+        {
+            var model = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            model.ExternalNeedConfirmation = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Rules", new { id = model.Room.Id });
+        }
 
 
         /// <summary>
@@ -665,7 +688,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public FileResult RoomBook()
         {
-
+            /*
             var doc = new PdfDocument();
 
             foreach (var room in Db.Rooms.OrderBy(r => r.Number))
@@ -709,11 +732,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 gfx.DrawString("Pitchfork.QRGenerator https://github.com/GrabYourPitchforks/Pitchfork.QRGenerator", fontFooter, XBrushes.Black, new XPoint(marginLeft, footerY += lineSpace));
 
             }
-
+            */
         
             var stream = new MemoryStream();
 
-            doc.Save(stream, false);
+            //doc.Save(stream, false);
 
             return File(stream, "text/pdf", "Test.pdf");
         }

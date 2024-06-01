@@ -36,8 +36,29 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
-                    <span id="loading" class="spinner-border"></span>
-                    <div id="calendar"></div>
+                    <div class="card">
+                        <div class="list-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                        <div class="btn-group me-2" role="group" aria-label="First group">
+                                            <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                                            <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                                        </div>
+                                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                                            <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
+                                            <a id="btnWeekDay" href="javascript:toggleWeekDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
+                                        </div>
+                                        <div class="btn-group" role="group" aria-label="Third group">
+                                            <a id="btnPersonal" href="javascript:togglePersonal()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar2-heart"></i></a>
+                                            <span id="loading" class="spinner-border"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="calendar"></div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -118,6 +139,13 @@
     <script>
         var myCalendar = null;
         var mySelection = "";
+        var showWeekend = false;
+        var showPersonal = false;
+        var showWeekDay = true;
+        var semId = "@Model.Semester.Id";
+        var slotId = "@Model.Slot.Id";
+        var orgId = "@Model.Organiser.Id";
+        var currId = "@Model.Curriculum.Id";
 
         $(document).ready(function() {
             $("#btnHidePersonalDates").hide();
@@ -134,6 +162,213 @@
             //myCalendar.setOption('hiddenDays', [6, 7]);
 
         }
+
+        function showWeekCalendar() {
+            try {
+                $('#loading').show();
+
+                $('#calendar').html('');
+                myCalendar = initDayCalendar("calendar");
+                myCalendar.setOption("headerToolbar", false);
+
+                $("#btnPrev").removeClass("disabled");
+                $("#btnNext").removeClass("disabled");
+
+
+                showLabelDates();
+
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
+
+        }
+
+        function showWeekDayCalendar() {
+            try {
+
+                $('#loading').show();
+
+                $('#calendar').html('');
+                myCalendar = initWeekCalendar("calendar");
+                myCalendar.setOption("headerToolbar", false);
+
+                $("#btnPrev").addClass("disabled");
+                $("#btnNext").addClass("disabled");
+
+                showLabelDates();
+
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
+        }
+
+        function toggleWeekDay() {
+            showWeekDay = !showWeekDay;
+
+            if (showWeekDay) {
+                showWeekDayCalendar();
+                showWeekendDays();
+                showPersonalDates();
+                $("#btnWeekDay").addClass("active");
+            } else {
+                showWeekCalendar();
+                showWeekendDays();
+                showPersonalDates();
+                $("#btnWeekDay").removeClass("active");
+            }
+        }
+
+
+        function onPrev() {
+            myCalendar.prev();
+        }
+
+        function onNext() {
+            myCalendar.next();
+        }
+
+        function toggleWeekend() {
+            showWeekend = !showWeekend;
+            showWeekendDays();
+        }
+
+        function showLabelDates() {
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: "courses",
+                        url: '@Url.Action("SlotEventsWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            orgId: orgId,
+                            slotId: slotId,
+                            currId: currId,
+
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: "courses",
+                        url: '@Url.Action("SlotEvents", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            orgId: orgId,
+                            slotId: slotId,
+                            currId: currId,
+
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+        }
+
+
+
+        function showPersonalDates() {
+
+            if (!showPersonal)
+                return;
+
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: "personal",
+                        url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            showWaiting: true
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: "personal",
+                        url: '@Url.Action("ActivityPlan", "Calendar")',
+                        method: 'POST',
+                        /*
+                        extraParams: {
+                            semId: semId,
+                            showWaiting: true
+                        },
+                        */
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+        }
+
 
     </script>
 }

@@ -70,6 +70,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == model.Student.Id);
             }
 
+            model.Candidatures = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
+
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;
 

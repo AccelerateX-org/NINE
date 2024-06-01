@@ -345,7 +345,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult SlotPlan(Guid currId, Guid semId)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var curr = Db.Curricula.Include(curriculum => curriculum.Organiser).Include(curriculum1 => curriculum1.Areas.Select(curriculumArea => curriculumArea.Options.Select(areaOption => areaOption.Slots.Select(curriculumSlot =>
+                curriculumSlot.LabelSet.ItemLabels)))).SingleOrDefault(x => x.Id == currId);
 
             var model = new CurriculumViewModel();
 
@@ -355,22 +356,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // die Labels sammlen
             var labels = new List<ItemLabel>();
-            foreach (var section in curr.Sections)
+            foreach (var area in curr.Areas)
             {
-                foreach (var slot in section.Slots)
+                foreach (var areaOption in area.Options)
                 {
-                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    foreach (var slot in areaOption.Slots)
                     {
+                        if (slot.LabelSet == null || !slot.LabelSet.ItemLabels.Any()) continue;
                         foreach (var label in slot.LabelSet.ItemLabels)
                         {
                             if (!labels.Contains(label))
                             {
                                 labels.Add(label);
                             }
-
                         }
-                    }
 
+                    }
                 }
             }
 

@@ -18,17 +18,23 @@ namespace MyStik.TimeTable.Data
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Veraltet. Wird nicht verwendet
+        /// Dieser Raum gehört der Organisation
+        /// Ein Raum kann auch mehreren organisationen gehören
+        /// Diese müssten im Zweifel alle einer Buchungsanfrage zustimmen
         /// </summary>
-        //public bool IsExclusive { get; set; }
+        public bool IsOwner { get; set; }
 
         /// <summary>
         /// interne Raum Admins dürfen diesen Raum belegen
+        /// false: interne brauchen keine Buchungsanfrage
+        /// true: für interne wird eine Buchungsanfrage erstellt
         /// </summary>
         public bool InternalNeedConfirmation { get; set; }
 
         /// <summary>
         /// externe Raum Admins dürfen diesen Raum belegen
+        /// false: externe brauchen keine Buchungsanfrage
+        /// true: externe brauchen eine Buchungsanfrage
         /// </summary>
         public bool ExternalNeedConfirmation { get; set; }
 

@@ -1,0 +1,126 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+
+
+@{
+    ViewBag.Title = "Semesterabschnitte";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Terminbereinigung Segmente</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Organiser.Id, (IEnumerable<SelectListItem>)ViewBag.Organisers, new { @class = "form-control", onchange = "onOrgChanged()" })
+                                <label for="Organiser.Id">Einrichtung</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Semester.Id, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control", onchange = "onSemChanged()" })
+                                <label for="Semester.Id">Semester</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Segment.Id, (IEnumerable<SelectListItem>)ViewBag.Segments, new { @class = "form-control", onchange = "onSegmentChanged()" })
+                                <label for="Segment.Id">Abschnitt</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="selectCat" disabled>
+                                </select>
+                                <label for="selectCat">Modulkatalog</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="selectCurr" disabled>
+                                </select>
+                                <label for="selectCurr">Studiengang</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="selectLabel" disabled>
+                                </select>
+                                <label for="selectLabel">Kohorte</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span id="loading" class="spinner-border"></span>
+            </div>
+            <div id="conflictTable"></div>
+        </div>
+    </div>
+</div>
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            loadConflictTable();
+        });
+
+
+        function loadConflictTable() {
+            $("#conflictTable").html("");
+            $('#loading').show();
+
+
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+            var segId = $("#Segment_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetConflictTable")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId,
+                        segId: segId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#conflictTable").html(data);
+                        $('#loading').hide();
+                        initTable();
+                    }
+                });
+        }
+
+        function onSegmentChanged() {
+            loadConflictTable();
+        }
+
+        function initTable() {
+            var t = $('#tabConflicts').DataTable(
+                {
+                    "paging": false
+                }
+            );
+        }
+
+
+    </script>
+
+}

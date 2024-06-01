@@ -33,7 +33,7 @@ namespace MyStik.TimeTable.DataServices
         public ICollection<OrganiserMember> GetLecturers(ActivityOrganiser org, Semester sem)
         {
             var activeLecturers =
-            _db.Members.Where(m => m.Organiser.Id == org.Id)
+            _db.Members.Where(m => m.Organiser.Id == org.Id && !string.IsNullOrEmpty(m.UserId) && !string.IsNullOrEmpty(m.FirstName) && !string.IsNullOrEmpty(m.Name))
                 .OrderBy(m => m.Name)
                 .ToList();
             

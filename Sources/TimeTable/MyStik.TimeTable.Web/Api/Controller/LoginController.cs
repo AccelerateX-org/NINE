@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Web.Api.DTOs;
@@ -64,22 +65,29 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             if (user != null)
             {
-                result.User = new UserDto();
-                result.User.Id = user.Id;
-                result.User.FirstName = user.FirstName;
-                result.User.LastName = user.LastName;
+                result.User = new UserDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
 
-                var student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).FirstOrDefault();
+                var student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).Include(student1 => student1.FirstSemester).Include(student2 =>
+                    student2.Curriculum.Organiser).FirstOrDefault();
                 if (student != null)
                 {
-                    result.Curriculum = new CurriculumDto();
-                    result.Curriculum.Name = student.Curriculum.Name;
-                    result.Curriculum.ShortName = student.Curriculum.ShortName;
-
-                    result.Curriculum.Organiser = new OrganiserDto();
-                    result.Curriculum.Organiser.Name = student.Curriculum.Organiser.Name;
-                    result.Curriculum.Organiser.ShortName = student.Curriculum.Organiser.ShortName;
-                    result.Curriculum.Organiser.Color = student.Curriculum.Organiser.HtmlColor;
+                    result.Curriculum = new CurriculumDto
+                    {
+                        Name = student.Curriculum.Name,
+                        ShortName = student.Curriculum.ShortName,
+                        Organiser = new OrganiserDto
+                        {
+                            Name = student.Curriculum.Organiser.Name,
+                            ShortName = student.Curriculum.Organiser.ShortName,
+                            Color = student.Curriculum.Organiser.HtmlColor
+                        },
+                        Semester = student.FirstSemester.Name
+                    };
                 }
             }
 

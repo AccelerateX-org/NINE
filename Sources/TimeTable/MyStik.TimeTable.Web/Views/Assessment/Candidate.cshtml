@@ -1,4 +1,6 @@
-﻿@using MyStik.TimeTable.Web.Services
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Candidature
 @{
     /**/
@@ -7,6 +9,34 @@
     var userService = new UserInfoService();
 
     var user = userService.GetUser(Model.UserId);
+
+    var db = new TimeTableDbContext();
+
+    var cand = db.Candidatures.Include(candidature => candidature.Stages.Select(candidatureStage => candidatureStage.AssessmentStage)).SingleOrDefault(x => x.Id == Model.Id);
+
+    var stageIds = cand.Stages.Select(x => x.AssessmentStage.Id).Distinct().ToList();
+
+    foreach (var stageId in stageIds)
+    {
+        var stages = cand.Stages.Where(x => x.AssessmentStage.Id == stageId).ToList();
+        if (stages.Count > 1)
+        {
+            var firstStage = stages.First();
+
+            foreach (var stage in stages)
+            {
+                if (stage.Id != firstStage.Id)
+                {
+                    cand.Stages.Remove(stage);
+
+                    db.CandidatureStages.Remove(stage);
+                }
+            }
+        }
+    }
+
+    db.SaveChanges();
+    
 }
 
 @section styles

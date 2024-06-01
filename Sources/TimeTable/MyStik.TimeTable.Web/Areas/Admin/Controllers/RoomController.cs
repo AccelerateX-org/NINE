@@ -179,6 +179,27 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        public ActionResult MakeOwner(Guid id)
+        {
+            var model = Db.RoomAssignments.SingleOrDefault(r => r.Id == id);
+
+            model.IsOwner = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Links", new {id = model.Room.Id});
+        }
+
+
+        public ActionResult RemoveOwner(Guid id)
+        {
+            var model = Db.RoomAssignments.SingleOrDefault(r => r.Id == id);
+
+            model.IsOwner = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Links", new { id = model.Room.Id });
+        }
+
         /// <summary>
         /// 
         /// </summary>

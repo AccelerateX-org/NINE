@@ -47,7 +47,15 @@
                             <td>
                                 @foreach (var org in room.Assignments)
                                 {
-                                    <div>@org.Organiser.ShortName</div>
+                                    if (org.IsOwner)
+                                    {
+                                        <div class="text-primary">@org.Organiser.ShortName <i class="bi bi-building-exclamation"></i></div>
+                                    }
+                                    else
+                                    {
+                                        <div>@org.Organiser.ShortName</div>
+                                       
+                                    }
                                 }
                             </td>
                             <td>

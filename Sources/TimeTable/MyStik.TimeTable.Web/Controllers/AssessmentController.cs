@@ -24,16 +24,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("Overview", all);
             }
 
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == id.Value);
 
-            var model = new AssessmentOverviewModel
-            {
-                Curriculum = curr,
-                Assessments = Db.Assessments.Where(x => x.Curriculum.Id == curr.Id).ToList()
-            };
+            var assessments = Db.Assessments.Where(x => x.Curriculum.Organiser.Id == org.Id).ToList();
 
-
-            return View(model);
+            return View("Overview", assessments);
         }
 
         public ActionResult Details(Guid id)
@@ -58,9 +53,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Admin()
+        public ActionResult Admin(Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
 
             var model = new AssessmentOverviewModel
@@ -130,10 +125,11 @@ namespace MyStik.TimeTable.Web.Controllers
         
 
 
-        public ActionResult Create()
+        public ActionResult Create(Guid id)
         {
             var model = new AssessmentCreateModel
             {
+                OrgId = id,
                 Name = "TEST Auswahlverfahren",
                 Description = "TEST TEST TEST",
                 CurriculumShortName = "",
@@ -152,8 +148,8 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Create(AssessmentCreateModel model)
         {
-            var member = GetMyMembership();
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(model.OrgId);
+            var member = GetMyMembership(model.OrgId);
 
 
             var curr = Db.Curricula.SingleOrDefault(x =>

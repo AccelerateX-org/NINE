@@ -14,26 +14,25 @@ namespace MyStik.TimeTable.Web.Controllers
     [AllowAnonymous]
     public class DictionaryController : BaseController
     {
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var model = new HomeViewModel();
 
-            var allPublishedSemester =
-                Db.Activities.OfType<Course>().Where(x => x.Semester != null).Select(x => x.Semester).Distinct()
-                    .OrderByDescending(s => s.EndCourses).Take(4).ToList();
+            var sem = id.HasValue ? SemesterService.GetSemester(id) : SemesterService.GetSemester(DateTime.Today);
 
-            foreach (var semester in allPublishedSemester)
-            {
-                var activeOrgs = SemesterService.GetActiveOrganiser(semester);
+            var currentSemester = sem;
+            var nextSemester = SemesterService.GetNextSemester(sem);
+            var prevSemester = SemesterService.GetPreviousSemester(sem);
 
-                var semModel = new SemesterActiveViewModel
-                {
-                    Semester = semester,
-                    Organisers = activeOrgs.ToList()
-                };
+            model.Organisers.AddRange(Db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).ToList());
 
-                model.ActiveSemester.Add(semModel);
-            }
+            model.Institutions.AddRange(model.Organisers.Select(x => x.Institution).Distinct().ToList());
+
+            model.CurrentSemester = sem;
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
             return View(model);
         }
@@ -1129,22 +1128,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // die Labels sammlen
             var labels = new List<ItemLabel>();
-            foreach (var section in curr.Sections)
+            foreach (var area in curr.Areas)
             {
-                foreach (var slot in section.Slots)
+                foreach (var areaOption in area.Options)
                 {
-                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    foreach (var slot in areaOption.Slots)
                     {
-                        foreach (var label in slot.LabelSet.ItemLabels)
+                        if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
                         {
-                            if (!labels.Contains(label))
+                            foreach (var label in slot.LabelSet.ItemLabels)
                             {
-                                labels.Add(label);
+                                if (!labels.Contains(label))
+                                {
+                                    labels.Add(label);
+                                }
+
                             }
-
                         }
-                    }
 
+                    }
                 }
             }
 
@@ -1190,17 +1192,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Areas = new List<AreaSelectViewModel>();
 
-            foreach (var optId in optIds)
+            if (optIds != null)
             {
-                var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optId);
-
-                var selectOption = new AreaSelectViewModel
+                foreach (var optId in optIds)
                 {
-                    Area = option.Area,
-                    Option = option,
-                };
+                    var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optId);
 
-                model.Areas.Add(selectOption);
+                    var selectOption = new AreaSelectViewModel
+                    {
+                        Area = option.Area,
+                        Option = option,
+                    };
+
+                    model.Areas.Add(selectOption);
+                }
             }
 
             ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
@@ -1224,17 +1229,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Areas = new List<AreaSelectViewModel>();
 
-            foreach (var optId in optIds)
+            if (optIds != null)
             {
-                var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optId);
-
-                var selectOption = new AreaSelectViewModel
+                foreach (var optId in optIds)
                 {
-                    Area = option.Area,
-                    Option = option,
-                };
+                    var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optId);
 
-                model.Areas.Add(selectOption);
+                    var selectOption = new AreaSelectViewModel
+                    {
+                        Area = option.Area,
+                        Option = option,
+                    };
+
+                    model.Areas.Add(selectOption);
+                }
             }
 
             ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
@@ -1258,22 +1266,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // die Labels sammlen
             var labels = new List<ItemLabel>();
-            foreach (var section in curr.Sections)
+            foreach (var area in curr.Areas)
             {
-                foreach (var slot in section.Slots)
+                foreach (var areaOption in area.Options)
                 {
-                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    foreach (var slot in areaOption.Slots)
                     {
-                        foreach (var label in slot.LabelSet.ItemLabels)
+                        if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
                         {
-                            if (!labels.Contains(label))
+                            foreach (var label in slot.LabelSet.ItemLabels)
                             {
-                                labels.Add(label);
+                                if (!labels.Contains(label))
+                                {
+                                    labels.Add(label);
+                                }
+
                             }
-
                         }
-                    }
 
+                    }
                 }
             }
 

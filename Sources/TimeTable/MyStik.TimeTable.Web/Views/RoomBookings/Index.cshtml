@@ -1,0 +1,80 @@
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
+    ViewBag.Title = "Raumbuchungen";
+
+    var userService = new UserInfoService();
+    var db = new TimeTableDbContext();
+
+    var date24h = DateTime.Now.AddDays(-1);
+
+    var nTotal = db.RoomBookings.Count();
+    var n24h = db.RoomBookings.Count(x => x.TimeStamp >= date24h);
+
+    var org = Model;
+
+    var bookings = db.RoomBookings.Where(x => x.Room.Assignments.Any(a => a.Organiser.Id == org.Id && a.IsOwner)).Include(roomBooking => roomBooking.Room).Include(roomBooking1 => roomBooking1.Date.Activity).ToList();
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Raumbuchungen @Model.ShortName</h5>
+                <h6 class="card-subtitle">Wer hat wann welchen Raum für welches Ereignis gebucht</h6>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Ereignis</th>
+                    <th>Termin</th>
+                    <th>Raum</th>
+                    <th>Gebucht von</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var booking in bookings.OrderByDescending(x => x.TimeStamp))
+                {
+                    var user = userService.GetUser(booking.UserId);
+                    
+                    <tr>
+                        <td>@booking.TimeStamp</td>
+                        <td>
+                            @if (booking.Date.Activity is Course)
+                            {
+                                <a href="@Url.Action("Details", "Course", new { id = booking.Date.Activity.Id })">
+                                    @booking.Date.Activity.ShortName
+                                </a>
+                            }
+                            else if (booking.Date.Activity is Reservation)
+                            {
+                                <a href="@Url.Action("Details", "Reservation", new { id = booking.Date.Activity.Id })">
+                                    Reservierung
+                                </a>
+                            }
+                            else if (booking.Date.Activity is Event)
+                            {
+                                <a href="@Url.Action("Details", "Event", new { id = booking.Date.Activity.Id })">
+                                    Veranstaltung
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#">unbekannt</a>
+                            }
+                            | @booking.Date.Activity.Name
+                        </td>
+                        <td>@Html.TimeSpanWithDate(booking.Date)</td>
+                        <td>@booking.Room.Number</td>
+                        <td>@user.FullName</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.RoomConflictModel
+
+
+@{
+}
+
+
+        @foreach (var date in Model.Alternatives)
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-label">@date.Date.Begin.ToShortDateString()</div>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select">
+                        @foreach (var room in date.AvailableRooms.OrderByDescending(x => x.Capacity))
+                        {
+                            <option value="@room.Id">@room.Number (@room.Capacity Plätze)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="btn btn-group">
+                        <a href="" class="btn btn-sm btn-outline-success"><i class="bi bi-check"></i></a>
+                        <a href="" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                    </div>
+                </div>
+            </div>
+        }

@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @{
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
@@ -8,7 +9,6 @@
     }
 
     ViewBag.Title = "Vorlesungsverzeichnis";
-
 }
 
 
@@ -30,7 +30,7 @@
                 <div class="list-group-item list-group-item-light">
                     <h4>Getrennt nach Studiengang</h4>
                 </div>
-                @foreach (var curr in Model.Curricula.OrderBy(x => x.ShortName))
+                @foreach (var curr in Model.Curricula.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
                 {
                     <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
                         <strong>@curr.ShortName</strong>: @curr.Name
@@ -40,36 +40,34 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card">
-            <div class="list-group">
-                <div class="list-group-item list-group-item-light">
-                    <h4>Wahlverfahren</h4>
-                </div>
-                @foreach (var l in Model.Lotteries.OrderBy(x => x.Name))
+        <div class="list-group mb-3">
+            <div class="list-group-item list-group-item-light">
+                <h4>Wahlverfahren</h4>
+            </div>
+            @foreach (var l in Model.Lotteries.OrderBy(x => x.Name))
+            {
+                if (l.IsActive)
                 {
-                    if (l.IsActive)
-                    {
-                        <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Lottery", new { id = l.Id })">
-                            <div><strong>@l.Name</strong></div>
-                            @if (l.IsFixed)
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Lottery", new { id = l.Id })">
+                        <div><strong>@l.Name</strong></div>
+                        @if (l.IsFixed)
+                        {
+                            if (l.IsActiveUntil.Value != null && l.IsActiveUntil.Value > DateTime.Now)
                             {
-                                if (l.IsActiveUntil.Value != null && l.IsActiveUntil.Value > DateTime.Now)
-                                {
-                                    <div><small>Eintrgaung für Platzverlosung bis @l.IsActiveUntil.Value.ToShortDateString() @l.IsActiveUntil.Value.ToShortTimeString()</small></div>
-                                }
-                                else
-                                {
-                                    <div><small>Aktuell keine Eintragung möglich</small></div>
-                                }
+                                <div><small>Eintrgaung für Platzverlosung bis @l.IsActiveUntil.Value.ToShortDateString() @l.IsActiveUntil.Value.ToShortTimeString()</small></div>
                             }
                             else
                             {
-                                <div><small>Eintragung nach Windhundverfahren</small></div>
+                                <div><small>Aktuell keine Eintragung möglich</small></div>
                             }
-                        </a>
-                    }
+                        }
+                        else
+                        {
+                            <div><small>Eintragung nach Windhundverfahren</small></div>
+                        }
+                    </a>
                 }
-            </div>
+            }
         </div>
     </div>
     <div class="col-md-4">

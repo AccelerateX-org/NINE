@@ -16,6 +16,8 @@ namespace MyStik.TimeTable.Web.Models
 
     public class AssessmentCreateModel
     {
+        public Guid OrgId { get; set; }
+
         public Guid AssessmentId { get; set; }
         public string CurriculumShortName { get; set; }
 

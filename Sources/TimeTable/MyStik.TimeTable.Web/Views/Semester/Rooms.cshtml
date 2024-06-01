@@ -1,4 +1,5 @@
-﻿@using System.Globalization
+﻿@using System.Data.Entity
+@using System.Globalization
 @using MyStik.TimeTable.Data
 @model MyStik.TimeTable.Web.Models.SemesterViewModel
 
@@ -13,7 +14,9 @@
     var from = sem.StartCourses.Date;
     var until = from.AddDays(120);
 
-    var rooms = db.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == org.Id)).OrderBy(x => x.Number).ToList();
+    var rooms = db.Rooms.Where(x =>
+        x.Capacity > 0 &&
+        x.Assignments.Any(a => a.Organiser.Id == org.Id)).OrderByDescending(x => x.Capacity).ThenBy(x => x.Number).Include(room => room.Dates).ToList();
 
 
 
@@ -26,8 +29,12 @@
 
     <style>
         .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            /*
             transform: rotate(270deg);
             transform-origin: left bottom 20;
+                */
         }
     </style>
 }
@@ -83,7 +90,7 @@
                         {
                             var name = room.Number.Length < 6 ? room.Number : room.Number.Substring(0, 6);
                             <th>
-                                <div class="vertical-text text-nowrap text-truncate">@name</div>
+                                <div class="vertical-text text-nowrap text-truncate">@name (@room.Capacity)</div>
                             </th>
                         }
                     </tr>

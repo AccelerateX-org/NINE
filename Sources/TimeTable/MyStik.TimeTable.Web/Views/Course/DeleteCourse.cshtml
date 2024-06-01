@@ -29,7 +29,7 @@
                             <li>Um sicherzugehen, dass Sie sich wirklich löschen möchten, müssen Sie einen Code eingeben</li>
                         </ul>
                     </div>
-                    <p>Bitte geben Sie den Code <strong>@Model.Course.ShortName</strong> ein.</p>
+                    <p>Bitte geben Sie den Code "<strong>@Model.Course.ShortName</strong>" ein (ohne die Anführungszeichen).</p>
                     using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
                         ))
                     {

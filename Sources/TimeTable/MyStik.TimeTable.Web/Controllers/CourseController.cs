@@ -44,6 +44,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 model = courseService.GetCourseSelectModel(id, user.Id);
             }
 
+            courseService.RepairDates(model.Summary.Course);
+
+
             if (model.Summary.Course.LabelSet == null)
             {
                 var labelSet = new ItemLabelSet();
@@ -365,6 +368,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var logger = LogManager.GetLogger("Course");
 
+            var user = GetCurrentUser();
             var activityDate = Db.ActivityDates.SingleOrDefault(d => d.Id == model.ActivityDateId);
 
             if (activityDate == null)
@@ -408,14 +412,53 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 // es kommen die neuen Räume und Dozenten
                 // => zuerst alle löschen!
-                activityDate.Rooms.Clear();
+                var oldRooms = activityDate.Rooms.ToList();
 
                 if (model.RoomIds != null)
                 {
                     foreach (var roomId in model.RoomIds)
                     {
-                        activityDate.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
+                        var oldRoom = oldRooms.FirstOrDefault(x => x.Id == roomId);
+                        if (oldRoom != null)
+                        {
+                            // nix machen, war ja schon drin
+                            oldRooms.Remove(oldRoom);
+                        }
+                        else
+                        {
+                            var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
+                            activityDate.Rooms.Add(room);
+
+                            // jetzt noch das Booking
+                            var booking = new RoomBooking
+                            {
+                                Date = activityDate,
+                                Room = room,
+                                TimeStamp = DateTime.Now,
+                                UserId = user.Id,
+                            };
+
+                            Db.RoomBookings.Add(booking);
+                        }
                     }
+                }
+                else
+                {
+                    activityDate.Rooms.Clear();
+                }
+
+                // die verbleibenden Räume müssen jetzt auch noch weg
+                foreach (var room in oldRooms)
+                {
+                    var bookings = Db.RoomBookings.Where(x => x.Date.Id == activityDate.Id && x.Room.Id == room.Id)
+                        .ToList();
+
+                    foreach (var booking in bookings)
+                    {
+                        Db.RoomBookings.Remove(booking);
+                    }
+
+                    activityDate.Rooms.Remove(room);
                 }
             }
 
@@ -592,12 +635,26 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult AddRoom(Guid id, DateTime date, TimeSpan from, TimeSpan to, string room)
         {
             var logger = LogManager.GetLogger("Course");
+            var user = GetCurrentUser();
             var activityDate = Db.ActivityDates.SingleOrDefault(d => d.Id == id);
             var model = Db.Rooms.SingleOrDefault(r => r.Number.Equals(room));
 
             if (model != null && activityDate != null)
             {
                 activityDate.Rooms.Add(model);
+
+                // jetzt noch das Booking
+                var booking = new RoomBooking
+                {
+                    Date = activityDate,
+                    Room = model,
+                    TimeStamp = DateTime.Now,
+                    UserId = user.Id,
+                };
+
+                Db.RoomBookings.Add(booking);
+
+
                 Db.SaveChanges();
 
                 logger.InfoFormat("Room {0} for {1} on [{2}-{3}] was added by {4}", model.Number,
@@ -824,6 +881,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /*
         public ActionResult DeleteAllDates(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -851,6 +909,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Kehre zurück zur Seite der Aktivität
             return RedirectToAction(actSummary.Action, actSummary.Controller, new { id = actSummary.Id });
         }
+        */
 
         /// <summary>
         /// 
@@ -1061,6 +1120,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult CreateCourseDate(CourseDateCreateModelExtended model)
         {
+            var user = GetCurrentUser();
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
 
             // Jetzt die Termine - falls vorhanden
@@ -1129,6 +1189,18 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
+
+                            // jetzt noch das Booking
+                            var booking = new RoomBooking
+                            {
+                                Date = activityDate,
+                                Room = room,
+                                TimeStamp = DateTime.Now,
+                                UserId = user.Id,
+                            };
+
+                            Db.RoomBookings.Add(booking);
+
                         }
 
                         foreach (var doz in dozList)
@@ -1238,6 +1310,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult CreateCoursePeriod(CourseCreateModelExtended model)
         {
+            var user = GetCurrentUser();
             var org = GetOrganiser(model.OrganiserId);
             var semester = SemesterService.GetSemester(model.SemesterId);
 
@@ -1336,6 +1409,18 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
+
+                            // jetzt noch das Booking
+                            var booking = new RoomBooking
+                            {
+                                Date = activityDate,
+                                Room = room,
+                                TimeStamp = DateTime.Now,
+                                UserId = user.Id,
+                            };
+
+                            Db.RoomBookings.Add(booking);
+
                         }
 
                         foreach (var doz in dozList)
@@ -1426,6 +1511,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult CreateCourseBlock(CourseCreateModelExtended model)
         {
+            var user = GetCurrentUser();
             var org = GetOrganiser(model.OrganiserId);
             var semester = SemesterService.GetSemester(model.SemesterId);
 
@@ -1523,6 +1609,18 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
+
+                            // jetzt noch das Booking
+                            var booking = new RoomBooking
+                            {
+                                Date = activityDate,
+                                Room = room,
+                                TimeStamp = DateTime.Now,
+                                UserId = user.Id,
+                            };
+
+                            Db.RoomBookings.Add(booking);
+
                         }
 
                         foreach (var doz in dozList)
@@ -2363,6 +2461,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult AddRoomToDates(ICollection<Guid> dateIds, Guid roomId)
         {
+            var user = GetCurrentUser();
             var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
 
             Course course = null;
@@ -2376,6 +2475,17 @@ namespace MyStik.TimeTable.Web.Controllers
                     if (room != null)
                     {
                         date.Rooms.Add(room);
+
+                        // jetzt noch das Booking
+                        var booking = new RoomBooking
+                        {
+                            Date = date,
+                            Room = room,
+                            TimeStamp = DateTime.Now,
+                            UserId = user.Id,
+                        };
+
+                        Db.RoomBookings.Add(booking);
                     }
 
                     if (course == null)
@@ -3529,6 +3639,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = course.Organiser != null ? course.Organiser : GetMyOrganisation();
 
             var courseService = new CourseService(Db);
+            courseService.RepairDates(course);
 
             var model = new CourseDetailViewModel()
             {
@@ -3842,6 +3953,42 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AdminNewDictionary(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+            var semester = course.Semester;
+            var org = course.Organiser;
+
+            var model = new CourseHistoryModel()
+            {
+                Course = course,
+                Semester = course.Semester,
+                SemesterId = course.Semester.Id,
+            };
+
+
+            var segments = Db.SemesterDates.Where(x => x.Semester.Id == semester.Id &&
+                                                       x.Organiser != null && x.Organiser.Id == org.Id && x.HasCourses)
+                .ToList();
+
+            if (segments.Any())
+            {
+                var maxSegment = segments.First();
+                var maxDays = 0.0;
+
+                foreach (var segment in segments)
+                {
+                    var days = (segment.To.Date - segment.From.Date).TotalDays;
+                    if (days > maxDays)
+                    {
+                        maxDays = days;
+                        maxSegment = segment;
+                    }
+                }
+
+                model.Segment = maxSegment;
+                model.SegmentId = maxSegment.Id;
+            }
+
+
+
 
             // Alle Semester, die in Zukunft enden
             ViewBag.Semester = Db.Semesters
@@ -3854,12 +4001,13 @@ namespace MyStik.TimeTable.Web.Controllers
                     Value = c.Id.ToString(),
                 });
 
-            var model = new CourseHistoryModel()
+
+            ViewBag.Segments = segments.Select(c => new SelectListItem
             {
-                Course = course,
-                Semester = course.Semester,
-                SemesterId = course.Semester.Id,
-            };
+                Text = c.Description,
+                Value = c.Id.ToString(),
+            });
+
 
 
             return View(model);
@@ -3870,12 +4018,28 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.Course.Id);
             var semester = SemesterService.GetSemester(model.SemesterId);
+            var segment = Db.SemesterDates.SingleOrDefault(x => x.Id == model.SegmentId);
 
             course.Semester = semester;
+            course.Segment = segment;
+
             Db.SaveChanges();
 
             return RedirectToAction("Details", new { id = course.Id });
         }
+
+
+        [HttpPost]
+        public PartialViewResult GetSegments(Guid semId, Guid orgId)
+        {
+            var segments = Db.SemesterDates.Where(x => x.Semester.Id == semId &&
+                                                       x.Organiser != null && x.Organiser.Id == orgId && x.HasCourses)
+                .ToList();
+
+
+            return PartialView("_SegmentSelectList", segments);
+        }
+
 
         public ActionResult AdminNewState(Guid id)
         {

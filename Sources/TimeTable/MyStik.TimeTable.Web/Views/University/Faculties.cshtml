@@ -24,13 +24,13 @@
                     </div>
 
                     <div class="list-group">
-                        @foreach (var org in Model)
+                        @foreach (var org in Model.OrderBy(x => x.ShortName))
                         {
                             if (org.IsFaculty && !org.IsStudent)
                             {
                                 <a href="@Url.Action("Faculty", new { id = org.Id })" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
                                     <div class="ms-2 me-auto">
-                                        <div class="fw-bold">@org.Name</div>
+                                        <div class="fw-bold">@org.ShortName | @org.Name</div>
                                     </div>
                                     @if (org.Curricula.Any(x => x.Areas.Any()))
                                     {

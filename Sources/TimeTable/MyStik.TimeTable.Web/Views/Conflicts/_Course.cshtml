@@ -6,6 +6,7 @@
 @{
     var courseService = new CourseService();
     var summary = courseService.GetCourseSummary(Model);
+    //var conflicts = courseService.GetConflicts(Model);
 }
 
 
@@ -29,12 +30,45 @@
             <div class="col-md-8">@Html.RoomList(summary.Rooms, showLinks: false)</div>
         </div>
         <hr />
+        @*
         <div class="row">
-            <div class="col-md-12">Alternativer Termin (Soll)</div>
+            <div class="col-md-12">
+                Konflikte
+            </div>
+        </div>
+        <div class="row">
+            <ul>
+                @foreach (var opponent in conflicts.Opponents)
+                {
+                    var roomConflicts = opponent.Conflicts.Where(x => x.Room != null).ToList();
+                    var rooms = roomConflicts.Select(x => x.Room).Distinct().ToList();
+                    var labelConflicts = opponent.Conflicts.Where(x => x.Label != null).ToList();
+                    var labels = labelConflicts.Select(x => x.Label).Distinct().ToList();
+
+                    <li>
+                        @opponent.Activity.ShortName
+                        <ul>
+                            @foreach (var room in rooms)
+                            {
+                                <li>@roomConflicts.Count(x => x.Room.Id == room.Id) Konflikte in @room.Number</li>
+                            }
+                            @foreach (var label in labels)
+                            {
+                                <li>@labelConflicts.Count(x => x.Label.Id == label.Id) Konflikte mit Kohorte @label.Name</li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
+        <hr />
+            *@
+        <div class="row">
+            <div class="col-md-12">Alternativer Termin</div>
         </div>
         <div class="row">
             <div class="col-md-4">
-                <select class="form-select">
+                <select id="altWeekDay" class="form-select">
                     <option value="1" selected>Mo</option>
                     <option value="2">Di</option>
                     <option value="3">Mi</option>
@@ -43,47 +77,18 @@
                 </select>
             </div>
             <div class="col-md-4">
-                <input type="text" class="form-control timepicker timepicker-24" id="NewBegin" name="NewBegin" value="09:00" />
-            </div>
-            <div class="col-md-4">
-                <input type="text" class="form-control timepicker timepicker-24" id="NewEnd" name="NewEnd" value="12:00" />
+                <input type="text" class="form-control timepicker timepicker-24" id="altBegin" name="NewBegin" value="09:00" />
             </div>
         </div>
-        <hr />
-        <div class="row">
-            <div class="col-md-12">
-                Konflikte
-            </div>
+        <div id="altConflicts" class="row">
+
         </div>
-        <div class="row">
-            <div class="col-md-6">Kategorie</div>
-            <div class="col-md-3">Ist</div>
-            <div class="col-md-3">Soll</div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">Raum</div>
-            <div class="col-md-3">0</div>
-            <div class="col-md-3">0</div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">Kohorte</div>
-            <div class="col-md-3">0</div>
-            <div class="col-md-3">0</div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">Person (Einsatz)</div>
-            <div class="col-md-3">0</div>
-            <div class="col-md-3">0</div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">Person (Verfügbarkeit)</div>
-            <div class="col-md-3">0</div>
-            <div class="col-md-3">0</div>
-        </div>
-        
+
         <div class="row mt-3">
             <div class="col-md-12">
-                <a class="btn btn-outline-primary disabled"><i class="bi bi-arrow-clockwise"></i> Aktualisieren</a>
+                <a class="btn btn-outline-primary" href="javascript:onShowDates()"><i class="bi bi-calendar-day"></i> Termine</a>
+                <a class="btn btn-outline-primary" href="javascript:onCheckAlternative()"><i class="bi bi-clock"></i> Alternativen</a>
+                <a class="btn btn-outline-danger" href="javascript:onMove()"><i class="bi bi-arrows-move"></i> Verschieben</a>
                 <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Id })"><i class="bi box-arrow-up-right"></i> zum Kurs</a>
             </div>
         </div>

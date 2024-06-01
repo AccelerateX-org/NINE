@@ -49,46 +49,12 @@ namespace MyStik.TimeTable.Web.Controllers
             if (members.Any())
             {
                 return RedirectToAction("Index", "Dashboard");
-
-                /*
-                var adminMembers = members.Where(x =>
-                    x.IsAdmin || x.IsAlumniAdmin || x.IsCourseAdmin || x.IsCurriculumAdmin || x.IsEventAdmin ||
-                    x.IsExamAdmin || x.IsMemberAdmin || x.IsNewsAdmin || x.IsRoomAdmin || x.IsSemesterAdmin ||
-                    x.IsStudentAdmin).ToList();
-                if (adminMembers.Any())
-                {
-                    // mit Admin-Rechten
-
-                    // hat Lehre
-                    var isLecturer = Db.Activities.OfType<Course>().Any(x =>
-                        x.Dates.Any(d =>
-                            d.Hosts.Any(h =>
-                                !string.IsNullOrEmpty(h.UserId) && h.UserId.Equals(user.Id)) && d.Begin >= DateTime.Now));
-
-                    if (isLecturer)
-                    {
-                        return RedirectToAction("Index", "Teaching");
-                    }
-                    else
-                    {
-                        //return RedirectToAction("Faculty", "University", new {id = members.First().Organiser.Id});
-                        return RedirectToAction("Index", "Administration");
-                    }
-                }
-                else
-                {
-                    // ohne
-                    return RedirectToAction("Index", "Teaching");
-                }
-                */
-
             }
 
             // Prio 2; Student
             if (student != null)
             {
                 return RedirectToAction("Index", "Dashboard");
-
             }
 
             // Prio 3: Studiengangbewerber

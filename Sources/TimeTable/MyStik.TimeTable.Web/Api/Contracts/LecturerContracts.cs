@@ -151,10 +151,6 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// <summary>
         /// 
         /// </summary>
-        public Guid MemberId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
         public string Title { get; set; }
         /// <summary>
         /// 

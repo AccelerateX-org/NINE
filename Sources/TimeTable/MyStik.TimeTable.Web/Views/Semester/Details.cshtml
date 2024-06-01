@@ -30,180 +30,218 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Ressourcenplanung</h5>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Segments", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
-                            Semesterabschnitte
-                        </a>
-                        <a href="@Url.Action("Rooms", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
-                            Raumbelegungen / -konflikte
-                        </a>
-                        <a href="@Url.Action("Lecturer", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
-                            Einsatzplanung Lehrende / Stundenpläne / Verfügbarkeiten
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Lehrveranstaltungsplanung</h5>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Label", "Conflicts", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
-                            Blinkwinkel Kohorte
-                        </a>
-                        <a href="@Url.Action("Catalog", "Conflicts",new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
-                            Blinkwinkel Modulkatalog
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Prüfungsplanung</h5>
-                    </div>
-                    <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action disabled">
-                            Angebote
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action disabled">
-                            Aufsichten
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action disabled">
-                            Räume
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action disabled">
-                            Studierende
-                        </a>
-                    </div>
-                </div>
+@if (ViewBag.UserRight.IsCourseAdmin)
+{
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Administration</h5>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Index", "Import", new {orgId=Model.Organiser.Id, semId = Model.Semester.Id})" class="list-group-item list-group-item-action">
-                            Datenimport / -export
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <div class="col-md-9">
-        <div class="row mb-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Planungsstand</h5>
-                    </div>
-                    <div class="list-group">
-                        <div class="list-group-item">
-                            Anzahl Kurse insgesamt: @nCourses
+    <div class="row">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Planungsgrundlagen</h5>
                         </div>
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <p>
-                                        Anzahl Kurse im Planungsmodus: @nProjected <br />
-                                        Kurse für Studierende über das Vorlesungsverzeichnis nicht sichtbar.
-                                    </p>
-                                </div>
-                                <div class="col-md-3">
-                                    @if (ViewBag.UserRight.IsCurriculumAdmin)
-                                    {
-
-                                        <div class="btn btn-group">
-                                            <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 1 })">an</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 2 })">aus</a>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-9">
-
-                                    <p>
-                                        Anzahl Kurse, die für Lehrende gesperrt sind: @nInternal<br />
-                                        In diesen Kursen können aktuell nur Admins, Modul- und Katalogverantwortliche Änderungen vornehmen.
-                                    </p>
-                                </div>
-                                <div class="col-md-3">
-                                    @if (ViewBag.UserRight.IsCurriculumAdmin)
-                                    {
-
-                                        <div class="btn btn-group">
-                                            <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 3 })">sperren</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 4 })">freigeben</a>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <p>
-                                        Anzahl Kurse, die für Studierende gesperrt sind: @nLocked<br />
-                                        In diese Kurse können sich Studierende nicht eintragen, ob sichtbar oder nicht.
-                                    </p>
-                                </div>
-                                <div class="col-md-3">
-                                    @if (ViewBag.UserRight.IsCurriculumAdmin)
-                                    {
-
-                                        <div class="btn btn-group">
-                                            <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 5 })">sperren</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 6 })">freigeben</a>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">
-                            Überschneidungen der Stundenpläne von Kohorten nach Studiengängen
-                        </h5>
-                    </div>
-                    <div class="list-group">
-                        @foreach (var c in Model.Organiser.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.ShortName))
-                        {
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = c.Id })">
-                                        @c.ShortName
+                        <div class="list-group">
+                            <a href="@Url.Action("Segments", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
+                                Zeitliche Anordnung der Semesterabschnitte
                             </a>
-                        }
+                            <a href="@Url.Action("Lecturer", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
+                                Verfügbarkeiten der Lehrenden
+                            </a>
+                            <a href="@Url.Action("Index", "Import", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
+                                Datenimport
+                            </a>
+                        </div>
                     </div>
-                    
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Planungsstand</h5>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                Anzahl Kurse insgesamt: @nCourses
+                            </div>
+                            <div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <p>
+                                            Anzahl Kurse im Planungsmodus: @nProjected <br/>
+                                            Kurse für Studierende über das Vorlesungsverzeichnis nicht sichtbar.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                                        {
+                                            <div class="btn btn-group-vertical">
+                                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 1 })">anschalten</a>
+                                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 2 })">ausschalten</a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-9">
 
+                                        <p>
+                                            Anzahl Kurse, die für Lehrende gesperrt sind: @nInternal<br/>
+                                            In diesen Kursen können aktuell nur Admins, Modul- und Katalogverantwortliche Änderungen vornehmen.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                                        {
+
+                                            <div class="btn btn-group-vertical">
+                                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 3 })">sperren</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 4 })">freigeben</a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <p>
+                                            Anzahl Kurse, die für Studierende gesperrt sind: @nLocked<br/>
+                                            In diese Kurse können sich Studierende nicht eintragen, ob sichtbar oder nicht.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                                        {
+
+                                            <div class="btn btn-group-vertical">
+                                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 5 })">sperren</a> <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 6 })">freigeben</a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+        <div class="col-md-4">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Terminbereinigungen</h5>
+                        </div>
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Segments", "Conflicts", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
+                                <div><strong>Semesterabschnitte</strong></div>
+                                <div>Anzeige von Terminen, die außerhalb der Semesterabschnitte liegen</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Übersichten Konflikte - Tagesbasis</h5>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <div><strong>Raumbelegungen</strong></div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="row">
+                                            <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("Rooms", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
+                                                Alle Räume
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div><strong>Kohorten</strong></div>
+                                <div class="row">
+                                    @foreach (var c in Model.Organiser.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.ShortName))
+                                    {
+                                        <div class="col-3">
+                                            <div class="row">
+                                                <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, currId = c.Id })">
+                                                    @c.ShortName
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Übersicht Konflikte - Wochenbasis</h5>
+                        </div>
+                        <div class="list-group">
+                            <a href="@Url.Action("Label", "Conflicts", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
+                                Kohorten
+                            </a>
+                            <a href="@Url.Action("Catalog", "Conflicts", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="list-group-item list-group-item-action">
+                                Modulkataloge
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Prüfungsplanung</h5>
+                        </div>
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action disabled">
+                                Angebote
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action disabled">
+                                Aufsichten
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action disabled">
+                                Räume
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action disabled">
+                                Studierende
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h5>Zugang nur für Admins auf Ebene Lehrveranstaltungen</h5>
+            </div>
+        </div>
+    </div>
+}

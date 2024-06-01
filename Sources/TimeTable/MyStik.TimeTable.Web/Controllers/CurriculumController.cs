@@ -70,22 +70,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // die Labels sammlen
             var labels = new List<ItemLabel>();
-            foreach (var section in curr.Sections)
+            foreach (var area in curr.Areas)
             {
-                foreach (var slot in section.Slots)
+                foreach (var areaOption in area.Options)
                 {
-                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    foreach (var slot in areaOption.Slots)
                     {
-                        foreach (var label in slot.LabelSet.ItemLabels)
+                        if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
                         {
-                            if (!labels.Contains(label))
+                            foreach (var label in slot.LabelSet.ItemLabels)
                             {
-                                labels.Add(label);
+                                if (!labels.Contains(label))
+                                {
+                                    labels.Add(label);
+                                }
+
                             }
-
                         }
-                    }
 
+                    }
                 }
             }
 
@@ -746,6 +749,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="until"></param>
         /// <param name="useFree"></param>
         /// <returns></returns>
+        /*
         [HttpPost]
         public JsonResult RoomList(string number, DateTime? date, TimeSpan? from, TimeSpan? until, bool? useFree)
         {
@@ -798,6 +802,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return Json(list);
             }
         }
+        */
 
         /// <summary>
         /// 
@@ -808,21 +813,40 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult RoomListByOrg(Guid orgId, string number)
         {
-            var user = GetCurrentUser();
             var org = GetOrganiser(orgId);
-            var member = MemberService.GetOrganiserMember(org.Id, user.Id);
-            var isOrgAdmin = false;
-            if (member != null)
+            var roomList = new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, true);
+
+            // Nur noch Raumiste mit Owner
+            roomList = roomList.Where(x => x.Assignments.Any(r => r.IsOwner)).ToList();
+
+            // jetzt den Namensfilter ansetzen
+            roomList = roomList.Where(l => l.Number.ToUpper().Contains(number.ToUpper())).ToList();
+
+
+            foreach (var room in roomList)
             {
-                if (member.IsRoomAdmin || member.IsAdmin)
+                var owner = room.Assignments.FirstOrDefault(x => x.IsOwner);
+                if (owner != null)
                 {
-                    isOrgAdmin = true;
+                    if (owner.Organiser.Id == org.Id)
+                    {
+                        if (owner.InternalNeedConfirmation)
+                        {
+                            room.Number += $" (interne Buchungsanfrage {owner.Organiser.ShortName})";
+                        }
+                    }
+                    else
+                    {
+                        if (owner.ExternalNeedConfirmation)
+                        {
+                            room.Number += $" (Buchungsanfrage bei {owner.Organiser.ShortName})";
+                        }
+                    }
                 }
             }
 
-            var roomList = new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, isOrgAdmin);
 
-            var list = roomList.Where(l => l.Number.ToUpper().Contains(number.ToUpper()))
+            var list = roomList
                 .OrderBy(l => l.Number)
                 .Select(l => new
                 {
@@ -838,32 +862,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="number"></param>
-        /// <returns></returns>
-
-        [HttpPost]
-        public JsonResult RoomListComplete(string number)
-        {
-            var roomList = new MyStik.TimeTable.Web.Services.RoomService().GetAllRooms(true);
-            var list = roomList.Where(l => l.Number.ToUpper().Contains(number.ToUpper()))
-                .OrderBy(l => l.Number)
-                .Select(l => new
-                {
-                    name = l.FullName,
-                    capacity = Math.Abs(l.Capacity),
-                })
-                .Take(10);
-            return Json(list);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="number"></param>
         /// <param name="sem"></param>
         /// <param name="day"></param>
         /// <param name="from"></param>
         /// <param name="until"></param>
         /// <returns></returns>
+        /*
         [HttpPost]
         public JsonResult RoomListForDay(string number, string sem, int? day, TimeSpan? from, TimeSpan? until)
         {
@@ -927,6 +931,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return Json(list2);
         }
+        */
+
 
         /// <summary>
         /// 
@@ -1118,6 +1124,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult ImportSections(CurriculumImportModel model)
         {
+            /*
             string tempFile = Path.GetTempFileName();
 
             // Speichern der Config-Dateien
@@ -1228,7 +1235,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             Db.SaveChanges();
-
+            */
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 

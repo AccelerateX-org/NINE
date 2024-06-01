@@ -34,7 +34,7 @@
         <div class="card">
             <div class="card-header">
                 <h5>
-                    Belegung 
+                    Belegung <strong>@Model.Number</strong> - @Model.Capacity Plätze
                     <span id="loading" class="spinner-border"></span>
                 </h5>
             </div>
@@ -145,6 +145,9 @@
 
         function onShowEventInfo(courseId, dateId) {
             if (dateId != null) {
+                $('#loading').show();
+                $('#conflictArea').html("");
+
                 $.ajax(
                     {
                         type: "POST",
@@ -160,6 +163,23 @@
 
 
             }
+
+        }
+
+        function getRoomsForDate(dateId) {
+            $("#loading").show();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetRoomsForDate")',
+                    data: {
+                        dateId: dateId,
+                    },
+                    success: function(data, success, xhr) {
+                        $('#dateList').html(data);
+                        $("#loading").hide();
+                    }
+                });
 
         }
 

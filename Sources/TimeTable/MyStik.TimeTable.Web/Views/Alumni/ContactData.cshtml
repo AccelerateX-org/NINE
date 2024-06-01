@@ -15,7 +15,7 @@
                     @Html.HiddenFor(m => m.Id)
                     <div class="row mb-1">
                         <div class="col-md-3">
-                            <label for="Email">E-Mail Adresse</label>
+                            <label for="Email">Private E-Mail Adresse (<strong>keine hm.edu Adresse</strong>)</label>
                         </div>
                         @if (Model.Alumni.Student != null)
                         {
@@ -24,9 +24,6 @@
                             </div>
                             <div class="col-md-6">
                                 Unter welcher E-Mail Adresse möchte ich erreichbar bleiben?
-                                @*
-                        <a href="" class="btn btn-outline-primary"><i class="bi bi-send-check"></i> Verfifizierungscode anfordern</a>
-                                *@
                             </div>
                         }
                         else

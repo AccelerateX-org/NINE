@@ -133,43 +133,51 @@ function initWeekCalendar(idCal, defaultDate) {
     });
     calendar.render();
     return calendar;
-
-
-    /*
-    $('#' + idCal).fullCalendar('destroy'); // destroy the calendar
-    $('#' + idCal).fullCalendar({
-        weekNumbers: false,
-        header: {
-            left: '',
-            center: '',
-            right: ''
-        },
-        defaultView: 'agendaWeek',
-        allDaySlot: false,
-        slotDuration: "00:30:00",
-        minTime: "08:00:00",
-        maxTime: "22:00:00",
-        columnFormat: defaultDate ? "dd DD.MM.YYYY" : "dddd",
-        slotEventOverlap: false,
-        hiddenDays: null,
-        firstDay: 1,
-        height: height,
-        defaultDate: defaultDate,
-        eventRender: function (event, element, view) {
-            if (event.htmlContent != null) element.find('.fc-content').append(event.htmlContent);
-        },
-        eventClick: function (calEvent, jsEvent, view) {
-            onShowEventInfo(calEvent.courseId);
-        },
-        loading: function (bool) {
-            if (bool)
-                $('#loading').show();
-            else
-                $('#loading').hide();
-        },
-    });
-    */
 }
+
+
+function initPlanningWeekCalendar(idCal, defaultDate) {
+
+    if (idCal == null || idCal === "")
+        idCal = "calendar";
+
+    var calendarEl = document.getElementById(idCal);
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "timeGridWeek",
+        headerToolbar: {
+            start: '',
+            center: '',
+            end: ''
+        },
+        timeZone: 'local',
+        allDaySlot: false,
+        locale: 'de',
+        dayHeaderFormat: { weekday: 'short' },
+        slotDuration: "00:15:00",
+        slotMinTime: "08:00:00",
+        slotMaxTime: "22:00:00",
+        slotLabelInterval: '01:00',
+        slotEventOverlap: false,
+        contentHeight: "auto",
+        displayEventTime: true,
+        editable: true,
+        eventClick: function (calEvent, jsEvent, view) {
+            calEvent.jsEvent.preventDefault(); // don't let the browser navigate
+            onShowEventInfo(calEvent.event.extendedProps.courseId, calEvent.event.id);
+        },
+        eventDrop: function (info) {
+            onEventDrop(info);
+        },
+        eventResize: function (info) {
+            onEventResize(info);
+        }
+
+    });
+    calendar.render();
+    return calendar;
+}
+
 
 
 function initPrintCalendar(height, isMoSa, defaultDate) {

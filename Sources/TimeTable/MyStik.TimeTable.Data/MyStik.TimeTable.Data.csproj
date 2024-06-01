@@ -613,6 +613,10 @@
     <Compile Include="Migrations\202403250914102_MiscMarch2024.Designer.cs">
       <DependentUpon>202403250914102_MiscMarch2024.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202405170920420_RoomOwnerV2.cs" />
+    <Compile Include="Migrations\202405170920420_RoomOwnerV2.Designer.cs">
+      <DependentUpon>202405170920420_RoomOwnerV2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -982,6 +986,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202403250914102_MiscMarch2024.resx">
       <DependentUpon>202403250914102_MiscMarch2024.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202405170920420_RoomOwnerV2.resx">
+      <DependentUpon>202405170920420_RoomOwnerV2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

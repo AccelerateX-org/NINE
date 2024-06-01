@@ -217,25 +217,27 @@ namespace MyStik.TimeTable.Web.Controllers
             var list = new List<OfficeHourOverviewModel>();
 
             // Alle Sprechstunden mit zukünftigen Terminen
-            
+            /*
             var allMySemesterWithOfficeHours = 
                 Db.Activities.OfType<OfficeHour>().Where(x =>
                     x.Semester.Id == sem.Id &&
                     x.Dates.Any(d => d.End >= now && (
                                         d.Occurrence.Subscriptions.Any(s =>s.UserId.Equals(user.Id)) ||
                                         d.Slots.Any(s =>s.Occurrence.Subscriptions.Any(g =>g.UserId.Equals(user.Id)))))).ToList();
-            
-            /*
-            var allMySemesterWithOfficeHours =
-                Db.Activities.OfType<OfficeHour>().Where(x =>
-                    x.Semester.Id == sem.Id).ToList();
             */
 
-            var model = new OfficeHourOverviewModel();
-            model.Semester = sem;
+            var allMySemesterWithOfficeHours =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                    x.Semester.Id == sem.Id &&
+                    x.Dates.Any(d => d.End >= now)).ToList();
 
+
+            
             foreach (var officeHour in allMySemesterWithOfficeHours)
             {
+                var model = new OfficeHourOverviewModel();
+                model.Semester = sem;
+
                 // alle dates
                 var dates = officeHour.Dates.Where(d => d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
                     .ToList();
@@ -273,8 +275,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
 
-
-                list.Add(model);
+                if (model.OfficeHours.Any())
+                {
+                    list.Add(model);
+                }
             }
 
             ViewBag.User = user;

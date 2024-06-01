@@ -9,26 +9,12 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class HomeViewModel
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public HomeViewModel()
-        {
-            ActiveSemester = new List<SemesterActiveViewModel>();
-        }
+        public List<SemesterActiveViewModel> ActiveSemester { get; private set; } = new List<SemesterActiveViewModel>();
 
-        public List<SemesterActiveViewModel> ActiveSemester { get; private set; }
+        public List<ActivityOrganiser> Organisers { get; private set; } = new List<ActivityOrganiser>();
 
-
-        public int OnlineUsers { get; set; }
-
-        public int Students { get; set; }
-
-        public int Lecturers { get; set; }
-
-        public int Curricula { get; set; }
-
-        public int Rooms { get; set; }
+        public List<Institution> Institutions { get; private set; } = new List<Institution>();
+        public Semester CurrentSemester { get; set; }
     }
 
     /// <summary>

@@ -10,6 +10,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using log4net;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.Logging;
 using MyStik.TimeTable.Data;
@@ -17,6 +18,7 @@ using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils.Helper;
+using RazorEngine.Compilation.ImpromptuInterface.Build;
 using RoomService = MyStik.TimeTable.Web.Services.RoomService;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -430,12 +432,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult LabelEventsWeekly(string start, string end, Guid semId, Guid? orgId, Guid labelId, Guid? currId)
+        public JsonResult LabelEventsWeekly(string start, string end, Guid semId, Guid? orgId, Guid labelId, Guid? currId, string color, bool isDraggable = false)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
 
             var courseService = new CourseService(Db);
+
+            var bgColor = string.IsNullOrEmpty(color) ? "#47aba1" : color;
+
 
             var semester = SemesterService.GetSemester(semId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
@@ -520,10 +525,11 @@ namespace MyStik.TimeTable.Web.Controllers
                         start = calBegin.ToString(_calDateFormatCalendar),
                         end = calEnd.ToString(_calDateFormatCalendar),
                         textColor = "#000",
-                        backgroundColor = "#fff",
+                        backgroundColor = bgColor,
                         borderColor = "#000",
                         courseId = course.Id.ToString(),
-                        htmlContent = string.Empty   //  this.RenderViewToString("_CalendarCourseEventContent", eventViewModel)
+                        htmlContent = string.Empty,   //  this.RenderViewToString("_CalendarCourseEventContent", eventViewModel)
+                        editable = isDraggable
                     };
 
                     cal.Add(calEvent);
@@ -585,6 +591,59 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(cal);
 
         }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult SlotEventsWeekly(string start, string end, Guid semId, Guid orgId, Guid slotId, Guid currId)
+        {
+            var startDate = GetDateTime(start);
+            var endDate = GetDateTime(end);
+
+
+            var semester = SemesterService.GetSemester(semId);
+            var org = GetOrganiser(orgId);
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var courses = Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semester.Id &&
+                    x.Organiser.Id == org.Id &&
+                    x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.Id == slot.Id)))
+                .ToList();
+
+            var cs = new CourseService();
+            var courseSummaries = new List<CourseSummaryModel>();
+
+            foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
+            {
+                courseSummaries.Add(cs.GetCourseSummary(labeledCourse));
+            }
+
+
+            var cal = new List<CalendarEventModel>();
+            var dateMap = new Dictionary<Guid, ActivityDateSummary>();
+
+            foreach (var course in courses)
+            {
+                var dates = course.Dates.Where(c => c.Begin >= startDate && c.End <= endDate);
+
+                foreach (var date in dates)
+                {
+                    if (!dateMap.ContainsKey(date.Id))
+                    {
+                        dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.SearchResult);
+                    }
+                }
+            }
+
+            cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), false));
+
+            return Json(cal);
+
+        }
+
 
 
         [HttpPost]
@@ -1361,7 +1420,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public JsonResult MemberPlanWeekly(string start, string end, Guid? semId, Guid memberId)
+        public JsonResult MemberPlanWeekly(string start, string end, Guid? semId, Guid memberId, string color)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
@@ -1370,13 +1429,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var events = new List<CalendarEventModel>();
 
+            var bgColor = string.IsNullOrEmpty(color) ? "#78a3aa" : color;
+
+
             // start und end sind "echte" Daten, d.h. eine Woche
 
             // Am Schluss muss alles in "Wochentage" umgerechnet werden
 
             // Alle Events abstrakt nah Wochentag
             var semester = SemesterService.GetSemester(semId);
-            var user = GetCurrentUser();
 
             var courses = new List<Course>();
 
@@ -1408,8 +1469,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 var eventViewModel = new CalenderCourseEventViewModel();
                 var summary = courseService.GetCourseSummary(course);
                 eventViewModel.CourseSummary = summary;
-
-                var color = "#ddd";
 
                 if (summary.IsPureBlock() || summary.IsPureWeekEndCourse()) continue;
 
@@ -1443,7 +1502,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     start = calBegin.ToString(_calDateFormatCalendar),
                     end = calEnd.ToString(_calDateFormatCalendar),
                     textColor = "#000",
-                    backgroundColor = color,
+                    backgroundColor = bgColor,
                     borderColor = "#000",
                     htmlContent = string.Empty // this.RenderViewToString("_CalendarCourseEventContent", eventViewModel),
                 });
@@ -1454,6 +1513,95 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+
+
+
+
+        [HttpPost]
+        public JsonResult RoomPlanWeekly(string start, string end, Guid? semId, Guid roomId, string color)
+        {
+                var startDate = GetDateTime(start);
+                var endDate = GetDateTime(end);
+
+                var semester = SemesterService.GetSemester(semId);
+                var events = new List<CalendarEventModel>();
+                var courses = new List<Course>();
+
+                var bgColor = string.IsNullOrEmpty(color) ? "#feb151" : color;
+
+
+                var courseService = new CourseService(Db);
+
+                // 3. Suchergebnis
+                // das Semester suchen, dass zum Datum passt
+                // Grundannahme:  Vorlesungszeiten überlappen sich nicht
+
+                var room = Db.Rooms.SingleOrDefault(l => l.Id == roomId);
+
+                if (room != null)
+                {
+                    var mylecture =
+                        Db.Activities.OfType<Course>()
+                            .Where(c =>
+                                c.Semester.Id == semester.Id &&
+                                c.Dates.Any(oc => oc.Rooms.Any(l => l.Id == room.Id)))
+                            .ToList();
+                    foreach (var lectureCourse in mylecture)
+                    {
+                        if (!courses.Contains(lectureCourse))
+                        {
+                            courses.Add(lectureCourse);
+                        }
+                    }
+                }
+
+                foreach (var course in courses)
+                {
+                    var eventViewModel = new CalenderCourseEventViewModel();
+                    var summary = courseService.GetCourseSummary(course);
+                    eventViewModel.CourseSummary = summary;
+
+                    if (summary.IsPureBlock() || summary.IsPureWeekEndCourse()) continue;
+
+                    var theDay = summary.GetDefaultDate();
+
+                    var calDay = startDate.AddDays((int)theDay.DayOfWeek - (int)startDate.DayOfWeek);
+                    var calBegin = calDay.Add(theDay.StartTime);
+                    var calEnd = calDay.Add(theDay.EndTime);
+
+                    var sbr = new StringBuilder();
+                    sbr.Append(course.ShortName);
+                    if (summary.Rooms.Any())
+                    {
+                        if (summary.Rooms.Count() == 1)
+                        {
+                            sbr.AppendFormat(" ({0})", summary.Rooms.First().Number);
+                        }
+                        else
+                        {
+                            sbr.AppendFormat(" ({0}, ...)", summary.Rooms.First().Number);
+                        }
+                    }
+
+                    // Einfacher Eintrag
+                    events.Add(new CalendarEventModel
+                    {
+                        id = course.Id.ToString(),
+                        courseId = course.Id.ToString(),
+                        title = sbr.ToString(),
+                        allDay = false,
+                        start = calBegin.ToString(_calDateFormatCalendar),
+                        end = calEnd.ToString(_calDateFormatCalendar),
+                        textColor = "#000",
+                        backgroundColor = bgColor,
+                        borderColor = "#000",
+                        htmlContent = string.Empty // this.RenderViewToString("_CalendarCourseEventContent", eventViewModel),
+                    });
+                }
+
+
+                return Json(events);
+        }
 
 
 

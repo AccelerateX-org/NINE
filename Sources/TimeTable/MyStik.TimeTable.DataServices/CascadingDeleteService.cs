@@ -38,6 +38,14 @@ namespace MyStik.TimeTable.DataServices
                 _db.DateChanges.Remove(dateChange);
             }
 
+            var bookings = _db.RoomBookings.Where(x => x.Date.Id == date.Id).ToList();
+
+            foreach (var booking in bookings)
+            {
+                _db.RoomBookings.Remove(booking);
+            }
+
+
             date.Hosts.Clear();
             date.Rooms.Clear();
 
@@ -45,6 +53,9 @@ namespace MyStik.TimeTable.DataServices
             {
                 _db.VirtualRoomAccesses.Remove(vRoom);
             }
+
+
+
 
             _db.ActivityDates.Remove(date);
 

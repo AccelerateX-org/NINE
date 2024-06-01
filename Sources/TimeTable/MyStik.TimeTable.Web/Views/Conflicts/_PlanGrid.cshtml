@@ -43,11 +43,16 @@
                                         @foreach (var lec in allLecturers)
                                         {
                                             <div class="list-group-item">
-                                                @lec.FullName
-                                                <span>
-                                                    <a id="c-@lec.Id" href="javascript:onShowLecturer('@lec.Id')" class="btn btn-sm btn-outline-primary"><i class="bi bi-calendar-week"></i></a>
-                                                </span>
-                                                <span><a id="a-@lec.Id" href="javascript:onShowAvailability('@lec.Id')" class="btn btn-sm btn-outline-success"><i class="bi bi-calendar-check"></i></a></span>
+                                                <div class="row">
+                                                    <div class="col-md-6">@lec.FullName</div>
+                                                    <div class="col-md-6">
+                                                        <div class="btn btn-group">
+                                                            <input type="color" class="form-control form-control-sm form-control-color" id="dc-@lec.Id" value="#78a3aa" title="Choose your color">
+                                                            <a id="d-@lec.Id" href="javascript:onShowLecturer('@lec.Id')" class="btn btn-sm btn-outline-primary"><i class="bi bi-calendar-week"></i></a>
+                                                            <a id="a-@lec.Id" href="javascript:onShowAvailability('@lec.Id')" class="btn btn-sm btn-outline-success"><i class="bi bi-calendar-check"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         }
                                     </div>
@@ -60,7 +65,16 @@
                                         @foreach (var room in allRooms)
                                         {
                                             <div class="list-group-item">
-                                                @room.Number
+                                                <div class="row">
+                                                    <div class="col-md-6">@room.Number</div>
+                                                    <div class="col-md-6">
+                                                        <div class="btn btn-group">
+                                                            <input type="color" class="form-control form-control-color" id="rc-@room.Id" value="#feb151" title="Choose your color">
+                                                            <a id="r-@room.Id" href="javascript:onShowRoom('@room.Id')" class="btn btn-sm btn-outline-primary"><i class="bi bi-calendar-week"></i></a>
+                                                            <a target="_blank" href="@Url.Action("Rooms", new {id=room.Id, segId=Model.Segment.Id})" class="btn btn-sm btn-outline-danger"><i class="bi bi-calendar-x"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         }
                                     </div>
@@ -73,7 +87,15 @@
                                         @foreach (var label in allLabels)
                                         {
                                             <div class="list-group-item">
-                                                @label.Name
+                                                <div class="row">
+                                                    <div class="col-md-6">@label.Name</div>
+                                                    <div class="col-md-6">
+                                                        <div class="btn btn-group">
+                                                            <input type="color" class="form-control form-control-color" id="lc-@label.Id" value="#47aba1" title="Choose your color">
+                                                            <a id="l-@label.Id" href="javascript:onShowLabel('@label.Id')" class="btn btn-sm btn-outline-primary"><i class="bi bi-calendar-week"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         }
                                     </div>

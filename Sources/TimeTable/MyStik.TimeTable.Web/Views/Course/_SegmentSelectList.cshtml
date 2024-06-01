@@ -1,0 +1,8 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.SemesterDate>
+
+
+@foreach (var date in Model)
+{
+    <option value="@date.Id">@date.Description</option>
+}

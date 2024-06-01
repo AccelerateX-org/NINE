@@ -85,7 +85,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 var lecModel = new LecturerContractExtended();
 
-                lecModel.MemberId = lecturer.Id;
                 lecModel.Title = lecturer.Role;
                 lecModel.Room = "";
 
@@ -107,7 +106,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 lecModel.Functions = new List<string>();
 
                 // Averfügbar Slots
-                lecModel.AvailableSlots = lecturerService.GetAvailabeSlots(lecturer, semester);
+                //lecModel.AvailableSlots = lecturerService.GetAvailabeSlots(lecturer, semester);
                 
                 LecturerList.Add(lecModel);
             }

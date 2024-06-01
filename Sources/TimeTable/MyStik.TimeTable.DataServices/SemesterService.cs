@@ -5,6 +5,12 @@ using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.DataServices
 {
+    public class DatePeriod
+    {
+        public DateTime Begin { get; set; }
+        public DateTime End { get; set; }
+    }
+
     public class SemesterService
     {
         private readonly TimeTableDbContext _db;
@@ -173,6 +179,51 @@ namespace MyStik.TimeTable.DataServices
 
         }
 
+        public ICollection<DateTime> GetDays(SemesterDate segment, DayOfWeek dayOfWeek, DateTime start, DateTime end)
+        {
+            var dates = new List<DateTime>();
+
+            DateTime firstDate = start;
+            DateTime lastDate = end;
+
+            var semesterStartTag = (int)((DateTime)firstDate).DayOfWeek;
+
+            var nDays = (int)dayOfWeek - semesterStartTag;
+            if (nDays < 0)
+                nDays += 7;
+
+            var occDate = firstDate.AddDays(nDays);
+
+            var noLectureDates = segment.Semester.Dates.Where(x => x.HasCourses == false &&
+                                                          (x.Organiser == null || x.Organiser.Id == segment.Organiser.Id)).ToList();
+
+            //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+            while (occDate <= lastDate)
+            {
+                var isVorlesung = true;
+                foreach (SemesterDate sd in noLectureDates)
+                {
+                    // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                    if (sd.From.Date <= occDate.Date &&
+                        occDate.Date <= sd.To.Date)
+                    {
+                        isVorlesung = false;
+                    }
+                }
+
+                if (isVorlesung)
+                {
+                    dates.Add(occDate);
+                }
+
+                occDate = occDate.AddDays(7);
+            }
+
+            return dates;
+
+        }
+
+
         /// <summary>
         /// tagesliste auf Basis Start- und Enddatum
         /// Die vorlesungsfreien Tage werden jeweils nach Semester gefiltert
@@ -242,6 +293,38 @@ namespace MyStik.TimeTable.DataServices
             // ist nicht explizit vorlesungsfrei
             return false;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="segmentId"></param>
+        /// <param name="dayOfWeek"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public ICollection<DatePeriod> GetDatePeriods(Guid segmentId, DayOfWeek dayOfWeek, DateTime start, DateTime end)
+        {
+            var segment = _db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var days = GetDays(segment, dayOfWeek, segment.From, segment.To);
+
+            var dates = new HashSet<DatePeriod>();
+
+            foreach (var day in days)
+            {
+                var period = new DatePeriod
+                {
+                    Begin = day.Date.Add(start.TimeOfDay),
+                    End = day.Date.Add(end.TimeOfDay)
+                };
+
+                dates.Add(period);
+            }
+
+
+            return dates;
+        }
+
 
 
         public SemesterSubscription GetSubscription(Semester semester, string userId)

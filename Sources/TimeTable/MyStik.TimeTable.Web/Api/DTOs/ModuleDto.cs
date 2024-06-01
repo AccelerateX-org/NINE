@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace MyStik.TimeTable.Web.Api.DTOs
 {
@@ -104,4 +105,44 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string tag { get; set; }
         public double weight { get; set; }
     }
+
+    public class ModuleSlotDto
+    {
+        public string ModuleTag { get; set; }
+        public string ModuleName { get; set; }
+        public string SubjectTag { get; set; }
+        public string SubjectName { get; set; }
+
+        public List<CourseSummaryDto> Courses { get; set; }
+    }
+
+
+    public class ModuleDtoVersion2
+    {
+        public string CatalogId { get; set; }
+
+        public string Title { get; set; }
+
+        public string UrlDescription { get; set; }
+
+        public List<TeachingDtoVersion2> Teachings { get; set; }
+    }
+
+    public class TeachingDtoVersion2
+    {
+        public string CurriculumId { get; set; }
+
+        public string CurriculumTitle { get; set; }
+
+        public string UrlCurriculumPlan { get; set; }
+
+        public int Semester { get; set; }
+
+       
+        public string SubjectTitle { get; set; }
+
+        public string SubjectTeachingFormat { get; set; }
+    }
+
+
 }

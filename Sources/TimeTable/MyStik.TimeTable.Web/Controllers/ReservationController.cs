@@ -135,6 +135,8 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult CreateReservation(ReservationCreateModel model)
         {
+            var user = GetCurrentUser();
+
             // Doppelungen von Namen pro Organiser vermeiden
             var org = GetOrganisation(model.OrganiserId);
 
@@ -144,8 +146,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (reservation == null)
             {
-                var user = AppUser;
-
                 reservation = new Reservation
                 {
                     Name = model.Name,
@@ -200,6 +200,18 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
+
+                            // jetzt noch das Booking
+                            var booking = new RoomBooking
+                            {
+                                Date = activityDate,
+                                Room = room,
+                                TimeStamp = DateTime.Now,
+                                UserId = user.Id,
+                            };
+
+                            Db.RoomBookings.Add(booking);
+
                         }
 
                         foreach (var doz in dozList)
@@ -335,6 +347,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var logger = LogManager.GetLogger("Course");
 
+            var user = GetCurrentUser();
             var activityDate = Db.ActivityDates.SingleOrDefault(d => d.Id == model.ActivityDateId);
 
             activityDate.Description = model.Description;
@@ -383,7 +396,20 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     foreach (var roomId in model.RoomIds)
                     {
-                        activityDate.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
+                        var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
+                        activityDate.Rooms.Add(room);
+
+                        // jetzt noch das Booking
+                        var booking = new RoomBooking
+                        {
+                            Date = activityDate,
+                            Room = room,
+                            TimeStamp = DateTime.Now,
+                            UserId = user.Id,
+                        };
+
+                        Db.RoomBookings.Add(booking);
+
                     }
                 }
             }
@@ -458,6 +484,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult CreateDate(CourseDateCreateModelExtended model)
         {
+            var user = GetCurrentUser();
             var course = Db.Activities.SingleOrDefault(c => c.Id == model.CourseId);
 
             // Jetzt die Termine - falls vorhanden
@@ -526,6 +553,18 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
+
+                            // jetzt noch das Booking
+                            var booking = new RoomBooking
+                            {
+                                Date = activityDate,
+                                Room = room,
+                                TimeStamp = DateTime.Now,
+                                UserId = user.Id,
+                            };
+
+                            Db.RoomBookings.Add(booking);
+
                         }
 
                         foreach (var doz in dozList)

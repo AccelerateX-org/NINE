@@ -19,7 +19,7 @@
                 @if (ViewBag.UserRight.Member.IsAdmin)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("Create")"><i class="bi bi-folder-plus fa-fw"></i><br />Anlegen</a>
+                        <a class="nav-link text-center" href="@Url.Action("Create", new {id = Model.Organiser.Id})"><i class="bi bi-folder-plus fa-fw"></i><br />Anlegen</a>
                     </li>
                 }
             </ul>

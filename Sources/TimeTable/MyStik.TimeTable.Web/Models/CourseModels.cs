@@ -355,6 +355,48 @@ namespace MyStik.TimeTable.Web.Models
     {
         public CourseConflictModel()
         {
+            Opponents = new List<ActivityConflictModel>();
+            Collisions = new List<ActivityDate>();
+        }
+
+        /// <summary>
+        /// Der Termin
+        /// </summary>
+        public Course Course { get; set; }
+
+        public List<ActivityConflictModel> Opponents { get; set; }
+
+        /// <summary>
+        /// Alle Kollissionen
+        /// </summary>
+        public List<ActivityDate> Collisions { get; set; }
+
+    }
+
+    public class ActivityConflictModel
+    {
+        public ActivityConflictModel()
+        {
+            Conflicts = new List<DateConflictModel>();
+        }
+
+        /// <summary>
+        /// Der Termin
+        /// </summary>
+        public Activity Activity { get; set; }
+
+
+        /// <summary>
+        /// Alle Kollissionen
+        /// </summary>
+        public List<DateConflictModel> Conflicts { get; set; }
+
+    }
+
+    public class DateConflictModel
+    {
+        public DateConflictModel()
+        {
             Collisions = new List<ActivityDate>();
         }
 
@@ -384,6 +426,7 @@ namespace MyStik.TimeTable.Web.Models
         public List<ActivityDate> Collisions { get; set; }
 
     }
+
 
 
     /// <summary>
@@ -421,6 +464,10 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public Guid SemesterId { get; set; }
+
+        public SemesterDate Segment { get; set; }
+
+        public Guid SegmentId { get; set; }
     }
 
     /// <summary>

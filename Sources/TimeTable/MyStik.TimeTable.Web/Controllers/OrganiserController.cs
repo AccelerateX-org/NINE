@@ -198,9 +198,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             }
 
+            model.Thesis = Db.Theses.Where(x => x.Supervisors.Any(s => s.Member.Id == member.Id)).ToList();
 
-
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, member.Organiser.ShortName);
+            ViewBag.UserRight = GetUserRight(member.Organiser);
 
             return View("Member", model);
         }
@@ -765,6 +765,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     lottery.Owner = null;
                 }
+
+                var supervisors = Db.Supervisors.Where(x => x.Member.Id == member.Id).ToList();
+                foreach (var supervisor in supervisors)
+                {
+                    Db.Supervisors.Remove(supervisor);
+                }
+
 
                 var org = member.Organiser;
 

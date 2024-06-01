@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.DTOs;
-using MyStik.TimeTable.Web.Models;
-using Org.BouncyCastle.Crypto.Tls;
+using MyStik.TimeTable.Web.Api.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -18,86 +18,41 @@ namespace MyStik.TimeTable.Web.Api.Controller
     public class ModulesController : ApiBaseController
     {
         [System.Web.Http.Route("")]
-        public IQueryable<ModuleDto> GetModules()
+        public IQueryable<ModuleDtoVersion2> GetModules()
         {
-            var list = new List<ModuleDto>();
+
+            var list = new List<ModuleDtoVersion2>();
 
             var modules = Db.CurriculumModules.Where(x => x.Catalog != null).ToList();
 
             foreach (var curriculumModule in modules)
             {
-                var dto = new ModuleDto
+
+                var dto = new ModuleDtoVersion2
                 {
-                    Id = curriculumModule.Id,
-                    Name = curriculumModule.Name,
-                    Tag = curriculumModule.FullTag,
-                    Accreditions = new List<ModuleAccreditionDto>(),
-                    Subjects = new List<SubjectDto>(),
-                    ExamOptions = new List<ExamOptionDto>()
+                    CatalogId = curriculumModule.FullTag,
+                    Title = curriculumModule.Name,
+                    UrlDescription = $"/ModuleDescription/Details/{curriculumModule.Id}",
+                    Teachings = new List<TeachingDtoVersion2>()
                 };
-
-                foreach (var moduleSubject in curriculumModule.ModuleSubjects)
-                {
-                    var subject = new SubjectDto
-                    {
-                        Name = moduleSubject.Name,
-                        SWS = moduleSubject.SWS,
-                        TeachingFormat = moduleSubject.TeachingFormat.Tag
-                    };
-
-                    dto.Subjects.Add(subject);
-                }
-
-                foreach (var examinationOption in curriculumModule.ExaminationOptions)
-                {
-                    var option = new ExamOptionDto
-                    {
-                        Name = examinationOption.Name,
-
-                        Exams = new List<ExamDto>()
-                    };
-
-                    dto.ExamOptions.Add(option);
-
-                    foreach (var fraction in examinationOption.Fractions)
-                    {
-                        var exam = new ExamDto
-                        {
-                            Name = fraction.Form.ShortName,
-                            Weight = fraction.Weight
-                        };
-
-                        option.Exams.Add(exam);
-                    }
-                }
 
                 foreach (var subject in curriculumModule.ModuleSubjects)
                 {
                     foreach (var accreditation in subject.SubjectAccreditations)
                     {
-                        try
+                        var teachingDto = new TeachingDtoVersion2
                         {
-                            if (accreditation.Slot != null && accreditation.Slot.AreaOption != null &&
-                                accreditation.Slot.AreaOption.Area != null &&
-                                accreditation.Slot.AreaOption.Area.Curriculum != null &&
-                                accreditation.Slot.AreaOption.Area.Curriculum.Organiser != null)
-                            {
-                                var acc = new ModuleAccreditionDto
-                                {
-                                    Curriculum = accreditation.Slot.AreaOption.Area.Curriculum.Name,
-                                    Faculty = accreditation.Slot.AreaOption.Area.Curriculum.Organiser.ShortName,
-                                    Slot = accreditation.Slot.FullTag,
-                                    Ects = accreditation.Slot.ECTS
-                                };
+                            Semester = accreditation.Slot.Semester,
+                            CurriculumId = accreditation.Slot.AreaOption.Area.Curriculum.ShortName,
+                            CurriculumTitle = accreditation.Slot.AreaOption.Area.Curriculum.Name,
+                            UrlCurriculumPlan = $"/Curriculum/Details/{accreditation.Slot.AreaOption.Area.Curriculum.Id}",
+                            SubjectTitle = subject.Name,
+                            SubjectTeachingFormat = subject.TeachingFormat.Tag
+                        };
 
-                                dto.Accreditions.Add(acc);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            // ignored
-                        }
+                        dto.Teachings.Add(teachingDto);
                     }
+
                 }
 
                 list.Add(dto);
@@ -160,6 +115,52 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return model;
         }
 
+        [Route("{curriculum}/{stage}/{semester}")]
+        public List<ModuleSlotDto> GetModuleByStages(string curriculum, int stage, string semester)
+        {
+            var curr = Db.Curricula.Include(curriculum1 => curriculum1.Areas)
+                .FirstOrDefault(x => x.ShortName.Equals(curriculum));
+            var sem = new SemesterService().GetSemester(semester);
+
+            if (curr == null || sem == null || !curr.Areas.Any())
+            {
+                return new List<ModuleSlotDto>();
+            }
+
+            var converter = new CourseConverter(Db);
+            var model = new List<ModuleSlotDto>();
+
+            var semSlots = Db.CurriculumSlots.Where(x =>
+                x.AreaOption.Area.Curriculum.Id == curr.Id && x.Semester == stage).OrderBy(x => x.Tag).ToList();
+
+            foreach (var slot in semSlots)
+            {
+                foreach (var module in slot.SubjectAccreditations.Select(x => x.Subject.Module).Distinct().ToList())
+                {
+                    foreach (var subject in module.ModuleSubjects.ToList())
+                    {
+                        var slotModel = new ModuleSlotDto();
+                        slotModel.ModuleTag = module.Tag;
+                        slotModel.ModuleName = module.Name;
+                        slotModel.SubjectTag = subject.Tag;
+                        slotModel.SubjectName = subject.Name;
+                        slotModel.Courses = new List<CourseSummaryDto>();
+
+                        var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == sem.Id).ToList();
+                        foreach (var teaching in teachings)
+                        {
+                            slotModel.Courses.Add(converter.ConvertSummary(teaching.Course));
+                        }
+
+                        model.Add(slotModel);
+                    }
+                }
+            }
+
+            return model;
+        }
+
+
         /*
         [Route("{id}/details/{semester}")]
         public ModuleDto GetModuleDetails(Guid id, string semester)
@@ -220,7 +221,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     moduleTag = words[2];
             }
 
-            var org = Db.Organisers.FirstOrDefault(x => 
+            var org = Db.Organisers.FirstOrDefault(x =>
                 !string.IsNullOrEmpty(x.Tag) &&
                 x.Tag.ToUpper().Equals(orgTag.ToUpper()));
 
@@ -250,7 +251,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 }
                 else
                 {
-                    // alle Kataloge der org                    
+                    // alle Kataloge der org
                     modules.AddRange(Db.CurriculumModules.Where(x => x.Catalog.Organiser.Id == org.Id).ToList());
                 }
             }
@@ -453,4 +454,4 @@ namespace MyStik.TimeTable.Web.Api.Controller
 */
 
     }
-}
+    }

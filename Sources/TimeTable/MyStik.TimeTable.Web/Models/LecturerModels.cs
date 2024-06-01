@@ -255,6 +255,8 @@ namespace MyStik.TimeTable.Web.Models
         public OrganiserMember Lecturer { get; set; }
 
         public List<CourseOverviewModel> Courses { get; private set; }
+
+        public List<Thesis> Thesis { get; set; }
     }
 
     public class CourseOverviewModel

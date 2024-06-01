@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
 
 @{
     ViewBag.Title = "Alle Studierenden";
@@ -30,7 +31,7 @@
                 <div class="row">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4>E-Mail an alle Studierende</h4>
+                            <h4>E-Mail an alle Studierende @ViewBag.Organiser.ShortName</h4>
                         </div>
                         <div class="panel-body">
                             <div class="row">
@@ -71,7 +72,9 @@
                                 <div class="col-md-12">
                                     @using (Html.BeginForm("AllStudents", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
                                     {
+                                        @Html.AntiForgeryToken()
                                         @Html.ValidationSummary(true)
+                                        @Html.HiddenFor(m => m.OrgId)
                                         <fieldset>
                                             @Html.ValidationSummary()
                                             <div class="form-group">

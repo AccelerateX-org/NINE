@@ -1,0 +1,120 @@
+﻿@using log4net.Core
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+
+
+@{
+
+    var db = new TimeTableDbContext();
+
+    var segment = db.SemesterDates.SingleOrDefault(x => x.Id == Model.Segment.Id);
+
+
+    var segments = db.SemesterDates.Where(x => x.Semester.Id == Model.Semester.Id &&
+                                               x.Organiser != null && x.Organiser.Id == Model.Organiser.Id && x.HasCourses)
+        .ToList();
+
+
+    /*
+    foreach (var summary in Model.Courses)
+    {
+        if (summary.Course.Segment != null && summary.Course.Segment.Description == segment.Description && summary.Course.Segment.Id != segment.Id)
+        {
+            var cc = db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == summary.Course.Id);
+            cc.Segment = segment;
+        }
+    }
+
+    db.SaveChanges();
+    */
+
+}
+
+
+<table id="tabConflicts" class="table">
+    <thead>
+    <tr>
+        <th>Kurs</th>
+        <th>Bezeichnung</th>
+        <th>Segmente</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var summary in Model.Courses)
+    {
+
+        var datesBefore = summary.Course.Dates.Where(x => x.Begin < Model.Segment.From.Date).ToList();
+        var datesAfter = summary.Course.Dates.Where(x => x.End > Model.Segment.To.Date.AddDays(1)).ToList();
+        var isSameSegment = true;
+
+        <tr>
+            <td>
+                <a target="_blank" href="@Url.Action("Details", "Course", new {id = summary.Course.Id})">@summary.Course.ShortName</a>
+            </td>
+            <td>@summary.Course.Name</td>
+            @if (summary.Course.Segment != null)
+            {
+                if (summary.Course.Segment.Id == Model.Segment.Id)
+                {
+                    <td>
+                        @summary.Course.Segment.Semester.Name
+                        @*
+                        @foreach (var seg in segments)
+                        {
+                            <div>
+                                <a href="@Url.Action("AssignSegment", "Conflicts", new {courseId = summary.Course.Id, segId = seg.Id})">@seg.Description</a>
+                            </div>
+                        
+                        }
+                        *@
+                    </td>
+                }
+                else
+                {
+                    isSameSegment = false;
+                    <td>gehört zu @summary.Course.Segment.Description [@summary.Course.Segment.From - @summary.Course.Segment.To]</td>
+                }
+            }
+            else
+            {
+                <td>
+                    @foreach (var seg in segments)
+                    {
+                        <div>
+                            <a href="@Url.Action("AssignSegment", "Conflicts", new {courseId = summary.Course.Id, segId = seg.Id})">@seg.Description</a>
+                        </div>
+                        
+                    }
+                </td>
+            }
+        <td>
+            @foreach (var date in datesBefore.OrderBy(x => x.Begin))
+            {
+                <div>
+                    @Html.TimeSpanWithDate(date)
+                    @if (isSameSegment)
+                    {
+                        <a class="btn btn-sm btn-outline-danger" href="@Url.Action("DeleteDate", new {id = date.Id})"><i class="bi bi-trash"></i></a>
+                    }
+                </div>
+            }
+            @foreach (var date in datesAfter.OrderBy(x => x.Begin))
+            {
+                <div>
+                    @Html.TimeSpanWithDate(date)
+                    @if (isSameSegment)
+                    {
+                        <a class="btn btn-sm btn-outline-danger" href="@Url.Action("DeleteDate", new {id = date.Id})"><i class="bi bi-trash"></i></a>
+                    }
+                </div>
+            }
+        </td>
+            <td>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

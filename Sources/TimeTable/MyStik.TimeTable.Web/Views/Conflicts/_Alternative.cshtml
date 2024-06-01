@@ -1,0 +1,21 @@
+﻿@using MyStik.TimeTable.Data
+@model ICollection<MyStik.TimeTable.Web.Models.DateAlternativeModel>
+@{
+}
+
+
+<p>Alternativen</p>
+<ul>
+    @foreach (var p in Model)
+    {
+        <li>@p.DatePeriod.Begin - @p.DatePeriod.End
+            <ul>
+                @foreach (var room in p.Rooms)
+                {
+                    <li>@room.Number</li>
+                }
+            </ul>
+        </li>
+        
+    }
+</ul>

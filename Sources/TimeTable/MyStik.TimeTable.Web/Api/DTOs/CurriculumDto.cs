@@ -12,6 +12,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public OrganiserDto Organiser { get; set; }
+
+        public string Semester { get; set; }
     }
 
     #region structure

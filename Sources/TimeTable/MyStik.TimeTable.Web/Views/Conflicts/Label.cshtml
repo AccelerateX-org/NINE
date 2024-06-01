@@ -11,6 +11,21 @@
 {
     <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    
+    <style>
+        .fc .fc-timegrid-slot {
+            height: 0.5em !important;
+            line-height: 0.5em !important;
+            border-bottom: 0 !important;
+        }
+
+        .fc .fc-timegrid-slot.fc-scrollgrid-shrink {
+            height: 0.5em !important;
+            line-height: 0.5em !important;
+            border-bottom: 0 !important;
+        }
+
+    </style>
 }
 
 
@@ -40,7 +55,6 @@
                                 @Html.DropDownListFor(model => model.Segment.Id, (IEnumerable<SelectListItem>)ViewBag.Segments, new { @class = "form-control", onchange = "onSegmentChanged()" })
                                 <label for="Segment.Id">Abschnitt</label>
                             </div>
-
                         </div>
                         <div class="col-md-2">
                             <div class="form-floating mb-3">
@@ -93,6 +107,7 @@
         var myCalendar = null;
         var showWeekend = false;
         var showWeekDay = true;
+        var selectedDateId = null;
 
         $(document).ready(function() {
             loadPlanGrid();
@@ -119,7 +134,9 @@
                             semId: semId,
                             orgId: orgId,
                             labelId: labelId,
-                            currId: currId
+                            currId: currId,
+                            color: '#ffffff',
+                            isDraggable: true 
                         },
                         success: function(data, success, xhr) {
                             $('#loading').hide();
@@ -295,8 +312,11 @@
                 $('#loading').show();
 
                 $('#calendar').html('');
-                myCalendar = initWeekCalendar("calendar");
+                myCalendar = initPlanningWeekCalendar("calendar");
                 myCalendar.setOption("headerToolbar", false);
+                //myCalendar.setOption("editable", true);
+                
+
 
                 $("#btnPrev").addClass("disabled");
                 $("#btnNext").addClass("disabled");
@@ -321,6 +341,7 @@
                 $('#calendar').html('');
                 myCalendar = initDayCalendar("calendar");
                 myCalendar.setOption("headerToolbar", false);
+                myCalendar.setOption("editable", true);
 
                 $("#btnPrev").removeClass("disabled");
                 $("#btnNext").removeClass("disabled");
@@ -382,6 +403,8 @@
 
     function onShowEventInfo(courseId, dateId) {
         if (dateId != null) {
+            selectedDateId = dateId;
+
             $.ajax(
                 {
                     type: "POST",
@@ -397,6 +420,66 @@
                 });
         }
     }
+
+    function onEventDrop(info) {
+        //   calEvent.event.extendedProps.courseId, calEvent.event.id
+        // console.log(info);
+        // console.log(info.event.start.toISOString());
+
+        if (!confirm("Kurs wirklich verschieben")) {
+            info.revert();
+            return;
+        }
+
+        $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("MoveFromDrop")',
+                data: {
+                    dateId: info.event.extendedProps.courseId,
+                    begin: info.event.start.toISOString()
+                },
+                success: function (data, success, xhr) {
+                    $("#loading").hide();
+                },
+                error: function() {
+                    info.revert();
+                }
+            });
+        }
+
+        function onEventResize(info) {
+            //   calEvent.event.extendedProps.courseId, calEvent.event.id
+            //console.log(info);
+            console.log(info.event.start.toISOString());
+            console.log(info.event.end.toISOString());
+
+            if (!confirm("Kursdauer wirklich verändern")) {
+                   info.revert();
+                   return;
+               }
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("MoveFromResize")',
+                    data: {
+                        dateId: info.event.extendedProps.courseId,
+                        begin: info.event.start.toISOString(),
+                        end: info.event.end.toISOString()
+                    },
+                    success: function (data, success, xhr) {
+                        $("#loading").hide();
+                    },
+                    error: function() {
+                        info.revert();
+                    }
+                });
+
+        }
+
+
+
 
     function initTimePicker() {
         $('.timepicker-24').timepicker({
@@ -415,7 +498,7 @@
 
     function onShowLecturer(memberId) {
 
-        var seriesId = "c-" + memberId;
+        var seriesId = "d-" + memberId;
         var source = myCalendar.getEventSourceById(seriesId);
         if (source != null) {
             $("#" + seriesId).removeClass("active");
@@ -423,6 +506,10 @@
             return;
         }
         var semId = $("#Semester_Id").val();
+
+        var rc = "dc-" + memberId;
+        var color = $("#" + rc).val();
+
 
         $("#" + seriesId).addClass("active");
 
@@ -435,6 +522,7 @@
                     extraParams: {
                         semId: semId,
                         memberId: memberId,
+                        color: color
                     },
                     success: function (data, success, xhr) {
                         $('#calendarList').html(data);
@@ -530,6 +618,222 @@
             );
         }
     }
+
+
+
+        function onShowRoom(roomId) {
+
+            var seriesId = "r-" + roomId;
+            var source = myCalendar.getEventSourceById(seriesId);
+            if (source != null) {
+                $("#" + seriesId).removeClass("active");
+                source.remove();
+                return;
+            }
+            var semId = $("#Semester_Id").val();
+
+            var rc = "rc-" + roomId;
+            var color = $("#" + rc).val();
+
+            $("#" + seriesId).addClass("active");
+
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("RoomPlanWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            roomId: roomId,
+                            color: color
+                        },
+                        success: function (data, success, xhr) {
+                            $('#calendarList').html(data);
+                            $('#calendarList').show();
+                            $('#loading').hide();
+                        },
+                        failure: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("RooomPlan", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            roomId: roomId
+                        },
+                        success: function (data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+
+        }
+
+
+
+        function onShowLabel(labelId) {
+
+            var seriesId = "l-" + labelId;
+            var source = myCalendar.getEventSourceById(seriesId);
+            if (source != null) {
+                $("#" + seriesId).removeClass("active");
+                source.remove();
+                return;
+            }
+            var semId = $("#Semester_Id").val();
+
+            var rc = "lc-" + labelId;
+            var color = $("#" + rc).val();
+
+
+            $("#" + seriesId).addClass("active");
+
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("LabelEventsWeekly", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semId: semId,
+                            labelId: labelId,
+                            color: color
+                        },
+                        success: function (data, success, xhr) {
+                            $('#calendarList').html(data);
+                            $('#calendarList').show();
+                            $('#loading').hide();
+                        },
+                        failure: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+                myCalendar.addEventSource(
+                    {
+                        id: seriesId,
+                        url: '@Url.Action("LabelEvents", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            labelId: labelId
+                        },
+                        success: function (data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            }
+
+        }
+
+
+        function onShowDates() {
+
+            $("#loading").show();
+
+            var weekDay = $("#altWeekDay").val();
+            var begin = $("#altBegin").val();
+
+            console.log(weekDay);
+            console.log(begin);
+            console.log(selectedDateId);
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("ShowDates")',
+                    data: {
+                        dateId: selectedDateId,
+                        weekDay: weekDay,
+                        begin: begin,
+                    },
+                    success: function (data, success, xhr) {
+                        $('#altConflicts').html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
+        function onMove() {
+
+            $("#loading").show();
+
+            var weekDay = $("#altWeekDay").val();
+            var begin = $("#altBegin").val();
+
+            console.log(weekDay);
+            console.log(begin);
+            console.log(selectedDateId);
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Move")',
+                    data: {
+                        dateId: selectedDateId,
+                        weekDay: weekDay,
+                        begin: begin,
+                    },
+                    success: function (data, success, xhr) {
+                        $('#altConflicts').html(data);
+                        $("#loading").hide();
+                        loadLabels();
+                    }
+                });
+
+        }
+
+
+        function onCheckAlternative() {
+
+            $("#loading").show();
+
+            var weekDay = $("#altWeekDay").val();
+            var begin = $("#altBegin").val();
+
+            console.log(weekDay);
+            console.log(begin);
+            console.log(selectedDateId);
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CheckAlternative")',
+                    data: {
+                        dateId: selectedDateId,
+                        weekDay: weekDay,
+                        begin: begin,
+                    },
+                    success: function (data, success, xhr) {
+                        $('#altConflicts').html(data);
+                        $("#loading").hide();
+                    }
+                });
+            
+        }
 
 
     </script>

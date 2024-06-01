@@ -1,5 +1,6 @@
 ﻿@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 
 @{
@@ -21,6 +22,12 @@
     db.SaveChanges();
     *@
 
+    @*
+    var userService = new UserInfoService();
+
+    var userDb = new ApplicationDbContext();
+    var maxUser = userDb.Users.Where(x => x.BinaryData != null);
+        *@
 
     List<OrganiserMember> memberList = null;
     if (ViewBag.UserRight.IsMemberAdmin || ViewBag.UserRight.IsOrgMember)
@@ -56,6 +63,7 @@
 
     </script>
 }
+
 
 
 <div class="row">

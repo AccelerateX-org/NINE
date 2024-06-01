@@ -1,24 +1,69 @@
 ﻿@using System.Globalization
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Data.ActivityDate
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.RoomConflictModel
+
+
+@{
+    var courseService = new CourseService();
+    var summary = courseService.GetCourseSummary(Model.Course);
+}
 
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">@Model.Activity.ShortName</h5>
-        <h6 class="card-subtitle">@Model.Activity.Name</h6>
-        <p class="card-text">Termin <strong>@Html.TimeSpanWithDate(Model)</strong></p>
+        <div class="card-title">
+            @summary.Course.ShortName
+            @Html.LabelList(summary.Course)
+        </div>
+        <div class="card-subtitle">@summary.Course.Name</div>
         <div class="row">
+            <div class="col-md-4">Lehrende</div>
+            <div class="col-md-8">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">Termine</div>
+            <div class="col-md-8">@Html.DateList(summary.Dates)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">Räume</div>
+            <div class="col-md-8">@Html.RoomList(summary.Rooms, showLinks: false)</div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                Verfügbare Räume
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-label">alle Termine</div>
+            </div>
             <div class="col-md-6">
-                <h6>Suche nach Alternativen für</h6>
-                <div class="list-group">
-                    <div class="list-group-item">... nur für Termin am @Model.Begin.ToShortDateString()</div>
-                    <div class="list-group-item">... alle Termine des Kurses am @DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(Model.Begin.DayOfWeek)</div>
-                    <div class="list-group-item">... alle Termine des Kurses (egal welcher Wochentag / Uhrzeit)</div>
-                    <a class="list-group-item list-group-item-action" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Activity.Id })">zur Terminverwaltung des Kurses gehen</a>
+                <select class="form-select">
+                    @foreach (var room in Model.AvailableRooms.OrderByDescending(x => x.Capacity))
+                    {
+                        <option value="@room.Id">@room.Number (@room.Capacity Plätze)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="btn btn-group">
+                    <a href="" class="btn btn-sm btn-outline-success"><i class="bi bi-check-all"></i></a>
+                    <a href="javascript:getRoomsForDate('@Model.Date.Id')" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-down"></i></a>
                 </div>
             </div>
         </div>
-    </div>
+        <div id="dateList">
 
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("AdminNewDates", "Course", new { id = Model.Course.Id })"><i class="bi box-arrow-up-right"></i> zum Kurs</a>
+            </div>
+        </div>
+
+    </div>
 </div>
