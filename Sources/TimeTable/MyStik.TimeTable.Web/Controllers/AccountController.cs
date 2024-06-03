@@ -8,6 +8,7 @@ using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -797,6 +798,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
+            //AuthenticationManager.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return RedirectToAction("Index", "Home");
         }
 

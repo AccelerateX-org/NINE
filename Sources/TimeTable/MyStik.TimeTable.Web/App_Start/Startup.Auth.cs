@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Configuration;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
+using Microsoft.Owin.Host.SystemWeb;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using Microsoft.Owin.Security.OpenIdConnect;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Providers;
+using MyStik.TimeTable.Web.Utils;
 using Owin;
 
 namespace MyStik.TimeTable.Web
@@ -64,6 +71,7 @@ namespace MyStik.TimeTable.Web
             //   consumerSecret: "");
 
             // TODO: das muss wohl noch geändert werden!
+            /*
             app.UseFacebookAuthentication(
               appId: "1561140870843238",
               appSecret: "59bb9c34ea5f7b5261f1e81525dd75fe");
@@ -71,6 +79,65 @@ namespace MyStik.TimeTable.Web
             app.UseGoogleAuthentication(
                 clientId: "563733444568-hr161m7gijet73a81r2g58jcfioenh2a.apps.googleusercontent.com",
                 clientSecret: "_ksB7M4Af62GppxoO5gB2owd");
+            */
+
+            // ab hier openid / auth0
+            // Configure Auth0 parameters
+            string auth0Domain = ConfigurationManager.AppSettings["auth0:Domain"];
+            string auth0ClientId = ConfigurationManager.AppSettings["auth0:ClientId"];
+            string auth0RedirectUri = ConfigurationManager.AppSettings["auth0:RedirectUri"];
+            string auth0PostLogoutRedirectUri = ConfigurationManager.AppSettings["auth0:PostLogoutRedirectUri"];
+
+            // Configure Auth0 authentication
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
+            {
+                AuthenticationType = "Auth0",
+
+                Authority = $"https://{auth0Domain}",
+
+                ClientId = auth0ClientId,
+
+                RedirectUri = auth0RedirectUri,
+                PostLogoutRedirectUri = auth0PostLogoutRedirectUri,
+
+                Scope = "openid profile email",
+
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                },
+
+                // More information on why the CookieManager needs to be set can be found here: 
+                // https://docs.microsoft.com/en-us/aspnet/samesite/owin-samesite
+                CookieManager = new SameSiteCookieManager(new SystemWebCookieManager()),
+
+                Notifications = new OpenIdConnectAuthenticationNotifications
+                {
+                    RedirectToIdentityProvider = notification =>
+                    {
+                        if (notification.ProtocolMessage.RequestType == OpenIdConnectRequestType.Logout)
+                        {
+                            var logoutUri = $"https://{auth0Domain}/v2/logout?client_id={auth0ClientId}";
+
+                            var postLogoutUri = notification.ProtocolMessage.PostLogoutRedirectUri;
+                            if (!string.IsNullOrEmpty(postLogoutUri))
+                            {
+                                if (postLogoutUri.StartsWith("/"))
+                                {
+                                    // transform to absolute
+                                    var request = notification.Request;
+                                    postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+                                }
+                                logoutUri += $"&returnTo={Uri.EscapeDataString(postLogoutUri)}";
+                            }
+
+                            notification.Response.Redirect(logoutUri);
+                            notification.HandleResponse();
+                        }
+                        return Task.FromResult(0);
+                    }
+                }
+            });
 
         }
 

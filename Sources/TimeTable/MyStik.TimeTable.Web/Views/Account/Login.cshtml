@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.LoginViewModel
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.LoginViewModel
 
 @{
     // Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
@@ -40,12 +41,13 @@
                         <li><i class="fas fa-question fa-li text-primary"></i>@Html.ActionLink(Resources.ForgotPasswordLink, "ForgotPassword")</li>
                         <li><i class="fas fa-pen fa-li text-primary"></i>@Html.ActionLink(Resources.RegisterLink, "Register")</li>
                     </ul>
-                    @*
-        <hr/>
-        <div class="form-group">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel {ReturnUrl = ViewBag.ReturnUrl})
-        </div>
-                    *@
+                    <hr/>
+                    @if (Request.IsLocal)
+                    {
+                        <div class="form-group">
+                            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                        </div>
+                    }
                 </div>
             </div>
         </div>

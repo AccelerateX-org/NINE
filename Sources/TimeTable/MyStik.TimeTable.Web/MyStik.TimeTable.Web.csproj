@@ -840,6 +840,8 @@
     <Compile Include="Utils\FakeView.cs" />
     <Compile Include="Utils\Helper\IconHelper.cs" />
     <Compile Include="Utils\Helper\StringHelper.cs" />
+    <Compile Include="Utils\SameSiteCookieManager.cs" />
+    <Compile Include="Utils\SameSiteSupport.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
