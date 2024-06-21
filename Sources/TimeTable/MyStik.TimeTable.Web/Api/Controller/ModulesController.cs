@@ -139,12 +139,16 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 {
                     foreach (var subject in module.ModuleSubjects.ToList())
                     {
-                        var slotModel = new ModuleSlotDto();
-                        slotModel.ModuleTag = module.Tag;
-                        slotModel.ModuleName = module.Name;
-                        slotModel.SubjectTag = subject.Tag;
-                        slotModel.SubjectName = subject.Name;
-                        slotModel.Courses = new List<CourseSummaryDto>();
+                        var slotModel = new ModuleSlotDto
+                        {
+                            ModuleTag = module.Tag,
+                            ModuleName = module.Name,
+                            SubjectTag = subject.Tag,
+                            SubjectName = subject.Name,
+                            Courses = new List<CourseSummaryDto>(),
+                            Exams = new List<ExamSummaryDto>()
+                        };
+
 
                         var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == sem.Id).ToList();
                         foreach (var teaching in teachings)
@@ -152,8 +156,20 @@ namespace MyStik.TimeTable.Web.Api.Controller
                             slotModel.Courses.Add(converter.ConvertSummary(teaching.Course));
                         }
 
+                        foreach (var examOption in module.ExaminationOptions.ToList())
+                        {
+                            var exams = examOption.ExaminationDescriptions.Where(x => x.Semester.Id == sem.Id).ToList();
+
+                            foreach (var exam in exams)
+                            {
+                                slotModel.Exams.Add(converter.ConvertExam(exam));
+                            }
+                        }
+
                         model.Add(slotModel);
                     }
+
+
                 }
             }
 

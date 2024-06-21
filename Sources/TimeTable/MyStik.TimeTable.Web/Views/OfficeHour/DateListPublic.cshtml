@@ -102,7 +102,14 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <i class="bi bi-cart-check text-success"></i>
-                                            @Html.TimeSpanWithDate(date.Slot)
+                                            @if (date.Date.Slots.Any())
+                                            {
+                                                <h5>@Html.TimeSpanWithDate(date.Slot)</h5>
+                                            }
+                                            else
+                                            {
+                                                <h5>@Html.TimeSpanWithDate(date.Date)</h5>
+                                            }
                                         </div>
                                         <div class="col-md-8">
                                             @if (!string.IsNullOrEmpty(@date.Date.Title))

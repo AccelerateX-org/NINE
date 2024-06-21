@@ -55,11 +55,13 @@
             <table id="tabCurricula" class="table">
                 <thead>
                     <tr>
-                        <th>Bezeichnung </th>
+                        <th>ID</th>
+                        <th>Bezeichnung</th>
                         <th>Abschluss</th>
+                        <th>Zeit</th>
+                        <th>WB</th>
+                        <th>BB</th>
                         <th>PKV</th>
-                        <th>Version</th>
-                        <td>Thesis</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,14 +87,39 @@
                             if (isMember || (!isMember && !curr.IsDeprecated))
                             {
                                 <tr class="@rowClass">
+                                    <td>@curr.ShortName</td>
                                     <td>
                                         <a href="@Url.Action("Details", "Curriculum", new { id = curr.Id })">
-                                            @curr.Name (@curr.ShortName)
+                                            @curr.Name
                                         </a>
                                     </td>
                                     @if (curr.Degree != null)
                                     {
                                         <td>@curr.Degree.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (curr.AsPartTime)
+                                    {
+                                        <td>Teilzeit</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Vollzeit</td>
+                                    }
+                                    @if (curr.IsQualification)
+                                    {
+                                        <td>Weiterbildung</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (curr.AsDual)
+                                    {
+                                        <td>Berufsbegleitend</td>
                                     }
                                     else
                                     {
@@ -106,8 +133,6 @@
                                     {
                                         <td></td>
                                     }
-                                    <td>@curr.Tag (@curr.Version)</td>
-                                    <td>@curr.ThesisDuration</td>
                                 </tr>
                             }
                         }

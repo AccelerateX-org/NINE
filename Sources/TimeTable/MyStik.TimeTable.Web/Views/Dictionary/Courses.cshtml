@@ -29,30 +29,6 @@
     }
 
     courses = courses.Distinct().ToList();
-
-    /*
-    foreach (var course in courses)
-    {
-        if (course.ShortName.EndsWith(" (Vorl)"))
-        {
-            var isSingle = true;
-            foreach (var module in course.SubjectTeachings.Select(x => x.Subject.Module))
-            {
-                if (module.ModuleSubjects.Count > 1)
-                {
-                    isSingle = false;
-                }
-            }
-
-            if (isSingle)
-            {
-                course.ShortName = course.ShortName.Replace(" (Vorl)", "");
-            }
-        }
-    }
-
-    db.SaveChanges();
-    */
 }
 
 @section styles

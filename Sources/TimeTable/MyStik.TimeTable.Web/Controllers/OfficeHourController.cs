@@ -208,10 +208,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Subscriptions(Guid id)
+        public ActionResult Subscriptions(Guid? id)
         {
             var user = GetCurrentUser();
-            var sem = SemesterService.GetSemester(id);
+            var sem = id.HasValue ? SemesterService.GetSemester(id.Value) : SemesterService.GetSemester(DateTime.Today);
             var now = DateTime.Now;
 
             var list = new List<OfficeHourOverviewModel>();

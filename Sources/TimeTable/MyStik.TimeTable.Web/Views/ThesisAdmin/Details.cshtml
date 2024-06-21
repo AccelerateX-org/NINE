@@ -43,6 +43,7 @@
         <a href="#" class="btn btn-outline-success disabled">Note melden</a>
         <a href="#" class="btn btn-outline-success disabled">Arbeit abgerechnet</a>
     }
+    <a target="_blank" href="@Url.Action("ThesisMark", "Print", new {id = Model.Thesis.Id})" class="btn btn-outline-success">Notenbeleg erstellen</a>
     <a href="@Url.Action("Delete", new {id = Model.Thesis.Id})" class="btn btn-outline-danger"><i class="fa fa-trash"></i> Arbeit löschen</a>
 </div>
 @{

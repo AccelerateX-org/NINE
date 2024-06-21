@@ -5,6 +5,7 @@
 
     var db = new TimeTableDbContext();
 
+    var now = DateTime.Now;
     var day = DateTime.Today.AddDays(-7);
     var nAds = db.Advertisements.Count(x => x.Created >= day);
 }
@@ -37,160 +38,231 @@
         <a href="https://localhost:44300/Course/Details/7dfad981-d23d-ee11-855b-7486e20bbe7b">Testkurs</a>
         <a href="https://localhost:44300/ModuleDescription/Semester?moduleId=9a068d88-77cc-ed11-8520-7486e20bbe7b&semId=17f321e3-76cc-ed11-8520-7486e20bbe7b">Testmodul</a>
     }
-    <div class="col-md-4">
-        @if (Model.Candidatures.Any())
-        {
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h5 class="card-title">Meine Aufnahmeverfahren</h5>
-                            </div>
+<div class="col-md-4">
+    @if (Model.Candidatures.Any())
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">Meine Aufnahmeverfahren</h5>
                         </div>
-                        <div class="list-group">
-                            <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action"><i class="bi bi-journals"></i> Übersicht</a>
-                        </div>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action"><i class="bi bi-journals"></i> Übersicht</a>
                     </div>
                 </div>
             </div>
-        }
-        @if (Model.Student != null && Model.Student.LastSemester == null)
-        {
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h5 class="card-title">Ich studiere <strong>@Model.Student.Curriculum.ShortName</strong> seit @Model.Student.FirstSemester.Name</h5>
-                            </div>
+        </div>
+    }
+    @if (Model.Student != null && Model.Student.LastSemester == null)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">Ich studiere <strong>@Model.Student.Curriculum.ShortName</strong> seit @Model.Student.FirstSemester.Name</h5>
                         </div>
-                        <div class="list-group">
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
-                                Studiengang ändern / wechseln / beenden
-                            </a>
-                            <a href="@Url.Action("Details", "Curriculum", new { id = Model.Student.Curriculum.Id })" class="list-group-item list-group-item-action">
-                                Aufbau und Modulplan
-                            </a>
-                            @if (Model.Thesis != null)
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
+                            Studiengang ändern / wechseln / beenden
+                        </a>
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.Student.Curriculum.Id })" class="list-group-item list-group-item-action">
+                            Aufbau und Modulplan
+                        </a>
+                        @if (Model.Thesis != null)
+                        {
+                            if (Model.Thesis.DeliveryDate == null) // noch nicht abgegeben
                             {
-                                if (Model.Thesis.DeliveryDate == null) // noch nicht abgegeben
+                                if (Model.Thesis.IssueDate == null) // noch nicht angemeldet
                                 {
-                                    if (Model.Thesis.IssueDate == null) // noch nicht angemeldet
+                                    if (Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null)) // Arbeit wurde angenommen
                                     {
-                                        if (Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null)) // Arbeit wurde angenommen
-                                        {
-                                            <a href="@Url.Action("Issue", "Thesis")" class="list-group-item list-group-item-action list-group-item-danger">
-                                                Meine Abschlussarbeit ist noch nicht angemeldet!
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-info">
-                                                Habe in NINE schon eine Abschlussarbeit angelegt, aber noch nicht offiziell damit begonnen.
-                                            </a>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var diff = Model.Thesis.ExpirationDate.Value.Date - DateTime.Today;
-                                        var isProlonged = false;
-                                        if (Model.Thesis.RenewalDate != null)
-                                        {
-                                            isProlonged = true;
-                                            diff = Model.Thesis.RenewalDate.Value.Date - DateTime.Today;
-                                        }
-
-                                        if (isProlonged)
-                                        {
-                                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-danger">
-                                                Abgabefrist meiner Abschlussarbeit (verlängert): @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-info">
-                                                Abgabefrist meiner Abschlussarbeit: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()
-                                            </a>
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    if (Model.Thesis.GradeDate == null)
-                                    {
-                                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-info">
-                                            Die Abgabe wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() erfasst.
+                                        <a href="@Url.Action("Issue", "Thesis")" class="list-group-item list-group-item-action list-group-item-danger">
+                                            Meine Abschlussarbeit ist noch nicht angemeldet!
                                         </a>
                                     }
                                     else
                                     {
-                                        <div class="list-group-item">
-                                            Die Note wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() gemeldet. In der Regel ist dies auch der Abschluss des Studiums
-                                            <small>Ist der Studiengang noch aktuell?</small>
-                                        </div>
-                                        <a href="@Url.Action("StayConnected", "Alumni", new { id = Model.Thesis.Student.Id })" class="list-group-item list-group-item-action list-group-item-info">
-                                            Erfassung der Kontaktdaten für Alumni-Datenbank
+                                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-info">
+                                            Habe in NINE schon eine Abschlussarbeit angelegt, aber noch nicht offiziell damit begonnen.
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    var diff = Model.Thesis.ExpirationDate.Value.Date - DateTime.Today;
+                                    var isProlonged = false;
+                                    if (Model.Thesis.RenewalDate != null)
+                                    {
+                                        isProlonged = true;
+                                        diff = Model.Thesis.RenewalDate.Value.Date - DateTime.Today;
+                                    }
+
+                                    if (isProlonged)
+                                    {
+                                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-danger">
+                                            Abgabefrist meiner Abschlussarbeit (verlängert): @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-info">
+                                            Abgabefrist meiner Abschlussarbeit: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()
                                         </a>
                                     }
                                 }
                             }
                             else
                             {
-                                if (Model.Student.Curriculum.ThesisDuration > 0)
+                                if (Model.Thesis.GradeDate == null)
                                 {
-                                    <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action">
-                                        Abschlussarbeit: bisher nicht begonnen
+                                    <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action list-group-item-info">
+                                        Die Abgabe wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() erfasst.
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="list-group-item">
+                                        Die Note wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() gemeldet. In der Regel ist dies auch der Abschluss des Studiums
+                                        <small>Ist der Studiengang noch aktuell?</small>
+                                    </div>
+                                    <a href="@Url.Action("StayConnected", "Alumni", new { id = Model.Thesis.Student.Id })" class="list-group-item list-group-item-action list-group-item-info">
+                                        Erfassung der Kontaktdaten für Alumni-Datenbank
                                     </a>
                                 }
                             }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
-
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h5 class="card-title">Agenda</h5>
-                            <input id="dateAgenda" type="text" class="form-control form-control-sm datepicker" onchange="onDateChanged(value)" value="@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)"/>
-                            <div class="btn-group">
-                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-day"></i></a>
-                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Free", "Room")"><i class="bi bi-building-check"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="placeholderAgenda">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title placeholder-glow">
-                                    <span class="placeholder col-6"></span>
-                                </h5>
-                                <p class="card-text placeholder-glow">
-                                    <span class="placeholder col-7"></span>
-                                    <span class="placeholder col-4"></span>
-                                    <span class="placeholder col-4"></span>
-                                    <span class="placeholder col-6"></span>
-                                    <span class="placeholder col-8"></span>
-                                </p>
-                                <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="listAgenda" class="list-group">
+                        }
+                        else
+                        {
+                            if (Model.Student.Curriculum.ThesisDuration > 0)
+                            {
+                                <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action">
+                                    Abschlussarbeit: bisher nicht begonnen
+                                </a>
+                            }
+                        }
                     </div>
                 </div>
             </div>
         </div>
+    }
 
 
 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title">Agenda</h5>
+                        <input id="dateAgenda" type="text" class="form-control form-control-sm datepicker" onchange="onDateChanged(value)" value="@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)" />
+                        <div class="btn-group">
+                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-day"></i></a>
+                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Free", "Room")"><i class="bi bi-building-check"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div id="placeholderAgenda">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title placeholder-glow">
+                                <span class="placeholder col-6"></span>
+                            </h5>
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                        </div>
+                    </div>
+                </div>
+                <div id="listAgenda" class="list-group">
+                </div>
+            </div>
+        </div>
     </div>
+
+
+    @if (Model.Student != null && Model.Student.LastSemester == null)
+    {
+        var org = Model.Student.Curriculum.Organiser;
+        var rooms = db.Rooms.Where(x => x.IsForLearning && x.Assignments.Any(a => a.Organiser.Id == org.Id && a.IsOwner)).ToList();
+
+        if (rooms.Any())
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">Aktuell freie Lernräume</h5>
+                            </div>
+                        </div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Nummer</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var room in rooms)
+                            {
+                                var dates = room.Dates.Where(x => x.Begin <= now && now <= x.End).ToList();
+
+                                <tr>
+                                    <td>@room.Number</td>
+                                    @if (dates.Any())
+                                    {
+                                        <td>
+                                            @foreach (var date in dates)
+                                            {
+                                                <div>@date.Activity.ShortName</div>
+                                            }
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>aktuell frei</td>
+                                    }
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                        <!--
+                        <div id="placeholderRooms">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title placeholder-glow">
+                                        <span class="placeholder col-6"></span>
+                                    </h5>
+                                    <p class="card-text placeholder-glow">
+                                        <span class="placeholder col-7"></span>
+                                        <span class="placeholder col-4"></span>
+                                        <span class="placeholder col-4"></span>
+                                        <span class="placeholder col-6"></span>
+                                        <span class="placeholder col-8"></span>
+                                    </p>
+                                    <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                                </div>
+                            </div>
+                        </div>
+                        -->
+                        <div id="listRooms"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</div>
     <div class="col-md-6">
         <div class="row">
             <div id="refreshSemester">

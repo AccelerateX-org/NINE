@@ -83,6 +83,7 @@ namespace MyStik.TimeTable.Web
 
             // ab hier openid / auth0
             // Configure Auth0 parameters
+            /*
             string auth0Domain = ConfigurationManager.AppSettings["auth0:Domain"];
             string auth0ClientId = ConfigurationManager.AppSettings["auth0:ClientId"];
             string auth0RedirectUri = ConfigurationManager.AppSettings["auth0:RedirectUri"];
@@ -97,6 +98,7 @@ namespace MyStik.TimeTable.Web
 
                 ClientId = auth0ClientId,
 
+                
                 RedirectUri = auth0RedirectUri,
                 PostLogoutRedirectUri = auth0PostLogoutRedirectUri,
 
@@ -138,7 +140,7 @@ namespace MyStik.TimeTable.Web
                     }
                 }
             });
-
+            */
         }
 
         /// <summary>

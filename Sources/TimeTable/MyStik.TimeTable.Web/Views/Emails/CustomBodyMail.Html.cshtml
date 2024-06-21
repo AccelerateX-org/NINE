@@ -1,5 +1,4 @@
-﻿@using RazorEngine.Text
-@model MyStik.TimeTable.Web.Models.CustomBodyEmail
+﻿@model MyStik.TimeTable.Web.Models.CustomBodyEmail
 
 Content-Type: text/html; charset=utf-8
 
@@ -27,11 +26,7 @@ Content-Type: text/html; charset=utf-8
 </head>
 <body>
 <div class="mail-text-style">
-
-    @{
-        var rawString = new RawString(Model.Body);
-    }
-    @rawString
+    @Html.Raw(Model.Body)
     <hr/>
 </div>
     <div class="mail-stationary-style">Dies ist eine manuell erstellte E-Mail. Bei Fragen zum Inhalt wenden Sie sich bitte an den Absender.</div>

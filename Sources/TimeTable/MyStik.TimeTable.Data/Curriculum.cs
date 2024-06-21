@@ -41,6 +41,7 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool AsPartTime { get; set; }
 
+
         /// <summary>
         /// Weiterbildungsangebot
         /// ja oder nein, aber nicht beides
@@ -78,6 +79,16 @@ namespace MyStik.TimeTable.Data
         public double EctsTarget { get; set; }
 
         public int ThesisDuration { get; set; }
+
+        /// <summary>
+        /// Beginn im Wintersemester
+        /// </summary>
+        public bool InWinterTerm { get; set; }
+
+        /// <summary>
+        /// Beginn im Sommersemester
+        /// </summary>
+        public bool InSummerTerm { get; set; }
 
         /// <summary>
         /// Gültig ab Semester

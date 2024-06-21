@@ -114,6 +114,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string SubjectName { get; set; }
 
         public List<CourseSummaryDto> Courses { get; set; }
+        public List<ExamSummaryDto> Exams { get; set; }
     }
 
 
@@ -144,5 +145,25 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string SubjectTeachingFormat { get; set; }
     }
 
+    public class ExamSummaryDto
+    {
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Beschreibung inkl. der Hilfsmittel
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Rahmenbedingungen
+        /// </summary>
+        public string Conditions { get; set; }
+
+        /// <summary>
+        /// Hilfsmittel
+        /// </summary>
+        public string Utilities { get; set; }
+
+    }
 
 }

@@ -697,32 +697,5 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Index");
         }
-
-        public FileResult MarkingEmpty(Guid id)
-        {
-            var userService = new UserInfoService();
-
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
-            var tm = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId),
-                Mark = ""
-            };
-
-            var stream = new MemoryStream();
-            var html = this.RenderViewToString("_ThesisPrintOut", tm);
-            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-
-            return File(stream.GetBuffer(), "application/pdf", "Notenmeldung.pdf");
-        }
-
-
     }
 }

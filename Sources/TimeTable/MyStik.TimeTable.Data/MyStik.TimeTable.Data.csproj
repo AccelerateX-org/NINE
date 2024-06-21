@@ -617,6 +617,10 @@
     <Compile Include="Migrations\202405170920420_RoomOwnerV2.Designer.cs">
       <DependentUpon>202405170920420_RoomOwnerV2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202406110713469_CurrModules.cs" />
+    <Compile Include="Migrations\202406110713469_CurrModules.Designer.cs">
+      <DependentUpon>202406110713469_CurrModules.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -989,6 +993,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202405170920420_RoomOwnerV2.resx">
       <DependentUpon>202405170920420_RoomOwnerV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202406110713469_CurrModules.resx">
+      <DependentUpon>202406110713469_CurrModules.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 @section styles
 {
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 <div class="row">
@@ -43,6 +44,7 @@
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
 
@@ -65,49 +67,18 @@
                     },
                     success: function(data, success, xhr) {
                         $("#roomPlan").html(data);
+                        initTable();
                         $("#loading").hide();
                     }
                 });
 
         }
 
-        @*
-        $(function() {
-
-
-            $('.datepicker').datepicker({
-                orientation: "right",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
+        function initTable() {
+            var t = $('#tabDates').DataTable({
+                "paging": false
             });
-            $('.datepicker').datepicker()
-                .on('changeDate',
-                    function(e) {
-
-                        $("#loading").show();
-
-                        var x = $('#myDate').val();
-
-                        $.ajax(
-                            {
-                                type: "POST",
-                                url: '@Url.Action("Programm")',
-                                data: {
-                                    date: x,
-                                    orgId: "@ViewBag.Organiser.Id.ToString()"
-                                },
-                                success: function(data, success, xhr) {
-                                    $("#roomPlan").html(data);
-                                    $("#loading").hide();
-                                }
-                            });
-
-                    });
-        });
-            *@
+        }
 
     </script>
 }

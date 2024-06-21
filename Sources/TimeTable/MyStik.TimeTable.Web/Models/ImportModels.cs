@@ -27,6 +27,8 @@ namespace MyStik.TimeTable.Web.Models
     {
         public ActivityOrganiser Organiser { get; set; }
 
+        public CurriculumModuleCatalog Catalog { get; set; }
+
         public HttpPostedFileBase AttachmentStructure { get; set; }
 
     }

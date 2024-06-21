@@ -379,7 +379,7 @@
 
             if (Model.Position == 1)
             {
-                <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary"><i class="fa fa-download"></i> Beleg zur Notenmeldung</a>
+                <a target="_blank" href="@Url.Action("ThesisMark", "Print", new {id = Model.Thesis.Id})" class="btn btn-primary"><i class="fa fa-download"></i> Beleg zur Notenmeldung</a>
             }
         }
     }

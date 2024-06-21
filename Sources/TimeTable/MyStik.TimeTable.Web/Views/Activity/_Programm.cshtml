@@ -6,13 +6,15 @@
 @if (Model.Any())
 {
     <div class="infoscreen">
-        <table class="table table-striped">
+        <table id="tabDates" class="table table-striped">
             <thead>
                 <tr>
-                    <th>Zeitraum</th>
+                    <th>Beginn</th>
+                    <th>Ende</th>
                     <th>Raum</th>
-                    <th>Name</th>
                     <th>Dozent</th>
+                    <th>Kurs</th>
+                    <th>Bezeichnung</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,8 +25,11 @@
                         if (date.Occurrence.IsCanceled)
                         {
                             <tr class="danger">
-                                <td>@Html.TimeSpan(date)</td>
+                                <td>@date.Begin.ToString("HH:mm")</td>
+                                <td>@date.End.ToString("HH:mm")</td>
                                 <td>abgesagt</td>
+                                <td>@Html.LecturerList(date.Hosts, true)</td>
+                                <td>@date.Activity.ShortName</td>
                                 @if (date.Activity is Course)
                                 {
                                     <td><a href="@Url.Action("Details", "Course", new {id = date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
@@ -33,34 +38,38 @@
                                 {
                                     <td>@date.Activity.Name</td>
                                 }
-                                <td>@Html.LecturerList(date.Hosts, true)</td>
                             </tr>
                         }
                         else
                         {
-                            <tr>
-                                <td>@Html.TimeSpan(date)</td>
-                                <td>@Html.RoomList(date.Rooms, true, false)</td>
-                                @if (date.Activity is Course)
-                                {
-                                    <td><a href="@Url.Action("Details", "Course", new {id = date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
-                                }
-                                else
-                                {
-                                    <td>@date.Activity.Name</td>
-                                }
-                                <td>@Html.LecturerList(date.Hosts, true)</td>
-                            </tr>
+            <tr>
+                <td>@date.Begin.ToString("HH:mm")</td>
+                <td>@date.End.ToString("HH:mm")</td>
+                <td>@Html.RoomList(date.Rooms, true, false)</td>
+                <td>@Html.LecturerList(date.Hosts, true)</td>
+                <td>@date.Activity.ShortName</td>
+                @if (date.Activity is Course)
+                {
+                    <td><a href="@Url.Action("Details", "Course", new {id = date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
+                }
+                else
+                {
+                    <td>@date.Activity.Name</td>
+                }
+
+            </tr>
                         }
                     }
                     else
                     {
-                        <tr>
-                            <td>@Html.TimeSpan(date)</td>
-                            <td>@Html.RoomList(date.Rooms, true, false)</td>
-                            <td>@date.Activity.Name</td>
-                            <td>@Html.LecturerList(date.Hosts, true)</td>
-                        </tr>
+            <tr>
+                <td>@date.Begin.ToString("HH:mm")</td>
+                <td>@date.End.ToString("HH:mm")</td>
+                <td>@Html.RoomList(date.Rooms, true, false)</td>
+                <td>@Html.LecturerList(date.Hosts, true)</td>
+                <td>@date.Activity.ShortName</td>
+                <td>@date.Activity.Name</td>
+            </tr>
                     }
                 }
             </tbody>

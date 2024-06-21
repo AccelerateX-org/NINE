@@ -253,6 +253,116 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new { id = org.Id });
         }
 
+
+
+        public ActionResult ImportModules(Guid id)
+        {
+            var cat = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == id);
+
+
+            var model = new OrganiserImportModel
+            {
+                Organiser = cat.Organiser,
+                Catalog = cat
+            };
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult ImportModules(OrganiserImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.Organiser.Id);
+            var cat = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == model.Catalog.Id);
+
+
+            if (cat == null || org == null)
+                return View();
+
+            var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
+            var i = 0;
+            foreach (var line in lines)
+            {
+                i++;
+                if (i == 1 || string.IsNullOrEmpty(line.Trim()))
+                    continue;
+
+                var words = line.Split(';');
+
+                var modTag = words[0].Trim();
+                var modTitle = words[1].Trim();
+                var modTeaching = words[2].Trim();
+                var modSWS = int.Parse(words[3].Trim());
+                var modExam = words[4].Trim();
+
+                var module = Db.CurriculumModules.SingleOrDefault(x => x.Catalog.Id == cat.Id && x.Tag.Equals(modTag));
+                if (module != null) continue;
+
+                var teachingFormat = Db.TeachingFormats.SingleOrDefault(x => x.Tag.Equals(modTeaching));
+                var examFormat = Db.ExaminationForms.SingleOrDefault(x => x.ShortName.Equals(modExam));
+
+                if (examFormat == null || teachingFormat == null) continue;
+
+
+                module = new CurriculumModule
+                {
+                    Tag = modTag,
+                    Name = modTitle,
+                    Catalog = cat,
+                    ModuleSubjects = new List<ModuleSubject>(),
+                    ExaminationOptions = new List<ExaminationOption>()
+                };
+
+                var subject = new ModuleSubject
+                {
+                    Name = "Lehrveranstaltung",
+                    Tag = "LV",
+                    TeachingFormat = teachingFormat,
+                    SWS = modSWS,
+                    Module = module
+                };
+
+                module.ModuleSubjects.Add(subject);
+                Db.ModuleCourses.Add(subject);
+
+                var examOption = new ExaminationOption
+                {
+                    Name = "Option A",
+                    Module = module,
+                    Fractions = new List<ExaminationFraction>()
+                };
+
+                var examFraction = new ExaminationFraction
+                {
+                    ExaminationOption = examOption,
+                    Form = examFormat,
+                    Weight = 1.0,
+                };
+
+                examOption.Fractions.Add(examFraction);
+                Db.ExaminationFractions.Add(examFraction);
+
+                module.ExaminationOptions.Add(examOption);
+                Db.ExaminationOptions.Add(examOption);
+
+                cat.Modules.Add(module);
+                Db.CurriculumModules.Add(module);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = cat.Id });
+        }
+
+
+
         public FileResult Export(Guid id)
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);

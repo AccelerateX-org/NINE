@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -562,14 +563,17 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = UserManager.FindById(id);
 
             model.User = user;
-            model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).ToList();
+            model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).Include(student =>
+                student.Curriculum.Organiser).ToList();
             model.Student = model.Students.FirstOrDefault();
 
             var org = model.Student.Curriculum.Organiser;
 
-            var allCourses = Db.Activities.OfType<Course>().Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+            var allCourses = Db.Activities.OfType<Course>()
+                .Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                .Include(activity => activity.Semester).ToList();
 
-            foreach (var course in allCourses)
+            foreach (var course in allCourses.Where(x => x.Semester != null).ToList())
             {
                 var semModel = model.Semester.FirstOrDefault(x => x.Semester.Id == course.Semester.Id);
                 if (semModel == null)

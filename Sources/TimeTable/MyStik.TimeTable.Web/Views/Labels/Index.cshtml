@@ -4,9 +4,11 @@
 @{
     ViewBag.Title = Model.ShortName + " | Kohorten";
 
+    //var db = new TimeTableDbContext();
+
+    /*
     if (Request.IsLocal)
     {
-        var db = new TimeTableDbContext();
 
         foreach (var c in Model.Curricula)
         {
@@ -19,12 +21,38 @@
             }
         }
 
-        db.SaveChanges();
     }
+    */
+
+    /*
+    var hasAW = false;
+    var inst = db.Institutions.SingleOrDefault(x => x.Tag == "HM");
+    if (inst != null && inst.LabelSet != null)
+    {
+        var label = inst.LabelSet.ItemLabels.SingleOrDefault(x => x.Name == "AW");
+        if (label == null)
+        {
+            hasAW = false;
+            label = new ItemLabel
+            {
+                Name = "AW",
+            };
+            inst.LabelSet.ItemLabels.Add(label);
+            db.ItemLabels.Add(label);
+        }
+        else
+        {
+            hasAW = true;
+        }
+    }
+    */
+
+    //db.SaveChanges();
+
+
 }
 
-
-    <div class="row">
+<div class="row">
     <div class="col-12">
 
         <nav aria-label="breadcrumb">

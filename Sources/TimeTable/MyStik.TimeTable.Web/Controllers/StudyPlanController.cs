@@ -31,6 +31,43 @@ namespace MyStik.TimeTable.Web.Controllers
 
     public class StudyPlanController : BaseController
     {
+        [AllowAnonymous]
+        public ActionResult Doc(string id, Guid? semId)
+        {
+            var sem = semId.HasValue? SemesterService.GetSemester(semId.Value):SemesterService.GetSemester(DateTime.Today);
+            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.Equals(id));
+
+            var subjects = Db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
+                    c.Slot != null &&
+                    c.Slot.AreaOption != null &&
+                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).Include(moduleSubject => moduleSubject.Module).ToList();
+
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
+
+
+            var printModel = new StudyPlanViewModel
+            {
+                TimeStamp = DateTime.Now,
+                Remark = "",
+                Curriculum = curr,
+                Semester = sem,
+                Modules = modules,
+            };
+
+            var currentSemester = sem;
+            var nextSemester = SemesterService.GetNextSemester(sem);
+            var prevSemester = SemesterService.GetPreviousSemester(sem);
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
+
+            return View(printModel);
+        }
+
+
         // GET: StudyPlan
         public ActionResult Details(Guid currId, Guid semId)
         {

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Utils
 {
+    /*
     public static class FakeViewExtensions
     {
         public static string MapPath(string filePath)
@@ -50,4 +51,5 @@ namespace MyStik.TimeTable.Web.Utils
             }
         }
     }
+    */
 }

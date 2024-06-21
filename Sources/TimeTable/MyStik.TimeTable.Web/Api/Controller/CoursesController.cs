@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Ical.Net.DataTypes;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Data.Migrations;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Services;
@@ -52,7 +55,22 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("")]
         public IQueryable<CourseDto> GetCourses()
         {
-            return new List<CourseDto>().AsQueryable();
+            var list = new List<CourseDto>();
+
+            var sem = new SemesterService().GetSemester(DateTime.Today);
+            if (sem == null)
+                return list.AsQueryable();
+
+            var allCourses = Db.Activities.OfType<Course>().Where(x =>
+                x.Semester.Id == sem.Id).ToList();
+
+            var converter = new CourseConverter(Db);
+            foreach (var course in allCourses)
+            {
+                list.Add(converter.Convert(course));
+            }
+
+            return list.AsQueryable();
         }
 
         /// <summary>
@@ -96,10 +114,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return list.AsQueryable();
 
             var allCourses = Db.Activities.OfType<Course>().Where(x =>
-                x.SemesterGroups.Any(g =>
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && 
-                    g.IsAvailable &&
-                    g.Semester.Id == sem.Id)).ToList();
+                x.Semester.Id == sem.Id &&
+                x.Organiser.Id == org.Id).ToList();
 
             var converter = new CourseConverter(Db);
             foreach (var course in allCourses)
@@ -131,9 +147,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return list.AsQueryable();
 
             var allCourses = Db.Activities.OfType<Course>().Where(x =>
-                x.SemesterGroups.Any(g =>
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && g.IsAvailable &&
-                    g.Semester.Id == sem.Id)).ToList();
+                x.Semester.Id == sem.Id &&
+                x.Organiser.Id == org.Id).ToList();
 
             var converter = new CourseConverter(Db);
             foreach (var course in allCourses)

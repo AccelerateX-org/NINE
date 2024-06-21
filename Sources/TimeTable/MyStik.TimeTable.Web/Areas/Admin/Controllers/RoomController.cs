@@ -159,6 +159,11 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                     roomDate.Rooms.Remove(room);
                 }
 
+                foreach (var booking in room.Bookings.ToList())
+                {
+                    Db.RoomBookings.Remove(booking);
+                }
+
                 Db.Rooms.Remove(room);
                 Db.SaveChanges();
             }

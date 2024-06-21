@@ -29,6 +29,7 @@ namespace MyStik.TimeTable.Web.Jobs
     {
         public void Print(StudyPlanPrintJobDescription jobDescription)
         {
+            /*
             var db = new TimeTableDbContext();
 
             var curr = db.Curricula.SingleOrDefault(x => x.Id == jobDescription.CurriculumId);
@@ -98,7 +99,7 @@ namespace MyStik.TimeTable.Web.Jobs
 
             db.SaveChanges();
 
-
+            */
 
             return;
         }

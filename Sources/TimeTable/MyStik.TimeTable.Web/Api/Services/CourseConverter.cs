@@ -340,5 +340,17 @@ namespace MyStik.TimeTable.Web.Api.Services
             return zpaCourse;
         }
 
+        public ExamSummaryDto ConvertExam(ExaminationDescription exam)
+        {
+            var dto = new ExamSummaryDto();
+
+            dto.Name = exam.ExaminationOption.FullName;
+            dto.Description = exam.Description;
+            dto.Conditions = exam.Conditions;
+            dto.Utilities = exam.Utilities;
+
+            return dto;
+        }
+
     }
 }

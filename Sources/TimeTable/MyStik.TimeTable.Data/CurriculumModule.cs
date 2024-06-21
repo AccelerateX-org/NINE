@@ -90,6 +90,11 @@ namespace MyStik.TimeTable.Data
         
         public string ApplicablenessEn { get; set; }
 
+        /// <summary>
+        /// Hat Kursangebote
+        /// </summary>
+        public bool HasCourses { get; set; }
+
 
         public virtual CurriculumModuleCatalog Catalog { get; set; }
 
@@ -119,7 +124,7 @@ namespace MyStik.TimeTable.Data
         {
             get
             {
-                return $"{Catalog.Organiser.Tag}#{Catalog.Tag}#{Tag}";
+                return $"{Catalog.Organiser.ShortName}#{Catalog.Tag}#{Tag}";
             }
         }
     }

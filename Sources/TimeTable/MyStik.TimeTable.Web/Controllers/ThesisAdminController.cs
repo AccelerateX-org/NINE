@@ -7,6 +7,10 @@ using System.Linq;
 using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Services;
+using MyStik.TimeTable.Web.Utils;
+using PdfSharp;
+using System.IO;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -1327,6 +1331,36 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Index", new { id = orgId });
+        }
+
+        public ActionResult MarkingEmpty(Guid id)
+        {
+            var userService = new UserInfoService();
+            var user = GetCurrentUser();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
+            var tm = new ThesisStateModel()
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId),
+                Mark = ""
+            };
+
+
+            /*
+            var stream = new MemoryStream();
+            var html = this.RenderViewToString("_ThesisPrintOut", tm);
+            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
+            pdf.Save(stream, false);
+
+            // Stream zurücksetzen
+            stream.Position = 0;
+            */
+
+            return View("_ThesisPrintOut", tm);
         }
 
     }

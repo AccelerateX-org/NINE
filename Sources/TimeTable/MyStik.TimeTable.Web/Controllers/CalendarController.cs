@@ -12,13 +12,11 @@ using Ical.Net.Serialization;
 using log4net;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.Extensions.Logging;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils.Helper;
-using RazorEngine.Compilation.ImpromptuInterface.Build;
 using RoomService = MyStik.TimeTable.Web.Services.RoomService;
 
 namespace MyStik.TimeTable.Web.Controllers

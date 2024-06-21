@@ -1,0 +1,399 @@
+﻿@model MyStik.TimeTable.Web.Models.StudyPlanViewModel
+@using MyStik.TimeTable.Data
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                
+                <div class="row">
+                    <div class="col-4">
+                        <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
+                            <nav class="nav nav-pills flex-column">
+                                <a class="nav-link" href="#@Model.Curriculum.Id">Allgemeines</a>
+                                <a class="nav-link" href="#item-2">Struktur</a>
+                                <nav class="nav nav-pills flex-column">
+                                    @foreach (var area in Model.Curriculum.Areas)
+                                    {
+                                        <a class="nav-link ms-3 my-1" href="#@area.Id">@area.Name</a>
+                                    }
+                                </nav>
+                                <a class="nav-link" href="#item-3">Module</a>
+                                <nav class="nav nav-pills flex-column">
+                                    @foreach (var module in Model.Modules)
+                                    {
+                                        <a class="nav-link ms-3 my-1" href="#@module.Id">@module.Name</a>
+                                    }
+                                </nav>
+                            </nav>
+                        </nav>
+                    </div>
+
+                    <div class="col-8">
+                        <div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
+                            <div id="@Model.Curriculum.Id">
+                                <h4>Studienplan @Model.Curriculum.Name</h4>
+                                <h5>
+                                    Stand: 
+                                    
+                                    @if (ViewBag.PrevSemester != null)
+                                    {
+                                        <a href="@Url.Action("Doc", "StudyPlan", new { id=Model.Curriculum.ShortName, semId=ViewBag.PrevSemester.Id})"><i class="bi bi-chevron-double-left"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
+                                    }
+                                    <span class="ms-2 me-2">@ViewBag.CurrentSemester.Name</span>
+                                    @if (ViewBag.NextSemester != null)
+                                    {
+                                        <a href="@Url.Action("Doc", "StudyPlan", new { id=Model.Curriculum.ShortName, semId=ViewBag.NextSemester.Id})"><i class="bi bi-chevron-double-right"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
+                                    }
+
+                                </h5>
+                                @if (string.IsNullOrEmpty(Model.Curriculum.Description))
+                                {
+                                    <p><i>kein Beschreibungstext vorhanden</i></p>
+                                }
+                                else
+                                {
+                                    <p>@Model.Curriculum.Description</p>
+                                }
+                            </div>
+                            <div id="item-2">
+                                <h4>Struktur nach Themenbereichen</h4>
+                                @foreach (var area in Model.Curriculum.Areas)
+                                {
+                                    <div id="@area.Id">
+                                        <h5>@area.Tag  @area.Name</h5>
+                                        @if (string.IsNullOrEmpty(area.Description))
+                                        {
+                                            <p><i>kein Beschreibungstext vorhanden</i></p>
+                                        }
+                                        else
+                                        {
+                                            <p>@area.Description</p>
+                                        }
+
+
+                                        @foreach (var option in area.Options)
+                                        {
+                                            <h6><strong>@option.Tag  @option.Name</strong></h6>
+                                            if (string.IsNullOrEmpty(option.Description))
+                                            {
+                                                <p><i>kein Beschreibungstext vorhanden</i></p>
+                                            }
+                                            else
+                                            {
+                                                <p>@option.Description</p>
+                                            }
+
+                                            foreach (var slot in option.Slots)
+                                            {
+                                                <p><strong>@slot.Tag @slot.Name</strong></p>
+                                                if (string.IsNullOrEmpty(slot.Description))
+                                                {
+                                                    <p><i>kein Beschreibungstext vorhanden</i></p>
+                                                }
+                                                else
+                                                {
+                                                    <p>@slot.Description</p>
+                                                }
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Titel</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var module in slot.SubjectAccreditations)
+                                                        {
+                                                            <tr>
+                                                                <td>@module.Subject.Module.Tag</td>
+                                                                <td>@module.Subject.Module.Name</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                        }
+                                    </div>
+                                }
+
+
+                            </div>
+                            <div id="item-3">
+                                <h4>Module</h4>
+                                @foreach (var module in Model.Modules)
+                                {
+                                    var desc = module.Descriptions.Where(x => x.Semester.Id == Model.Semester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
+
+                                    <div id="@module.Id">
+                                        <h4>@module.Tag: @module.Name</h4>
+
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        Name
+                                                    </div>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div>
+                                                        @module.Name
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        Katalog-Nummer
+                                                    </div>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div>
+                                                        @module.FullTag
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @foreach (var subject in module.ModuleSubjects)
+                                            {
+                                                <tr>
+                                                    <td rowspan="3">
+                                                        <div>
+                                                            Fach
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            Name
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            @subject.Name
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div>
+                                                            Aufwand
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            @subject.SWS SWS
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div>
+                                                            Lehrform
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            @subject.CourseType.ToString()
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @foreach (var exam in module.ExaminationOptions)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div>
+                                                            Prüfungsform
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <div>
+                                                            @exam.FullName
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @foreach (var lecturer in module.ModuleResponsibilities)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div>
+                                                            Lehrende
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <div>
+                                                            @lecturer.Member.FullName
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        Voraussetzungen
+                                                    </div>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div>
+                                                        @module.Prerequisites
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        Verwendbarkeit
+                                                    </div>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div>
+                                                        @module.Applicableness
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <div>Semester @Model.Semester.Name</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Inhalt / Lernziele
+                                                </td>
+                                                <td colspan="2">
+                                                    @if (desc != null)
+                                                    {
+                                                        <div>@Html.Raw(desc.Description)</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>Keine Beschreibung vorhanden</div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            @*
+                                @foreach (var accr in module.Accreditations)
+                                {
+                                    foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+                                    {
+                                        <tr>
+                                            <td rowspan="6">
+                                                <div>
+                                                    Prüfungsangebote
+                                                </div>
+                                            </td>
+                                            <td colspan="2">
+                                                <div>
+                                                    <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    Erstprüfer:in
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (exam.FirstExminer != null)
+                                                {
+                                                    <div>@exam.FirstExminer.FullName</div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div>Nicht festgelegt</div>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    Zweitprüfer:in
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (exam.SecondExaminer != null)
+                                                {
+                                                    <div>@exam.SecondExaminer.FullName</div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div>Nicht festgelegt</div>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    Prüfungsform
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (exam.ExaminationOption != null)
+                                                {
+                                                    <div>@exam.ExaminationOption.FullName</div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div>Nicht festgelegt</div>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    Details zur Prüfung
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div>@exam.Conditions</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    Hilfsmittel
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div>@exam.Utilities</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                            *@
+                                        </table>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

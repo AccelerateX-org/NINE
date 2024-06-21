@@ -1,0 +1,106 @@
+﻿@using System.Web.UI.WebControls
+@model MyStik.TimeTable.Web.Models.ThesisStateModel
+
+@{
+    Layout = "~/Views/Print/_LayoutA4.cshtml";
+    ViewBag.Title = "Notenmeldung Abschlussarbeit";
+}
+
+@section styles {
+    <style>
+            </style>
+     
+    }
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h4 class="card-title">Beleg für das Erfassen der Abschlussarbeit</h4>
+                        <div class="row mt-3">
+                            <h5 class="col-md-12">Angaben zur/zum Studierenden</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Name, Vorname</td>
+                                <td>@Model.User.LastName,  @Model.User.FirstName</td>
+                            </tr>
+                            <tr>
+                                <td>Matrikelnummer</td>
+                                <td>@Model.Thesis.Student.Number</td>
+                            </tr>
+                            <tr>
+                                <td>Studiengang</td>
+                                <td>@Model.Thesis.Student.Curriculum.Name (@Model.Thesis.Student.Curriculum.ShortName)</td>
+                            </tr>
+                            <tr>
+                                <td>Fakultät</td>
+                                <td>@Model.Thesis.Student.Curriculum.Organiser.Name (@Model.Thesis.Student.Curriculum.Organiser.ShortName)</td>
+                            </tr>
+                        </table>
+                        <div class="row mt-3">
+                            <h5 class="col-md-12">Angaben zur Arbeit</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Thema (deutsch)</td>
+                                <td>@Model.Thesis.TitleDe</td>
+                            </tr>
+                            <tr>
+                                <td>Thema (englisch)</td>
+                                <td>@Model.Thesis.TitleEn</td>
+                            </tr>
+                        </table>
+                        <div class="row mt-3">
+                            <h5 class="col-md-12">Angaben zur Bewertung</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            @if (Model.Thesis.Supervisors.Count > 1)
+                            {
+                                if (Model.PrimarySupervisor.Member != null)
+                                {
+                                    <tr>
+                                        <td>Erstbetreuer / Erstbetreuerin</td>
+                                        <td>@Model.PrimarySupervisor.Member.FullName</td>
+                                    </tr>
+                                }
+                                if (Model.SecondarySupervisor.Member != null)
+                                {
+                                    <tr>
+                                        <td>Zweitbetreuer / Zweitbetreuerin</td>
+                                        <td>@Model.SecondarySupervisor.Member.FullName</td>
+                                    </tr>
+                                }
+
+                            }
+                            else
+                            {
+                                if (Model.PrimarySupervisor.Member != null)
+                                {
+                                    <tr>
+                                        <td>Betreuer / Betreuerin</td>
+                                        <td>@Model.PrimarySupervisor.Member.FullName</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>Betreuer / Betreuerin</td>
+                                        <td>Ohne Betreuung</td>
+                                    </tr>
+                                }
+                            }
+                            <tr>
+                                <td>Note der Abschlussarbeit</td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

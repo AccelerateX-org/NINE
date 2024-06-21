@@ -189,5 +189,25 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(ms.GetBuffer(), @"image/png");
 
         }
+
+        public ActionResult ThesisMark(Guid id)
+        {
+            var userService = new UserInfoService();
+            var user = GetCurrentUser();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
+            var tm = new ThesisStateModel()
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId),
+                Mark = ""
+            };
+
+            return View("ThesisPrintOut", tm);
+        }
+
     }
 }

@@ -66,6 +66,9 @@
 
                                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                                         {
+                                            <a href="@Url.Action("ImportModules", "Catalogs", new { id = Model.Id })" class="btn btn-outline-primary">
+                                                <i class="bi bi-upload"></i> Import
+                                            </a>
                                             <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
                                                 <i class="bi bi-plus"></i> Neues Modul anlegen
                                             </a>

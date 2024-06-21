@@ -1061,6 +1061,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 Version = curr.Version,
                 ThesisDuration = curr.ThesisDuration,
                 IsDeprecated = !curr.IsDeprecated,
+                AsDual = curr.AsDual,
+                AsPartTime = curr.AsPartTime,
+                IsQualification = curr.IsQualification
             };
 
             if (curr.Degree != null)
@@ -1098,6 +1101,9 @@ namespace MyStik.TimeTable.Web.Controllers
             cur.Version = model.Version;
             cur.ThesisDuration = model.ThesisDuration;
             cur.EctsTarget = model.EctsTarget;
+            cur.AsDual = model.AsDual;
+            cur.AsPartTime = model.AsPartTime;
+            cur.IsQualification = model.IsQualification;
 
             cur.IsDeprecated = !model.IsDeprecated;
 

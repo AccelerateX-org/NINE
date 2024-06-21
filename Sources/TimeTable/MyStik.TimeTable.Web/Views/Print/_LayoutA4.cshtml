@@ -7,23 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NINE | @ViewBag.Title</title>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/jquery/jquery-ui.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/bootstrap-icons.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/fontawesome/css/all.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/font/bootstrap-icons.css")" />
+    <!--
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-print-css/css/bootstrap-print.min.css" media="print">
+        -->
     @RenderSection("styles", required: false)
-    @*
-        @Scripts.Render("~/bundles/modernizr")
-    *@
     <link rel="icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
 </head>
 <body>
-<div class="container">
-    @RenderBody()
-</div>
+
+@RenderBody()
 
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/jquery/jquery.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/libs/jquery/jquery-ui.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.bundle.min.js")"></script>
 
     @RenderSection("scripts", required: false)
