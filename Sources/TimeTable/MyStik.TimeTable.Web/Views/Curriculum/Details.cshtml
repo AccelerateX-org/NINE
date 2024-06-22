@@ -67,6 +67,19 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h5>Allgemeine Informationen</h5>
+                        <div class="row">
+                            <div class="col-4">
+                                Studien- und Prüfungsordnung
+                            </div>
+                            <div class="col-8">
+                                <div>
+                                    <a href="https://hm.edu/studium_1/im_studium/mein_studium/recht/spo.de.html" target="_blank">HM Webseite</a>
+                                </div>
+                                <div>
+                                    <a href="https://www3.primuss.de/cgi-bin/login/index.pl?FH=fhm" target="_blank">Login primuss</a>
+                                </div>
+                            </div>
+                        </div>
                         @if (Model.Curriculum.Degree != null)
                         {
                             <div class="row">
@@ -74,21 +87,13 @@
                                     Abschluss
                                 </div>
                                 <div class="col-8">
-                                    @Model.Curriculum.Degree.Name (<a href="https://hm.edu" target="_blank">SPO</a>)
+                                    @Model.Curriculum.Degree.Name
                                 </div>
                             </div>
                         }
                         <div class="row">
                             <div class="col-4">
-                                Studienplan (print)
-                            </div>
-                            <div class="col-8">
-                                <a href="@Url.Action("Doc", "StudyPlan", new {id = Model.Curriculum.ShortName})">aktuelles Semester</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                ECTS
+                                Leistungspunkte
                             </div>
                             <div class="col-8">
                                 @Model.Curriculum.EctsTarget
@@ -109,53 +114,74 @@
                                 }
                             </div>
                         </div>
-                        @if (Model.NextSemester != null)
-                        {
-                            <div class="row">
-                                <div class="col-4">
-                                    @Model.NextSemester.Name
-                                </div>
-                                <div class="col-8">
-                                    <div>
-                                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
-                                        <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
-                                        <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
-                                        @if (Model.Assessments.Any())
-                                        {
-                                            <div>
-                                                <a href="@Url.Action("Index", "Assessment")">
-                                                    Auswahlverfahren
-                                                </a>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
                         <div class="row">
                             <div class="col-4">
-                                @Model.Semester.Name
+                                Pläne und Verzeichnisse für aktuelles Semester <strong>@Model.Semester.Name</strong>
                             </div>
                             <div class="col-8">
                                 <div>
-                                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan</a> |
-                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Vorlesungsverzeichnis</a> |
+                                    <a href="@Url.Action("Doc", "StudyPlan", new { id = Model.Curriculum.ShortName })">Studienplan (Textfassung)</a>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan (tabellarisch)</a>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Vorlesungsverzeichnis</a>
+                                </div>
+                                <div>
                                     <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Prüfungsplan</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                @Model.PreviousSemester.Name
+                        @*
+        @if (Model.NextSemester != null)
+        {
+            <div class="row">
+                <div class="col-4">
+                    @Model.NextSemester.Name
+                </div>
+                <div class="col-8">
+                    <div>
+                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
+                        <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
+                        <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
+                        @if (Model.Assessments.Any())
+                        {
+                            <div>
+                                <a href="@Url.Action("Index", "Assessment")">
+                                    Auswahlverfahren
+                                </a>
                             </div>
-                            <div class="col-8">
-                                <div>
-                                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Studienplan</a> |
-                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Vorlesungsverzeichnis</a> |
-                                    <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Prüfungsplan</a>
-                                </div>
-                            </div>
-                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-4">
+                @Model.Semester.Name
+            </div>
+            <div class="col-8">
+                <div>
+                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan</a> |
+                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Vorlesungsverzeichnis</a> |
+                    <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Prüfungsplan</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                @Model.PreviousSemester.Name
+            </div>
+            <div class="col-8">
+                <div>
+                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Studienplan</a> |
+                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Vorlesungsverzeichnis</a> |
+                    <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Prüfungsplan</a>
+                </div>
+            </div>
+        </div>
+                        *@
                     </div>
                     <div class="col-md-6">
                         <h5>Beschreibung</h5>

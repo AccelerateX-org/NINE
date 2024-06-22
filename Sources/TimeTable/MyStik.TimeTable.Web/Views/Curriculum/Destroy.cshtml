@@ -7,6 +7,26 @@
 
     var students = db.Students.Count(x => x.Curriculum.Id == Model.Id);
     var alumnae = db.Alumnae.Count(x => x.Curriculum.Id == Model.Id);
+
+
+    var chapters = db.CurriculumChapters.ToList();
+    foreach (var chapter in chapters)
+    {
+        foreach (var topic in chapter.Topics.ToList())
+        {
+            foreach (var semesterTopic in topic.SemesterTopics.ToList())
+            {
+                db.SemesterTopics.Remove(semesterTopic);
+            }
+
+            db.CurriculumTopics.Remove(topic);
+        }
+
+        db.CurriculumChapters.Remove(chapter);
+    }
+
+    db.SaveChanges();
+
 }
 
 <h2>Studiengang @Model.Name (@Model.ShortName) löschen</h2>

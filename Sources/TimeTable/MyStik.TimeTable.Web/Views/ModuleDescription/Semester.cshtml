@@ -169,7 +169,7 @@ if (showMenu)
         <div class="card">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-10">
                         @if (!string.IsNullOrEmpty(Model.CurriculumModule.Name))
                         {
                             <h4 class="card-title">
@@ -182,6 +182,9 @@ if (showMenu)
                                 <img src="~/Assets/img/flags/gb.png" alt="en" /> @Model.CurriculumModule.NameEn
                             </h4>
                         }
+                    </div>
+                    <div class="col-md-2">
+                        <a href="@Url.Action("Module", "Print", new {moduleId = Model.CurriculumModule.Id, semId = Model.Semester.Id})" target="_blank" class="btn btn-outline-primary"><i class="bi bi-printer"></i></a>
                     </div>
                 </div>
             </div>
@@ -208,8 +211,8 @@ if (showMenu)
                                                         </a> |
                                                         <a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">
                                                             @slot.Tag
-                                                        </a>
-                                                        <span class="badge bg-secondary">@slot.ECTS ECTS</span>
+                                                        </a> |
+                                                        @slot.ECTS Leistungspunkte
                                                     </div>
                                                 }
                                             </div>
@@ -266,11 +269,11 @@ if (showMenu)
                                                 {
                                                     if (subject.TeachingFormat != null)
                                                     {
-                                                        <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                                                        <div>@subject.Name | @subject.TeachingFormat.Tag | @subject.SWS SWS</div>
                                                     }
                                                     else
                                                     {
-                                                        <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">N.N.</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                                                        <div>@subject.Name | N.N. | @subject.SWS SWS</div>
                                                     }
                                                 }
 
@@ -303,10 +306,7 @@ if (showMenu)
                                                                 <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
                                                                     @teaching.Course.Name (@teaching.Course.ShortName)
                                                                 </a>
-                                                                @foreach (var item in teaching.Course.LabelSet.ItemLabels.ToList())
-                                                                {
-                                                                    <span class="badge bg-secondary">@item.Name</span>
-                                                                }
+                                                                @Html.LabelList(teaching.Course)
                                                             </li>
                                                         }
                                                     </ul>
@@ -506,7 +506,16 @@ if (showMenu)
                                                                     <div class="col-md-12">
                                                                         @if (!string.IsNullOrEmpty(Model.ModuleDescription.Description))
                                                                         {
-                                                                            @Html.Raw(Model.ModuleDescription.Description.Trim())
+                                                                            if (Model.ModuleDescription.Description.Trim().StartsWith("#"))
+                                                                            {
+                                                                                <md-block>
+                                                                                    @Model.ModuleDescription.Description.Trim()
+                                                                                </md-block>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.Raw(Model.ModuleDescription.Description.Trim())
+                                                                            }
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -518,7 +527,16 @@ if (showMenu)
                                                                 <div class="col-md-12">
                                                                     @if (!string.IsNullOrEmpty(Model.ModuleDescription.DescriptionEn))
                                                                     {
-                                                                        @Html.Raw(Model.ModuleDescription.DescriptionEn.Trim())
+                                                                        if (Model.ModuleDescription.DescriptionEn.Trim().StartsWith("#"))
+                                                                        {
+                                                                            <md-block>
+                                                                                @Model.ModuleDescription.DescriptionEn.Trim()
+                                                                            </md-block>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.Raw(Model.ModuleDescription.DescriptionEn.Trim())
+                                                                        }
                                                                     }
                                                                 </div>
                                                             </div>

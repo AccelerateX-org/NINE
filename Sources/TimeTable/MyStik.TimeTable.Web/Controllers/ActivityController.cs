@@ -274,6 +274,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Courses.Add(summary);
             }
 
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
 
             return View(model);
         }

@@ -1,0 +1,107 @@
+﻿@model MyStik.TimeTable.Web.Models.StudyPlanViewModel
+@using MyStik.TimeTable.Data
+
+
+@{
+    Layout = "~/Views/Print/_LayoutA4.cshtml";
+    ViewBag.Title = "Studienplan";
+}
+
+<div class="container-fluid">
+
+    <div class="row gx-5">
+        <div class="col">
+
+            <h3>Studienplan @Model.Curriculum.Name</h3>
+            <h5>
+                Stand:
+
+                <span class="ms-2 me-2">@Model.Semester.Name</span>
+            </h5>
+            @if (string.IsNullOrEmpty(Model.Curriculum.Description))
+            {
+                <p><i>kein Beschreibungstext vorhanden</i></p>
+            }
+            else
+            {
+                <p>@Model.Curriculum.Description</p>
+            }
+            <h4>Struktur nach Themenbereichen</h4>
+            @foreach (var area in Model.Curriculum.Areas)
+            {
+                <div id="@area.Id">
+                    <h5>@area.Tag  @area.Name</h5>
+                    @if (string.IsNullOrEmpty(area.Description))
+                    {
+                        <p><i>kein Beschreibungstext vorhanden</i></p>
+                    }
+                    else
+                    {
+                        <p>@area.Description</p>
+                    }
+
+
+                    @foreach (var option in area.Options)
+                    {
+                        <h6><strong>@option.Tag  @option.Name</strong></h6>
+                        if (string.IsNullOrEmpty(option.Description))
+                        {
+                            <p><i>kein Beschreibungstext vorhanden</i></p>
+                        }
+                        else
+                        {
+                            <p>@option.Description</p>
+                        }
+
+                        foreach (var slot in option.Slots)
+                        {
+                            <p><strong>@slot.Tag @slot.Name</strong></p>
+                            if (string.IsNullOrEmpty(slot.Description))
+                            {
+                                <p><i>kein Beschreibungstext vorhanden</i></p>
+                            }
+                            else
+                            {
+                                <p>@slot.Description</p>
+                            }
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Titel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var module in slot.SubjectAccreditations)
+                                    {
+                                        <tr>
+                                            <td>@module.Subject.Module.Tag</td>
+                                            <td>@module.Subject.Module.Name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            }
+            <h4>Module</h4>
+            @foreach (var module in Model.Modules)
+            {
+                <h5>@module.Name</h5>
+                var desc = module.Descriptions.Where(x => x.Semester.Id == Model.Semester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
+                if (desc != null)
+                {
+                    @Html.Partial("_PrintCurriculumModule", desc)
+                }
+                else
+                {
+                    <div><i>keine Beschreibung vorhanden</i></div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+
+

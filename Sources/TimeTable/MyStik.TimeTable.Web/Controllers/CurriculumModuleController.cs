@@ -16,7 +16,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// Liste aller Module des aktuellen Benutzers
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
 
@@ -24,11 +24,17 @@ namespace MyStik.TimeTable.Web.Controllers
                 x.ModuleResponsibilities.Any(m =>
                     !string.IsNullOrEmpty(m.Member.UserId) && m.Member.UserId.Equals(user.Id))).ToList();
 
-            var semester = SemesterService.GetSemester(DateTime.Today);
-            var nextSemester = SemesterService.GetNextSemester(semester);
+            var semester = SemesterService.GetSemester(id);
 
             ViewBag.Semester = semester;
+
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+            ViewBag.CurrentSemester = currentSemester;
             ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
             return View(model);
         }

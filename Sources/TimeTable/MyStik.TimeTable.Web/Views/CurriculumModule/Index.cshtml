@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Data.CurriculumModule>
 @{
     ViewBag.Title = "Meine Module";
@@ -9,104 +10,125 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-                <li class="breadcrumb-item active" aria-current="page">Meine Module</li>
+                <li class="breadcrumb-item" aria-current="page">Meine Module</li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <div class="btn-group">
+                        @if (ViewBag.PrevSemester != null)
+                        {
+                            <a href="@Url.Action("Index", "CurriculumModule", new {id=ViewBag.PrevSemester.Id})"><i class="bi bi-chevron-double-left"></i></a>
+                        }
+                        else
+                        {
+                            <a class="disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
+                        }
+                        <span class="ms-2 me-2">@ViewBag.CurrentSemester.Name</span>
+                        @if (ViewBag.NextSemester != null)
+                        {
+                            <a href="@Url.Action("Index", "CurriculumModule", new {id=ViewBag.NextSemester.Id})"><i class="bi bi-chevron-double-right"></i></a>
+                        }
+                        else
+                        {
+                            <a class="disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
+                        }
+                    </div>
+                </li>
             </ol>
         </nav>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h4>Aktuelles Semester: @ViewBag.Semester.Name</h4>
-            </div>
-            <div class="list-group">
-                @foreach (var module in Model)
-                {
-                    <div class="list-group-item">
-                        <h5>
-                            <a href="@Url.Action("Details", "Catalogs", new { id = module.Catalog.Id })">@module.Catalog.Name</a> /
-                            <a href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })">@module.Name</a>
-                        </h5>
-                        @foreach (var subject in module.ModuleSubjects)
-                        {
+    <div class="col-md-12">
+        <div class="row">
+            @foreach (var module in Model)
+            {
+                <div class="col-md-3 col-sm-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">@module.Name</h5>
+                            <p>@module.FullTag</p>
                             <div class="row">
-                                <div class="col-md-4">
-                                    <div>@subject.Tag: @subject.Name (@subject.TeachingFormat.Tag)</div>
-                                </div>
-                                <div class="col-md-8">
-                                    @foreach (var teaching in subject.Teachings.Where(x => x.Semester.Id == ViewBag.Semester.Id))
-                                    {
-                                        if (teaching.Accreditation != null && teaching.Accreditation.Slot != null)
-                                        {
-                                            <div>
-                                                @teaching.Accreditation.Slot.AreaOption.Area.Curriculum.ShortName /
-                                                <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name</a>
-                                            </div>
-                                        }
-                                    }
-                                </div>
+                                <div>Lehrangebote</div>
                             </div>
-                        }
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-    
-    @if (ViewBag.NextSemester != null)
-    {
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h4>Planung nächstes Semester: @ViewBag.NextSemester.Name</h4>
-                    <p class="text-danger">### experimentell ###</p>
-                </div>
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <div class="fc-button-group">
-                            <a href="" class="btn btn-outline-primary"><i class="bi bi-calendar-heart"></i> Wunschzettel</a>
-                        </div>
-                    </div>
-                    @foreach (var module in Model)
-                    {
-                        <div class="list-group-item">
-                            <h5>
-                                <a href="@Url.Action("Details", "Catalogs", new { id = module.Catalog.Id })">@module.Catalog.Name</a> /
-                                <a href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })">@module.Name</a>
-                            </h5>
                             @foreach (var subject in module.ModuleSubjects)
                             {
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div>@subject.Tag: @subject.Name (@subject.TeachingFormat.Tag)</div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        @foreach (var teaching in subject.Teachings.Where(x => x.Semester.Id == ViewBag.NextSemester.Id))
+                                var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == ViewBag.Semester.Id).ToList();
+                                <div class="ms-3">
+                                    <div>
+                                        @subject.Tag: @subject.Name (@subject.TeachingFormat.Tag)
+
+                                        @if (teachings.Any())
                                         {
-                                            if (teaching.Accreditation != null && teaching.Accreditation.Slot != null)
+                                            foreach (var teaching in teachings)
                                             {
-                                                <div>
-                                                    @teaching.Accreditation.Slot.AreaOption.Area.Curriculum.ShortName /
+                                                <div class="ms-3">
                                                     <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name</a>
+                                                    @Html.LabelList(teaching.Course)
                                                 </div>
                                             }
                                         }
-                                        @foreach (var accr in module.Accreditations)
+                                        else
                                         {
-                                            <div>@accr.Slot.AreaOption.Area.Curriculum.ShortName (@accr.Slot.FullTag):
-                                                <a href="#" class="btn btn-sm btn-outline-primary">Anbieten</a>
+                                            <div class="ms-3">
+                                                <i class="text-danger">Kein Angebot</i>
                                             </div>
                                         }
                                     </div>
                                 </div>
                             }
+                            <div class="row">
+                                <div>Prüfungsangebote</div>
+                                
+                                @foreach (var exam in module.ExaminationOptions)
+                                {
+                                    var subExams = exam.ExaminationDescriptions
+                                        .Where(x => x.Semester.Id == ViewBag.Semester.Id)
+                                        .ToList();
+
+                                    <div class="ms-3">
+                                        <div>@exam.OptionName
+
+                                            @if (subExams.Any())
+                                            {
+                                                foreach (var subExam in subExams)
+                                                {
+                                                    <div>
+                                                        Prüfende:
+                                                        @if (subExam.FirstExminer != null)
+                                                        {
+                                                            <span>@subExam.FirstExminer.FullName</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span><i>Nicht festgelegt</i></span>
+                                                        }
+                                                        @if (subExam.SecondExaminer != null)
+                                                        {
+                                                            <span>, @subExam.SecondExaminer.FullName</span>
+                                                        }
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="ms-3">
+                                                    <i class="text-danger">Kein Angebot</i>
+                                                </div>
+
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                               
+
+                            </div>
+                            <a class="card-link" href="@Url.Action("Details", "Catalogs", new { id = module.Catalog.Id })">Modulkatalog</a>
+                            <a class="card-link" href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })">Modulbeschreibung</a>
                         </div>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
         </div>
-    }
+    </div>
 </div>
 

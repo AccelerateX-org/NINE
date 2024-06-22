@@ -1,0 +1,196 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.ModuleDescription
+
+@{
+    var slots = (from subject in Model.Module.ModuleSubjects.ToList() from subjectAccreditation in subject.SubjectAccreditations.ToList() select subjectAccreditation.Slot).Distinct().ToList();
+    var nSumSWS = 0.0;
+    var nMaxECTS = 0.0;
+
+    var sem = Model.Semester;
+
+    var lecturers = new List<OrganiserMember>();
+    var service = new CourseService();
+
+    foreach (var subject in Model.Module.ModuleSubjects)
+    {
+        var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
+
+        foreach (var teaching in teachings)
+        {
+            var summary = service.GetCourseSummary(teaching.Course);
+            lecturers.AddRange(summary.Lecturers);
+        }
+    }
+
+    lecturers = lecturers.Distinct().ToList();
+}
+
+<table class="table">
+    <tr>
+        <td>Name</td>
+        <td colspan="2">@Model.Module.Name</td>
+    </tr>
+    <tr>
+        <td>Katalog-Nummer</td>
+        <td>@Model.Module.FullTag</td>
+    </tr>
+    <tr>
+        <td>Zugehörigkeit zu Curriculum</td>
+        <td>
+            @foreach (var slot in slots)
+            {
+                if (slot.ECTS > nMaxECTS)
+                {
+                    nMaxECTS = slot.ECTS;
+                }
+
+                <div>
+                    @slot.AreaOption.Area.Curriculum.Name | @slot.Tag | @slot.ECTS Leistungspunkte
+                </div>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Modulverantwortung</td>
+        <td>
+            @foreach (var lecturer in Model.Module.ModuleResponsibilities)
+            {
+
+                <div>
+                    @lecturer.Member.FullName
+                </div>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Lehrende</td>
+        <td>
+            @foreach (var lecturer in lecturers)
+            {
+                <div>
+                    @lecturer.FullName
+                </div>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Prüfung(en)</td>
+        <td>
+            @foreach (var exam in Model.Module.ExaminationOptions)
+            {
+                var subExams = exam.ExaminationDescriptions
+                    .Where(x => x.Semester.Id == sem.Id)
+                    .ToList();
+
+                if (subExams.Any())
+                {
+                    foreach (var subExam in subExams)
+                    {
+                        <div>Prüfungsform: @subExam.ExaminationOption.OptionName</div>
+                        <div>Detailangaben: @Html.Raw(subExam.Conditions)</div>
+                        <div>Hildsmittel: @Html.Raw(subExam.Utilities)</div>
+                        <div>
+                            Prüfende:
+                            @if (subExam.FirstExminer != null)
+                            {
+                                <span>@subExam.FirstExminer.FullName</span>
+                            }
+                            else
+                            {
+                                <span><i>Nicht festgelegt</i></span>
+                            }
+                            @if (subExam.SecondExaminer != null)
+                            {
+                                <span>, @subExam.SecondExaminer.FullName</span>
+                            }
+                        </div>
+                    }
+                }
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Lehr- und Lernform(en)</td>
+        <td>
+            @foreach (var subject in Model.Module.ModuleSubjects)
+            {
+                var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
+
+                if (teachings.Any())
+                {
+                    nSumSWS += subject.SWS;
+
+                    <div>
+                        @subject.Name | @subject.SWS SWS | @subject.TeachingFormat.Tag - @teachings.Count Angebot(e)
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        @subject.Name | @subject.SWS SWS | @subject.TeachingFormat.Tag - <i>wird nicht angeboten</i>
+                    </div>
+                }
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>Arbeitsaufwand</td>
+        <td>
+            @{
+                var t1 = nSumSWS * 15;
+                var t2 = nMaxECTS * 30 - t1;
+            }
+            <div>Präsenzzeit: @t1 Stunden</div>
+            <div>Selbststudium, Vor- und Nachbereitung, Prüfungsvorbereitung: @t2 Stunden</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div>
+                Voraussetzungen
+            </div>
+        </td>
+        <td colspan="2">
+            <div>
+                @Model.Module.Prerequisites
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div>
+                Verwendbarkeit
+            </div>
+        </td>
+        <td colspan="2">
+            <div>
+                @Model.Module.Applicableness
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Inhalt / Lernziele
+        </td>
+        <td colspan="2">
+            @if (Model != null && !string.IsNullOrEmpty(Model.Description))
+            {
+                if (Model.Description.Trim().StartsWith("#"))
+                {
+                    <md-block>
+                        @Model.Description.Trim()
+                    </md-block>
+                }
+                else
+                {
+                    @Html.Raw(Model.Description.Trim())
+                }
+            }
+            else
+            {
+                <div>Keine Beschreibung vorhanden</div>
+            }
+        </td>
+    </tr>
+</table>

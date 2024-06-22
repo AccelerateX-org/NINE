@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1864,6 +1865,22 @@ namespace MyStik.TimeTable.Web.Controllers
                     Db.ItemLabelSets.Remove(curriculum.LabelSet);
                 }
 
+                var quotas = Db.SeatQuotas.Where(x => x.Curriculum != null && x.Curriculum.Id == curriculum.Id)
+                    .Include(seatQuota => seatQuota.Fractions).ToList();
+                foreach (var quotasItem in quotas)
+                {
+                    foreach (var fraction in quotasItem.Fractions.ToList())
+                    {
+                        Db.SeatQuotaFractions.Remove(fraction);
+                    }
+                    Db.SeatQuotas.Remove(quotasItem);
+                }
+
+                var fractions = Db.SeatQuotaFractions.Where(x => x.Curriculum != null && x.Curriculum.Id == curriculum.Id).ToList();
+                foreach (var fraction in fractions)
+                {
+                    Db.SeatQuotaFractions.Remove(fraction);
+                }
 
                 Db.Curricula.Remove(curriculum);
                 Db.SaveChanges();

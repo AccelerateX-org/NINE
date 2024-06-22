@@ -123,9 +123,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // die aktuell veröffentlichte Fassung
+            /*
             var lastPublished = module.Descriptions
                 .Where(x =>
                     x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.IsVisible)
+                .OrderByDescending(x => x.ChangeLog.Created)
+                .FirstOrDefault();
+            */
+            var lastPublished = module.Descriptions
+                .Where(x =>
+                    x.Semester.Id == semester.Id && x.ChangeLog != null)
                 .OrderByDescending(x => x.ChangeLog.Created)
                 .FirstOrDefault();
 
@@ -135,7 +142,7 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var accr in module.ExaminationOptions)
             {
                 var subExams = accr.ExaminationDescriptions
-                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.IsVisible)
+                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null)
                     .ToList();
                 exams.AddRange(subExams);
             }

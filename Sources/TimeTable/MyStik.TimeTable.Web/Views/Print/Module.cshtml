@@ -1,0 +1,29 @@
+﻿@model MyStik.TimeTable.Data.ModuleDescription
+@{
+    Layout = "~/Views/Print/_LayoutA4.cshtml";
+    ViewBag.Title = "Modulbeschreibung";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            @if (Model != null)
+            {
+                <h3 class="card-title">Modulbeschreibung</h3>
+                <p class="card-subtitle">Stand: @Model.Semester.Name</p>
+                @Html.Partial("_PrintCurriculumModule", Model)
+            }
+            else
+            {
+                <h1>Keine Daten vorhanden</h1>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
+}
+

@@ -4790,6 +4790,9 @@
     <Content Include="Views\Print\ThesisPrintOut.cshtml" />
     <Content Include="Views\Catalogs\ImportModules.cshtml" />
     <Content Include="Views\StudyPlan\Doc.cshtml" />
+    <Content Include="Views\Print\Module.cshtml" />
+    <Content Include="Views\Shared\_PrintCurriculumModule.cshtml" />
+    <Content Include="Views\Print\StudyPlan.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

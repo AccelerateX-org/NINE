@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -207,6 +208,49 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             return View("ThesisPrintOut", tm);
+        }
+
+        [AllowAnonymous]
+        public ActionResult Module(Guid moduleId, Guid? semId)
+        {
+            var sem = SemesterService.GetSemester(semId);
+            var module = Db.CurriculumModules.Include(curriculumModule => curriculumModule.Descriptions.Select(moduleDescription => moduleDescription.Semester)).Include(curriculumModule1 =>
+                curriculumModule1.Descriptions.Select(moduleDescription1 => moduleDescription1.ChangeLog)).SingleOrDefault(x => x.Id == moduleId);
+
+            var desc = module.Descriptions
+                .Where(x =>
+                    x.Semester.Id == sem.Id && x.ChangeLog != null)
+                .OrderByDescending(x => x.ChangeLog.Created)
+                .FirstOrDefault();
+
+            return View(desc);
+        }
+
+        [AllowAnonymous]
+        public ActionResult StudyPlan(Guid currId, Guid? semId)
+        {
+            var sem = semId.HasValue ? SemesterService.GetSemester(semId.Value) : SemesterService.GetSemester(DateTime.Today);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var subjects = Db.ModuleCourses.Where(x =>
+                x.SubjectAccreditations.Any(c =>
+                    c.Slot != null &&
+                    c.Slot.AreaOption != null &&
+                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).Include(moduleSubject => moduleSubject.Module).ToList();
+
+            var modules = subjects.Select(x => x.Module).Distinct().ToList();
+
+
+            var printModel = new StudyPlanViewModel
+            {
+                TimeStamp = DateTime.Now,
+                Remark = "",
+                Curriculum = curr,
+                Semester = sem,
+                Modules = modules,
+            };
+
+            return View(printModel);
         }
 
     }
