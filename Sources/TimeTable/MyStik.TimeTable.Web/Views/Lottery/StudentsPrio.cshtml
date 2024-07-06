@@ -36,6 +36,56 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
+                <h5 class="card-title">Experimentell - Übersicht</h5>
+            </div>
+            <table clas="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>E-Mail</th>
+                    @foreach (var c in Model.Courses)
+                    {
+                        <th>@c.ShortName</th>
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var student in Model.Games)
+                {
+                    var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
+
+                    <tr>
+                        <td>@user.LastName</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.Email</td>
+                        @foreach (var c in Model.Courses)
+                        {
+                            var lot = student.Lots.FirstOrDefault(x => x.Course.Id == c.Id);
+
+                            if (lot != null)
+                            {
+                                <td>@lot.Priority</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
                 <h4>Wahlverfahren: "@Model.Lottery.Name" - Studierende</h4>
                 @if (!Model.Lottery.IsActive)
                 {

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using System.Net;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -60,34 +63,16 @@ namespace MyStik.TimeTable.Web
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
+            // ConfigureAuth0(app);
+            // ConfigureSSO(app);
+        }
 
-            // Uncomment the following lines to enable logging in with third party login providers
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
-
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
-
-            // TODO: das muss wohl noch geändert werden!
-            /*
-            app.UseFacebookAuthentication(
-              appId: "1561140870843238",
-              appSecret: "59bb9c34ea5f7b5261f1e81525dd75fe");
-
-            app.UseGoogleAuthentication(
-                clientId: "563733444568-hr161m7gijet73a81r2g58jcfioenh2a.apps.googleusercontent.com",
-                clientSecret: "_ksB7M4Af62GppxoO5gB2owd");
-            */
-
-            // ab hier openid / auth0
-            // Configure Auth0 parameters
-            /*
-            string auth0Domain = ConfigurationManager.AppSettings["auth0:Domain"];
-            string auth0ClientId = ConfigurationManager.AppSettings["auth0:ClientId"];
-            string auth0RedirectUri = ConfigurationManager.AppSettings["auth0:RedirectUri"];
-            string auth0PostLogoutRedirectUri = ConfigurationManager.AppSettings["auth0:PostLogoutRedirectUri"];
+        private void ConfigureAuth0(IAppBuilder app)
+        {
+            var auth0Domain = ConfigurationManager.AppSettings["auth0:Domain"];
+            var auth0ClientId = ConfigurationManager.AppSettings["auth0:ClientId"];
+            var auth0RedirectUri = ConfigurationManager.AppSettings["auth0:RedirectUri"];
+            var auth0PostLogoutRedirectUri = ConfigurationManager.AppSettings["auth0:PostLogoutRedirectUri"];
 
             // Configure Auth0 authentication
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
@@ -98,7 +83,6 @@ namespace MyStik.TimeTable.Web
 
                 ClientId = auth0ClientId,
 
-                
                 RedirectUri = auth0RedirectUri,
                 PostLogoutRedirectUri = auth0PostLogoutRedirectUri,
 
@@ -140,8 +124,120 @@ namespace MyStik.TimeTable.Web
                     }
                 }
             });
-            */
+
         }
+
+        private void ConfigureSSO(IAppBuilder app)
+        {
+            var ssoDomain = ConfigurationManager.AppSettings["sso:Domain"];
+            var ssoClientId = ConfigurationManager.AppSettings["sso:ClientId"];
+            var ssoClientSecret = ConfigurationManager.AppSettings["sso:ClientSecret"];
+            var ssoRedirectUri = ConfigurationManager.AppSettings["sso:RedirectUri"];
+            var ssoPostLogoutRedirectUri = ConfigurationManager.AppSettings["sso:PostLogoutRedirectUri"];
+
+            var json = "";
+            using (WebClient wc = new WebClient())
+            {
+                json = wc.DownloadString("https://sso.hm.edu/.well-known/openid-configuration");
+            }
+
+
+
+            // Configure Auth0 authentication
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
+            {
+                AuthenticationType = "SSO",
+
+                Authority = $"https://{ssoDomain}",
+
+                ClientId = ssoClientId,
+                ClientSecret = ssoClientSecret,
+
+                RedirectUri = ssoRedirectUri,
+
+                ResponseType = OpenIdConnectResponseType.Code,
+                ResponseMode = OpenIdConnectResponseMode.Query,
+                //RedeemCode = true,
+                //SaveTokens = true,
+                //CallbackPath = new PathString("/callback"),
+                
+
+                PostLogoutRedirectUri = ssoPostLogoutRedirectUri,
+
+                //Configuration = new OpenIdConnectConfiguration(json),
+
+                Scope = "openid profile email",
+
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name",
+                    ValidateIssuer = false
+                },
+
+                RequireHttpsMetadata = false,
+                SignInAsAuthenticationType = "Cookies",
+
+                // More information on why the CookieManager needs to be set can be found here: 
+                // https://docs.microsoft.com/en-us/aspnet/samesite/owin-samesite
+                //CookieManager = new SameSiteCookieManager(new SystemWebCookieManager()),
+
+                Notifications = new OpenIdConnectAuthenticationNotifications
+                {
+                    RedirectToIdentityProvider = notification =>
+                    {
+                        /*
+                        if (notification.ProtocolMessage.RequestType == OpenIdConnectRequestType.Logout)
+                        {
+                            var logoutUri = $"https://{ssoDomain}/v2/logout?client_id={ssoClientId}";
+
+                            var postLogoutUri = notification.ProtocolMessage.PostLogoutRedirectUri;
+                            if (!string.IsNullOrEmpty(postLogoutUri))
+                            {
+                                if (postLogoutUri.StartsWith("/"))
+                                {
+                                    // transform to absolute
+                                    var request = notification.Request;
+                                    postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+                                }
+                                logoutUri += $"&returnTo={Uri.EscapeDataString(postLogoutUri)}";
+                            }
+
+                            notification.Response.Redirect(logoutUri);
+                            notification.HandleResponse();
+                        }
+                        */
+                        return Task.FromResult(0);
+                    },
+                    AuthorizationCodeReceived = notification =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    MessageReceived = notification =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    AuthenticationFailed = notification =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    SecurityTokenReceived = notification =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    SecurityTokenValidated = notification =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                    TokenResponseReceived = notification =>
+                    {
+                        return Task.FromResult(0);
+                    },
+                }
+            });
+
+        }
+
+
 
         /// <summary>
         /// 
@@ -161,5 +257,7 @@ namespace MyStik.TimeTable.Web
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 
         }
+
+
     }
 }

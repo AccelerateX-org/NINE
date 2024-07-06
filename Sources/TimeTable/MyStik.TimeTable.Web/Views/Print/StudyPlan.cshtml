@@ -12,6 +12,7 @@
     <div class="row gx-5">
         <div class="col">
 
+            <h2>Hochschule München</h2>
             <h3>Studienplan @Model.Curriculum.Name</h3>
             <h5>
                 Stand:
@@ -20,7 +21,6 @@
             </h5>
             @if (string.IsNullOrEmpty(Model.Curriculum.Description))
             {
-                <p><i>kein Beschreibungstext vorhanden</i></p>
             }
             else
             {
@@ -33,7 +33,6 @@
                     <h5>@area.Tag  @area.Name</h5>
                     @if (string.IsNullOrEmpty(area.Description))
                     {
-                        <p><i>kein Beschreibungstext vorhanden</i></p>
                     }
                     else
                     {
@@ -41,28 +40,47 @@
                     }
 
 
-                    @foreach (var option in area.Options)
+                    @if (area.Options.Count == 1)
                     {
-                        <h6><strong>@option.Tag  @option.Name</strong></h6>
-                        if (string.IsNullOrEmpty(option.Description))
+                        foreach (var option in area.Options)
                         {
-                            <p><i>kein Beschreibungstext vorhanden</i></p>
-                        }
-                        else
-                        {
-                            <p>@option.Description</p>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Titel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var slot in option.Slots)
+                                    {
+
+                                        foreach (var module in slot.SubjectAccreditations)
+                                        {
+                                            <tr>
+                                                <td>@module.Subject.Module.Tag</td>
+                                                <td>
+                                                    @module.Subject.Module.Name
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
                         }
 
-                        foreach (var slot in option.Slots)
+                    }
+                    else
+                    {
+                        foreach (var option in area.Options)
                         {
-                            <p><strong>@slot.Tag @slot.Name</strong></p>
-                            if (string.IsNullOrEmpty(slot.Description))
+                            <h6><strong>@option.Name</strong></h6>
+                            if (string.IsNullOrEmpty(option.Description))
                             {
-                                <p><i>kein Beschreibungstext vorhanden</i></p>
                             }
                             else
                             {
-                                <p>@slot.Description</p>
+                                <p>@option.Description</p>
                             }
                             <table class="table">
                                 <thead>
@@ -72,16 +90,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var module in slot.SubjectAccreditations)
+                                    @foreach (var slot in option.Slots)
                                     {
-                                        <tr>
-                                            <td>@module.Subject.Module.Tag</td>
-                                            <td>@module.Subject.Module.Name</td>
-                                        </tr>
+
+                                        foreach (var module in slot.SubjectAccreditations)
+                                        {
+                                            <tr>
+                                                <td>@module.Subject.Module.Tag</td>
+                                                <td>
+                                                    @module.Subject.Module.Name
+                                                </td>
+                                            </tr>
+                                        }
                                     }
                                 </tbody>
                             </table>
+
                         }
+
                     }
                 </div>
             }

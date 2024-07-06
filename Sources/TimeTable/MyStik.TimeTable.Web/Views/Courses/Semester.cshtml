@@ -1,7 +1,51 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
      ViewBag.Title = "Lehrangebot";
+
+     /*
+     var db = new TimeTableDbContext();
+
+     var match = false;
+     if (Model.Organiser.ShortName == "FK 11" &&
+         Model.Semester.Name == "WiSe 2024")
+     {
+         match = true;
+
+         foreach (var c in Model.Courses)
+         {
+             // keine Kontingente aber Plätze
+             if (!c.Course.Occurrence.SeatQuotas.Any() && c.Course.Occurrence.Capacity > 0)
+             {
+                 foreach (var label in c.Course.LabelSet.ItemLabels)
+                 {
+                     var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                     if (curr != null)
+                     {
+                         var occ = db.Occurrences.SingleOrDefault(x => x.Id == c.Course.Occurrence.Id);
+
+                         var quota = new SeatQuota
+                         {
+                             Curriculum = curr,
+                             ItemLabelSet = new ItemLabelSet(),
+                             MaxCapacity = c.Course.Occurrence.Capacity,
+                             MinCapacity = 0,
+                             Description = string.Empty,
+                             Occurrence = occ
+                         };
+
+                         db.SeatQuotas.Add(quota);
+
+                     }
+                 }
+             }
+         }
+
+         db.SaveChanges();
+     }
+     */
+
 }
 
 @section styles
@@ -33,7 +77,6 @@
             <li class="breadcrumb-item active" aria-current="page">Komplettes Lehrangebot</li>
         </ol>
     </nav>
-
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -79,6 +122,7 @@
                         <th>Kohorten</th>
                         <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
+                        <th>Platzkontingente</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,6 +180,41 @@
                                 </td>
                                 <td>
                                     @Html.LecturerList(c.Lecturers)
+                                </td>
+                                <td>
+                                    @if (c.Course.Occurrence.SeatQuotas.Any())
+                                    {
+                                        foreach (var quota in c.Course.Occurrence.SeatQuotas)
+                                        {
+                                            <div>@quota.Summary</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (c.Course.Occurrence.Capacity < 1)
+                                        {
+                                            <div>Offene Liste</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
+                                            /*
+                                            foreach (var label in c.Course.LabelSet.ItemLabels)
+                                            {
+                                                var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                                                if (curr != null)
+                                                {
+                                                    <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
+                                                    <div>Kontingent für SG @curr.ShortName kann erstellt werden</div>
+                                                }
+                                                else
+                                                {
+                                                    <div>FEHLER: Kein Label für Studiengang - Kein Kontingent möglich</div>
+                                                }
+                                            }
+                                            */
+                                        }
+                                    }
                                 </td>
                             </tr>
                         }

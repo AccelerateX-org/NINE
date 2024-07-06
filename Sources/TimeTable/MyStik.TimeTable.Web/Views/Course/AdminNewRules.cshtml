@@ -5,7 +5,7 @@
 
 
 @{
-    ViewBag.Title = "Platzvergabe";
+    ViewBag.Title = "Platzkontingente";
 
     var db = new TimeTableDbContext();
 
@@ -48,8 +48,11 @@
     </nav>
 
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-6">
             <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Einfache Platzkontingente</h5>
+                </div>
                 <div class="list-group">
                     <div class="list-group-item">
                         <a class="btn btn-outline-primary" href="@Url.Action("AddQuota", new { id = Model.Course.Id })"><i class="bi bi-plus"></i> Platzkontingent hinzufügen</a>
@@ -57,245 +60,128 @@
                 </div>
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Studiengang</th>
-                            <th>Kohorte</th>
-                            <th>Plätze</th>
-                            <th>Beschreibung</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Studiengang</th>
+                        <th>Plätze</th>
+                        <th>Werte < 0 => unbegrenzt</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var quota in Model.Course.Occurrence.SeatQuotas)
-                        {
-                            <tr>
-                                @if (quota.Curriculum != null)
+                    @foreach (var quota in Model.Course.Occurrence.SeatQuotas)
+                    {
+                        <tr>
+                            @if (quota.Curriculum != null)
+                            {
+                                <td>@quota.Curriculum.ShortName</td>
+                            }
+                            else
+                            {
+                                <td>Offen für alle Studiengänge</td>
+                            }
+                            @if (quota.MaxCapacity == int.MaxValue)
+                            {
+                                <td>unbegrenzt</td>
+                            }
+                            else
+                            {
+                                <td>@quota.MaxCapacity</td>
+                            }
+                            <td>
+                                @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
                                 {
-                                    <td>@quota.Curriculum.ShortName</td>
+                                    <input name="quotaId" hidden value="@quota.Id"/>
+                                    <input name="courseId" hidden value="@Model.Course.Id"/>
+                                    <div class="col-2">
+                                        <input type="text" name="delta" id="delta" class="form-control" placeholder="">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-outline-primary">Überschreiben</button>
+                                    </div>
                                 }
-                                else
-                                {
-                                    <td>Offen für alle Studiengänge</td>
-                                }
-                                @if (quota.ItemLabelSet.ItemLabels.Any())
-                                {
-                                    <td>
-                                        @foreach(var label in quota.ItemLabelSet.ItemLabels)
-                                        {
-                                            @Html.Raw(label.Name)
-                                            if (label != quota.ItemLabelSet.ItemLabels.Last())
-                                            {
-                                                <span> und</span>
-                                            }
-                                        }
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (quota.MaxCapacity == int.MaxValue)
-                                {
-                                    <td>unbegrenzt</td>
-                                }
-                                else
-                                {
-                                    <td>@quota.MaxCapacity</td>
-                                }
-                                <td>@quota.Description</td>
-                                <td>
-                                    @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
-                                    {
-                                        <input name="quotaId" hidden value="@quota.Id" />
-                                        <input name="courseId" hidden value="@Model.Course.Id" />
-                                        <div class="col-auto">
-                                            <input type="text" name="delta" id="delta" class="form-control" placeholder="Anzahl Plätze">
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="submit" class="btn btn-primary mb-3">Ändern</button>
-                                        </div>
-                                    }
-                                </td>
-                                <td>
-                                    @if (Request.IsLocal)
-                                    {
-                                        <a class="btn btn-outline-primary" href="@Url.Action("EditQuota", new { id = quota.Id })">
-                                            <i class="bi bi-gear"></i> ändern
-                                        </a>
-                                    }
+                            </td>
+                            <td>
+                                <div class="btn-group">
                                     <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuota", new { id = quota.Id })">
-                                        <i class="bi bi-trash"></i> löschen
+                                        <i class="bi bi-trash"></i> Löschen
                                     </a>
-                                </td>
-                                    </tr>
+                                </div>
+                            </td>
+                        </tr>
 
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                    }
+                    </tbody>
+                </table>
+            </div>
                 </div>
-                <div class="col-md-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Zusammengesetzte Platzkontingente</h5>
+                </div>
+                <div class="card-body">
                     <div class="alert alert-info">
-                        <h5>Hinweise zur Verwendung:</h5>
+                        <div>Folgende Möglichkeiten sollen hier entstehen</div>
                         <ul>
-                            <li>Anzahl Plätze < 0 => unbegrenzt</li>
-                            <li>Standard: Platzkontingent pro Studiengang</li>
-                            <li>Erweiterung: Platzkonrtingent pro Studiengang und Kohorte</li>
-                            <li>Wichtig: Kohorten innerhalb eines Platzkontingents werden mit "UND" verknüpft</li>
-                            <li>Option: Ohne Angabe eines Studiengangs = offen für alle (anderen)</li>
+                            <li>Ein Platzkontingent steht insgesamt für Studierender mehrerer Studiengänge zur Verfügung, z.B. 20 Plätze für Studierende aus A oder B. Keine Kontrolle über die Zusammensetzung.</li>
+                            <li>Angabe Kohorten. Beispiel: 15 Plätze für A (ohne Angabe Kohorte), 3 Plätze für A mit Kohorte CIE</li>
                         </ul>
                     </div>
                 </div>
+                @*
+        <div class="list-group">
+            <div class="list-group-item">
+                <a class="btn btn-outline-primary" href="@Url.Action("AddQuotaComplex", new { id = Model.Course.Id })"><i class="bi bi-plus"></i> Platzkontingent hinzufügen</a>
             </div>
-    
-    <div class="row">
-        <div class="col-md-12">
-            <ul>
-                @foreach (var bl in bookingLists)
-                {
-                    <li>@bl.Name</li>
-                }
-            </ul>
         </div>
-    </div>
-
-</div>
-
-
-
-        @*
-            @Html.Partial("_CourseSummaryHeader", Model.Summary)
-
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4><i class="fa fa-legal"></i> Teilnahmebeschränkungen</h4>
-                            </div>
-                            <div class="panel-body">
-                                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                                {
-                                    <fieldset>
-                                        @Html.HiddenFor(m => m.Course.Id)
-
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Einordnung nach "Ampelsystem"</label>
-                                            <div class="col-md-10">
-                                                <div class="radio-list">
-                                                    <label>
-                                                        @Html.RadioButtonFor(m => m.optionsAccess, 1)
-                                                        Jeder Studierende kann sich eintragen
-                                                    </label>
-                                                    <label>
-                                                        @Html.RadioButtonFor(m => m.optionsAccess, 2)
-                                                        Studierende der angegebenen Studiengänge werden bevorzugt, d.h. alle anderen landen auf der Warteliste
-                                                    </label>
-                                                    <label>
-                                                        @Html.RadioButtonFor(m => m.optionsAccess, 3)
-                                                        Nur Studierende der angegebenen Studiengänge können sich eintragen
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr />
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Platzkontingent</label>
-                                            <div class="col-md-10">
-                                                <div class="radio-list">
-                                                    <label>
-                                                        @Html.RadioButtonFor(m => m.optionsLimit, 1)
-                                                        Keine Beschränkung
-                                                    </label>
-                                                    <label>
-                                                        @Html.RadioButtonFor(m => m.optionsLimit, 2)
-                                                        Beschränkung auf Ebene der Lehrveranstaltung als Ganzes
-                                                        @Html.TextBoxFor(m => m.Capacity, new { @class = "form-control" })
-                                                    </label>
-                                                    <label>
-                                                        @Html.RadioButtonFor(m => m.optionsLimit, 3)
-                                                        Beschränkung auf Ebene der einzelnen Studiengänge
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @foreach (var occGroup in Model.Course.Occurrence.Groups)
-                                        {
-                                            <div class="form-group">
-                                                <label class="col-md-offset-2 col-md-2 control-label">Anzahl Plätze für @Html.GroupList(occGroup.SemesterGroups, showLink: false)</label>
-                                                <div class="col-md-2">
-                                                    <input name="@occGroup.Id" id="@occGroup.Id" value="@occGroup.Capacity" class="form-control dtcap" />
-                                                </div>
-                                            </div>
-                                        }
-
-                                        <div class="form-group">
-                                            <div class="col-md-offset-2 col-md-8">
-                                                <a class="btn btn-primary" href="javascript:onSave()"><i class="fa fa-save"></i> Speichern</a>
-                                            </div>
-                                        </div>
-
-                                    </fieldset>
-
-                                }
-
-                            </div>
-                        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div><strong>Basiskontingent</strong></div>
+                    <span>20 Plätze</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>Studiengänge / Kohorten</div>
+                    <div>
+                        <span>AU</span>, <span>LM</span>, <span>WI</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-primary">Einstellungen</a>
+                    <a href="#" class="btn btn-outline-primary">Zusammensetzung</a>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div><strong>Zusatzplätze international</strong></div>
+                    <span>4 Plätze</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>Studiengänge / Kohorten</div>
+                    <div>
+                        <span>Studiengang beliebig</span> <span class="badge bg-secondary">CIE</span>
                     </div>
                 </div>
             </div>
-                                    *@
-
-                                    @section scripts
-{
-                                        @*
-            <script>
-
-                                        function onSave() {
-                                            var list = $(".dtcap").get();
-                                            var capacity = $("#Capacity").val();
-                                            var optAccess = $('input[name=optionsAccess]:checked').val();
-                                            var optLimit = $('input[name=optionsLimit]:checked').val();
-
-
-                                            var n = list.length;
-
-
-                                            var groupIds = new Array();
-                                            var groupCaps = new Array();
-
-                                            for (var i = 0; i < n; i++) {
-                                                groupIds[i] = list[i].name;
-                                                groupCaps[i] = list[i].value;
-                                            }
-
-
-                                            $.ajax(
-                                                {
-                                                    type: "POST",
-                                                    url: '@Url.Action("SaveAdminNewRules")',
-                                                    data: {
-                                                        courseId: "@Model.Course.Id",
-                                                        optAccess: optAccess,
-                                                        optLimit: optLimit,
-                                                        capacity: capacity,
-                                                        groupIds: groupIds,
-                                                        groupCaps: groupCaps
-
-                                                    },
-                                                    success: function (data, success, xhr) {
-                                                        window.location = data.url;
-                                                    }
-                                                });
-
-
-
-                                        }
-
-
-            </script>
-                                        *@
-
-                                    }
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div><strong>Wiederholer</strong></div>
+                    <span>7 Plätze</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>Studiengänge / Kohorten</div>
+                    <div>
+                        <span>AU</span> <span class="badge bg-secondary">2B</span>, <span>LM</span> <span class="badge bg-secondary">3</span>, <span>WI</span> <span class="badge bg-secondary">5 INF</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+                *@
+            </div>
+        </div>
+    </div>
+</div>

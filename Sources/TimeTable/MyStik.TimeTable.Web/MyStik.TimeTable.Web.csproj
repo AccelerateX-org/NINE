@@ -4793,7 +4793,13 @@
     <Content Include="Views\Print\Module.cshtml" />
     <Content Include="Views\Shared\_PrintCurriculumModule.cshtml" />
     <Content Include="Views\Print\StudyPlan.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
     <None Include="Web.Deploy.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>

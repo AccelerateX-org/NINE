@@ -112,7 +112,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Directory.Delete(tempDir, true);
 
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(model.OrganiserId);
             model.Organiser = org;
             model.Semester = SemesterService.GetSemester(model.SemesterId);
 
@@ -182,7 +182,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             model.Context = ctx;
-            model.Organiser = GetMyOrganisation();
+            model.Organiser = GetOrganiser(model.OrganiserId);
             model.Semester = SemesterService.GetSemester(model.SemesterId);
 
 

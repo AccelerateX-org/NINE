@@ -20,7 +20,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
-            var member = GetMyMembership();
+            var member = GetMyMembership(org.Id);
             if (member == null)
                 return View("_NoAccess");
 
@@ -96,7 +96,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
-            var member = GetMyMembership();
+            var member = GetMyMembership(org.Id);
             if (member == null)
                 return View("_NoAccess");
 
@@ -135,14 +135,15 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Details(Guid id)
         {
             var itsMe = GetCurrentUser();
-            var org = GetMyOrganisation();
-            var userRight = GetUserRight(org);
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
+            var org = thesis.Student.Curriculum.Organiser;
+            var userRight = GetUserRight(org);
+
             var user = GetUser(thesis.Student.UserId);
             var student = thesis.Student;
-            var member = GetMyMembership();
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
 
             if (member == null)
                 return View("_NoAccess");
@@ -173,11 +174,12 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult ChangeTitle(Thesis model)
         {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Id);
+
             var userService = new UserInfoService();
-            var member = GetMyMembership();
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
             var user = GetCurrentUser();
 
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Id);
 
             if (thesis != null)
             {
@@ -207,13 +209,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var userService = new UserInfoService();
 
+            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
+            var thesis = supervisor.Thesis;
+
             var user = GetCurrentUser();
-            var member = GetMyMembership();
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
             if (member == null)
                 return View("_NoAccess");
 
-            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
-            var thesis = supervisor.Thesis;
 
 
             supervisor.AcceptanceDate = DateTime.Now;
@@ -234,13 +237,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var userService = new UserInfoService();
 
+            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
+            var thesis = supervisor.Thesis;
+
             var user = GetCurrentUser();
-            var member = GetMyMembership();
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
             if (member == null)
                 return View("_NoAccess");
 
-            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
-            var thesis = supervisor.Thesis;
 
             thesis.Supervisors.Remove(supervisor);
             Db.Supervisors.Remove(supervisor);
@@ -262,13 +266,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var userService = new UserInfoService();
 
+            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
+            var thesis = supervisor.Thesis;
+
             var user = GetCurrentUser();
-            var member = GetMyMembership();
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
             if (member == null)
                 return View("_NoAccess");
 
-            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
-            var thesis = supervisor.Thesis;
 
             var supervisorUser = GetUser(supervisor.Member.UserId);
 
@@ -570,14 +575,15 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AcceptProlongRequest(Guid id)
         {
             var userService = new UserInfoService();
-
             var user = GetCurrentUser();
-            var member = GetMyMembership();
-            if (member == null)
-                return View("_NoAccess");
 
             var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
             var thesis = supervisor.Thesis;
+
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
+            if (member == null)
+                return View("_NoAccess");
+
 
 
             thesis.ProlongSupervisorAccepted = true;
@@ -598,13 +604,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var userService = new UserInfoService();
 
+            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
+            var thesis = supervisor.Thesis;
+
             var user = GetCurrentUser();
-            var member = GetMyMembership();
+            var member = GetMyMembership(thesis.Student.Curriculum.Organiser.Id);
             if (member == null)
                 return View("_NoAccess");
 
-            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
-            var thesis = supervisor.Thesis;
 
             thesis.ProlongSupervisorAccepted = false;
             Db.SaveChanges();

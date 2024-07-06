@@ -93,7 +93,8 @@ namespace MyStik.TimeTable.Web.Hubs
                 var course = db.Activities.FirstOrDefault(x =>
                     x.ExternalSource.Equals(formatId) &&
                     x.ExternalId.Equals(k.CourseId) &&
-                    x.Organiser.Id == org.Id);
+                    (x.Organiser != null && x.Organiser.Id == org.Id) &&
+                    (x.Semester != null && x.Semester.Id == semester.Id));
                 try
                 {
                     if (course != null)

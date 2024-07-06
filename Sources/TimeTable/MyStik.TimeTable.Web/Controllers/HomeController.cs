@@ -15,6 +15,12 @@ namespace MyStik.TimeTable.Web.Controllers
     //[CookieConsent]
     public class HomeController : BaseController
     {
+        [AllowAnonymous]
+        public ActionResult Callback()
+        {
+            return RedirectToAction("Index");
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -24,85 +24,85 @@
     </nav>
 </div>
 <div class="row">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="list-group">
-                <div class="list-group-item list-group-item-light">
-                    <h4>Getrennt nach Studiengang</h4>
-                </div>
-                @foreach (var curr in Model.Curricula.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
-                {
-                    <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
-                        <strong>@curr.ShortName</strong>: @curr.Name
-                    </a>
-                }
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="list-group mb-3">
-            <div class="list-group-item list-group-item-light">
-                <h4>Wahlverfahren</h4>
-            </div>
-            @foreach (var l in Model.Lotteries.OrderBy(x => x.Name))
-            {
-                if (l.IsActive)
-                {
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Lottery", new { id = l.Id })">
-                        <div><strong>@l.Name</strong></div>
-                        @if (l.IsFixed)
+    <div class="col-md-12">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        Studiengänge
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="list-group">
+                        @foreach (var curr in Model.Curricula.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
                         {
-                            if (l.IsActiveUntil.Value != null && l.IsActiveUntil.Value > DateTime.Now)
-                            {
-                                <div><small>Eintrgaung für Platzverlosung bis @l.IsActiveUntil.Value.ToShortDateString() @l.IsActiveUntil.Value.ToShortTimeString()</small></div>
-                            }
-                            else
-                            {
-                                <div><small>Aktuell keine Eintragung möglich</small></div>
-                            }
-                        }
-                        else
-                        {
-                            <div><small>Eintragung nach Windhundverfahren</small></div>
-                        }
-                    </a>
-                }
-            }
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="list-group mb-3">
-            <div class="list-group-item list-group-item-light">
-                <h4>Allgemein</h4>
-            </div>
-            <div class="list-group">
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Semester", "Courses", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
-                    Das komplette Lehrangebot in einer Tabelle
-                </a>
-                <div class="list-group-item list-group-item-action disabled">
-                    Beraten lassen mit dem Chatbot Buddy
-                </div>
-            </div>
-        </div>
-        <div class="list-group mb-3">
-            <div class="list-group-item list-group-item-light">
-                <h4>Studiengangübergreifende Angebote</h4>
-            </div>
-            <div class="list-group">
-               
-                @{
-                    var inst = Model.Organiser.Institution;
-                    if (inst != null && inst.LabelSet != null)
-                    {
-                        foreach (var label in inst.LabelSet.ItemLabels.OrderBy(x => x.Name))
-                        {
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, labelId = label.Id })">
-                                @label.Name
+                            <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
+                                <strong>@curr.ShortName</strong>: @curr.Name
                             </a>
                         }
-                    }
-                }
-
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Wahlverfahren
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="list-group">
+                        @foreach (var l in Model.Lotteries.OrderBy(x => x.Name))
+                        {
+                            if (l.IsActive)
+                            {
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Lottery", new { id = l.Id })">
+                                    <div><strong>@l.Name</strong></div>
+                                    @if (l.IsFixed)
+                                    {
+                                        if (l.IsActiveUntil.Value != null && l.IsActiveUntil.Value > DateTime.Now)
+                                        {
+                                            <div><small>Eintragung für Platzverlosung bis @l.IsActiveUntil.Value.ToShortDateString() @l.IsActiveUntil.Value.ToShortTimeString()</small></div>
+                                        }
+                                        else
+                                        {
+                                            <div><small>Aktuell keine Eintragung möglich</small></div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div><small>Eintragung nach Windhundverfahren</small></div>
+                                    }
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Gesamtangebote
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("Semester", "Courses", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
+                            Gesamtangebot @Model.Organiser.ShortName
+                        </a>
+                        @{
+                            var inst = Model.Organiser.Institution;
+                            if (inst != null && inst.LabelSet != null)
+                            {
+                                foreach (var label in inst.LabelSet.ItemLabels.OrderBy(x => x.Name))
+                                {
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Label", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id, labelId = label.Id })">
+                                        Hochschulweites Angebot: @label.Name
+                                    </a>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@
 
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Studienplan";
 }
 
 
@@ -28,7 +28,7 @@
                                 <nav class="nav nav-pills flex-column">
                                     @foreach (var module in Model.Modules)
                                     {
-                                        <a class="nav-link ms-3 my-1" href="#@module.Id">@module.Name</a>
+                                        <a class="nav-link ms-3 my-1" href="#@module.Id">@module.Tag @module.Name</a>
                                     }
                                 </nav>
                             </nav>
@@ -38,10 +38,11 @@
                     <div class="col-8">
                         <div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
                             <div id="@Model.Curriculum.Id">
-                                <h4>Studienplan @Model.Curriculum.Name</h4>
+                                <h2>Hochschule München</h2>
+                                <h3>Studienplan @Model.Curriculum.Name</h3>
                                 <h5>
-                                    Stand: 
-                                    
+                                    Stand:
+
                                     @if (ViewBag.PrevSemester != null)
                                     {
                                         <a href="@Url.Action("Doc", "StudyPlan", new { id=Model.Curriculum.ShortName, semId=ViewBag.PrevSemester.Id})"><i class="bi bi-chevron-double-left"></i></a>
@@ -63,7 +64,6 @@
                                 </h5>
                                 @if (string.IsNullOrEmpty(Model.Curriculum.Description))
                                 {
-                                    <p><i>kein Beschreibungstext vorhanden</i></p>
                                 }
                                 else
                                 {
@@ -75,59 +75,85 @@
                                 @foreach (var area in Model.Curriculum.Areas)
                                 {
                                     <div id="@area.Id">
-                                        <h5>@area.Tag  @area.Name</h5>
+                                        <h5>@area.Name</h5>
                                         @if (string.IsNullOrEmpty(area.Description))
                                         {
-                                            <p><i>kein Beschreibungstext vorhanden</i></p>
                                         }
                                         else
                                         {
                                             <p>@area.Description</p>
                                         }
 
-
-                                        @foreach (var option in area.Options)
+                                        @if (area.Options.Count == 1)
                                         {
-                                            <h6><strong>@option.Tag  @option.Name</strong></h6>
-                                            if (string.IsNullOrEmpty(option.Description))
+                                            foreach (var option in area.Options)
                                             {
-                                                <p><i>kein Beschreibungstext vorhanden</i></p>
-                                            }
-                                            else
-                                            {
-                                                <p>@option.Description</p>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Titel</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @foreach (var slot in option.Slots)
+                                                        {
+
+                                                            foreach (var module in slot.SubjectAccreditations)
+                                                            {
+                                                                <tr>
+                                                                    <td>@module.Subject.Module.Tag</td>
+                                                                    <td>
+                                                                        <a href="#@module.Subject.Module.Id">@module.Subject.Module.Name</a>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                        </tbody>
+                                                    </table>
                                             }
 
-                                            foreach (var slot in option.Slots)
+                                        }
+                                        else
+                                        {
+                                            foreach (var option in area.Options)
                                             {
-                                                <p><strong>@slot.Tag @slot.Name</strong></p>
-                                                if (string.IsNullOrEmpty(slot.Description))
+                                                <h6><strong>@option.Name</strong></h6>
+                                                if (string.IsNullOrEmpty(option.Description))
                                                 {
-                                                    <p><i>kein Beschreibungstext vorhanden</i></p>
                                                 }
                                                 else
                                                 {
-                                                    <p>@slot.Description</p>
+                                                    <p>@option.Description</p>
                                                 }
                                                 <table class="table">
                                                     <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>Titel</th>
-                                                        </tr>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Titel</th>
+                                                    </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach (var module in slot.SubjectAccreditations)
+                                                    @foreach (var slot in option.Slots)
+                                                    {
+
+                                                        foreach (var module in slot.SubjectAccreditations)
                                                         {
                                                             <tr>
                                                                 <td>@module.Subject.Module.Tag</td>
-                                                                <td>@module.Subject.Module.Name</td>
+                                                                <td>
+                                                                    <a href="#@module.Subject.Module.Id">@module.Subject.Module.Name</a>
+                                                                </td>
                                                             </tr>
                                                         }
+                                                    }
                                                     </tbody>
                                                 </table>
+
                                             }
+
                                         }
+
                                     </div>
                                 }
 
@@ -149,7 +175,6 @@
                         </div>
                     </div>
                 </div>                
-
             </div>
         </div>
     </div>

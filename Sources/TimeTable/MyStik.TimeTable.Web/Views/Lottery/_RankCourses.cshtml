@@ -71,12 +71,10 @@
         @if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
         {
             <input type="radio" name="optionsRadios" id="acceptAny" value="1" hidden>
-            <input type="radio" name = "optionsRadios" id = "acceptNope" value = "0"  hidden>
-
+            <input type="radio" name="optionsRadios" id="acceptNope" value="0" hidden>
         }
         else
         {
-
             if (!Model.Lottery.IsScheduled)
             {
                 <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>

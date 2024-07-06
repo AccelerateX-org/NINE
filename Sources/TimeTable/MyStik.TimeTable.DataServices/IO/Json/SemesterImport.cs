@@ -112,6 +112,8 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                 bool isCourse = !scheduleCourse.Groups.Any(g => string.IsNullOrEmpty(g.CurriculumShortName));
                 if (isCourse)
                     return ImportCourse(scheduleCourse);
+                
+                return ImportReservation(scheduleCourse);
             }
 
             return ImportReservation(scheduleCourse);

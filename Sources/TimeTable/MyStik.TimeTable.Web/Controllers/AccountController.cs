@@ -64,7 +64,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login(string returnUrl = "/")
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
@@ -79,7 +79,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl="/")
         {
             if (string.IsNullOrEmpty(model.Email) && string.IsNullOrEmpty(model.Password))
                 return RedirectToAction("Login");

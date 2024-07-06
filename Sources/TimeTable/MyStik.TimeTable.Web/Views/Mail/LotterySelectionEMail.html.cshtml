@@ -12,19 +12,27 @@
         <li>@course.Course.Name (@course.Course.ShortName)</li>
     }
 </ol>
-<p>Sie können maximal @Model.ConfirmCount Plätze erhalten.</p>
-<p>Sie haben angegeben, dass Sie an @Model.ConfirmCount Lehrveranstaltungen teilnehmen möchten.</p>
-@if (Model.AcceptAny)
+@if (Model.Game.Lottery.MaxConfirm == 0 && Model.Game.Lottery.MaxExceptionConfirm == 0)
 {
-<p>
-    Im Falle, dass Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptieren Sie jeweils einen Platz in nicht von Ihnen gewählten Lehrveranstaltungen.
-</p>
 }
 else
 {
-    <p>
-        Im Falle, dass Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptieren Sie eine geringe Anzahl an Plätzen, als Sie angegeben haben.
-    </p>
+    <p>Sie können maximal @Model.ConfirmCount Plätze erhalten.</p>
+    <p>Sie haben angegeben, dass Sie an @Model.ConfirmCount Lehrveranstaltungen teilnehmen möchten.</p>
+
+    if (Model.AcceptAny)
+    {
+        <p>
+            Im Falle, dass Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptieren Sie jeweils einen Platz in nicht von Ihnen gewählten Lehrveranstaltungen.
+        </p>
+    }
+    else
+    {
+        <p>
+            Im Falle, dass Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptieren Sie eine geringe Anzahl an Plätzen, als Sie angegeben haben.
+        </p>
+    }
+
 }
 
 <p>Die Verteilung der Plätze findet zwischen dem @Model.Lottery.FirstDrawing.ToShortDateString() und @Model.Lottery.LastDrawing.ToShortDateString() statt.</p>
