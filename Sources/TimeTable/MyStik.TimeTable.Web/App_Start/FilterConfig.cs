@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using MyStik.TimeTable.Web.Utils;
 
 namespace MyStik.TimeTable.Web
 {
@@ -14,7 +15,10 @@ namespace MyStik.TimeTable.Web
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new AuthorizeAttribute());
+            //filters.Add(new AuthorizeAttribute());
+
+            filters.Add(new OIDCAuthorizeAttribute());
+
 #if !DEBUG
             filters.Add(new RequireHttpsAttribute());
 #endif

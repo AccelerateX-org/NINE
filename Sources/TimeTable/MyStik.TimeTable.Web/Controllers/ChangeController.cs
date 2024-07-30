@@ -17,7 +17,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var model = Db.DateChanges.OrderBy(c => c.TimeStamp).ToList();
+            var model = Db.DateChanges.OrderByDescending(c => c.TimeStamp).Take(10).ToList();
             return View(model);
         }
 

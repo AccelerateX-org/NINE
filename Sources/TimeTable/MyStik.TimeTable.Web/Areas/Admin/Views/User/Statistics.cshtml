@@ -1,0 +1,24 @@
+﻿@using MyStik.TimeTable.Web.Models
+
+@{
+    ViewBag.Title = "Statistiken";
+
+    var db = new ApplicationDbContext();
+
+    var d365 = DateTime.Today.AddDays(-365);
+    var d180 = DateTime.Today.AddDays(-180);
+    var d090 = DateTime.Today.AddDays(-90);
+}
+
+<div class="row">
+    <dic class="col-md-12">
+        <ul>
+            <li>Gesamt: @db.Users.Count()</li>
+            <li>Expired: @db.Users.Count(x => x.ExpiryDate != null)</li>
+            <li>Älter 365 Tage: @db.Users.Count(x => x.LastLogin.HasValue && x.LastLogin < d365)</li>
+            <li>Älter 180 Tage: @db.Users.Count(x => x.LastLogin.HasValue && x.LastLogin < d180)</li>
+            <li>Älter  90 Tage: @db.Users.Count(x => x.LastLogin.HasValue && x.LastLogin < d090)</li>
+        </ul>
+    </dic>
+</div>
+

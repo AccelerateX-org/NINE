@@ -61,6 +61,12 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        public ActionResult Statistics()
+        {
+            return View();
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

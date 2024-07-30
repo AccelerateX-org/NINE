@@ -23,7 +23,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public Student GetCurrentStudent(string userId)
         {
-            return Db.Students.Where(x => x.UserId.Equals(userId)).OrderByDescending(x => x.Created)
+            return Db.Students.Where(x => x.UserId.Equals(userId) && x.LastSemester == null).OrderByDescending(x => x.Created)
                 .FirstOrDefault();
         }
 
@@ -37,7 +37,7 @@ namespace MyStik.TimeTable.Web.Services
             if (user == null)
                 return null;
 
-            return Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
+            return Db.Students.Where(x => x.UserId.Equals(user.Id) && x.LastSemester == null).OrderByDescending(x => x.Created)
                 .FirstOrDefault();
         }
 

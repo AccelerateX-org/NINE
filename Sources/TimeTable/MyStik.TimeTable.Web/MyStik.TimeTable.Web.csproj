@@ -797,6 +797,7 @@
     <Compile Include="Utils\FakeView.cs" />
     <Compile Include="Utils\Helper\IconHelper.cs" />
     <Compile Include="Utils\Helper\StringHelper.cs" />
+    <Compile Include="Utils\OIDCAuthorizeAttribute.cs" />
     <Compile Include="Utils\SameSiteCookieManager.cs" />
     <Compile Include="Utils\SameSiteSupport.cs" />
   </ItemGroup>
@@ -3498,7 +3499,7 @@
     <Content Include="Areas\Admin\Views\Organiser\EditAdmin.cshtml" />
     <Content Include="Areas\Admin\Views\Semester\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Organiser\Delete.cshtml" />
-    <Content Include="Areas\Admin\Views\User\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Statistics.cshtml" />
     <Content Include="Areas\Admin\Views\Module\Index.cshtml" />
     <Content Include="Areas\Admin\Views\User\_UserList.cshtml" />
     <Content Include="Areas\Admin\Views\User\_UserListEntry.cshtml" />
@@ -3626,6 +3627,7 @@
     <Content Include="Assets\libs\bootstrap-icons\README.md" />
     <Content Include="Areas\Admin\Views\Repair\MigrateCurricula.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Index.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -4422,7 +4424,6 @@
     <Content Include="Views\Schedule\_DlgDateList.cshtml" />
     <Content Include="Views\Shared\_Error.cshtml" />
     <Content Include="Views\Subscription\ChangeCurriculum.cshtml" />
-    <Content Include="Views\Course\RawAdmin.cshtml" />
     <Content Include="Views\ThesisSupervision\Cleared.cshtml" />
     <Content Include="Views\ThesisAdmin\Statistics.cshtml" />
     <Content Include="Views\Dashboard\_ViewStart.cshtml" />
@@ -4799,7 +4800,13 @@
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <None Include="Web.Lab.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
     <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.SystemTest.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
@@ -4952,10 +4959,19 @@
   <Import Project="..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
   <Import Project="..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Import Project="..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets" Condition="Exists('..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-  </Target> -->
+  </Target> 
+  <Target Name="AfterBuild">
+    <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="$(OutputPath)MyStik.TimeTable.Web.dll.config" />
+  </Target>
+  -->
+
 </Project>

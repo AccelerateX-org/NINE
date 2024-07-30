@@ -95,7 +95,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             course.LabelSet = labelSet;
             db.ItemLabelSets.Add(labelSet);
 
-            course.Occurrence.SeatQuotas = new List<SeatQuota>();
+            //course.Occurrence.SeatQuotas = new List<SeatQuota>();
 
             // Kurs sofort speichern, damit die ID gesichert ist
             db.Activities.Add(course);
@@ -114,6 +114,8 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 }
 
                 // Platzkontingente anlegen
+                // wird nicht mehr gemacht
+                /*
                 var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(g.GruppenID));
                 var org = db.Organisers.SingleOrDefault(x => x.Id == _orgId);
 
@@ -141,6 +143,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                         }
                     }
                 }
+                */
             }
 
 
@@ -402,6 +405,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 {
                     // auf Ebene der Instution suchen
                     // Positiver Ansatz: nur anfügen, wenn es es wirklich gibt
+                    var inInstitution = false;
                     var inst = org.Institution;
                     if (inst != null && inst.LabelSet != null)
                     {
@@ -410,17 +414,20 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                         if (labelInst != null)
                         {
                             labelList.Add(labelInst);
+                            inInstitution = true;
                         }
-                        else
+                    }
+
+                    if (!inInstitution)
+                    {
+                        // Am Studiemgang anfügen
+                        label = new ItemLabel
                         {
-                            label = new ItemLabel
-                            {
-                                Name = labelName
-                            };
-                            db.ItemLabels.Add(label);
-                            curr.LabelSet.ItemLabels.Add(label);
-                            labelList.Add(label);
-                        }
+                            Name = labelName
+                        };
+                        db.ItemLabels.Add(label);
+                        curr.LabelSet.ItemLabels.Add(label);
+                        labelList.Add(label);
                     }
                 }
                 else

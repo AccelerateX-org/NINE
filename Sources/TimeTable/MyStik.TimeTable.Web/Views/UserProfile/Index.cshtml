@@ -34,6 +34,7 @@
                                 OnSuccess = "onSaved"
                             }, new { @role = "form" }))
                         {
+                            @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
                             if (ViewBag.IsMember)
@@ -97,6 +98,7 @@
                                 OnSuccess = "onSaved"
                             }, new { @role = "form" }))
                         {
+                            @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
                             <div class="alert alert-info">

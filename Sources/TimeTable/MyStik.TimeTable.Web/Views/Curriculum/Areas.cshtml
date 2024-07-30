@@ -44,15 +44,10 @@
                         </div>
                     </div>
                 }
-                @foreach (var area in Model.Areas)
+                @foreach (var area in Model.Areas.OrderBy(x => x.Name))
                 {
                     <a href="@Url.Action("Area", new { id = area.Id })" class="list-group-item list-group-item-action">
-                        <h5>@area.Tag | @area.Name</h5>
-                        <p>@area.Description</p>
-                        @if (area.Options.Count() > 1)
-                        {
-                            <p>Anzahl Wahlmöglichlkeiten: @area.Options.Count()</p>
-                        }
+                        <h5>@area.Name</h5>
                     </a>
                 }
             </div>

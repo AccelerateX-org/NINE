@@ -505,8 +505,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 summaryModel.OfficeHours.Add(ohModel);
             }
 
-            ViewBag.ThisSemester = semester;
-            ViewBag.NextSemester = SemesterService.GetNextSemester(semester);
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
 
             return View(summaryModel);
         }

@@ -3743,23 +3743,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult RawAdmin(Guid id)
-        {
-            var model = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
-
-            return View(model);
-        }
-
-        public ActionResult RawRemoveSubscription(Guid courseId, Guid id)
-        {
-            var subscription = Db.Subscriptions.SingleOrDefault(x => x.Id == id);
-            Db.Subscriptions.Remove(subscription);
-            Db.SaveChanges();
-
-            return RedirectToAction("RawAdmin", new { id = courseId });
-        }
-
-
         public ActionResult ParticipiantDetails(Guid id)
         {
             var studentService = new StudentService(Db);

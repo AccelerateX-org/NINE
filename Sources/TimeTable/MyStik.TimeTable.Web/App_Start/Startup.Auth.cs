@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,12 +12,14 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
 using Microsoft.Owin.Host.SystemWeb;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.Security.OpenIdConnect;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Providers;
 using MyStik.TimeTable.Web.Utils;
+using Newtonsoft.Json;
 using Owin;
 
 namespace MyStik.TimeTable.Web
@@ -65,6 +69,77 @@ namespace MyStik.TimeTable.Web
 
             // ConfigureAuth0(app);
             // ConfigureSSO(app);
+            // ConfigureOIDC(app);
+        }
+
+
+
+        private void ConfigureOIDC(IAppBuilder app)
+        {
+            var OidcAuthority = ConfigurationManager.AppSettings["oidc:Authority"];
+            var OidcRedirectUrl = ConfigurationManager.AppSettings["oidc:RedirectUrl"];
+            var OidcClientId = ConfigurationManager.AppSettings["oidc:ClientId"];
+            var OidcClientSecret = ConfigurationManager.AppSettings["oidc:ClientSecret"];
+
+
+            var oidcOptions = new OpenIdConnectAuthenticationOptions
+            {
+                Authority = OidcAuthority,
+                ClientId = OidcClientId,
+                ClientSecret = OidcClientSecret,
+                PostLogoutRedirectUri = "https://localhost:44300/",
+                RedirectUri = OidcRedirectUrl,
+                ResponseType = OpenIdConnectResponseType.Code,
+                //Scope = $"{OpenIdConnectScope.Phone} {OpenIdConnectScope.OpenIdProfile}",
+                Scope = "openid profile email",
+                UsePkce = false,
+                RedeemCode = true,
+                Notifications = new OpenIdConnectAuthenticationNotifications
+                {
+                    MessageReceived = async n => { Console.WriteLine(n); },
+                    AuthorizationCodeReceived = async n => { Console.WriteLine(n); },
+                    TokenResponseReceived = async n => { Console.WriteLine(n); },
+                    SecurityTokenReceived = async n => { Console.WriteLine(n); },
+                    AuthenticationFailed = async n => { Console.WriteLine(n); },
+                    RedirectToIdentityProvider = async n => { Console.WriteLine(n); },
+                    SecurityTokenValidated = async n =>
+                    {
+                        Console.WriteLine(n);
+
+                        var id = n.AuthenticationTicket.Identity;
+
+                        var client = new HttpClient()
+                        {
+                            BaseAddress = new Uri("https://sso.hm.edu/"),
+                        };
+
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", n.ProtocolMessage.AccessToken);
+
+                        var response = await client.GetAsync("idp/profile/oidc/userinfo");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var data = await response.Content.ReadAsStringAsync();
+
+                            Console.WriteLine(data);
+
+                            if (!String.IsNullOrWhiteSpace(data))
+                            {
+                                id.AddClaim(new Claim("hmsso", data));
+                            }
+                        }
+
+                        n.AuthenticationTicket = new AuthenticationTicket(id, n.AuthenticationTicket.Properties);
+
+
+                    },
+                }
+            };
+
+            app.UseOpenIdConnectAuthentication(oidcOptions);
+
+
         }
 
         private void ConfigureAuth0(IAppBuilder app)

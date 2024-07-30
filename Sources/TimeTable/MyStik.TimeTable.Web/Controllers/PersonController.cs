@@ -84,7 +84,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new PersonViewModel
             {
-                Members = new List<OrganiserMember> { member }
+                Members = Db.Members.Where(x => x.UserId.Equals(member.UserId)).ToList()
             };
 
             if (!string.IsNullOrEmpty(member.UserId))

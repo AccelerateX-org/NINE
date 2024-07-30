@@ -138,6 +138,16 @@ namespace MyStik.TimeTable.DataServices
                 }
 
                 DeleteOccurrence(date.Occurrence);
+
+                foreach (var roomBooking in date.RoomBookings.ToList())
+                {
+                    foreach (var confirmation in roomBooking.Confirmations.ToList())
+                    {
+                        _db.BookingConfirmations.Remove(confirmation);
+                    }
+                    _db.RoomBookings.Remove(roomBooking);
+                }
+
                 activity.Dates.Remove(date);
                 _db.ActivityDates.Remove(date);
             }
@@ -163,6 +173,9 @@ namespace MyStik.TimeTable.DataServices
             {
                 _db.SubjectTeachings.Remove(teaching);
             }
+
+
+
 
 
             _db.Activities.Remove(activity);

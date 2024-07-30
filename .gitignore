@@ -3,9 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-/Sources/TimeTable/MyStik.TimeTable.Web/Web.Deploy.config
-/Sources/TimeTable/MyStik.TimeTable.Web/Web.Debug.config
-/Sources/TimeTable/MyStik.TimeTable.Web/Web.Release.config
+/Sources/TimeTable/MyStik.TimeTable.Web/Web.*.config
 
 # User-specific files
 *.suo

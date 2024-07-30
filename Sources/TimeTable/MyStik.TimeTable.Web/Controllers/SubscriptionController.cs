@@ -378,14 +378,19 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ChangeNumber(Guid id)
         {
             var student = Db.Students.SingleOrDefault(x => x.Id == id);
-            var user = UserManager.FindById(student.UserId);
+            var user = GetCurrentUser();
 
+            if (!user.Id.Equals(student.UserId)) 
+                return RedirectToAction("Index", "Dashboard");
+            
+            
             var model = new CurriculumSubscriptionViewModel();
             model.User = user;
             model.Student = student;
             model.Number = student.Number;
 
             return View(model);
+
         }
 
 
@@ -393,10 +398,12 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ChangeNumber(CurriculumSubscriptionViewModel model)
         {
             var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
-            var user = UserManager.FindById(student.UserId);
+            var user = GetCurrentUser();
+
+            if (!user.Id.Equals(student.UserId))
+                return RedirectToAction("Index", "Dashboard");
 
             student.Number = model.Number;
-
             Db.SaveChanges();
 
             return RedirectToAction("Curricula");

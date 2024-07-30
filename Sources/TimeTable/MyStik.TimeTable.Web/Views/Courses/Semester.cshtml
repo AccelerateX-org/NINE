@@ -169,10 +169,7 @@
                                 <td>
                                     @if (c.Course.LabelSet != null)
                                     {
-                                        foreach (var label in c.Course.LabelSet.ItemLabels)
-                                        {
-                                            <span>@label.Name</span>
-                                        }
+                                        @Html.LabelList(c.Course)
                                     }
                                 </td>
                                 <td>

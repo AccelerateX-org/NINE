@@ -98,6 +98,11 @@ namespace MyStik.TimeTable.Web.Controllers
         public FileResult List(Guid id)
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var userRight = GetUserRight(curr.Organiser);
+
+            if (!userRight.Member.IsStudentAdmin)
+                return null;
+
             // nur aktive, d.h. noch kein Abschlussemester
             var students = Db.Students.Where(x => x.Curriculum.Id == curr.Id && x.LastSemester == null).ToList();
 
