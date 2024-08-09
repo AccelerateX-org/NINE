@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Hangfire;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
+using MyStik.TimeTable.Web.Jobs;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 {
@@ -26,6 +29,14 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             var db = new LogDbContext();
             var model = db.Log.OrderByDescending(l => l.Date).Take(n).OrderBy(l => l.Date);
+
+            var success = bool.TryParse(ConfigurationManager.AppSettings["log:BulkDelete"], out var isBulkDelete);
+            if (success != true)
+            {
+                isBulkDelete = false;
+            }
+
+            ViewBag.IsBulkDelete = isBulkDelete;
 
             return View(model);
         }
@@ -96,20 +107,24 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Clear()
+        public ActionResult StartClear()
         {
-            var db = new LogDbContext();
+            ConfigurationManager.AppSettings["log:BulkDelete"] = true.ToString();
 
-            var history = DateTime.Today.AddYears(-1);
-
-            var oldLogs = db.Log.Where(l => l.Date < history).ToList();
-
-            db.Log.RemoveRange(oldLogs);
-
-            db.SaveChanges();
+            RecurringJob.AddOrUpdate<LoggingJob>("Logging.BulkDelete", x => x.BulkDelete(), Cron.Hourly(15));
 
             return RedirectToAction("Index");
         }
+
+        public ActionResult StopClear()
+        {
+            ConfigurationManager.AppSettings["log:BulkDelete"] = false.ToString();
+
+            RecurringJob.RemoveIfExists("Logging.BulkDelete");
+
+            return RedirectToAction("Index");
+        }
+
 
         /// <summary>
         /// 

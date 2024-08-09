@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net.Configuration;
@@ -13,10 +14,12 @@ using Postal;
 
 namespace MyStik.TimeTable.Web.Jobs
 {
-    public class ThesisJob
+    public class ThesisJob : BaseJob
     {
-        private ILog logger = LogManager.GetLogger("ThesisJob");
-
+        public ThesisJob()
+        {
+            Logger = LogManager.GetLogger("ThesisJob");
+        }
 
         public void InitJob()
         {
@@ -49,7 +52,8 @@ namespace MyStik.TimeTable.Web.Jobs
                     x.IssueDate == null && x.DeliveryDate == null &&
                     x.Supervisors.Any(s => s.AcceptanceDate.HasValue))
                 .OrderBy(x => x.Student.Curriculum.ShortName)
-                .ThenBy(x => x.PlannedBegin.Value)
+                .ThenBy(x => x.PlannedBegin.Value).Include(thesis =>
+                    thesis.Student.Curriculum.Organiser.Autonomy.Committees.Select(committee => committee.Curriculum))
                 .ToList();
 
             var allCurr = allThesis.Select(x => x.Student.Curriculum).Distinct();
@@ -85,24 +89,23 @@ namespace MyStik.TimeTable.Web.Jobs
                     x.IssueDate != null && x.ExpirationDate == null && x.DeliveryDate == null &&
                     x.Supervisors.Any(s => s.AcceptanceDate.HasValue))
                 .OrderBy(x => x.Student.Curriculum.ShortName)
-                .ThenBy(x => x.PlannedBegin.Value)
+                .ThenBy(x => x.PlannedBegin.Value).Include(thesis => thesis.Student.Curriculum)
                 .ToList();
 
             foreach (var thesis in allThesisRepair)
             {
                 var period = thesis.Student.Curriculum.ThesisDuration;
-                if (period == 0)
+                if (period > 0)
                 {
-                    period = 3;
+                    thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period);
                 }
-
-                thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period);
             }
 
             db.SaveChanges();
 
 
             // Prepare Postal classes to work outside of ASP.NET request
+            /*
             var viewsPath = Path.GetFullPath(HostingEnvironment.MapPath(@"~/Views/Emails"));
             var engines = new ViewEngineCollection();
             engines.Add(new FileSystemRazorViewEngine(viewsPath));
@@ -111,17 +114,20 @@ namespace MyStik.TimeTable.Web.Jobs
 
 
             var smtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
+            */
 
             // Sammel
             var emailTotal = new ThesisAutoIssueSummaryEmail()
             {
-                From = smtpSection.From,
+                //From = smtpSection.From,  => überflüssig, weil wird beim Senden automatisch ergänzt
                 To = "olav.hinz@hm.edu",
                 Subject = "Abschlussarbeiten Automatische Anmeldungem",
                 Theses = allThesisWithPk
             };
 
+            SendMail(emailTotal);
 
+            /*
             try
             {
                 // Rendern und senden
@@ -131,7 +137,7 @@ namespace MyStik.TimeTable.Web.Jobs
             {
 
             }
-
+            */
         }
     }
 }

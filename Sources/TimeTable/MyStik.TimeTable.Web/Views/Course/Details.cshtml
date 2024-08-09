@@ -157,227 +157,228 @@
     </div>
 }
 <div class="@colDetails">
-<div class="row">
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 mb-1">
-                                <strong>@Model.Summary.Course.ShortName: @Model.Summary.Course.Name</strong>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Kohorten
-                            </div>
-                            <div class="col-8">
-                                @Html.LabelList(Model.Summary.Course)
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Modulbeschreibung
-                            </div>
-                            <div class="col-8">
-                                @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
-                                {
-                                    <div>
-                                        @if (Model.Summary.Course.Semester != null)
-                                        {
-                                            <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">Modulbeschreibung</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">Modulbeschreibung</a>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Inhaltsbeschreibung
-                            </div>
-                            <div class="col-8">
-                                <div>
-                                    <a href="#cardDetails">Details zur Lehrveranstaltung</a>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 mb-1">
+                                    <strong>@Model.Summary.Course.ShortName: @Model.Summary.Course.Name</strong>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Ressourcen
-                            </div>
-                            <div class="col-8">
-                                @if (string.IsNullOrEmpty(Model.Summary.Course.UrlMoodleCourse) && string.IsNullOrEmpty(Model.Summary.Course.KeyMoodleCourse))
-                                {
-                                    <div><i>Kein moodle-Kurs hinterlegt</i></div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <a href="@Model.Summary.Course.UrlMoodleCourse" target="_blank">Moodle</a>
-                                        @if (!string.IsNullOrEmpty(Model.Summary.Course.KeyMoodleCourse))
-                                        {
-                                            <span>(Zugangsschlüssel <strong>@Model.Summary.Course.KeyMoodleCourse</strong>)</span>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Nächster Termin
-                            </div>
-                            <div class="col-8">
-                                @if (Model.Summary.CurrentDate != null)
-                                {
-                                    <div>
-                                        @Html.TimeSpanWithDate(Model.Summary.CurrentDate) | @Html.RoomList(Model.Summary.CurrentDate.Rooms) | @Html.LecturerList(Model.Summary.CurrentDate.Hosts)
-                                    </div>
-                                    <div><strong>@Model.Summary.CurrentDate.Title</strong></div>
-                                    <div>
-                                        @Html.Raw(Model.Summary.CurrentDate.Description)
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div><i>keine zukünftigen Termine</i></div>
-                                }
-                                <div>
-                                    <a href="#cardDates">Alle Termine</a>
+                            <div class="row">
+                                <div class="col-4">
+                                    Kohorten
+                                </div>
+                                <div class="col-8">
+                                    @Html.LabelList(Model.Summary.Course)
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Platzkontingente
-                            </div>
-                            <div class="col-8">
-                                @if (Model.Summary.Course.Occurrence.SeatQuotas.Any())
-                                {
-                                    foreach (var quota in Model.Summary.Course.Occurrence.SeatQuotas)
-                                    {
-                                        <div>@quota.Summary</div>
-                                    }
-
-                                    if (Model.Summary.Lottery != null)
+                            <div class="row">
+                                <div class="col-4">
+                                    Modulbeschreibung
+                                </div>
+                                <div class="col-8">
+                                    @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
                                     {
                                         <div>
-                                            Platzvergabe über das Wahlverfahren
-                                            <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">@Model.Summary.Lottery.Name</a>
+                                            @if (Model.Summary.Course.Semester != null)
+                                            {
+                                                <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">Modulbeschreibung</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">Modulbeschreibung</a>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    Inhaltsbeschreibung
+                                </div>
+                                <div class="col-8">
+                                    <div>
+                                        <a href="#cardDetails">Details zur Lehrveranstaltung</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    Ressourcen
+                                </div>
+                                <div class="col-8">
+                                    @if (string.IsNullOrEmpty(Model.Summary.Course.UrlMoodleCourse) && string.IsNullOrEmpty(Model.Summary.Course.KeyMoodleCourse))
+                                    {
+                                        <div><i>Kein moodle-Kurs hinterlegt</i></div>
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <a href="@Model.Summary.Course.UrlMoodleCourse" target="_blank">Moodle</a>
+                                            @if (!string.IsNullOrEmpty(Model.Summary.Course.KeyMoodleCourse))
+                                            {
+                                                <span>(Zugangsschlüssel <strong>@Model.Summary.Course.KeyMoodleCourse</strong>)</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    Nächster Termin
+                                </div>
+                                <div class="col-8">
+                                    @if (Model.Summary.CurrentDate != null)
+                                    {
+                                        <div>
+                                            @Html.TimeSpanWithDate(Model.Summary.CurrentDate) | @Html.RoomList(Model.Summary.CurrentDate.Rooms) | @Html.LecturerList(Model.Summary.CurrentDate.Hosts)
+                                        </div>
+                                        <div><strong>@Model.Summary.CurrentDate.Title</strong></div>
+                                        <div>
+                                            @Html.Raw(Model.Summary.CurrentDate.Description)
                                         </div>
                                     }
                                     else
                                     {
-                                        <div>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen.</div>
+                                        <div><i>keine zukünftigen Termine</i></div>
                                     }
-                                }
-                                else
-                                {
-                                    <div>Offene Veranstaltung ohne Kontingente</div>
-                                }
-                            </div>
-                        </div>
-                        <div class="row bg-light-subtle">
-                            <div class="col-4">
-                                Meine Eintragung
-                            </div>
-                            <div class="col-8">
-                                <div>
-                                    @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
-                                    {
-                                        @Html.Partial("_CourseSummaryBooking", Model)
-                                    }
+                                    <div>
+                                        <a href="#cardDates">Alle Termine</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="cardDetails" class="card">
-                    <div class="card-body">
-                        <strong>Details zur Lehrveranstaltung</strong>
-                        @if (string.IsNullOrEmpty(Model.Summary.Course.Description))
-                        {
-                            <i>Keine weiteren Detailinformationen vorhanden</i>
-                        }
-                        else
-                        {
-                            <div>@Html.Raw(Model.CourseDescriptionHtml)</div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div id="cardDates" class="card mb-3">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 mb-1">
-                        <strong>Alle Termine</strong>
-                    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
-                    {
-
-                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("AdminNewDates", new { id = Model.Summary.Course.Id })">
-                            <i class="bi bi-calendar"></i> Terminverwaltung
-                        </a>
-                    }
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                    </div>
-                    <div class="col-3">
-                        <div><i class="bi bi-building-check"></i></div>
-                    </div>
-                    <div class="col-3">
-                        <div><i class="bi bi-person-gear"></i></div>
-                    </div>
-                </div>
-                <div class="list-group">
-
-                    @foreach (var date in Model.Summary.Course.Dates.OrderBy(x => x.Begin))
-                    {
-                        <div class="list-group-item">
                             <div class="row">
-                                <div class="col-2">
-                                    @string.Format("{0:ddd}", date.Begin)
-                                </div>
                                 <div class="col-4">
-                                    @Html.TimeSpanWithDate(date)
+                                    Platzkontingente
                                 </div>
-                                <div class="col-3">
-                                    <div>@Html.RoomList(date.Rooms)</div>
-                                </div>
-                                <div class="col-3">
-                                    <div>@Html.LecturerList(date.Hosts)</div>
+                                <div class="col-8">
+                                    @if (Model.Summary.Course.Occurrence.SeatQuotas.Any())
+                                    {
+                                        foreach (var quota in Model.Summary.Course.Occurrence.SeatQuotas)
+                                        {
+                                            <div>@quota.Summary</div>
+                                        }
+
+                                        if (Model.Summary.Lottery != null)
+                                        {
+                                            <div>
+                                                Platzvergabe über das Wahlverfahren
+                                                <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">@Model.Summary.Lottery.Name</a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen.</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>Offene Veranstaltung ohne Kontingente</div>
+                                    }
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="offset-2 col-md-10">
-                                    <strong>@date.Title</strong>
-                                    <div>@Html.Raw(date.Description)</div>
+                            <div class="row bg-light-subtle">
+                                <div class="col-4">
+                                    Meine Eintragung
+                                </div>
+                                <div class="col-8">
+                                    <div>
+                                        @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
+                                        {
+                                            @Html.Partial("_CourseSummaryBooking", Model)
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="cardDetails" class="card">
+                        <div class="card-body">
+                            <strong>Details zur Lehrveranstaltung</strong>
+                            @if (string.IsNullOrEmpty(Model.Summary.Course.Description))
+                            {
+                                <i>Keine weiteren Detailinformationen vorhanden</i>
+                            }
+                            else
+                            {
+                                <div>@Html.Raw(Model.CourseDescriptionHtml)</div>
+                            }
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="cardDates" class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 mb-1">
+                            <strong>Alle Termine</strong>
+                            @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                            {
+
+                                <a class="btn btn-outline-primary btn-sm" href="@Url.Action("AdminNewDates", new { id = Model.Summary.Course.Id })">
+                                    <i class="bi bi-calendar"></i> Terminverwaltung
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-3">
+                            <div><i class="bi bi-building-check"></i></div>
+                        </div>
+                        <div class="col-3">
+                            <div><i class="bi bi-person-gear"></i></div>
+                        </div>
+                    </div>
+                    <div class="list-group">
+
+                        @foreach (var date in Model.Summary.Course.Dates.OrderBy(x => x.Begin))
+                        {
+                            <div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-2">
+                                        @string.Format("{0:ddd}", date.Begin)
+                                    </div>
+                                    <div class="col-4">
+                                        @Html.TimeSpanWithDate(date)
+                                    </div>
+                                    <div class="col-3">
+                                        <div>@Html.RoomList(date.Rooms)</div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div>@Html.LecturerList(date.Hosts)</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="offset-2 col-md-10">
+                                        <strong>@date.Title</strong>
+                                        <div>@Html.Raw(date.Description)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
 </div>
 </div>
 </div>
 </div>
+
 
 
 

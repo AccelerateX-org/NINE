@@ -161,7 +161,35 @@
                         <h5 class="card-title">Agenda</h5>
                         <input id="dateAgenda" type="text" class="form-control form-control-sm datepicker" onchange="onDateChanged(value)" value="@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)" />
                         <div class="btn-group">
-                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-day"></i></a>
+
+                            @if (Model.Organisers.Any())
+                            {
+                                if (Model.Organisers.Count == 1)
+                                {
+                                    var org = Model.Organisers.First();
+                                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Today", "Activity", new { id = org.Id })">
+                                        <i class="bi bi-calendar-day"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-calendar-day"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var org in Model.Organisers.OrderBy(x => x.ShortName))
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item"  href="@Url.Action("Today", "Activity", new { id = org.Id })">@org.ShortName</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            }
+
+                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-heart"></i></a>
                             <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Free", "Room")"><i class="bi bi-building-check"></i></a>
                         </div>
                     </div>

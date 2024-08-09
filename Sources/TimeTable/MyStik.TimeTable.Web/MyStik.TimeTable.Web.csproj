@@ -483,6 +483,8 @@
     <Compile Include="Areas\Admin\Models\DataAdminModel.cs" />
     <Compile Include="Areas\Admin\Models\LogModels.cs" />
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
+    <Compile Include="Jobs\AccountJob.cs" />
+    <Compile Include="Jobs\LoggingJob.cs" />
     <Compile Include="Areas\Fillter\Controllers\HomeController.cs" />
     <Compile Include="Areas\Fillter\FillterAreaRegistration.cs" />
     <Compile Include="Areas\Gym\Controllers\GymBaseController.cs" />
@@ -652,6 +654,7 @@
     <Compile Include="Hubs\MaterialExportHub.cs" />
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
+    <Compile Include="Jobs\BaseJob.cs" />
     <Compile Include="Jobs\LotteryJob.cs" />
     <Compile Include="Jobs\PrintJobs.cs" />
     <Compile Include="Jobs\ThesisJob.cs" />
@@ -4794,6 +4797,8 @@
     <Content Include="Views\Print\Module.cshtml" />
     <Content Include="Views\Shared\_PrintCurriculumModule.cshtml" />
     <Content Include="Views\Print\StudyPlan.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteUser.html.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteUser.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4813,6 +4818,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="App_Readme\" />
+    <Folder Include="Areas\Admin\Services\" />
     <Folder Include="Areas\Admin\Views\Curriculum\" />
     <Folder Include="Areas\Admin\Views\Notification\" />
     <Folder Include="Areas\Fillter\Models\" />
@@ -4973,5 +4979,4 @@
     <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="$(OutputPath)MyStik.TimeTable.Web.dll.config" />
   </Target>
   -->
-
 </Project>

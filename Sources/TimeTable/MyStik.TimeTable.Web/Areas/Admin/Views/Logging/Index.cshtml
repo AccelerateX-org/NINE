@@ -1,8 +1,31 @@
-﻿@model IEnumerable<MyStik.TimeTable.Web.Areas.Admin.Models.Log>
+﻿@using MyStik.TimeTable.Web.Areas.Admin.Models
+@model IEnumerable<MyStik.TimeTable.Web.Areas.Admin.Models.Log>
 
 @{
     ViewBag.Title = "Logs";
+
+    var db = new LogDbContext();
+
+    var minDate = db.Log.Min(x => x.Date);
+    var nLogs = db.Log.Count();
 }
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">Anzahl Logs</div>
+                    <div class="col-md-6">@nLogs</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">ÄltesterLog</div>
+                    <div class="col-md-6">@minDate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-hm">
@@ -25,14 +48,21 @@
                     <a href="@Url.Action("GetErrors")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Errors</a>
                     <a href="@Url.Action("GetMails")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> SendMail</a>
                     <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Alle</a>
-                    <a href="@Url.Action("Clear")" class="btn btn-default"><i class="fa fa-trash-o fa-2x"></i> Löschen</a>
+                    @if (ViewBag.IsBulkDelete)
+                    {
+                        <a href="@Url.Action("StopClear")" class="btn btn-outline-primary"><i class="bi bi-stop-circle"></i> Löschprozess beenden</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("StartClear")" class="btn btn-outline-primary"><i class="bi bi-stopwatch"></i> Löschprozess starten</a>
+                    }
                     <div class="form-inline">
 
                         <div class="form-group">
                             <input id="txtThread" class="form-control" type="text" />
                         </div>
                         <div class="form-group">
-                            <input id="txtLogger" class="form-control" type="text"/>
+                            <input id="txtLogger" class="form-control" type="text" />
                         </div>
                         <div class="form-group">
                             <button class="form-control" onclick="search()">Suchen</button>

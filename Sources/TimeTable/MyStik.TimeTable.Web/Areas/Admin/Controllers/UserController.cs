@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Web.Controllers;
+using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -63,8 +65,38 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
         public ActionResult Statistics()
         {
+
+            var success = bool.TryParse(ConfigurationManager.AppSettings["Account:BulkDelete"], out var isBulkDelete);
+            if (success != true)
+            {
+                isBulkDelete = false;
+            }
+
+            ViewBag.IsBulkDelete = isBulkDelete;
+
+
             return View();
         }
+
+
+        public ActionResult StartClear()
+        {
+            ConfigurationManager.AppSettings["Account:BulkDelete"] = true.ToString();
+
+            RecurringJob.AddOrUpdate<AccountJob>("Account.BulkDelete", x => x.CheckUserAccounts(), Cron.Hourly(45));
+
+            return RedirectToAction("Statistics");
+        }
+
+        public ActionResult StopClear()
+        {
+            ConfigurationManager.AppSettings["Account:BulkDelete"] = false.ToString();
+
+            RecurringJob.RemoveIfExists("Account.BulkDelete");
+
+            return RedirectToAction("Statistics");
+        }
+
 
 
         /// <summary>
