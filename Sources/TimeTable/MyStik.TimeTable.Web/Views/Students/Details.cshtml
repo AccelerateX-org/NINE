@@ -1,153 +1,198 @@
-﻿@model MyStik.TimeTable.Web.Models.StudentDetailViewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.StudentDetailViewModel
 @{
     ViewBag.Title = "Profil";
+
+    var db = new TimeTableDbContext();
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    @if (Model.Student != null)
-                    {
-                        if (Model.Student.Curriculum != null && Model.Student.FirstSemester != null)
-                        {
-                            <h1>
-                                @Model.User.FirstName @Model.User.LastName | @Model.Student.Curriculum.ShortName (@Model.Student.FirstSemester.Name)
-                            </h1>
-                        }
-                        else
-                        {
-                            <h1>
-                                @Model.User.FirstName @Model.User.LastName | KEIN STUDIUM
-                            </h1>
-                        }
-                    }
-                    else
-                    {
-                        <h1>
-                            @Model.User.FirstName @Model.User.LastName
-                        </h1>
-                    }
-                </div>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Students")">Studierende</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.User.FirstName @Model.User.LastName</li>
+            </ol>
+        </nav>
     </div>
 </div>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4>Studiengänge</h4>
-                        </div>
-                        <div class="list-group">
-                            @foreach (var student in Model.Students.OrderByDescending(x => x.FirstSemester.StartCourses))
-                            {
-                                <a class="list-group-item" href="@Url.Action("Curriculum", new {id=student.Id})">
-                                    @if (student.LastSemester != null)
-                                    {
-                                        <h5 class="list-group-item-heading">@student.Curriculum.ShortName (@student.FirstSemester.Name - @student.LastSemester.Name)</h5>
-                                    }
-                                    else
-                                    {
-                                        <h5 class="list-group-item-heading">@student.Curriculum.ShortName (seit @student.FirstSemester.Name)</h5>
-                                    }
-                                </a>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4>Studiensemester</h4>
-                        </div>
-                        <div class="list-group">
-                            @foreach (var semesterViewModel in Model.Semester.OrderByDescending(x => x.Semester.StartCourses))
-                            {
-                                <a class="list-group-item" href="@Url.Action("CoursePlan", new {id = Model.User.Id, semid = semesterViewModel.Semester.Id})">
-                                    <span class="badge badge-info">@semesterViewModel.Courses.Count LVs</span><h5 class="list-group-item-heading">@semesterViewModel.Semester.Name</h5>
-                                </a>
-                            }
-                        </div>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="list-group">
+                        <a class="list-group-item" href="mailto:@Model.User.Email">
+                            <i class="bi bi-envelope"></i> E-Mail senden
+                        </a>
+                        @if (ViewBag.UserRight.IsStudentAdmin)
+                        {
+                            <a class="list-group-item" href="@Url.Action("Logs", new { id = Model.Student.Id })">
+                                <i class="bi bi-list"></i> Logdaten ansehen
+                            </a>
+                            <a class="list-group-item" href="@Url.Action("Subscribe", new { id = Model.Student.Id })">
+                                <i class="bi bi-pencil"></i> In Kurs eintragen
+                            </a>
+                            <a class="list-group-item" href="@Url.Action("Unsubscribe", new { id = Model.Student.Id })">
+                                <i class="bi bi-x"></i> Aus Kurs austragen
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="list-group">
-                    <a class="list-group-item" href="mailto:@Model.User.Email">
-                        <div class="list-group-item-heading">
-                            <h5><i class="fa fa-envelope-o"></i> E-Mail senden</h5>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            @if (ViewBag.UserRight.IsStudentAdmin && Model.Student != null)
-            {
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Studiensemester</h5>
                     </div>
                     <div class="list-group">
-                        <a class="list-group-item" href="@Url.Action("ChangeCurriculum", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Studiengang korrigieren</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                <p>Verändert den aktuellen Studiengang</p>
-                            </div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("ChangeNumber", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Matrikelnummer erfassen</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                <p>Verändert den aktuellen Studiengang</p>
-                            </div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("SwitchCurriculum", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Studiengang wechseln</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                <p>Beendet den aktuellen Studiengang und beginnt einen neuen</p>
-                            </div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("Logs", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Logdaten ansehen</h5>
-                            </div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("Subscribe", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Eintragen</h5>
-                            </div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("Unsubscribe", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Austragen</h5>
-                            </div>
-                        </a>
-                        <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteStudent", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Student löschen</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                Löscht lediglich die Zuordnung zum Studiengang. Studierende muss sich neu festlegen.
-                            </div>
-                        </a>
+                        @foreach (var semesterViewModel in Model.Semester.OrderByDescending(x => x.Semester.StartCourses))
+                        {
+                            <a class="list-group-item  d-flex justify-content-between align-items-start" href="@Url.Action("CoursePlan", new {id = Model.User.Id, semid = semesterViewModel.Semester.Id})">
+                                @semesterViewModel.Semester.Name <span class="badge bg-secondary">@semesterViewModel.Courses.Count LVs</span>
+                            </a>
+                        }
                     </div>
                 </div>
-            }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h5>Studienbuch (Studiengänge)</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var student in Model.Students.OrderByDescending(x => x.FirstSemester.StartCourses))
+                    {
+                        var admins = student.Curriculum.Organiser.Members.Where(x => x.IsStudentAdmin).ToList();
+
+                        var theses = db.Theses.Where(x => x.Student.Id == student.Id).ToList();
+
+                        var isActive = student.LastSemester == null;
+                        var cardBordeer = "";
+                        var cardText = "text-muted";
+                        if (isActive)
+                        {
+                            cardBordeer = "border-primary";
+                            cardText = "";
+                        }
+
+                        <div class="col">
+                            <div class="card @cardBordeer @cardText">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        @student.Curriculum.Name (@student.Curriculum.ShortName)
+                                    </h5>
+                                    <h6 class="card-subtitle mb-3">@student.Curriculum.Organiser.Name (@student.Curriculum.Organiser.ShortName)</h6>
+                                    <div class="row mb-1">
+                                        <div class="col-6">
+                                            <div><i class="bi bi-upc"></i> Zeitraum:</div>
+                                        </div>
+                                        <div class="col-6">
+                                            @if (isActive)
+                                            {
+                                                <div>seit @student.FirstSemester.Name</div>
+                                            }
+                                            else
+                                            {
+                                                <div>von @student.FirstSemester.Name bis @student.LastSemester.Name</div>
+
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="row mb-1">
+                                        <div class="col-6">
+                                            <div><i class="bi bi-gear-wide-connected"></i> Umfang:</div>
+                                        </div>
+                                        @if (student.IsPartTime)
+                                        {
+                                            <div class="col-6">Teilzeit</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-6">Vollzeit</div>
+                                        }
+                                    </div>
+                                    <div class="row mb-1">
+                                        <div class="col-6">
+                                            <div><i class="bi bi-upc"></i> Matrikelnummer:</div>
+                                        </div>
+                                        <div class="col-6"> @student.Number</div>
+                                    </div>
+                                    <div class="row mb-1">
+                                        <div class="col-6">
+                                            <div><i class="bi bi-mortarboard"></i> Abschlussarbeit(en):</div>
+                                        </div>
+                                        @if (theses.Any())
+                                        {
+                                            <div class="col-6">
+                                                <ul>
+                                                    @foreach (var t in theses)
+                                                    {
+                                                        if (t.GradeDate == null)
+                                                        {
+                                                            <li>in Bearbeitung</li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li>abgeschlossen</li>
+                                                        }
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-6">Keine</div>
+                                        }
+                                    </div>
+                                    <div class="row mb-1">
+                                        <div class="col-6">
+                                            <div><i class="bi bi-tags"></i> Kohorten:</div>
+                                        </div>
+                                        <div class="col-6">
+                                            @if (student.LabelSet != null && student.LabelSet.ItemLabels.Any())
+                                            {
+                                                foreach (var label in student.LabelSet.ItemLabels)
+                                                {
+                                                    <div>@label.Name</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div>Keine Angaben</div>
+                                            }
+                                        </div>
+                                    </div>
+                                    @if (ViewBag.UserRight.IsStudentAdmin)
+                                    {
+                                        <hr/>
+                                        if (isActive)
+                                        {
+                                            <a href="@Url.Action("ChangeNumber", new { id = student.Id })" class="btn btn-outline-primary">Matrikelnummer ändern</a>
+                                            <a href="@Url.Action("ChangeLabel", new { id = student.Id })" class="btn btn-outline-primary">Kohorten ändern</a>
+                                            <a href="@Url.Action("SwitchCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang beenden / wechseln</a>
+                                        }
+                                        else
+                                        {
+                                        }
+
+                                        <a href="@Url.Action("ChangeCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang korrigieren</a>
+                                        <a href="@Url.Action("DeleteStudent", new { id = student.Id })" class="btn btn-outline-danger">Studiengang löschen</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-

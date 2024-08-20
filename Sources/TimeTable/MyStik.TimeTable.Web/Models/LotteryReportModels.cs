@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Web.Models
                             sb.AppendLine("</div>");
                             sb.AppendLine("<div class=\"portlet-body\">");
                             
-                                sb.AppendLine("<table class=\"table table-condensed\">");
+                                sb.AppendLine("<table class=\"table table-sm\">");
                                 sb.AppendLine("<thead>");
                                 sb.AppendLine("<tr>");
                                 sb.AppendLine("<th>Name</th>");

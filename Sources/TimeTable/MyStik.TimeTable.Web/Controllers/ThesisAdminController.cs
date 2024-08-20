@@ -726,10 +726,11 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Deny(ThesisDetailModel model)
         {
-            var member = GetMyMembership();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+            var org = thesis.Student.Curriculum.Organiser;
+            var member = GetMyMembership(org.Id);
             var user = GetCurrentUser();
 
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
             thesis.RequestMessage = model.Thesis.RequestMessage;
             thesis.ResponseDate = DateTime.Now;
@@ -751,10 +752,11 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Approve(ThesisDetailModel model)
         {
-            var member = GetMyMembership();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+            var org = thesis.Student.Curriculum.Organiser;
+            var member = GetMyMembership(org.Id);
             var user = GetCurrentUser();
 
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
             thesis.ResponseDate = DateTime.Now;
             thesis.IsPassed = true;
@@ -1124,7 +1126,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Extend(Guid id)
         {
-            var org = GetMyOrganisation();
+            var thesis = Db.Theses.Include(thesis1 => thesis1.Student.Curriculum.Organiser).SingleOrDefault(x => x.Id == id);
+            var org = thesis.Student.Curriculum.Organiser;
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -1135,7 +1138,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var userService = new UserInfoService();
 
             var user = GetCurrentUser();
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             var model = new ThesisExtendViewModel();
             model.Thesis = thesis;
@@ -1186,55 +1188,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = thesis.Id });
         }
 
-        public ActionResult RepairExpiry()
-        {
-            var org = GetMyOrganisation();
-
-            var model = org.Curricula.ToList();
-
-            return View(model);
-        }
-
-        public ActionResult RepairExpiryGo()
-        {
-            var org = GetMyOrganisation();
-            var userRight = GetUserRight(org);
-
-            if (!userRight.IsExamAdmin)
-            {
-                return View("_NoAccess");
-            }
-
-            var userService = new UserInfoService();
-
-            var theses = Db.Theses.Where(x =>
-                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.IssueDate != null) && // angemeldet
-                    x.DeliveryDate == null      // noch nicht abgegeben
-            ).ToList();
-
-            var model = new List<ThesisStateModel>();
-
-            foreach (var thesis in theses)
-            {
-                var period = thesis.Student.Curriculum.ThesisDuration;
-                if (period == 0)
-                {
-                    period = 3;
-                }
-
-                thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period).AddDays(-1);
-            }
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Issued");
-        }
-
 
         public ActionResult AcceptProlongRequest(Guid id)
         {
-            var org = GetMyOrganisation();
+            var thesis = Db.Theses.Include(thesis1 => thesis1.Student.Curriculum.Organiser).SingleOrDefault(x => x.Id == id);
+            var org = thesis.Student.Curriculum.Organiser;
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -1243,8 +1201,6 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             var userService = new UserInfoService();
-
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             thesis.ProlongExaminationBoardAccepted = true;
             Db.SaveChanges();
@@ -1260,7 +1216,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult RejectProlongRequest(Guid id)
         {
-            var org = GetMyOrganisation();
+            var thesis = Db.Theses.Include(thesis1 => thesis1.Student.Curriculum.Organiser).SingleOrDefault(x => x.Id == id);
+            var org = thesis.Student.Curriculum.Organiser;
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -1269,8 +1226,6 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             var userService = new UserInfoService();
-
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             thesis.ProlongExaminationBoardAccepted = false;
             Db.SaveChanges();
@@ -1363,5 +1318,18 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("_ThesisPrintOut", tm);
         }
 
+
+        public ActionResult Advisors(Guid id)
+        {
+            var org = GetOrganisation(id);
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            return View(org);
+        }
     }
 }

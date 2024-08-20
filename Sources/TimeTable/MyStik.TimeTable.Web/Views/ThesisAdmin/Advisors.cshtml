@@ -1,0 +1,106 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
+    ViewBag.Title = "Unternehmen";
+
+
+    var db = new TimeTableDbContext();
+    var org = Model;
+
+    var advisors = db.Advisors.Where(x => x.Thesis.Student.Curriculum.Organiser.Id == org.Id).ToList();
+
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Id})">@Model.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})">Abschlussarbeiten</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Unternehmen</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Betreuende Unternehmen</h4>
+            </div>
+            <table id="tabAdvisors" class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Unternehmen</th>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        <th>Abteilung</th>
+                        <th>E-Mail</th>
+                        <th>Telefon</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var advisor in advisors)
+                    {
+                        <tr id="@advisor.Id">
+                            <td></td>
+                            <td>@advisor.CorporateName</td>
+                            <td>@advisor.PersonLastName</td>
+                            <td>@advisor.PersonFirstName</td>
+                            <td>@advisor.PersonAction</td>
+                            <td>@advisor.PersonEMail</td>
+                            <td>@advisor.PersonPhone</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $.fn.dataTable.moment('DD.MM.YYYY');
+
+
+            var t = $('#tabAdvisors').DataTable({
+                "paging": false,
+                "columnDefs": [{
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                }],
+                "order": [[1, 'asc']]
+            });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
+        });
+    </script>
+}

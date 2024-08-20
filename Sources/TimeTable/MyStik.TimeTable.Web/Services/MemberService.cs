@@ -125,7 +125,7 @@ namespace MyStik.TimeTable.Web.Services
 
         internal List<OrganiserMember> GetFacultyMemberships(string userId)
         {
-            return db.Members.Where(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(userId) && m.Organiser.IsFaculty && !m.Organiser.IsStudent).ToList();
+            return db.Members.Where(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(userId) && !m.Organiser.IsStudent).ToList();
         }
 
         internal OrganiserMember GetOrganiserMember(Guid orgid, string userId)

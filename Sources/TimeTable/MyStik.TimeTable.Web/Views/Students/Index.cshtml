@@ -1,102 +1,133 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model ICollection<StudentStatisticsModel>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.StudentStatisticsModel>
 @{
     ViewBag.Title = "Studierende";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Studierende @ViewBag.MyOrganisation.ShortName</h1>
-                </div>
-            </div>
-        </div>
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item active" aria-current="page">Studierende</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-search"></i> Suche <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
-                    @using (Ajax.BeginForm("Search", "Students", null,
-                        new AjaxOptions
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        @using (Ajax.BeginForm("Search", "Students", null,
+                                    new AjaxOptions
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "StudList",
+                                        LoadingElementId = "loading",
+                                        OnSuccess = "onDataLoaded()"
+                                    },
+                                    new { @class = "form-inline", role = "form" }))
                         {
-                            HttpMethod = "Post",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "StudList",
-                            LoadingElementId = "loading"
-                        },
-                        new {@class = "form-inline", role = "form"}))
-                    {
-                        <div class="form-group">
-                            <input type="text" name="searchString" id="searchString" class="form-control" placeholder="Name / Vorname" />
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Suchen" class="btn btn-primary" />
-                        </div>
-                    }
+                            @Html.AntiForgeryToken()
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-person-vcard"></i></span>
+                                <input type="text" name="searchString" id="searchString" class="form-control" placeholder="Name / Vorname" />
+                                <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Suchen</button>
+                            </div>
+                        }
+
+                    </div>
                 </div>
-                <div class="panel-body">
-                    <div id="StudList"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="StudList"></div>
+                    </div>
                 </div>
             </div>
-
         </div>
-        <div class="col-md-4">
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-list"></i> Listen</h4>
-                    </div>
-                    <div class="list-group">
-                        <a class="list-group-item" href="@Url.Action("StartGroups", new {id = ViewBag.MyOrganisation.Id})">
-                            <div class="list-group-item-heading">
-                                <h5><i class="fa fa-graduation-cap"></i> Studiengangslisten</h5>
-                            </div>
-                            <div class="list-group-item-text">Listen getrennt nach Studiengängen</div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @if (ViewBag.UserRight.IsStudentAdmin)
-        {
 
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-info">
+            <div class="list-group">
+                <div class="list-group-item bg-info">
+                    <div class="list-group-item-heading">
+                        <h5><i class="fa fa-graduation-cap"></i> Studiengangslisten</h5>
                     </div>
-                    <div class="list-group">
-                        <a class="list-group-item" href="@Url.Action("Invitation")">
-                            <div class="list-group-item-heading">
-                                <h5><i class="fa fa-user-plus"></i> Einladungen</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                Einlesen von Listen, Benutzerkonten werden automatisch angelegt
-                            </div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("Invitation", "Cie")">
-                            <div class="list-group-item-heading">
-                                <h5><i class="fa fa-globe"></i> CIE Import</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                Einlesen der Kurswahl von primuss / FK 13
-                            </div>
-                        </a>
+                    <div class="list-group-item-text">Ist ab sofort unter "Studienangebote" auf der Admin-Seite der Fakultät zu finden</div>
+                </div>
+                <div class="list-group-item bg-info">
+                    <div class="list-group-item-heading">
+                        <h5><i class="fa fa-user-plus"></i> Einladungen</h5>
                     </div>
+                    <div class="list-group-item-text">
+                        Einlesen von Listen, Benutzerkonten werden automatisch angelegt
+                    </div>
+                    <div class="list-group-item-text">Ist ab sofort unter "Semesterplanung/[Semester]/Datenimport" auf der Admin-Seite der Fakultät zu finden</div>
+                </div>
+                <div class="list-group-item bg-info">
+                    <div class="list-group-item-heading">
+                        <h5><i class="fa fa-globe"></i> CIE Import</h5>
+                    </div>
+                    <div class="list-group-item-text">
+                        Einlesen der Kurswahl von primuss / FK 13
+                    </div>
+                    <div class="list-group-item-text">Ist ab sofort unter "Semesterplanung/[Semester]/Datenimport" auf der Admin-Seite der Fakultät zu finden</div>
                 </div>
             </div>
-        }
         </div>
     </div>
 </div>
 
 
 
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
+
+    <script>
+        function onDataLoaded() {
+            var t = $('#tabStud').DataTable({
+                language: {
+                    search: 'suchen'
+                },
+                "paging": false,
+                "order": [[1, 'asc']]
+            });
+
+            t.on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    t.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+
+                    var id = $(this).attr('id');
+                    if (id != null) {
+                        window.location.href = "@Url.Action("Details", "Students")/" + id;
+                    }
+                }
+            } );
+
+        }
+
+    </script>
+}
 
 
 

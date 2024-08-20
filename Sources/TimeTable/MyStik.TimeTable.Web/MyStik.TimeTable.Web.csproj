@@ -4799,6 +4799,7 @@
     <Content Include="Views\Print\StudyPlan.cshtml" />
     <Content Include="Views\Emails\AccountDeleteUser.html.cshtml" />
     <Content Include="Views\Emails\AccountDeleteUser.cshtml" />
+    <Content Include="Views\ThesisAdmin\Advisors.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

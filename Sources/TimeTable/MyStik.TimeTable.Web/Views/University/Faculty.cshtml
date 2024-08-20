@@ -50,7 +50,7 @@
                     <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
                     <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
                 }
-                <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
+                <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studienangebote</a>
                 @if (nSem != null)
                 {
                     <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = nSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @nSem.Name</a>

@@ -27,25 +27,25 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index(Guid? id)
         {
-            ViewBag.UserRight = GetUserRight();
-
-            // Liste aller Fachschaften
-            var org = id == null ?  GetMyOrganisation() : GetOrganiser(id.Value);
-
-            ViewBag.MyOrganisation = org;
-
+            var user = GetCurrentUser();
+            
+            var orgs = MemberService.GetFacultyMemberships(user.Id);
+            
+            if (!orgs.Any()) 
+                return View("_NoAccess");
 
             var model = new List<StudentStatisticsModel>();
-
             return View(model);
+
         }
 
 
         public ActionResult StartGroups(Guid? id)
         {
-            ViewBag.UserRight = GetUserRight();
 
             var org = id == null ? GetMyOrganisation(): GetOrganiser(id.Value);
+
+            ViewBag.UserRight = GetUserRight(org);
 
 
             // Liste aller Studiengänge
@@ -217,10 +217,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var user in users)
                 {
+                    var student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
+                        .FirstOrDefault();
+
+                    if (student == null) continue;
+
                     var studModel = new StudentViewModel
                     {
                         User = user,
-                        Student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).FirstOrDefault()
+                        Student = student
                     };
 
 
@@ -562,14 +567,20 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Details(string id)
+        public ActionResult Details(Guid id)
         {
             var model = new StudentDetailViewModel();
-            var user = UserManager.FindById(id);
+
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+            if (student == null)
+                return RedirectToAction("Index");
+
+            var user = UserManager.FindById(student.UserId);
 
             model.User = user;
-            model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).Include(student =>
-                student.Curriculum.Organiser).ToList();
+            model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).Include(x =>
+                x.Curriculum.Organiser).ToList();
             model.Student = model.Students.FirstOrDefault();
 
             var org = model.Student.Curriculum.Organiser;

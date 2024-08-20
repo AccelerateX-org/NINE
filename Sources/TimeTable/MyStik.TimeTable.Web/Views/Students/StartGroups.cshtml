@@ -15,8 +15,8 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <a href="@Url.Action("Index")" class="btn btn-outline-primary">
-                        <i class="bi bi-arrow-left"></i> Zurück
+                    <a href="@Url.Action("Index", "Curricula", new {id = Model.Organiser.Id})" class="btn btn-outline-primary">
+                        <i class="bi bi-chevron-left"></i> Zurück
                     </a>
                 </div>
             </div>
@@ -65,8 +65,16 @@
                         <td>@nOld</td>
                         <td>@curr.Students.Count(x => x.LastSemester != null)</td>
                         <td>@curr.Alumnae.Count</td>
-                        <td><a href="@Url.Action("List", new {id = curr.Curriculum.Id})" class="btn btn-outline-primary">Adressliste</a></td>
-                        <td><a href="@Url.Action("Admin", new {id = curr.Curriculum.Id})" class="btn btn-outline-primary">Verwaltung</a></td>
+                        @if (ViewBag.UserRight.IsStudentAdmin)
+                        {
+                            <td><a href="@Url.Action("List", new {id = curr.Curriculum.Id})" class="btn btn-outline-primary">Adressliste</a></td>
+                            <td><a href="@Url.Action("Admin", new {id = curr.Curriculum.Id})" class="btn btn-outline-primary">Verwaltung</a></td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                        }
                     </tr>
                 }
                 </tbody>

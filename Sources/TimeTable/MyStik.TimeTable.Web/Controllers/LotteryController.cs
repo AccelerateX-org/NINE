@@ -814,7 +814,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var userService = new UserInfoService();
             var sb = new StringBuilder();
 
-            sb.AppendLine("<table class=\"table table-condensed\">");
+            sb.AppendLine("<table class=\"table table-sm\">");
             sb.AppendLine("<thead>");
             sb.AppendLine("<tr>");
             sb.AppendLine("<th>Datum</th>");

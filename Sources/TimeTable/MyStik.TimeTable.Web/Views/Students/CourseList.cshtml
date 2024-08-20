@@ -1,9 +1,12 @@
 ﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
 @model ICollection<MyStik.TimeTable.Data.Student>
 @{
     ViewBag.Title = "CourseList";
 
     var db = new TimeTableDbContext();
+
+    var userService = new UserInfoService();
 }
 
 <div class="row">
@@ -23,8 +26,16 @@
                 <tbody>
                 @foreach (var student in Model)
                 {
+                    var user = userService.GetUser(student.UserId);
                     <tr>
-                        <td>@student.Id</td>
+                        @if (user != null)
+                        {
+                            <td>@user.FullName</td>
+                        }
+                        else
+                        {
+                            <td>Kein Benutzerkonto</td>
+                        }
                         <td>@db.Subscriptions.Count(x => x.UserId.Equals(student.UserId))</td>
                     </tr>
                 }

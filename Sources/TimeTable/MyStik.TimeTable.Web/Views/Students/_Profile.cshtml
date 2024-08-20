@@ -2,8 +2,7 @@
 @model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
 
 
-<div class="panel panel-default">
-    <table class="table table-condensed">
+    <table id="tabStud" class="table table-sm table-hover">
         <thead>
         <tr>
             <th></th>
@@ -18,7 +17,7 @@
         <tbody>
         @foreach (var user in Model)
         {
-            <tr>
+            <tr id="@user.Student.Id">
                 @if (user.Student != null && user.Student.Curriculum != null)
                 {
                     <td>@Html.FacultyLabel(user.Student.Curriculum.Organiser)</td>
@@ -28,9 +27,9 @@
                     <td></td>
                     
                 }
-                <td>
-                    <a href="@Url.Action("Details", "Students", new {id = user.User.Id})">@user.User.LastName</a>
-                </td>
+            <td>
+                @user.User.LastName
+            </td>
                 <td>@user.User.FirstName</td>
                 @if (user.Student != null)
                 {
@@ -52,7 +51,7 @@
                 }
                 <td>@user.CurrentCourses.Count</td>
                 <td>
-                    <a href="mailto:@user.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                    <a href="mailto:@user.User.Email" class="btn btn-outline-primary btn-xs"><i class="bi bi-envelope"></i> E-Mail senden</a>
                 </td>
 
             </tr>
@@ -60,4 +59,3 @@
         </tbody>
 
     </table>
-</div>

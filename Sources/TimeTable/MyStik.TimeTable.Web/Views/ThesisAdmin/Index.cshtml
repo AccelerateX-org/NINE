@@ -9,10 +9,16 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Id})">@Model.ShortName</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Abschlussarbeiten</li>
             </ol>
         </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
         @if (ViewBag.UserRight.IsExamAdmin)
         {
             <div class="row">
@@ -107,6 +113,12 @@
                                 <h5 class="mb-1">Auswertungen</h5>
                             </div>
                             <p class="mb-1">Statistiken</p>
+                        </a>
+                        <a href="@Url.Action("Advisors", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Unternehmen</h5>
+                            </div>
+                            <p class="mb-1">Liste aller betreuenden Unternehmen</p>
                         </a>
                     </div>
                 </div>

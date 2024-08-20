@@ -100,6 +100,32 @@
                         }
                     </div>
                 </div>
+            @if (ViewBag.UserRight.IsStudentAdmin)
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Personen und Kursbelegungen</h5>
+                        </div>
+                        <div class="list-group">
+                            <a class="list-group-item" href="@Url.Action("Invitation", "Students", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })">
+                                <div class="list-group-item-heading">
+                                    <h5><i class="fa fa-user-plus"></i> Einladungen</h5>
+                                </div>
+                                <div class="list-group-item-text">
+                                    Einlesen von Listen, Benutzerkonten werden automatisch angelegt
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="@Url.Action("Invitation", "Cie", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })">
+                                <div class="list-group-item-heading">
+                                    <h5><i class="fa fa-globe"></i> CIE Import</h5>
+                                </div>
+                                <div class="list-group-item-text">
+                                    Einlesen der Kurswahl von primuss / FK 13
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

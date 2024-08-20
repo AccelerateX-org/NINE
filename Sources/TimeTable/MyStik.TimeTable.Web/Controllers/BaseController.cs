@@ -353,6 +353,13 @@ namespace MyStik.TimeTable.Web.Controllers
              return members.FirstOrDefault();
          }
 
+        protected List<OrganiserMember> GetMyMemberships()
+        {
+            var user = GetCurrentUser();
+            var members = MemberService.GetMemberships(user.Id).ToList();
+            return members;
+        }
+
 
         protected ICollection<Alumnus> GetMyAlumni()
         {
