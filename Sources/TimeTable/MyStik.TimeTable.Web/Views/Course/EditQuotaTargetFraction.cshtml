@@ -6,7 +6,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Neues Platzkontingent anlegen</h4>
+                <h4>Zielgruppe für Platzkontingent festlegen</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -21,33 +21,33 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-4">
-                        @*
-            <div class="row">
-                <div class="col-4">Bezeichnung</div>
-                <div class="col-8">
-                    <input type="text" class="form-control" id="name" placeholder="optional: Bezeichnung">
-                </div>
-            </div>
-                        *@
                         <div class="row">
                             <h5>Kapazität</h5>
                         </div>
                         <div class="row">
                             <div class="col-4">Anzahl Plätze</div>
                             <div class="col-8">
-                                <div class="input-group">
-                                    <div class="input-group-text">
-                                        <input class="form-check-input mt-0" type="radio" id="optCapaUnrestricted" name="optCapa" value="0" aria-label="Radio button for following text input" checked>
-                                    </div>
-                                    <input type="text" class="form-control" aria-label="Text input with radio button" value="unbegrenzt" disabled>
-                                </div>
-                                <div class="input-group">
-                                    <div class="input-group-text">
-                                        <input class="form-check-input mt-0" type="radio" id="optCapaRestricted" name="optCapa" value="1" aria-label="Radio button for following text input">
-                                    </div>
-                                    <input type="text" class="form-control" id="capa" aria-label="Text input with radio button">
-                                    <div> Plätze</div>
-                                </div>
+                                @if (Model.Quota.MaxCapacity == int.MaxValue)
+                                {
+                                    <div>unbegrenzt</div>
+                                }
+                                else
+                                {
+                                    <div>@Model.Quota.MaxCapacity</div>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Aktuelle Zielgruppe</div>
+                            <div class="col-8">
+                                @if (Model.Quota.Curriculum != null)
+                                {
+                                    <div>@Model.Quota.Curriculum.ShortName</div>
+                                }
+                                else
+                                {
+                                    <div>alle Studiengänge</div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -143,22 +143,16 @@
 
         function saveChanges() {
             // Zielkatalog
-            var courseId = "@Model.Course.Id.ToString()";
+            var quotaId = "@Model.Quota.Id.ToString()";
             var currId = $("#selectCurr").val();
-            var capa = -1; // unbegrenzt
-            var optCapa = $("input[type='radio'][name='optCapa']:checked").val();
-            if (optCapa == 1) {
-                capa = $("#capa").val();
-            }
 
             $.ajax(
                 {
                     type: "POST",
-                    url: '@Url.Action("AddQuota")',
+                    url: '@Url.Action("EditQuotaTarget")',
                     data: {
-                        courseId: courseId,
+                        quotaId: quotaId,
                         currId: currId,
-                        capa: capa
                     },
                     success: function(data, success, xhr) {
                         window.location.replace("@Url.Action("AdminNewRules", new { id = Model.Course.Id })");

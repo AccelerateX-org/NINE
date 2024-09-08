@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -3617,8 +3618,24 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult DeleteQuota(Guid id)
         {
-            var quota = Db.SeatQuotas.FirstOrDefault(x => x.Id == id);
+            var quota = Db.SeatQuotas.Include(seatQuota =>
+                    seatQuota.Fractions.Select(seatQuotaFraction => seatQuotaFraction.ItemLabelSet))
+                .Include(seatQuota1 => seatQuota1.ItemLabelSet).FirstOrDefault(x => x.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
+
+            foreach (var fraction in quota.Fractions.ToList())
+            {
+                if (fraction.ItemLabelSet != null)
+                {
+                    Db.ItemLabelSets.Remove(fraction.ItemLabelSet);
+                }
+                Db.SeatQuotaFractions.Remove(fraction);
+            }
+
+            if (quota.ItemLabelSet != null)
+            {
+                Db.ItemLabelSets.Remove(quota.ItemLabelSet);
+            }
 
             Db.SeatQuotas.Remove(quota);
             Db.SaveChanges();
@@ -4076,13 +4093,33 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult EditQuota(Guid id)
+        public ActionResult EditQuotaTarget(Guid id)
         {
+            var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
 
+            var model = new CourseLabelViewModel()
+            {
+                Quota = quota,
+                Course = course,
+                Organisers = Db.Organisers.Where(x => !x.IsStudent && x.IsFaculty).OrderBy(x => x.ShortName).ToList()
+            };
 
-            return View();
+            return View(model);
         }
 
+        [HttpPost]
+        public ActionResult EditQuotaTarget(Guid quotaId, Guid currid)
+        {
+            var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == quotaId);
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currid);
+
+            quota.Curriculum = curr;
+            Db.SaveChanges();
+
+            return null;
+        }
 
         public ActionResult Copy(Guid id)
         {
@@ -4092,5 +4129,130 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(course);
         }
 
+        public ActionResult DeleteQuotaTarget(Guid id)
+        {
+            var quota = Db.SeatQuotas.Include(curr => curr.Curriculum).Include(seatQuota => seatQuota.ItemLabelSet).SingleOrDefault(x => x.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
+
+            quota.Curriculum = null;
+            quota.ItemLabelSet.ItemLabels.Clear();
+            Db.SaveChanges();
+
+            return RedirectToAction("AdminNewRules", new {id = course.Id});
+        }
+
+
+
+
+        [HttpPost]
+        public PartialViewResult TestQuota(Guid quotaId, string test)
+        {
+            var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == quotaId);
+
+            var currName = string.Empty;
+            var labelsName = string.Empty;
+
+
+            if (test.Contains(':'))
+            {
+                var words = test.Split(':');
+                currName = words[0].Trim();
+                labelsName = words[1].Trim();
+            }
+            else
+            {
+                currName = test;
+            }
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.Equals(currName));
+            var labels = new List<ItemLabel>();
+
+            var quotaService = new QuotaService();
+
+            var response = quotaService.IsAvailable(quota, curr, labels);
+
+            return PartialView("_QuotaTestResult", response);
+        }
+
+        public ActionResult AddQuotaTargetFraction(Guid id)
+        {
+            var quota = Db.SeatQuotas.Include(curr => curr.Curriculum).Include(seatQuota =>
+                seatQuota.ItemLabelSet.ItemLabels).SingleOrDefault(x => x.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
+
+            // ggf. jetzt das Modell umbauen
+            if (quota.Curriculum != null || (quota.ItemLabelSet != null && !quota.ItemLabelSet.ItemLabels.Any()))
+            {
+                var fraction = new SeatQuotaFraction
+                {
+                    Quota = quota,
+                    Curriculum = quota.Curriculum,
+                    ItemLabelSet = new ItemLabelSet()
+                };
+
+                var labels = new List<ItemLabel>();
+                if (quota.ItemLabelSet != null && quota.ItemLabelSet.ItemLabels.Any())
+                {
+                    labels.AddRange(quota.ItemLabelSet.ItemLabels.ToList());
+                    fraction.ItemLabelSet.ItemLabels = labels;
+                }
+
+                quota.Fractions.Add(fraction);
+
+                quota.Curriculum = null;
+                quota.ItemLabelSet?.ItemLabels.Clear();
+
+                Db.SeatQuotaFractions.Add(fraction);
+                Db.ItemLabelSets.Add(fraction.ItemLabelSet);
+                Db.SaveChanges();
+            }
+
+            var model = new CourseLabelViewModel()
+            {
+                Quota = quota,
+                Course = course,
+                Organisers = Db.Organisers.Where(x => !x.IsStudent && x.IsFaculty).OrderBy(x => x.ShortName).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddQuotaTargetFraction(Guid quotaId, Guid currid)
+        {
+            var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == quotaId);
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currid);
+
+            var fraction = new SeatQuotaFraction
+            {
+                Quota = quota,
+                Curriculum = curr,
+                ItemLabelSet = new ItemLabelSet()
+            };
+
+            quota.Fractions.Add(fraction);
+
+            Db.SeatQuotaFractions.Add(fraction);
+            Db.ItemLabelSets.Add(fraction.ItemLabelSet);
+            Db.SaveChanges();
+
+            return null;
+        }
+
+        public ActionResult DeleteQuotaTargetFraction(Guid id)
+        {
+            var fraction = Db.SeatQuotaFractions.Include(seatQuotaFraction => seatQuotaFraction.ItemLabelSet).Include(seatQuotaFraction1 =>
+                seatQuotaFraction1.Quota.Occurrence).SingleOrDefault(x => x.Id == id);
+            var quota = fraction.Quota;
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
+
+            fraction.ItemLabelSet.ItemLabels.Clear();
+            Db.ItemLabelSets.Remove(fraction.ItemLabelSet);
+            Db.SeatQuotaFractions.Remove(fraction);
+            Db.SaveChanges();
+
+            return RedirectToAction("AdminNewRules", new { id = course.Id });
+        }
     }
 }

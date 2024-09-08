@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Activities.Statements
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.DataServices.Booking
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.CourseDetailViewModel
@@ -48,140 +49,197 @@
     </nav>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Einfache Platzkontingente</h5>
-                </div>
                 <div class="list-group">
                     <div class="list-group-item">
                         <a class="btn btn-outline-primary" href="@Url.Action("AddQuota", new { id = Model.Course.Id })"><i class="bi bi-plus"></i> Platzkontingent hinzufügen</a>
                     </div>
                 </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Studiengang</th>
-                        <th>Plätze</th>
-                        <th>Werte < 0 => unbegrenzt</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                <div class="card-body">
                     @foreach (var quota in Model.Course.Occurrence.SeatQuotas)
                     {
-                        <tr>
-                            @if (quota.Curriculum != null)
-                            {
-                                <td>@quota.Curriculum.ShortName</td>
-                            }
-                            else
-                            {
-                                <td>Offen für alle Studiengänge</td>
-                            }
-                            @if (quota.MaxCapacity == int.MaxValue)
-                            {
-                                <td>unbegrenzt</td>
-                            }
-                            else
-                            {
-                                <td>@quota.MaxCapacity</td>
-                            }
-                            <td>
-                                @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
-                                {
-                                    <input name="quotaId" hidden value="@quota.Id"/>
-                                    <input name="courseId" hidden value="@Model.Course.Id"/>
-                                    <div class="col-2">
-                                        <input type="text" name="delta" id="delta" class="form-control" placeholder="">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">Anzahl Plätze (Kapazität)</div>
+                                            <div class="col-md-2">
+                                                @if (quota.MaxCapacity == int.MaxValue)
+                                                {
+                                                    <div>unbegrenzt</div>
+                                                }
+                                                else
+                                                {
+                                                    <div>@quota.MaxCapacity</div>
+                                                }
+                                            </div>
+                                            <div class="col-md-6">
+                                                @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
+                                                {
+                                                    <input name="quotaId" hidden value="@quota.Id" />
+                                                    <input name="courseId" hidden value="@Model.Course.Id" />
+                                                    <div class="input-group mb-1">
+                                                        <input type="text" name="delta" id="delta" class="form-control" placeholder="Neuer Wert (für unbegrenzt Wert < 0 angeben)">
+                                                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-123"></i> Wert übernehmen</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-md-4">Bereitgestellt für Studierende in folgenden Studiengängen (Zielgruppen)</div>
+                                            <div class="col-md-8">
+                                                @if (quota.Fractions.Any())
+                                                {
+                                                    foreach (var quotaFraction in quota.Fractions)
+                                                    {
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                @if (quotaFraction.Curriculum != null)
+                                                                {
+                                                                    <div>@quotaFraction.Curriculum.ShortName</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div>Offen für alle Studiengänge</div>
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <div class="btn-group">
+                                                                    @if (quotaFraction.Curriculum != null)
+                                                                    {
+                                                                        <a class="btn btn-outline-primary" href="@Url.Action("EditQuotaTargetFraction", new { id = quotaFraction.Id })">
+                                                                            <i class="bi bi-gear"></i> Zielgruppe ändern
+                                                                        </a>
+                                                                        <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuotaTargetFraction", new { id = quotaFraction.Id })">
+                                                                            <i class="bi bi-trash"></i> Zielgruppe löschen
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a class="btn btn-outline-primary" href="@Url.Action("EditQuotaTargetFraction", new { id = quotaFraction.Id })">
+                                                                            <i class="bi bi-gear"></i> Zielgruppe festlegen
+                                                                        </a>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            @if (quota.Curriculum != null)
+                                                            {
+                                                                <div>@quota.Curriculum.ShortName</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div>Offen für alle Studiengänge</div>
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <div class="btn-group">
+                                                                @if (quota.Curriculum != null)
+                                                                {
+                                                                    <a class="btn btn-outline-primary" href="@Url.Action("EditQuotaTarget", new { id = quota.Id })">
+                                                                        <i class="bi bi-gear"></i> Zielgruppe ändern
+                                                                    </a>
+                                                                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuotaTarget", new { id = quota.Id })">
+                                                                        <i class="bi bi-trash"></i> Zielgruppe löschen
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a class="btn btn-outline-primary" href="@Url.Action("EditQuotaTarget", new { id = quota.Id })">
+                                                                        <i class="bi bi-gear"></i> Zielgruppe festlegen
+                                                                    </a>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="btn-group">
+                                                    <a class="btn btn-outline-primary" href="@Url.Action("AddQuotaTargetFraction", new { id = quota.Id })">
+                                                        <i class="bi bi-plus"></i> Zielgruppe hinzufügen
+                                                    </a>
+                                                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuota", new { id = quota.Id })">
+                                                        <i class="bi bi-trash"></i> Platzkontingent löschen
+                                                    </a>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="input-group mb-3">
+                                                            <input id="txtTest" type="text" class="form-control" placeholder="[Studiengang]:[Kohorte]" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                                            <a href="javascript:onTest('@quota.Id')" class="btn btn-outline-secondary" type="button" id="button-addon2">Test</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div id="testResponse">
+                                                            <div class="text-secondary">
+                                                                <i class="bi bi-question"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="alert alert-info">
+                                                            Hier kann getestet werden, ob sich Studierende einer bestimmten Zielgruppe eintragen können. Folgende Varianten sind möglich:
+                                                            <ul>
+                                                                <li>Nur Studiengang, z.B. WI, BABW</li>
+                                                                <li>Hochschulweite Kohorte (d.h. alle Studiengänge), z.B. HM:CIE</li>
+                                                                <li>Mehrere Kohorten in einem Studiengang, z.B. MBE:ING/NW,CIE => Studierender eines Zugangstyps UND Incomer</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-outline-primary">Überschreiben</button>
-                                    </div>
-                                }
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteQuota", new { id = quota.Id })">
-                                        <i class="bi bi-trash"></i> Löschen
-                                    </a>
                                 </div>
-                            </td>
-                        </tr>
-
+                            </div>
+                        </div>
                     }
-                    </tbody>
-                </table>
-            </div>
                 </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Zusammengesetzte Platzkontingente</h5>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <div>Folgende Möglichkeiten sollen hier entstehen</div>
-                        <ul>
-                            <li>Ein Platzkontingent steht insgesamt für Studierender mehrerer Studiengänge zur Verfügung, z.B. 20 Plätze für Studierende aus A oder B. Keine Kontrolle über die Zusammensetzung.</li>
-                            <li>Angabe Kohorten. Beispiel: 15 Plätze für A (ohne Angabe Kohorte), 3 Plätze für A mit Kohorte CIE</li>
-                        </ul>
-                    </div>
-                </div>
-                @*
-        <div class="list-group">
-            <div class="list-group-item">
-                <a class="btn btn-outline-primary" href="@Url.Action("AddQuotaComplex", new { id = Model.Course.Id })"><i class="bi bi-plus"></i> Platzkontingent hinzufügen</a>
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div><strong>Basiskontingent</strong></div>
-                    <span>20 Plätze</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div>Studiengänge / Kohorten</div>
-                    <div>
-                        <span>AU</span>, <span>LM</span>, <span>WI</span>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a href="#" class="btn btn-outline-primary">Einstellungen</a>
-                    <a href="#" class="btn btn-outline-primary">Zusammensetzung</a>
-                </div>
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div><strong>Zusatzplätze international</strong></div>
-                    <span>4 Plätze</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div>Studiengänge / Kohorten</div>
-                    <div>
-                        <span>Studiengang beliebig</span> <span class="badge bg-secondary">CIE</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div><strong>Wiederholer</strong></div>
-                    <span>7 Plätze</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div>Studiengänge / Kohorten</div>
-                    <div>
-                        <span>AU</span> <span class="badge bg-secondary">2B</span>, <span>LM</span> <span class="badge bg-secondary">3</span>, <span>WI</span> <span class="badge bg-secondary">5 INF</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-                *@
             </div>
         </div>
     </div>
 </div>
+
+
+@section scripts
+{
+    <script>
+        function onTest(quotaId) {
+            var str = $("#txtTest").val();
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("TestQuota")',
+                    data: {
+                        quotaId: quotaId,
+                        test: str
+                    },
+                    success: function(data, success, xhr) {
+                        $("#testResponse").html(data);
+                        $("#loading").hide();
+                    }
+                });
+        }
+
+    </script>
+}

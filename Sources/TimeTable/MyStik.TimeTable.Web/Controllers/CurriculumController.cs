@@ -525,13 +525,20 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
-            var currs = org.Curricula.Where(x => !x.IsDeprecated).ToList();
+            if (org != null)
+            {
+                var currs = org.Curricula.Where(x => !x.IsDeprecated).ToList();
 
-            var model = currs
-                .OrderBy(g => g.ShortName)
-                .ToList();
+                var model = currs
+                    .OrderBy(g => g.ShortName)
+                    .ToList();
 
-            return PartialView("_CurriculumSelectList", model);
+                return PartialView("_CurriculumSelectList", model);
+            }
+            else
+            {
+                return PartialView("_CurriculumAllSelectList");
+            }
         }
         
         [HttpPost]
@@ -2590,25 +2597,17 @@ namespace MyStik.TimeTable.Web.Controllers
             return null;
         }
 
-        public ActionResult DeleteAccredition(Guid id)
+        public ActionResult DeleteAccredition(Guid moduleId, Guid slotId)
         {
-            var accr = Db.SubjectAccreditations.SingleOrDefault(x => x.Id == id);
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
 
-            var slot = accr.Slot;
+            var accrs = Db.SubjectAccreditations.Where(x => x.Slot.Id == slotId && x.Subject.Module.Id == moduleId).ToList();
 
-            /*
-            foreach (var exam in accr.ExaminationDescriptions.ToList())
+            foreach (var accr in accrs)
             {
-                Db.ExaminationDescriptions.Remove(exam);
+                Db.SubjectAccreditations.Remove(accr);
             }
-
-            foreach (var teaching in accr.TeachingDescriptions.ToList())
-            {
-                Db.TeachingDescriptions.Remove(teaching);
-            }
-            */
-
-            Db.SubjectAccreditations.Remove(accr);
 
             Db.SaveChanges();
 

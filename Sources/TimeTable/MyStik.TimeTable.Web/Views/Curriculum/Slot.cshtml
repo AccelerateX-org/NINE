@@ -140,7 +140,7 @@
                                     @if (ViewBag.UserRight.IsCurriculumAdmin)
                                     {
                                         <td>
-                                            <a class="btn btn-outline-danger" href="@Url.Action("DeleteAccredition", new { id = module.Id })">
+                                            <a class="btn btn-outline-danger" href="@Url.Action("DeleteAccredition", new { moduleId = module.Id, slotId = Model.Id })">
                                                 <i class="bi bi-x"></i> Entfernen
                                             </a>
                                         </td>

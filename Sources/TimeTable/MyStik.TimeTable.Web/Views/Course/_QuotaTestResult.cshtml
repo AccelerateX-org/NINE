@@ -1,0 +1,11 @@
+﻿@model MyStik.TimeTable.Web.Services.QuotaCheckResponse
+
+
+@if (Model.Success)
+{
+    <div class="text-success"><i class="bi bi-check"></i> Eintragung möglich</div>
+}
+else
+{
+    <div class="text-danger"><i class="bi bi-x"></i> Keine Eintragung möglich. Grund: @Model.Remark</div>
+}

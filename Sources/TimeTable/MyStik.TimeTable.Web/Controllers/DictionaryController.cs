@@ -609,7 +609,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (orgId != null)
                 {
                     org = GetOrganiser(orgId.Value);
-                    //var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId.Value);
+                    if (currId != null)
+                    {
+                        curr = Db.Curricula.SingleOrDefault(x => x.Id == currId.Value);
+                    }
 
                     courses.AddRange(Db.Activities.OfType<Course>()
                         .Where(x =>

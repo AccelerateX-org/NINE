@@ -15,9 +15,9 @@ namespace MyStik.TimeTable.Web
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            //filters.Add(new AuthorizeAttribute());
+            filters.Add(new AuthorizeAttribute());
 
-            filters.Add(new OIDCAuthorizeAttribute());
+            //filters.Add(new OIDCAuthorizeAttribute());
 
 #if !DEBUG
             filters.Add(new RequireHttpsAttribute());
