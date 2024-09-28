@@ -28,7 +28,6 @@
             {
                 <a class="btn btn-sm btn-outline-secondary disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
             }
-            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.CurrentSemester.Semester.Id })"><i class="bi bi-calendar-week"></i></a>
             @if (Model.NextSemester != null)
             {
                 <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.NextSemester.Id')"><i class="bi bi-chevron-double-right"></i></a>
@@ -38,7 +37,14 @@
                 <a class="btn btn-sm btn-outline-secondary disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
             }
         </div>
+        <div class="btn-group">
+            <a class="btn btn-sm btn-outline-primary" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.CurrentSemester.Semester.Id })">
+                <i class="bi bi-person-workspace"></i> mein <strong>@Model.CurrentSemester.Semester.Name</strong>
+            </a>
+        </div>
+        @*
         <h5 class="card-title"><strong>@Model.CurrentSemester.Semester.Name</strong></h5>
+        *@
         <div class="dropdown">
             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-list"></i> Verzeichnisse

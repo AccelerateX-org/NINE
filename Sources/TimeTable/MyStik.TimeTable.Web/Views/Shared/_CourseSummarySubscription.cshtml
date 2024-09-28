@@ -1,14 +1,6 @@
 ﻿@model MyStik.TimeTable.Web.Models.CourseSummaryModel
 
 
-@if (Model.Lottery != null)
-{
-    <div class="list-group-item list-group-item-info">
-        <i class="bi bi-shuffle"></i> Lehrveranstaltung gehört zum Wahlverfahren 
-            <a href="@Url.Action("Details", "Lottery", new {id=Model.Lottery.Id})">@Model.Lottery.Name</a>
-    </div>
-}
-
 @if (Model.Course.Occurrence.IsAvailable)
  {
      <div class="list-group-item list-group-item-success">

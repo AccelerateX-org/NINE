@@ -197,7 +197,10 @@
                                                         }
                                                         else
                                                         {
-                                                            <li>Offene Liste</li>
+                                                            if (!quota.IsLost)
+                                                            {
+                                                                <li>@quota.Name</li>
+                                                            }
                                                         }
                                                     }
                                                 </ul>

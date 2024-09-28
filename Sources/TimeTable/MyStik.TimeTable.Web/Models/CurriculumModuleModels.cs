@@ -44,7 +44,6 @@ namespace MyStik.TimeTable.Web.Models
         public Guid TeachingFormatId { get; set; }
 
         public Guid ExamFormatId { get; set; }
-
     }
 
 

@@ -149,18 +149,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult EditGeneral(Guid id)
         {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            var module = Db.CurriculumModules.Include(curriculumModule => curriculumModule.Catalog.Organiser).SingleOrDefault(x => x.Id == id);
 
-            var model = new CurriculumModuleCreateModel();
-            model.moduleId = module.Id;
-            model.catalogId = module.Catalog.Id;
-            model.Name = module.Name;
-            model.NameEn = module.NameEn;
-            model.Tag = module.Tag;
-            model.Prequisites = module.Prerequisites;
-            model.Applicableness = module.Applicableness;
+            var model = new CurriculumModuleCreateModel
+            {
+                moduleId = module.Id,
+                catalogId = module.Catalog.Id,
+                Name = module.Name,
+                NameEn = module.NameEn,
+                Tag = module.Tag,
+                Prequisites = module.Prerequisites,
+                Applicableness = module.Applicableness,
+            };
 
-
+            ViewBag.Module = module;
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
 
             return View(model);

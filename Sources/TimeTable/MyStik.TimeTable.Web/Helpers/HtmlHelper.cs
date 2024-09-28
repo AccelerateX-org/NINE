@@ -593,6 +593,43 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
+        public static MvcHtmlString LabelLinkList(this HtmlHelper htmlHelper, Course course)
+        {
+            if (course == null || course.LabelSet == null)
+                return new MvcHtmlString(string.Empty);
+
+            var sb = new StringBuilder();
+            var db = new TimeTableDbContext();
+
+            var sem = course.Semester;
+
+            foreach (var label in course.LabelSet.ItemLabels)
+            {
+                sb.Append("<div>");
+
+                var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+
+
+                if (curr != null)
+                {
+                    var linkName = $"{curr.ShortName}:{label.Name}";
+                    sb.Append(htmlHelper.ActionLink(linkName, "Label", "Dictionary", new { semId = sem.Id, orgId = curr.Organiser.Id, currId = curr.Id, labelId = label.Id}, null));
+                }
+
+                var inst = db.Institutions.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+                if (inst != null)
+                {
+                    //sb.AppendFormat("{0}:{1}", inst.Tag, label.Name);
+                    //sb.Append(htmlHelper.ActionLink(room.Number, "Details", "Room", new { id = room.Id }, null));
+                }
+
+                sb.Append("</div>");
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
 
 
         public static MvcHtmlString FacultyList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> members)

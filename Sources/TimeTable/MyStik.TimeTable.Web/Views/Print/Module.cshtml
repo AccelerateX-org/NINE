@@ -9,6 +9,8 @@
         <div class="col-12">
             @if (Model != null)
             {
+                <h1>Hochschule München</h1>
+                <h2>@Model.Module.Catalog.Organiser.Name (@Model.Module.Catalog.Organiser.ShortName)</h2>
                 <h3 class="card-title">Modulbeschreibung</h3>
                 <p class="card-subtitle">Stand: @Model.Semester.Name</p>
                 @Html.Partial("_PrintCurriculumModule", Model)

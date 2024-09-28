@@ -42,12 +42,80 @@
                         <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
                     </div>
                 </div>
-                <div class="list-group-item">
-                    <h4>Legende</h4>
-                    <p>Angaben bei den Studiengängen ist jeweils die Anzahl an noch verfügbaren Plätzen (positive Werte).</p>
-                </div>
-
             </div>
+            
+            <table id="tabPots" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Lehrveranstaltung</th>
+                        <th>Zielgruppe</th>
+                        <th>Kapazität</th>
+                        <th>Belegte Plätze</th>
+                        <th>Verfügbare Plätze</th>
+                        <th>Warteliste</th>
+                        <tH>Status</tH>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.Courses)
+                    {
+                        var pots = Model.LotPots.Where(x => x.Course.Id == course.Id).ToList();
+
+                        foreach (var pot in pots)
+                        {
+                            <tr>
+                                <td>
+                                    <div>@course.ShortName</div>
+                                    <div>
+                                        <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
+                                    </div>
+                                </td>
+                                <td>@pot.BookingList.Name</td>
+                                @if (pot.Capacity == int.MaxValue)
+                                {
+                                    <td><i class="bi bi-infinity"></i></td>
+                                }
+                                else
+                                {
+                                    <td>@pot.Capacity</td>
+                                }
+                                <td>
+                                    @pot.BookingList.Participients.Count
+                                </td>
+                                @if (pot.SeatsAvailable == int.MaxValue)
+                                {
+                                    <td><i class="bi bi-infinity"></i></td>
+                                }
+                                else
+                                {
+                                    <td>@pot.SeatsAvailable</td>
+                                }
+                                <td>@pot.BookingList.WaitingList.Count</td>
+                                @if (pot.SeatsAvailable == int.MaxValue)
+                                {
+                                    <td>@string.Format("{0:0%}", 0.0)</td>
+                                }
+                                else
+                                {
+                                    if (pot.SeatsAvailable == 0)
+                                    {
+                                        <td><i class="bi bi-infinity"></i></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@string.Format("{0:0%}", (pot.BookingList.WaitingList.Count / (double)(pot.SeatsAvailable)))</td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            
+        @*
+            <hr/>
+           
+
             <table id="tabPots" class="table">
                 @{
                     var nCapa = Model.Curricula.Count() + 1;
@@ -81,8 +149,8 @@
                     var wl = course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
                     var total = tn + wl;
 
-                    var openPot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && !x.BookingList.Curricula.Any() && !x.BookingList.IsLost);
-                    var lostPot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && !x.BookingList.Curricula.Any() && x.BookingList.IsLost);
+                    var openPot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && x.BookingList.SeatQuota == null && !x.BookingList.IsLost);
+                    var lostPot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && x.BookingList.SeatQuota == null && x.BookingList.IsLost);
 
                     <tr>
                         <td>
@@ -93,7 +161,10 @@
                         </td>
                         @foreach (var c in Model.Curricula)
                         {
-                            var pot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && x.BookingList.Curricula.Contains(c));
+
+                            var pot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && 
+                                                                        ((x.BookingList.SeatQuota.Curriculum != null && x.BookingList.SeatQuota.Curriculum.Id == c.Id) ||
+                                                                         (x.BookingList.SeatQuota.Fractions.Any(f => f.Curriculum != null && f.Curriculum.Id == c.Id))));
 
                             if (pot != null)
                             {
@@ -177,6 +248,7 @@
                 }
                 </tbody>
             </table>
+            *@
         </div>
     </div>
 </div>

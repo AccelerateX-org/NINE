@@ -14,6 +14,7 @@ using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.Booking;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -44,6 +45,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 var user = GetCurrentUser();
                 model = courseService.GetCourseSelectModel(id, user.Id);
             }
+
+
 
             courseService.RepairDates(model.Summary.Course);
 
@@ -3566,7 +3569,8 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult AddQuota(Guid courseId, Guid currid, int? capa)
         {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var course = Db.Activities.OfType<Course>().Include(activity =>
+                activity.Occurrence.SeatQuotas.Select(seatQuota => seatQuota.Curriculum)).SingleOrDefault(c => c.Id == courseId);
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currid);
 
             int cpacity = (!capa.HasValue || capa.Value == -1) ? int.MaxValue : capa.Value;
@@ -3574,7 +3578,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (curr != null)
             {
                 // Aktuell keine doppelten zulassen
-                if (course.Occurrence.SeatQuotas.Any(x => x.Curriculum.Id == curr.Id))
+                if (course.Occurrence.SeatQuotas.Any(x => x.Curriculum != null && x.Curriculum.Id == curr.Id))
                 {
                     return null;
                 }
@@ -4177,11 +4181,12 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AddQuotaTargetFraction(Guid id)
         {
             var quota = Db.SeatQuotas.Include(curr => curr.Curriculum).Include(seatQuota =>
-                seatQuota.ItemLabelSet.ItemLabels).SingleOrDefault(x => x.Id == id);
+                seatQuota.ItemLabelSet.ItemLabels).Include(seatQuota1 => seatQuota1.Fractions).SingleOrDefault(x => x.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == quota.Occurrence.Id);
 
             // ggf. jetzt das Modell umbauen
-            if (quota.Curriculum != null || (quota.ItemLabelSet != null && !quota.ItemLabelSet.ItemLabels.Any()))
+            // aber nur dann, wenn es noch keine fractions g8bt
+            if (!quota.Fractions.Any() && (quota.Curriculum != null || (quota.ItemLabelSet != null && !quota.ItemLabelSet.ItemLabels.Any())))
             {
                 var fraction = new SeatQuotaFraction
                 {

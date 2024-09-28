@@ -45,7 +45,6 @@
     <div class="col-md-2">
         <div class="card mb-3">
             <div class="list-group">
-                @Html.Partial("_CourseSummarySubscription", Model.Summary)
                 @if (Model.Summary.Course.IsInternal && !(ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
                 {
                     attrDisabled = "disabled";
@@ -169,48 +168,48 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
-                                    Kohorten
+                                <div class="col-6">
+                                    Einordnung im Vorlesungsverzeichnis
                                 </div>
-                                <div class="col-8">
-                                    @Html.LabelList(Model.Summary.Course)
+                                <div class="col-6">
+                                    @Html.LabelLinkList(Model.Summary.Course)
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
-                                    Modulbeschreibung
+                                <div class="col-6">
+                                    Modulbeschreibung(en)
                                 </div>
-                                <div class="col-8">
+                                <div class="col-6">
                                     @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
                                     {
                                         <div>
                                             @if (Model.Summary.Course.Semester != null)
                                             {
-                                                <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">Modulbeschreibung</a>
+                                                <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">@t2.Subject.FullTag</a>
                                             }
                                             else
                                             {
-                                                <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">Modulbeschreibung</a>
+                                                <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">@t2.Subject.FullTag</a>
                                             }
                                         </div>
                                     }
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="col-6">
                                     Inhaltsbeschreibung
                                 </div>
-                                <div class="col-8">
+                                <div class="col-6">
                                     <div>
                                         <a href="#cardDetails">Details zur Lehrveranstaltung</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="col-6">
                                     Ressourcen
                                 </div>
-                                <div class="col-8">
+                                <div class="col-6">
                                     @if (string.IsNullOrEmpty(Model.Summary.Course.UrlMoodleCourse) && string.IsNullOrEmpty(Model.Summary.Course.KeyMoodleCourse))
                                     {
                                         <div><i>Kein moodle-Kurs hinterlegt</i></div>
@@ -228,10 +227,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="col-6">
                                     Nächster Termin
                                 </div>
-                                <div class="col-8">
+                                <div class="col-6">
                                     @if (Model.Summary.CurrentDate != null)
                                     {
                                         <div>
@@ -252,27 +251,37 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="col-6">
                                     Platzkontingente
                                 </div>
-                                <div class="col-8">
+                                <div class="col-6">
                                     @if (Model.Summary.Course.Occurrence.SeatQuotas.Any())
                                     {
                                         foreach (var quota in Model.Summary.Course.Occurrence.SeatQuotas)
                                         {
-                                            <div>@quota.Summary</div>
-                                        }
-
-                                        if (Model.Summary.Lottery != null)
-                                        {
-                                            <div>
-                                                Platzvergabe über das Wahlverfahren
-                                                <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">@Model.Summary.Lottery.Name</a>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen.</div>
+                                            if (quota.MaxCapacity == int.MaxValue)
+                                            {
+                                                <div>unbeschränkte Anzahl an Plätzen für @quota.Summary</div>
+                                            }
+                                            else
+                                            {
+                                                var bookingList = Model.BookingState.BookingLists.FirstOrDefault(x => x.SeatQuota != null && x.SeatQuota.Id == quota.Id);
+                                                if (bookingList != null)
+                                                {
+                                                    if (bookingList.FreeSeats > 0)
+                                                    {
+                                                        <div>@quota.MaxCapacity Plätze für @quota.Summary <i>[@bookingList.FreeSeats freie Plätze]</i></div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>@quota.MaxCapacity Plätze für @quota.Summary <i>[ausgebucht]</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div>@quota.MaxCapacity Plätze für @quota.Summary <i>[keine Infos]</i></div>
+                                                }
+                                            }
                                         }
                                     }
                                     else
@@ -281,19 +290,42 @@
                                     }
                                 </div>
                             </div>
-                            <div class="row bg-light-subtle">
-                                <div class="col-4">
-                                    Meine Eintragung
+                            <div class="row">
+                                <div class="col-6">
+                                    Platzvergabe
                                 </div>
-                                <div class="col-8">
-                                    <div>
-                                        @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
+                                <div class="col-6">
+                                    @if (Model.Summary.Lottery != null)
+                                    {
+                                        <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">Wahlverfahren @Model.Summary.Lottery.Name</a>
+                                    }
+                                    else
+                                    {
+                                        if (Model.Summary.Course.Occurrence.SeatQuotas.Any())
                                         {
-                                            @Html.Partial("_CourseSummaryBooking", Model)
+                                            <div>Nach zeitlicher Reihenfolge der Eintragungen entsprechend der Kontingente</div>
                                         }
-                                    </div>
+                                        else
+                                        {
+                                            <div>Offene Veranstaltung ohne Kontingente</div>
+                                        }
+                                    }
                                 </div>
                             </div>
+                            @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
+                            {
+                                <hr/>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+                                        Meine Eintragung
+                                    </div>
+                                    <div class="col-6">
+                                        <div>
+                                            @Html.Partial("_CourseSummaryBooking", Model)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

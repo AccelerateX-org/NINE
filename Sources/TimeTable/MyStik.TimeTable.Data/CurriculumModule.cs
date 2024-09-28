@@ -120,13 +120,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ModuleApplicability> Applicabilities { get; set; }
 
-        public string FullTag
-        {
-            get
-            {
-                return $"{Catalog.Organiser.ShortName}#{Catalog.Tag}#{Tag}";
-            }
-        }
+        public string FullTag => $"{Catalog.Organiser.ShortName}#{Catalog.Tag}#{Tag}";
     }
 
     public class ModuleApplicability

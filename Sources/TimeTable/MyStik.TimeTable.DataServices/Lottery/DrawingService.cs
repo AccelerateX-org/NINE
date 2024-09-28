@@ -48,9 +48,22 @@ namespace MyStik.TimeTable.DataServices.Lottery
             {
                 foreach (var quota in c.Occurrence.SeatQuotas)
                 {
-                    if (quota.Curriculum != null && !Curricula.Contains(quota.Curriculum))
+                    if (quota.Fractions.Any())
                     {
-                        Curricula.Add(quota.Curriculum);
+                        foreach (var fraction in quota.Fractions)
+                        {
+                            if (fraction.Curriculum != null && !Curricula.Contains(fraction.Curriculum))
+                            {
+                                Curricula.Add(fraction.Curriculum);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (quota.Curriculum != null && !Curricula.Contains(quota.Curriculum))
+                        {
+                            Curricula.Add(quota.Curriculum);
+                        }
                     }
                 }
             }

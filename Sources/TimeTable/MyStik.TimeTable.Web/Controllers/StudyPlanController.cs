@@ -190,9 +190,17 @@ namespace MyStik.TimeTable.Web.Controllers
                         }
 
                         // Modulbeschreibung fortschreiben nur wenn Text leer und nicht veröffentlicht
-                        if (nextDesc.ChangeLog.Approved == null && string.IsNullOrEmpty(nextDesc.Description))
+                        if (nextDesc.ChangeLog.Approved == null)
                         {
-                            nextDesc.Description = currentDesc.Description;
+                            if (string.IsNullOrEmpty(nextDesc.Description))
+                            {
+                                nextDesc.Description = currentDesc.Description;
+                            }
+                            if (string.IsNullOrEmpty(nextDesc.DescriptionEn))
+                            {
+                                nextDesc.DescriptionEn = currentDesc.DescriptionEn;
+                            }
+
                             nextDesc.ChangeLog.LastEdited = now;
                         }
                     }

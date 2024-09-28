@@ -119,7 +119,8 @@
 
                     var id = $(this).attr('id');
                     if (id != null) {
-                        window.location.href = "@Url.Action("Details", "Students")/" + id;
+                        @*window.location.href = "@Url.Action("Details", "Students")/" + id;*@
+                        window.open(`@Url.Action("Details", "Students")/${id}`, '_blank');
                     }
                 }
             } );

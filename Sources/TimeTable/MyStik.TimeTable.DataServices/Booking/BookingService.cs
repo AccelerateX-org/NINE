@@ -280,6 +280,7 @@ namespace MyStik.TimeTable.DataServices.Booking
                 Occurrence = _occ
             };
 
+            // hier jedes Platzkontingent einzeln
             foreach (var quota in _occ.SeatQuotas)
             {
                 var list = new BookingList(quota.Summary)
@@ -288,14 +289,30 @@ namespace MyStik.TimeTable.DataServices.Booking
                     Occurrence = _occ
                 };
 
-                if (quota.Curriculum != null)
+                /*
+                if (quota.Fractions.Any())
                 {
-                    list.Curricula.Add(quota.Curriculum);
+                    foreach (var fraction in quota.Fractions)
+                    {
+                        if (fraction.Curriculum != null)
+                        {
+                            list.Curricula.Add(fraction.Curriculum);
+                        }
+                    }
                 }
+                else
+                {
+                    if (quota.Curriculum != null)
+                    {
+                        list.Curricula.Add(quota.Curriculum);
+                    }
+                }
+                */
 
                 _lists.Add(list);
             }
 
+            var quotaService = new QuotaService();
             foreach (var subscription in _occ.Subscriptions)
             {
                 var student = GetStudent(subscription.UserId);
@@ -306,6 +323,28 @@ namespace MyStik.TimeTable.DataServices.Booking
                 };
 
                 // erster Versuch => passend zum Studiengang
+                var theList = lostBookings;
+                foreach (var quota in _occ.SeatQuotas)
+                {
+                    var list = _lists.FirstOrDefault(x => x.SeatQuota != null && x.SeatQuota.Id == quota.Id);
+                    var check = quotaService.IsAvailable(list.SeatQuota, student.Curriculum, new List<ItemLabel>());
+                    if (check.Success)
+                    {
+                        theList = list;
+                        break;
+                    }
+                    /*
+                    else
+                    {
+                        // verlorene Eintragung
+                        lostBookings.Bookings.Add(booking);
+                    }
+                    */
+                }
+
+                theList.Bookings.Add(booking);
+
+                /*
                 var list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum != null && x.SeatQuota.Curriculum.Id == student.Curriculum.Id);
                 if (list == null)
                 {
@@ -322,7 +361,7 @@ namespace MyStik.TimeTable.DataServices.Booking
                     // verlorene Eintragung
                     lostBookings.Bookings.Add(booking);
                 }
-
+                */
             }
 
             if (lostBookings.Bookings.Any())
@@ -338,6 +377,28 @@ namespace MyStik.TimeTable.DataServices.Booking
             if (student?.Curriculum == null)
                 return null;
 
+            var quotaService = new QuotaService();
+            if (_occ.SeatQuotas.Any())
+            {
+                foreach (var quota in _occ.SeatQuotas)
+                {
+                    var list = _lists.FirstOrDefault(x => x.SeatQuota != null && x.SeatQuota.Id == quota.Id);
+                    var check = quotaService.IsAvailable(list.SeatQuota, student.Curriculum, new List<ItemLabel>());
+                    if (check.Success)
+                    {
+                        return list;
+                    }
+                }
+
+                return null;
+            }
+            else
+            {
+                return _lists.FirstOrDefault();
+            }
+
+
+            /*
             // welche Liste gehört exakt zum Studiengang des Studierenden
             var list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum != null && x.SeatQuota.Curriculum.Id == student.Curriculum.Id);
             if (list != null)
@@ -356,6 +417,7 @@ namespace MyStik.TimeTable.DataServices.Booking
             // gar keine Einschränken
             list = _lists.FirstOrDefault(x => x.SeatQuota == null && !x.IsLost);
             return list;
+            */
         }
 
         public List<BookingList> GetBookingLists()

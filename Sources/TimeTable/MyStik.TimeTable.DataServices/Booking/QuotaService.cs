@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Http.Results;
 using MyStik.TimeTable.Data;
-using PdfSharp;
 
-namespace MyStik.TimeTable.Web.Services
+namespace MyStik.TimeTable.DataServices.Booking
 {
     public class QuotaCheckResponse
     {
@@ -23,7 +21,55 @@ namespace MyStik.TimeTable.Web.Services
 
             if (quota.Fractions.Any())
             {
+                var isAvailable = false;
+                var remark = string.Empty;
+                foreach (var fraction in quota.Fractions)
+                {
+                    var checkLabelSet = CheckLabelSet(fraction.ItemLabelSet, labels);
+                    if (fraction.Curriculum != null)
+                    {
+                        if (curr != null)
+                        {
+                            var checkCurr = fraction.Curriculum.Id == curr.Id;
+                            if (checkCurr)
+                            {
+                                if (checkLabelSet.Success)
+                                {
+                                    isAvailable = true;
+                                }
+                            }
+                            else
+                            {
+                                remark = $"Kein Platzkontingent für Studiengang {curr.ShortName} vorhanden";
+                            }
+                        }
+                        else
+                        {
+                            remark = $"Angabe des Studiengangs fehlt oder Studiengang existiert nicht";
+                        }
+                    }
+                    else
+                    {
+                        if (checkLabelSet.Success)
+                        {
+                            isAvailable = true;
+                        }
+                        remark = checkLabelSet.Remark;
+                    }
+                }
 
+                if (isAvailable)
+                {
+                    result.Success = true;
+                    result.Remark = string.Empty;
+                    return result;
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Remark = remark;
+                    return result;
+                }
             }
             else
             {
@@ -40,7 +86,7 @@ namespace MyStik.TimeTable.Web.Services
                         else
                         {
                             checkLabelSet.Success = false;
-                            checkLabelSet.Remark = $"Nicht für Studiengang {quota.Curriculum.ShortName} zugänglich";
+                            checkLabelSet.Remark = $"Kein Platzkontingent für Studiengang {curr.ShortName} vorhanden";
                             return checkLabelSet;
                         }
                     }
@@ -71,6 +117,7 @@ namespace MyStik.TimeTable.Web.Services
                 if (labels == null || !labels.Any())
                 {
                     // Quota fordert Labels, Student hat kein Label => kein Zugang
+                    resp.Success = false;
                     resp.Remark = "Erforderliche Kohorten fehlen";
                     return resp;
                 }
@@ -82,6 +129,7 @@ namespace MyStik.TimeTable.Web.Services
                     // sobald ein Label nicht dabei ist, sofort aufhören
                     if (exist == null)
                     {
+                        resp.Success = false;
                         resp.Remark = $"Erforderliche Kohorte {quotaLabel.Name} fehlt";
                         return resp;
                     }

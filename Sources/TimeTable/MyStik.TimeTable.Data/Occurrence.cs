@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace MyStik.TimeTable.Data
@@ -178,24 +179,35 @@ namespace MyStik.TimeTable.Data
             {
                 var sb = new StringBuilder();
 
-                if (Curriculum != null)
+                if (Fractions.Any())
                 {
-                    sb.AppendFormat("{0}: ", Curriculum.ShortName);
+                    foreach (var fraction in Fractions)
+                    {
+                        if (fraction.Curriculum != null)
+                        {
+                            sb.Append(fraction.Curriculum.ShortName);
+                        }
+                        else
+                        {
+                            sb.Append("offen für alle Studiengänge");
+                        }
+                        if (fraction != Fractions.Last())
+                        {
+                            sb.Append(" oder ");
+                        }
+                    }
                 }
                 else
                 {
-                    sb.Append("Alle Studiengänge: ");
+                    if (Curriculum != null)
+                    {
+                        sb.AppendFormat("{0}", Curriculum.ShortName);
+                    }
+                    else
+                    {
+                        sb.Append("offen für alle Studiengänge");
+                    }
                 }
-
-                if (MaxCapacity == int.MaxValue)
-                {
-                    sb.Append("unbegrenzt");
-                }
-                else
-                {
-                    sb.AppendFormat("{0} Plätze", MaxCapacity);
-                }
-
 
                 return sb.ToString();
             }

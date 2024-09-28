@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices.Booking.Data;
@@ -32,7 +33,17 @@ namespace MyStik.TimeTable.DataServices.Lottery.Data
         /// <summary>
         /// Berücksichtigt den aktuellen Zustand aller Subscriptions dieses Losttopfs
         /// </summary>
-        public int SeatsAvailable => Capacity - BookingList.Participients.Count;
+        public int SeatsAvailable
+        {
+            get
+            {
+                if (Capacity == int.MaxValue)
+                    return Capacity;
+
+                return (Capacity - BookingList.Participients.Count);
+            }
+        }
+
 
         public double BookingRank
         {

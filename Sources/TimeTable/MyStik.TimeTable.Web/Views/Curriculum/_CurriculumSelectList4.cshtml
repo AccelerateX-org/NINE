@@ -1,0 +1,7 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+
+<option value="@Guid.Empty">Studiengang wählen</option>
+@foreach (var group in Model.Where(x => !x.IsDeprecated).OrderBy(x => x.Name))
+{
+    <option value="@group.Id">@group.Name (@group.ShortName)</option>
+}

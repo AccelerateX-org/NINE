@@ -651,12 +651,14 @@ namespace MyStik.TimeTable.Web.Services
 
                 var bookingService = new BookingServiceQuotas(Db, summary.Course.Occurrence);
                 var bookingList = bookingService.GetBookingList(student);
+                var bookingLists = bookingService.GetBookingLists();
 
                 var bookingState = new BookingState
                 {
                     Occurrence = summary.Course.Occurrence,
                     Student = student,
-                    MyBookingList = bookingList
+                    MyBookingList = bookingList,
+                    BookingLists = bookingLists,
                 };
                 bookingState.Init();
 

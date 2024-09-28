@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
         public BookingList(string name)
         {
             _name = name;
-            Curricula = new List<Curriculum>();
+            //Curricula = new List<Curriculum>();
             Bookings = new List<Booking>();
         }
 
@@ -35,7 +35,7 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
         /// <summary>
         /// deprecated
         /// </summary>
-        public List<Curriculum> Curricula { get; }
+        // public List<Curriculum> Curricula { get; }
 
 
         public int Capacity
@@ -111,23 +111,10 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
                     return SeatQuota.Summary;
                 }
 
-                if (!Curricula.Any())
-                {
-                    return _name;
-                }
+                if (IsLost)
+                    return "sonstige";
 
-                var sb = new StringBuilder();
-                sb.Append("Studiengänge: ");
-                foreach (var curriculum in Curricula)
-                {
-                    sb.Append(curriculum.ShortName);
-                    if (curriculum != Curricula.Last())
-                    {
-                        sb.Append(", ");
-                    }
-                }
-
-                return sb.ToString();
+                return "Offene Liste";
             }
         }
     }

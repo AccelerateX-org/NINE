@@ -90,6 +90,7 @@
     <Compile Include="Booking\Data\Booking.cs" />
     <Compile Include="Booking\Data\BookingList.cs" />
     <Compile Include="Booking\Data\BookingTicket.cs" />
+    <Compile Include="Booking\QuotaService.cs" />
     <Compile Include="CascadingDeleteService.cs" />
     <Compile Include="IO\Cie\Data\CieCourse.cs" />
     <Compile Include="IO\Cie\Data\CieModel.cs" />

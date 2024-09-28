@@ -786,7 +786,6 @@
     <Compile Include="Services\OccurrenceService.cs" />
     <Compile Include="Services\OfficeHourInfoService.cs" />
     <Compile Include="Services\OfficeHourService.cs" />
-    <Compile Include="Services\QuotaService.cs" />
     <Compile Include="Services\RoomService.cs" />
     <Compile Include="Services\SemesterGroupService.cs" />
     <Compile Include="Services\SemesterSubscriptionService.cs" />
@@ -4587,7 +4586,6 @@
     <Content Include="Views\ModuleDescription\Details.cshtml" />
     <Content Include="Views\ModuleDescription\Edit.cshtml" />
     <Content Include="Views\Home\SelectFilter.cshtml" />
-    <Content Include="Views\Course\DetailsNew.cshtml" />
     <Content Include="Views\ScriptShop\Inventory.cshtml" />
     <Content Include="Views\ThesisAdmin\All.cshtml" />
     <Content Include="Views\Emails\ThesisAutoIssued.cshtml" />
@@ -4806,6 +4804,7 @@
     <Content Include="Views\Course\_QuotaTestResult.cshtml" />
     <Content Include="Views\Course\AddQuotaTargetFraction.cshtml" />
     <Content Include="Views\Course\EditQuotaTargetFraction.cshtml" />
+    <Content Include="Views\Curriculum\_CurriculumSelectList4.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

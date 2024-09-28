@@ -1,132 +1,140 @@
 ﻿@model MyStik.TimeTable.Web.Models.CourseSelectModel
 
+@if (Model.Summary.Course.Occurrence.IsAvailable)
+{
+    if (Model.Student != null)
+    {
 
-        <h5 class="list-group-item-heading">Aktueller Status</h5>
-
-        @if (Model.Student != null)
+        if (Model.Summary.Lottery != null)
         {
-
-            if (Model.Summary.Lottery != null)
-            {
-                <div class="list-group-item-text">
-                    <p>Diese Lehrveranstaltung gehört zu Wahlverfahren "@Model.Summary.Lottery.Name".</p>
-                    <p>Ein- / Austragen findet über das Wahlverfahren statt.</p>
-                    @if (Model.Subscription != null)
+            <div class="alert alert-info">
+                <p>Die Platzvergabe erfolgt über das Wahlverfahren
+                    <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">@Model.Summary.Lottery.Name</a></p>
+                @if (Model.Subscription != null)
+                {
+                    if (Model.Subscription.OnWaitingList)
                     {
-                        if (Model.Subscription.OnWaitingList)
+                        <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+                    }
+                    else
+                    {
+                        <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+                    }
+                }
+                else
+                {
+                    <p>Ich habe bisher keine Eintragung.</p>
+                }
+            </div>
+        }
+        else
+        {
+            if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
+            {
+                <ul class="fa-ul">
+                    @if (Model.BookingState.MyBookingList.IsMisc)
+                    {
+                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der globalen Warteliste</li>
+                    }
+                    else
+                    {
+                        if (Model.BookingState.IsUnrestricted)
                         {
-                            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Keine Einschränkungen</li>
                         }
                         else
                         {
-                            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+                            if (Model.Summary.Course.Occurrence.UseGroups)
+                            {
+                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze für Studiengang @Model.BookingState.MyBookingList.Name verfügbar</li>
+                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste für Studiengang @Model.BookingState.MyBookingList.Name</li>
+                            }
+                            else
+                            {
+                                if (Model.BookingState.AvailableSeats == int.MaxValue)
+                                {
+                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Plätze verfügbar</li>
+                                }
+                                else
+                                {
+                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
+                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste</li>
+                                }
+                            }
                         }
                     }
-                    <a href="@Url.Action("Details", "Lottery", new {id = Model.Summary.Lottery.Id})" class="btn btn-primary"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
+                </ul>
+            }
+
+            if (Model.Subscription != null)
+            {
+                <div class="list-group-item-text">
+                    @if (Model.Subscription.OnWaitingList)
+                    {
+                        <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong> auf Platz @Model.BookingState.MyBookingList.GetPosition(Model.Subscription).</p>
+                    }
+                    else
+                    {
+                        <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+                    }
+                    <a href="javascript:onSubscribe('@Model.Summary.Course.Id')" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
                 </div>
 
             }
             else
             {
-                if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
+                if (Model.BookingState.IsAvailable)
                 {
-                    <ul class="fa-ul">
-                        @if (Model.BookingState.MyBookingList.IsMisc)
+                    var btnClass = "btn-success";
+                    var txtList = "Teilnehmerliste";
+                    <div class="list-group-item-text">
+                        @if (Model.BookingState.IsUnrestricted)
                         {
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der globalen Warteliste</li>
                         }
                         else
                         {
-                            if (Model.BookingState.IsUnrestricted)
+                            if (Model.BookingState.AvailableSeats <= 0)
                             {
-                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Keine Einschränkungen</li>
+                                btnClass = "btn-warning";
+                                txtList = "Warteliste";
                             }
                             else
                             {
-                                if (Model.Summary.Course.Occurrence.UseGroups)
-                                {
-                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName verfügbar</li>
-                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName</li>
-                                }
-                                else
-                                {
-                                    if (Model.BookingState.AvailableSeats == int.MaxValue)
-                                    {
-                                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Plätze verfügbar</li>
-                                    }
-                                    else
-                                    {
-                                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
-                                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste</li>
-                                    }
-                                }
                             }
                         }
-                    </ul>
-                }
-
-                if (Model.Subscription != null)
-                {
-                    <div class="list-group-item-text">
-                        @if (Model.Subscription.OnWaitingList)
-                        {
-                            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong> auf Platz @Model.BookingState.MyBookingList.GetPosition(Model.Subscription).</p>
-                        }
-                        else
-                        {
-                            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
-                        }
-                        <a href="javascript:onSubscribe('@Model.Summary.Course.Id')" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+                        <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="bi bi-pencil"></i> Eintragen auf @txtList</a>
                     </div>
 
                 }
                 else
                 {
-                    if (Model.BookingState.IsAvailable)
-                    {
-                        var btnClass = "btn-success";
-                        var txtList = "Teilnehmerliste";
-                        <div class="list-group-item-text">
-                            @if (Model.BookingState.IsUnrestricted)
+                    <div class="list-group-item-text">
+                        <h5>Keine Eintragung möglich</h5>
+                        <p>Gründe</p>
+                        <ul>
+                            @foreach (var reason in Model.BookingState.Reasons)
                             {
+                                <li>@reason</li>
                             }
-                            else
-                            {
-                                if (Model.BookingState.AvailableSeats <= 0)
-                                {
-                                    btnClass = "btn-warning";
-                                    txtList = "Warteliste";
-                                }
-                                else
-                                {
-                                }
-                            }
-                            <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="bi bi-pencil"></i> Eintragen auf @txtList</a>
-                        </div>
-
-                    }
-                    else
-                    {
-                        <div class="list-group-item-text">
-                            <h5>Keine Eintragung möglich</h5>
-                            <p>Gründe</p>
-                            <ul>
-                                @foreach (var reason in Model.BookingState.Reasons)
-                                {
-                                    <li>@reason</li>
-                                }
-                            </ul>
-                        </div>
-                    }
-
+                        </ul>
+                    </div>
                 }
+
             }
         }
-        else
-        {
-            <div class="list-group-item-text">
-                <h5>Keine Eintragung möglich</h5>
-                <p>Im Studienbuch ist kein aktiver Studiengang verzeichnet.</p>
-                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-primary">Studienbuch</a>
-            </div>
-        }
+    }
+    else
+    {
+        <div class="list-group-item-text">
+            <p class="text-danger"><i class="bi bi-exclamation-circle"></i> <strong>Keine Eintragung möglich</strong></p>
+            <p>Im <a href="@Url.Action("Curricula", "Subscription")">Studienbuch</a> zuerst den aktuellen Studiengang festlegen.</p>
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-danger">
+        <i class="bi bi-ban"></i> Studierende können sich aktuell nicht eintragen.
+    </div>
+   
+}

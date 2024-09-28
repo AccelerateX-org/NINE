@@ -556,6 +556,28 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        [HttpPost]
+        public PartialViewResult CurriculaList4(Guid orgId)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            if (org != null)
+            {
+                var currs = org.Curricula.Where(x => !x.IsDeprecated).ToList();
+
+                var model = currs
+                    .OrderBy(g => g.ShortName)
+                    .ToList();
+
+                return PartialView("_CurriculumSelectList4", model);
+            }
+            else
+            {
+                return PartialView("_CurriculumAllSelectList");
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

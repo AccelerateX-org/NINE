@@ -60,6 +60,8 @@ namespace MyStik.TimeTable.Data
 
         public string Tag { get; set; }
 
+        public string FullTag => $"{Module.FullTag}#{Tag}";
+
         /// <summary>
         /// Das zugehörige Modul
         /// </summary>

@@ -132,7 +132,11 @@
 
                         if (show)
                         {
-                            var linkName = c.Course.ShortName ?? "Kein Kurzname";
+                            var linkName = "Kein Kurzname";
+                            if (!string.IsNullOrEmpty(c.Course.ShortName))
+                            {
+                                linkName = c.Course.ShortName;
+                            }
                             <tr>
                                 <td>
                                     @if (c.Course.IsProjected)
