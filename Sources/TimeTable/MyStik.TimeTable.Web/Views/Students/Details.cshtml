@@ -27,7 +27,7 @@
                         <a class="list-group-item" href="mailto:@Model.User.Email">
                             <i class="bi bi-envelope"></i> E-Mail senden
                         </a>
-                        @if (ViewBag.UserRight.IsStudentAdmin)
+                        @if (ViewBag.UserRight.IsCourseAdmin)
                         {
                             <a class="list-group-item" href="@Url.Action("Logs", new { id = Model.Student.Id })">
                                 <i class="bi bi-list"></i> Logdaten ansehen
@@ -173,15 +173,16 @@
                                     </div>
                                     @if (ViewBag.UserRight.IsStudentAdmin)
                                     {
-                                        <hr/>
+                                        <hr />
                                         if (isActive)
                                         {
                                             <a href="@Url.Action("ChangeNumber", new { id = student.Id })" class="btn btn-outline-primary">Matrikelnummer ändern</a>
-                                            <a href="@Url.Action("ChangeLabel", new { id = student.Id })" class="btn btn-outline-primary">Kohorten ändern</a>
+                                            <a href="@Url.Action("ChangeLabel", new { id = student.Id })" class="btn btn-outline-primary disabled">Kohorten ändern</a>
                                             <a href="@Url.Action("SwitchCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang beenden / wechseln</a>
                                         }
                                         else
                                         {
+                                            <a href="@Url.Action("ProlongCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang fortführen</a>
                                         }
 
                                         <a href="@Url.Action("ChangeCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang korrigieren</a>

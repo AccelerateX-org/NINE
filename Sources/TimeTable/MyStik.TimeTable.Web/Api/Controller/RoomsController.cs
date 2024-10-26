@@ -4,12 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.IO.GpUntis.Data;
 using MyStik.TimeTable.Web.Api.DTOs;
+using MyStik.TimeTable.Web.Services;
+using NodaTime;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -412,6 +417,87 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return result;
         }
+
+
+        /* so nicht
+        [System.Web.Http.Route("famos/state")]
+        //[System.Web.Http.HttpGet]
+        public HttpResponseMessage GetFamosState(string searchPattern)
+        {
+            var now = DateTime.Now;
+
+            var semester = new SemesterService(Db).GetSemester(now);
+
+            var rooms = string.IsNullOrEmpty(searchPattern) ?
+                Db.Rooms.ToList() :
+                Db.Rooms.Where(x => x.Number.ToLower().StartsWith(searchPattern.ToLower())).ToList();
+
+            var roomsWithDate = rooms.Where(x => x.Dates.Any(d => d.Begin <= now && now <= d.End)).ToList();
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "ID;Semester;Vorlesungstitel;Langtitel;Bemerkung;Dozent;Fakultaet;Start;Ende;Serientyp;Intervall;Serienendtyp;Wiederholung;Teilnehmer;Raum");
+
+
+            writer.Write(Environment.NewLine);
+
+            foreach (var room in roomsWithDate)
+            {
+                var dates = room.Dates.Where(d => d.Begin <= now && now <= d.End).ToList();
+
+                foreach (var date in dates)
+                {
+                    var id = room.Id.ToString();
+                    var sem = semester.Name;
+                    var comment = string.Empty;
+                    var org = date.Activity.Organiser != null ? date.Activity.Organiser.ShortName : string.Empty;
+
+                    var lec = date.Hosts.FirstOrDefault() != null ? date.Hosts.FirstOrDefault()?.Name : string.Empty;
+
+                    var type = 2;
+                    var interval = 1;
+                    var typeEnd = 2;
+                    var frequency = 1;
+                    var part = date.Occurrence != null ? date.Occurrence.Subscriptions.Count : 0;
+
+
+
+                    writer.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14}",
+                        id, sem, 
+                        date.Activity.Name, date.Activity.Name, comment, lec, org,
+                        date.Begin.ToString("dd.MM.yyyy HH:mm"), date.End.ToString("dd.MM.yyyy HH:mm"),
+                        type, interval, typeEnd, frequency, part,
+                        room.Number
+                        );
+                    writer.Write(Environment.NewLine);
+                }
+
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            //ms.Position = 0;
+
+            var sb = new StringBuilder();
+            sb.Append("Raumbelegung");
+            sb.Append("_");
+            sb.Append(now.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            
+
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(ms);
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv");
+            response.Content.Headers.ContentDisposition.FileName = sb.ToString();
+
+            return response;
+
+        }
+        */
 
 
 

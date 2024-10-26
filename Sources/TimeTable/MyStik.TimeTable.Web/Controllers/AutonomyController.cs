@@ -10,9 +10,9 @@ namespace MyStik.TimeTable.Web.Controllers
     public class AutonomyController : BaseController
     {
         // GET: Autonomy
-        public ActionResult Index(Guid? id)
+        public ActionResult Index(Guid id)
         {
-            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
+            var org = GetOrganiser(id);
 
             var aut = org.Autonomy;
 
@@ -40,10 +40,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult CreateCommittee()
+        public ActionResult CreateCommittee(Guid id)
         {
-            var org = GetMyOrganisation();
-
+            var org = GetOrganiser(id);
 
             var selectList = new List<SelectListItem>();
             selectList.Add(new SelectListItem
@@ -51,8 +50,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = "Fakultätsweit",
                 Value = Guid.Empty.ToString()
             });
-
-
 
             var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).OrderBy(c => c.ShortName).ToList();
             var sList = currList.Select(c => new SelectListItem
@@ -120,6 +117,78 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return View(committee);
+        }
+
+
+        public ActionResult EditCommittee(Guid id)
+        {
+            var committee = Db.Committees.SingleOrDefault(x => x.Id == id);
+            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Id == committee.Autonomy.Id);
+
+
+            var selectList = new List<SelectListItem>();
+            selectList.Add(new SelectListItem
+            {
+                Text = "Fakultätsweit",
+                Value = Guid.Empty.ToString()
+            });
+
+
+
+            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).OrderBy(c => c.ShortName).ToList();
+            var sList = currList.Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            selectList.AddRange(sList);
+
+
+            ViewBag.Curricula = selectList;
+
+            var model = new CommitteeCreateModel();
+            model.CommitteeId = committee.Id;
+            model.CurriculumId = committee.Curriculum?.Id ?? Guid.Empty;
+            model.Description = committee.Description;
+            model.Name = committee.Name;
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditCommittee(CommitteeCreateModel model)
+        {
+            var committee = Db.Committees.SingleOrDefault(x => x.Id == model.CommitteeId);
+            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Id == committee.Autonomy.Id);
+
+
+            // keine Zwei Gremien mit dem selben Namen
+            committee.Name = model.Name;
+            committee.Description = model.Description;
+            committee.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurriculumId);
+
+            Db.SaveChanges();
+           
+
+            return RedirectToAction("Index", new {id = org.Id});
+        }
+
+        public ActionResult DeleteCommittee(Guid id)
+        {
+            var committee = Db.Committees.SingleOrDefault(x => x.Id == id);
+            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Id == committee.Autonomy.Id);
+
+            foreach (var member in committee.Members.ToList())
+            {
+                Db.CommitteeMember.Remove(member);
+            }
+
+            Db.Committees.Remove(committee);
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", new { id = org.Id });
         }
 
 

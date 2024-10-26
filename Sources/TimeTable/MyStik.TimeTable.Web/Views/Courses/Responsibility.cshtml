@@ -119,7 +119,6 @@
                         <th>Modul-ID</th>
                         <th>Modul</th>
                         <th>Kurse</th>
-                        <th></th>
                     </tr>
                 </theed>
                 <tbody>
@@ -134,32 +133,40 @@
                                 <td>@module.Tag</td>
                                 <td>@module.Name</td>
                                 <td>
-                                    @foreach (var course in courses)
+                                    @if (courses.Any())
                                     {
-                                        var summary = courseService.GetCourseSummary(course);
+                                        foreach (var course in courses)
+                                        {
+                                            var summary = courseService.GetCourseSummary(course);
 
-                                        var sb = new StringBuilder();
-                                        foreach (var accr in subject.SubjectAccreditations)
-                                        {
-                                            sb.AppendFormat("{0} {1} | ", accr.Slot.AreaOption.Area.Curriculum.ShortName, accr.Slot.Tag);
-                                        }
+                                            var sb = new StringBuilder();
+                                            foreach (var accr in subject.SubjectAccreditations)
+                                            {
+                                                sb.AppendFormat("{0} {1} | ", accr.Slot.AreaOption.Area.Curriculum.ShortName, accr.Slot.Tag);
+                                            }
 
-                                        if (module.ModuleSubjects.Count > 1)
-                                        {
-                                            <div>
-                                                @sb.ToString() (@subject.Name):
-                                                <a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.ShortName @course.Name</a> | @Html.LecturerList(summary.Lecturers)
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>
-                                                @sb.ToString():
-                                                <a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.ShortName @course.Name</a> | @Html.LecturerList(summary.Lecturers)
-                                            </div>
+                                            if (module.ModuleSubjects.Count > 1)
+                                            {
+                                                <div>
+                                                    @sb.ToString() (@subject.Name):
+                                                    <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName @course.Name</a> | @Html.LecturerList(summary.Lecturers)
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>
+                                                    @sb.ToString():
+                                                    <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName @course.Name</a> | @Html.LecturerList(summary.Lecturers)
+                                                </div>
+                                            }
                                         }
                                     }
+                                    else
+                                    {
+                                        <div>keine verknüpften Lehrveranstaltungen</div>
+                                    }
                                 </td>
+                            @*
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -220,6 +227,7 @@
                                         </ul>
                                     </div>
                                 </td>
+                                *@
                             </tr>
                         }
                     }

@@ -1,0 +1,65 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+@{
+    ViewBag.Title = "Kurs planen";
+
+    var db = new TimeTableDbContext();
+    var courseService = new CourseService(db);
+    var semService = new SemesterService(db);
+
+    var course = Model.Course;
+    var segment = Model.PlaningSegment;
+
+    var currentSemester = semService.GetSemester(DateTime.Today);
+    var historicSemester = course.Semester;
+    var planingSemester = semService.GetNextSemester(currentSemester);
+
+
+    var summary = courseService.GetCourseSummary(course);
+
+    var planCourse = new Course();
+
+    planCourse.Dates = courseService.GetPlanningDates(summary, segment);
+
+    var refDate = planCourse.Dates.FirstOrDefault();
+
+    var accId = "accPlaningItem";
+}
+
+
+<div class="accordion" id="accPlaning">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@accId" aria-expanded="false" aria-controls="@accId">
+                @if (refDate != null)
+                {
+                    <div>
+                        @string.Format("{0:ddd}", refDate.Begin) | @Html.TimeSpan(refDate) | @planCourse.Dates.Count Termine
+                    </div>
+                }
+                else
+                {
+                    <div>Keine Termine verfügbar</div>
+                }
+            </button>
+        </h2>
+        <div id="@accId" class="accordion-collapse collapse" data-bs-parent="#accRegular">
+            <div class="list-group">
+                @foreach (var date in planCourse.Dates)
+                {
+                    <div class="list-group-item">
+                        @string.Format("{0:ddd}", date.Begin) | @Html.TimeSpanWithDate(date) | @Html.RoomList(date.Rooms) | @Html.LecturerList(date.Hosts)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

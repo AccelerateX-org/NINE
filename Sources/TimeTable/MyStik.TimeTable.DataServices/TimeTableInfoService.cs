@@ -188,9 +188,6 @@ namespace MyStik.TimeTable.DataServices
             if (occ == null)
                 return;
 
-            var quotes = occ.SeatQuotas.ToList();
-            quotes.ForEach(x => _db.SeatQuotas.Remove(x));
-
             // Occurrence Groups löschen
             var occGroups = occ.Groups.ToList();
             occGroups.ForEach(g => _db.OccurrenceGroups.Remove(g));
@@ -228,6 +225,25 @@ namespace MyStik.TimeTable.DataServices
                 lottery.Occurrences.Remove(occ);
             }
 
+            // Platzkontingente löschen
+            foreach (var quota in occ.SeatQuotas.ToList())
+            {
+                foreach (var fraction in quota.Fractions.ToList())
+                {
+                    if (fraction.ItemLabelSet != null)
+                    {
+                        _db.ItemLabelSets.Remove(fraction.ItemLabelSet);
+                    }
+                    _db.SeatQuotaFractions.Remove(fraction);
+                }
+
+                if (quota.ItemLabelSet != null)
+                {
+                    _db.ItemLabelSets.Remove(quota.ItemLabelSet);
+                }
+
+                _db.SeatQuotas.Remove(quota);
+            }
 
             // jetzt die Ocurrence wegwerfen
             _db.Occurrences.Remove(occ);

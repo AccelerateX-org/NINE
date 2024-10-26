@@ -4805,6 +4805,10 @@
     <Content Include="Views\Course\AddQuotaTargetFraction.cshtml" />
     <Content Include="Views\Course\EditQuotaTargetFraction.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumSelectList4.cshtml" />
+    <Content Include="Views\Autonomy\EditCommittee.cshtml" />
+    <Content Include="Views\Course\Planning.cshtml" />
+    <Content Include="Views\Course\_PreviewDateList.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

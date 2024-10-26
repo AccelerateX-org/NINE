@@ -4259,5 +4259,244 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("AdminNewRules", new { id = course.Id });
         }
+
+        public ActionResult Planning(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+            var courseService = new CourseService(Db);
+
+            var nextSemester = SemesterService.GetNextSemester(course.Semester);
+
+            var model = new CourseDetailViewModel()
+            {
+                Course = course,
+                Summary = courseService.GetCourseSummary(course),
+                PlaningSemester = nextSemester,
+                CopyDates = true
+            };
+
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
+
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        public PartialViewResult PreviewDateList(Guid courseId, Guid segmentId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var segement = Db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var model = new CourseDetailViewModel
+            {
+                Course = course,
+                PlaningSegment = segement
+            };
+
+            return PartialView("_PreviewDateList", model);
+        }
+
+
+
+        [HttpPost]
+        public ActionResult CopyCourse(Guid courseId, Guid segmentId, CourseDetailViewModel model)
+        {
+            var user = GetCurrentUser();
+
+            var copyDates = model.CopyDates;
+
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Segment)
+                .Include(activity1 => activity1.Organiser).Include(activity2 => activity2.Dates)
+                .Include(course1 => course1.SubjectTeachings.Select(subjectTeaching => subjectTeaching.Subject))
+                .Include(activity => activity.LabelSet.ItemLabels)
+                .Include(activity1 => activity1.Owners.Select(activityOwner => activityOwner.Member))
+                .Include(activity => activity.Occurrence.SeatQuotas.Select(seatQuota => seatQuota.Curriculum))
+                .Include(activity1 =>
+                    activity1.Occurrence.SeatQuotas.Select(seatQuota1 => seatQuota1.ItemLabelSet.ItemLabels))
+                .Include(activity => activity.Occurrence.SeatQuotas.Select(seatQuota2 =>
+                    seatQuota2.Fractions.Select(seatQuotaFraction => seatQuotaFraction.Curriculum))).Include(
+                    activity1 => activity1.Occurrence.SeatQuotas.Select(seatQuota3 => seatQuota3.Fractions.Select(
+                        seatQuotaFraction1 =>
+                            seatQuotaFraction1.ItemLabelSet.ItemLabels))).Include(activity => activity.Semester).SingleOrDefault(x => x.Id == courseId);
+            var segment = Db.SemesterDates.Include(semesterDate => semesterDate.Semester).FirstOrDefault(x => x.Id == segmentId);
+
+            var sourceSemester = course.Semester;
+            var destSemester = segment.Semester;
+
+            var courseService = new CourseService(Db);
+
+            var summary = courseService.GetCourseSummary(course);
+
+            try
+            {
+                var planCourse = new Course
+                {
+                    ShortName = course.ShortName,
+                    Name = course.Name,
+                    Semester = destSemester,
+                    Segment = segment,
+                    Organiser = course.Organiser,
+                    UrlMoodleCourse = course.UrlMoodleCourse,
+                    IsInternal = true,
+                    IsProjected = true,
+                    Occurrence = new Occurrence()
+                    {
+                        Capacity = course.Occurrence.Capacity,
+                        IsAvailable = false,
+                        FromIsRestricted = course.Occurrence.FromIsRestricted,
+                        UntilIsRestricted = course.Occurrence.UntilIsRestricted,
+                        IsCanceled = course.Occurrence.IsCanceled,
+                        IsMoved = false,
+                        UseGroups = course.Occurrence.UseGroups,
+                    }
+                };
+
+                var itemLabelSet = new ItemLabelSet();
+                planCourse.LabelSet = itemLabelSet;
+                Db.ItemLabelSets.Add(itemLabelSet);
+
+                // Module
+                foreach (var teaching in course.SubjectTeachings)
+                {
+                    var planTeaching = new SubjectTeaching()
+                    {
+                        Course = planCourse,
+                        Subject = teaching.Subject,
+                    };
+
+                    Db.SubjectTeachings.Add(planTeaching);
+                }
+
+                // Kohorten
+                if (course.LabelSet != null)
+                {
+                    foreach (var label in course.LabelSet.ItemLabels.ToList())
+                    {
+                        planCourse.LabelSet.ItemLabels.Add(label);
+                    }
+                }
+
+                // Platzbeschränkungen
+                foreach (var quota in course.Occurrence.SeatQuotas)
+                {
+                    var planQuota = new SeatQuota()
+                    {
+                        Occurrence = planCourse.Occurrence,
+                        Name = quota.Name,
+                        Description = quota.Description,
+                        MinCapacity = quota.MinCapacity,
+                        MaxCapacity = quota.MaxCapacity,
+                        Curriculum = quota.Curriculum,
+                        ItemLabelSet = new ItemLabelSet(),
+                        Fractions = new List<SeatQuotaFraction>()
+                    };
+
+                    if (quota.ItemLabelSet != null)
+                    {
+                        foreach (var label in quota.ItemLabelSet.ItemLabels.ToList())
+                        {
+                            planQuota.ItemLabelSet.ItemLabels.Add(label);
+                        }
+                    }
+
+
+                    foreach (var fraction in quota.Fractions)
+                    {
+                        var planFraction = new SeatQuotaFraction()
+                        {
+                            Curriculum = fraction.Curriculum,
+                            ItemLabelSet = new ItemLabelSet(),
+                            Percentage = fraction.Percentage,
+                            Quota = planQuota,
+                            Weight = fraction.Weight
+                        };
+
+                        foreach (var label in fraction.ItemLabelSet.ItemLabels.ToList())
+                        {
+                            planFraction.ItemLabelSet.ItemLabels.Add(label);
+                        }
+
+                        Db.SeatQuotaFractions.Add(planFraction);
+                        Db.ItemLabelSets.Add(planFraction.ItemLabelSet);
+                    }
+
+
+                    Db.SeatQuotas.Add(planQuota);
+                    Db.ItemLabelSets.Add(planQuota.ItemLabelSet);
+                }
+
+
+                // Owner sind alle Dozenten sowie der Anleger
+                var member = MemberService.GetMember(user.Id, course.Organiser.Id);
+                ActivityOwner owner = null;
+                if (member != null)
+                {
+                    owner = course.Owners.FirstOrDefault(x => x.Member.Id == member.Id);
+                }
+
+                foreach (var courseOwner in course.Owners)
+                {
+                    var planOwner = new ActivityOwner()
+                    {
+                        Activity = planCourse,
+                        Member = courseOwner.Member
+                    };
+                    planCourse.Owners.Add(planOwner);
+                    Db.ActivityOwners.Add(planOwner);
+                }
+
+                // sollte der aktuelle User kein Owner sein => dazufügen
+                if (owner == null && member != null)
+                {
+                    var planOwner = new ActivityOwner()
+                    {
+                        Activity = planCourse,
+                        Member = member
+                    };
+                    planCourse.Owners.Add(planOwner);
+                    Db.ActivityOwners.Add(planOwner);
+                }
+
+                if (copyDates)
+                {
+                    var dates = courseService.GetPlanningDates(summary, segment);
+
+                    foreach (var date in dates)
+                    {
+                        date.Occurrence = new Occurrence
+                        {
+                            Capacity = -1,
+                            IsAvailable = true,
+                            FromIsRestricted = false,
+                            UntilIsRestricted = false,
+                            IsCanceled = false,
+                            IsMoved = false,
+                            UseGroups = false,
+                        };
+                        date.Activity = planCourse;
+
+                        planCourse.Dates.Add(date);
+                    }
+                }
+
+
+                Db.Activities.Add(planCourse);
+                Db.SaveChanges();
+
+                return RedirectToAction("Details", new {id = planCourse.Id});
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = ex.Message;
+                ViewBag.CallStack = ex.StackTrace;
+
+                return RedirectToAction("Index", "Error");
+            }
+        }
+
+
+
     }
 }

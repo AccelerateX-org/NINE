@@ -6,7 +6,7 @@
 
     //var userDb = new ApplicationDbContext();
 
-//    var users = userDb.Users.Where(x => x.BinaryData != null).ToList();
+    //    var users = userDb.Users.Where(x => x.BinaryData != null).ToList();
 
 
 }
@@ -14,14 +14,13 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
@@ -32,69 +31,31 @@
     </script>
 }
 
-@*
-@foreach (var user in users)
-    {
-        var maxSize = 240;
-        //var image = new ImageMagick.MagickImageInfo(user.BinaryData);
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Gremien</li>
+            </ol>
+        </nav>
+    </div>
+</div>
 
-        //var width_org = image.Width;
-        //var height_org = image.Height;
-
-        using (var memStream = new MemoryStream(user.BinaryData))
-        {
-            try
-            {
-                using (var image = new MagickImage(memStream))
-                {
-                    var width_org = image.Width;
-                    var height_org = image.Height;
-
-                    if (width_org > maxSize || height_org > maxSize)
-                    {
-                        //image.Resize(new MagickGeometry(widthAndHeight: maxSize));
-                        image.Resize(new MagickGeometry(widthAndHeight: maxSize));
-
-                        var bytes = image.ToByteArray();
-
-                        user.BinaryData = bytes;
-
-                        <li>@user.BinaryData.Length (@width_org x @height_org) => (@image.Width x @image.Height)</li>
-
-                        userDb.SaveChanges();
-                    }
-                    else
-                    {
-                        <li>Größe passt</li>
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                <li>Fehler</li>
-            }
-        }
-
-
-
-    }
-</ol>
-*@
 
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
-            <h4>
-
-                Gremien der @Model.Organiser.ShortName
-            </h4>
+            <h4>Gremien der @Model.Organiser.ShortName</h4>
         </div>
         <div class="list-group">
             <div class="list-group-item">
                 <div class="btn-group">
                     @if (ViewBag.UserRight.IsMemberAdmin)
                     {
-                            <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateCommittee", "Autonomy")"> <i class="bi bi-folder-plus"></i><br />Hinzufügen</a>
+                        <a class="btn btn-outline-primary" href="@Url.Action("CreateCommittee", "Autonomy", new {id = Model.Organiser.Id})"><i class="bi bi-folder-plus"></i>Hinzufügen</a>
                     }
                 </div>
             </div>
@@ -112,8 +73,13 @@
             <tbody>
                 @foreach (var c in Model.Autonomy.Committees)
                 {
+                    var name = c.Name;
+                    if (c.Curriculum != null)
+                    {
+                        name = name + " (" + c.Curriculum.ShortName + ")";
+                    }
                     <tr>
-                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@c.Name</a></td>
+                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@name</a></td>
                         <td>@c.Description</td>
                         @if (c.Curriculum != null)
                         {

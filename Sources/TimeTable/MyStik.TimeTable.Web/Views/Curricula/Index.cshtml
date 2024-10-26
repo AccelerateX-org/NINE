@@ -63,6 +63,7 @@
                         <th>WB</th>
                         <th>BB</th>
                         <th>PKV</th>
+                        <th>TH</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -133,6 +134,14 @@
                                     else
                                     {
                                         <td></td>
+                                    }
+                                    @if (curr.ThesisDuration == 0)
+                                    {
+                                        <td>keine Anmeldung Abschlussarbeiten</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@curr.ThesisDuration</td>
                                     }
                                 </tr>
                             }

@@ -56,6 +56,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
 
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
             var organiser = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
             var allLotteries = Db.Lotteries.Where(x =>
@@ -71,12 +75,21 @@ namespace MyStik.TimeTable.Web.Controllers
                 Lotteries = allLotteries
             };
 
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
+
             return View(model);
         }
 
         public ActionResult Curriculum(Guid semId, Guid currId)
         {
             var semester = SemesterService.GetSemester(semId);
+
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
 
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
@@ -99,6 +112,11 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.UserRight = GetUserRight(curr.Organiser);
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
 
             return View(model);
         }
@@ -591,6 +609,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(semId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
 
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
             var courses = new List<Course>();
             ActivityOrganiser org = null;
             Curriculum curr = null;
@@ -643,6 +665,9 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.UserRight = GetUserRight(org);
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
             return View(model);
         }

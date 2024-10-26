@@ -873,28 +873,140 @@ namespace MyStik.TimeTable.Web.Services
 
         public void RepairDates(Course course)
         {
+            if (course.Semester != null && course.Organiser != null && course.Segment != null)
+            {
+                if (course.Semester.Id != course.Segment.Semester.Id)
+                {
+                    // suche aus dem Semester das Segmant mit den selben Namen
+                    var segment =
+                        course.Semester.Dates.FirstOrDefault(x =>
+                            x.Description.Equals(course.Segment.Description) && x.Organiser != null &&
+                            x.Organiser.Id == course.Organiser.Id);
+
+                    if (segment != null)
+                    {
+                        course.Segment = segment;
+                    }
+                }
+            }
+
             var dates = course.Dates.Where(x => x.Occurrence == null).ToList();
 
-            if (!dates.Any())
-                return;
-
-            foreach (var date in dates)
+            if (dates.Any())
             {
-                date.Occurrence = new Occurrence
+                foreach (var date in dates)
                 {
-                    Capacity = int.MaxValue,
-                    IsAvailable = true,
-                    IsCanceled = false,
-                    IsMoved = false,
-                    FromIsRestricted = false,
-                    UntilIsRestricted = false,
-                    UseGroups = false,
-                };
+                    date.Occurrence = new Occurrence
+                    {
+                        Capacity = int.MaxValue,
+                        IsAvailable = true,
+                        IsCanceled = false,
+                        IsMoved = false,
+                        FromIsRestricted = false,
+                        UntilIsRestricted = false,
+                        UseGroups = false,
+                    };
+                }
             }
 
             Db.SaveChanges();
+        }
 
-            return;
+        public List<ActivityDate> GetPlanningDates(CourseSummaryModel summary, SemesterDate segment)
+        {
+            var dates = new List<ActivityDate>();
+
+            List<Room> favRooms = new List<Room>();
+            List<OrganiserMember> favHosts = new List<OrganiserMember>();
+
+            var room = summary.GetFavoriteRoom();
+            var host = summary.GetFavoriteHost();
+
+
+            if (room != null)
+            {
+                favRooms.Add(room);
+            }
+
+            if (host != null)
+            {
+                favHosts.Add(host);
+            }
+
+            var frq = 1;
+            var occDate = segment.From.Date;
+            var lastDate = segment.To.Date;
+            var refDate = summary.Course.Dates.OrderBy(x => x.Begin).First();
+
+
+            if (!summary.IsPureBlock())
+            {
+                frq = 7;
+
+                var majorvDate = summary.Dates.OrderByDescending(x => x.Dates.Count).FirstOrDefault();
+                refDate = majorvDate.Dates.First();
+                var semesterStartTag = (int)segment.From.DayOfWeek;
+                var day = (int)refDate.Begin.DayOfWeek;
+                int nDays = day - semesterStartTag;
+                if (nDays < 0)
+                {
+                    nDays += 7;
+                }
+
+                occDate = segment.From.AddDays(nDays);
+            }
+
+
+
+            //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+            int numOcc = 0;
+            while (occDate <= lastDate)
+            {
+                bool isVorlesung = true;
+                foreach (var sd in segment.Semester.Dates)
+                {
+                    // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                    if (sd.From.Date <= occDate.Date &&
+                        occDate.Date <= sd.To.Date &&
+                        sd.HasCourses == false)
+                    {
+                        isVorlesung = false;
+                    }
+                }
+
+                if (isVorlesung)
+                {
+                    var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day, refDate.Begin.Hour,
+                        refDate.Begin.Minute, refDate.Begin.Second);
+                    var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day, refDate.End.Hour,
+                        refDate.End.Minute, refDate.End.Second);
+
+                    var occ = new ActivityDate
+                    {
+                        Id = Guid.NewGuid(),
+                        Begin = ocStart,
+                        End = ocEnd,
+                    };
+
+
+                    foreach (var favRoom in favRooms)
+                    {
+                        occ.Rooms.Add(favRoom);
+                    }
+
+                    foreach (var favHost in favHosts)
+                    {
+                        occ.Hosts.Add(favHost);
+                    }
+
+                    dates.Add(occ);
+                    numOcc++;
+                }
+
+                occDate = occDate.AddDays(frq);
+            }
+
+            return dates;
         }
     }
 }

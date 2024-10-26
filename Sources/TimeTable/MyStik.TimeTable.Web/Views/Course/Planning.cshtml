@@ -1,0 +1,359 @@
+﻿@using Microsoft.IdentityModel.Tokens
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+@{
+    ViewBag.Title = "Kurs planen";
+
+    var db = new TimeTableDbContext();
+    var courseService = new CourseService(db);
+    var semService = new SemesterService(db);
+
+    var course = Model.Course;
+    var org = course.Organiser;
+
+    var currentSemester = semService.GetSemester(DateTime.Today);
+    var historicSemester = course.Semester;
+    var planingSemester = semService.GetNextSemester(currentSemester);
+
+    var summary = courseService.GetCourseSummary(course);
+
+    var planingSegments = planingSemester.Dates.Where(x => x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.From).ToList();
+
+    var historicSegment = course.Segment;
+    if (historicSegment == null)
+    {
+        historicSegment = new SemesterDate
+        {
+            Description = ""
+        };
+    }
+
+    var favSegment = planingSegments.FirstOrDefault(x => x.Description.Equals(historicSegment.Description));
+
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Lehrveranstaltung planen / fortschreiben</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 mb-1">
+                                        <strong>@Model.Summary.Course.ShortName: @Model.Summary.Course.Name</strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        Einordnung im Vorlesungsverzeichnis (Kohorten)
+                                    </div>
+                                    <div class="col-6">
+                                        @Html.LabelLinkList(Model.Summary.Course)
+                                    </div>
+                                </div>
+                                @if (Model.Summary.Course.SubjectTeachings.Any())
+                                {
+                                    <div class="row">
+                                        <div class="col-6">
+                                            Modulbeschreibung(en) / Prüfungsleistung(en)
+                                        </div>
+                                        <div class="col-6">
+                                            @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
+                                            {
+                                                <div>
+                                                    @if (Model.Summary.Course.Semester != null)
+                                                    {
+                                                        <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">@t2.Subject.FullTag</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">@t2.Subject.FullTag</a>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-6">
+                                            Modulbeschreibung
+                                        </div>
+                                        <div class="col-6">
+                                            <div><i>nicht verfügbar</i></div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="col-6">
+                                        Platzkontingente
+                                    </div>
+                                    <div class="col-6">
+                                        @if (Model.Summary.Course.Occurrence.SeatQuotas.Any())
+                                        {
+                                            foreach (var quota in Model.Summary.Course.Occurrence.SeatQuotas)
+                                            {
+                                                if (quota.MaxCapacity == int.MaxValue)
+                                                {
+                                                    <div>unbeschränkte Anzahl an Plätzen für @quota.Summary</div>
+                                                }
+                                                else
+                                                {
+                                                    <div>@quota.MaxCapacity Plätze für @quota.Summary <i>[keine Infos]</i></div>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div>Offene Veranstaltung ohne Kontingente</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2">Semester</div>
+                                    <div class="col-md-5"><strong>@historicSemester.Name</strong></div>
+                                    <div class="col-md-5">@historicSemester.StartCourses.ToShortDateString() bis @historicSemester.EndCourses.ToShortDateString()</div>
+                                </div>
+                                @if (!historicSegment.Description.IsNullOrEmpty())
+                                {
+                                    <div class="row">
+                                        <div class="col-md-2">Abschnitt</div>
+                                        <div class="col-md-5">@historicSegment.Description</div>
+                                        <div class="col-md-5">@historicSegment.From.ToShortDateString() bis @historicSegment.To.ToShortDateString()</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-md-12"><i>keinem Abschnitt zugeordnet</i></div>
+                                    </div>
+                                }
+
+                                @if (summary.IsPureBlock())
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col-md-2">
+                                            Format
+                                        </div>
+                                        <div class="col-md-5">
+                                            Blockveranstaltung
+                                        </div>
+                                        <div class="col-md-5">
+                                            Beim Übertragen werden alle Tage des Abschnitts belegt
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="list-group">
+                                                @foreach (var date in course.Dates)
+                                                {
+                                                    <div class="list-group-item">
+                                                        @string.Format("{0:ddd}", date.Begin) | @Html.TimeSpanWithDate(date) | @Html.RoomList(date.Rooms) | @Html.LecturerList(date.Hosts)
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    var majorvDate = summary.Dates.OrderByDescending(x => x.Dates.Count).FirstOrDefault();
+                                    var i = 0;
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-2">
+                                            Format
+                                        </div>
+                                        <div class="col-md-5">
+                                            Regelmäßig stattfindende Termine
+                                        </div>
+                                        <div class="col-md-5">
+                                            Der am häufigsten aufgetretene Termin wird im Wochenrhythmus übertragen.
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="accordion" id="accRegular">
+                                                @foreach (var favDate in summary.Dates.OrderByDescending(x => x.Dates.Count))
+                                                {
+                                                    i++;
+                                                    var accId = "acc" + i;
+                                                    var refDate = favDate.Dates.First();
+
+                                                    if (majorvDate == favDate)
+                                                    {
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@accId" aria-expanded="false" aria-controls="@accId">
+                                                                    @string.Format("{0:ddd}", refDate.Begin) | @Html.TimeSpan(refDate) | @favDate.Dates.Count Termine
+                                                                </button>
+                                                            </h2>
+                                                            <div id="@accId" class="accordion-collapse collapse" data-bs-parent="#accRegular">
+                                                                <div class="list-group">
+                                                                    @foreach (var date in favDate.Dates)
+                                                                    {
+                                                                        <div class="list-group-item">
+                                                                            @string.Format("{0:ddd}", date.Begin) | @Html.TimeSpanWithDate(date) | @Html.RoomList(date.Rooms) | @Html.LecturerList(date.Hosts)
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@accId" aria-expanded="false" aria-controls="@accId">
+                                                                    @string.Format("{0:ddd}", refDate.Begin) | @Html.TimeSpan(refDate) | @favDate.Dates.Count Termine
+                                                                </button>
+                                                            </h2>
+                                                            <div id="@accId" class="accordion-collapse collapse" data-bs-parent="#accRegular">
+                                                                <div class="list-group">
+                                                                    @foreach (var date in favDate.Dates)
+                                                                    {
+                                                                        <div class="list-group-item">
+                                                                            @string.Format("{0:ddd}", date.Begin) | @Html.TimeSpanWithDate(date) | @Html.RoomList(date.Rooms) | @Html.LecturerList(date.Hosts)
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="btn btn-outline-primary btn-lg disabled">
+                            übertragen  nach <i class="bi bi-chevron-double-right"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2">Semester</div>
+                                    <div class="col-md-5"><strong>@planingSemester.Name</strong></div>
+                                    <div class="col-md-5">@planingSemester.StartCourses.ToShortDateString() bis @planingSemester.EndCourses.ToShortDateString()</div>
+                                </div>
+                            @using (Html.BeginForm("CopyCourse", null, FormMethod.Post, new { @class = "form-horizontal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input name="courseId" value="@Model.Course.Id" hidden/>
+
+                                    <div class="row">
+                                        <div class="col-md-2">Abschnitt</div>
+                                        <div class="col-md-10">
+                                            <select id="selectSegment" name="segmentId" class="form-select" onchange="onSegmentChanged(this.value)">
+                                                @foreach (var segment in planingSegments)
+                                                {
+                                                    <option value="@segment.Id">
+                                                        @segment.Description (@segment.From.ToShortDateString() bis @segment.To.ToShortDateString())
+                                                    </option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="row mt-5">
+                                            <div class="col-md-12">
+                                                <div id="dateList"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col-md-12">
+                                                <div class="form-check">
+                                                    @Html.CheckBoxFor(m => m.CopyDates, new { @class = "form-check-input" })
+                                                    <label class="form-check-label" for="CopyDates">
+                                                        Termine übernehmen
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-12">
+                                                <div id="btnActioms" class="btn-group">
+                                                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-calendar-check"></i> Kurs erstellen</button>
+                                                    <a href="@Url.Action("Details", new { id = course.Id })" class="btn btn-outline-secondary"><i class="bi bi-x"></i> abbrechen</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts
+{
+    <script>
+        $(function () {
+            $("#btnActioms").hide();
+            $("#loading").hide();
+            var org = $("#selectSegment").val();
+            onSegmentChanged(org);
+        });
+
+        function onSegmentChanged(value) {
+            var segId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("PreviewDateList", "Course")',
+                    data: {
+                        courseId: "@Model.Course.Id.ToString()",
+                        segmentId: segId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#dateList").html(data);
+                        $("#loading").hide();
+                        $("#btnActioms").show();
+                    }
+                });
+
+        }
+
+
+
+    </script>
+}

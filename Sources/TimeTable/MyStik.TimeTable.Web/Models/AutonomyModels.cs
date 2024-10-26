@@ -20,5 +20,6 @@ namespace MyStik.TimeTable.Web.Models
 
         public Guid CurriculumId { get; set; }
 
+        public Guid CommitteeId { get; set; }
     }
 }

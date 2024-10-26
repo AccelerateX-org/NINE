@@ -96,6 +96,11 @@
                             <th>Vorname</th>
                             <th>Titel</th>
                             <th>Kurzbezeichnung</th>
+                            <th>Account</th>
+                            @if (ViewBag.UserRight.IsMemberAdmin)
+                            {
+                                <th></th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -109,18 +114,23 @@
                                 </td>
                                 <td>@member.FirstName</td>
                                 <td>@member.Title</td>
+                                <td>@member.ShortName</td>
+                                @if (string.IsNullOrEmpty(member.UserId))
+                                {
+                                    <td>Kein Account</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
 
                                 @if (ViewBag.UserRight.IsMemberAdmin)
                                 {
                                     <td>
-                                        <a href="@Url.Action("MemberAdmin", "Organiser", new { id = member.Id })">
-                                            <i class="bi bi-gear"></i> @member.ShortName
+                                        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("MemberAdmin", "Organiser", new { id = member.Id })">
+                                            <i class="bi bi-gear"></i> Verwaltung
                                         </a>
                                     </td>
-                                }
-                                else
-                                {
-                                    <td>@member.ShortName</td>
                                 }
                             </tr>
                         }

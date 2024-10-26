@@ -4,7 +4,6 @@
 @{
     ViewBag.Title = "Lehrveranstaltung kopieren";
 
-    var modules = Model.SubjectTeachings.Select(x => x.Subject.Module).Distinct();
     var semesterService = new SemesterService();
 
     var todaySemester = semesterService.GetSemester(DateTime.Today);
@@ -17,52 +16,9 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Lehrveranstaltung teilen / zusammenlegen</h5>
-                <p class="card-text">
-                    Im aktuellen Semester eine weitere Lehrveranstaltung anlegen. Teilnahmelisten können mitgenommen bzw. nach bestimmten Kriterien aufgeteilt werden.
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Lehrveranstaltung planen</h5>
-                <p class="card-text">
-                    Für zukünftiges Semester Lehrveranstaltung anlegen bzw. fortschreiben. Angaben zu Modulem, Kohorten, Platzkontingenten werdem übernommen.
-                </p>
-                @foreach (var module in modules)
-                {
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Planungsaktion für Modul @module.FullTag
-                        </button>
-                        <ul class="dropdown-menu">
-                            @if (courseSemester.StartCourses < todaySemester.StartCourses)
-                            {
-                                // das Semester des Kurses liegt in der Vergangenheit
-                                // ins tagesaktuelle Semester kopieren
-                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = todaySemester.Id, backSemId = courseSemester.Id })">ins aktuelle Semester <strong>@todaySemester.Name</strong> kopieren</a></li>
-                                // ins planungssemester kopieren
-                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = planingSemester.Id, backSemId = courseSemester.Id })">ins Planungssemester <strong>@planingSemester.Name</strong> kopieren</a></li>
-                            }
-                            else if (courseSemester.StartCourses > todaySemester.StartCourses)
-                            {
-                                // das Semester des Kurses liegt in der Zukunft
-                                // ins planungssemester kopieren
-                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = planingSemester.Id, backSemId = courseSemester.Id })">ins Planungssemester <strong>@planingSemester.Name</strong> kopieren</a></li>
-                            }
-                            else
-                            {
-                                // das Semester des Kurses ist das tagesaktuelle Semeater
-                                // im aktuellen Semester kopieren
-                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = todaySemester.Id, backSemId = courseSemester.Id })">Eine Kopie für das aktuelle Semester <strong>@todaySemester.Name</strong> erstellen</a></li>
-                                // ins planungssemester kopieren
-                                <li><a class="dropdown-item" href="@Url.Action("Copy", "CurriculumModule", new { moduleId = module.Id, sourceSemId = courseSemester.Id, destSemId = planingSemester.Id, backSemId = courseSemester.Id })">ins Planungssemester <strong>@planingSemester.Name</strong> kopieren</a></li>
-                            }
-                        </ul>
-                    </div>
-                }
+                <h5 class="card-title">Fortschreibung</h5>
+                <p class="card-text">Übertragung der Daten aus dem Semester <strong>@courseSemester.Name</strong> in das Planungssemester <strong>@planingSemester.Name</strong></p>
+                <a href="@Url.Action("Planning", new {id = Model.Id})" class="btn btn-outline-primary">weiter <i class="bi bi-chevron-double-right"></i></a>
             </div>
         </div>
     </div>

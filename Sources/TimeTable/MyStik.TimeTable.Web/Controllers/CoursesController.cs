@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
@@ -76,9 +78,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courses =
                 Db.Activities.OfType<Course>().Where(c =>
-                    c.Semester.Id == semester.Id &&
-                    c.Organiser.Id == org.Id)
-                .OrderBy(c => c.ShortName).ToList();
+                        c.Semester.Id == semester.Id &&
+                        c.Organiser.Id == org.Id)
+                    .OrderBy(c => c.ShortName).ToList();
 
             var courseService = new CourseService(Db);
 
@@ -248,7 +250,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = semester.Id});
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
         /// <summary>
@@ -275,7 +277,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = semester.Id});
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
         /// <summary>
@@ -319,7 +321,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("AdminGroups", new {id = id});
+            return RedirectToAction("AdminGroups", new { id = id });
         }
 
         /// <summary>
@@ -356,7 +358,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = semester.Id});
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
         /// <summary>
@@ -378,7 +380,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = semester.Id});
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
 
@@ -401,7 +403,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = semester.Id});
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
         /// <summary>
@@ -423,7 +425,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = semester.Id});
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
 
@@ -600,10 +602,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Alle Lehrveranstaltungen in diesem Semester
             var courses = Db.Activities.OfType<Course>().Where(x => x.Organiser.Id == org.Id &&
-                    x.Semester.Id == semester.Id)
+                                                                    x.Semester.Id == semester.Id &&
+                                                                    x.LabelSet != null && x.LabelSet.ItemLabels.Any())
+                .Include(activity =>
+                    activity.LabelSet.ItemLabels)
                 .ToList();
 
-            
+
             // für jede Lehrveranstaltung alle Dozenten
             foreach (var course in courses)
             {
@@ -658,19 +663,30 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester,
                 Organiser = org,
                 Courses = Db.Activities.OfType<Course>().Where(x =>
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList(),
+                    x.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList(),
 
-                FreezedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.IsInternal),
+                FreezedCourses = Db.Activities.OfType<Course>().Count(x =>
+                    x.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.IsInternal),
 
-                UnFreezedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.IsInternal),
+                UnFreezedCourses = Db.Activities.OfType<Course>().Count(x =>
+                    x.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.IsInternal),
 
-                LockedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.Occurrence.IsAvailable),
+                LockedCourses = Db.Activities.OfType<Course>().Count(x =>
+                    x.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) &&
+                    !x.Occurrence.IsAvailable),
 
-                UnLockedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.Occurrence.IsAvailable)
+                UnLockedCourses = Db.Activities.OfType<Course>().Count(x =>
+                    x.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.Occurrence.IsAvailable)
             };
 
             return View(model);
@@ -697,7 +713,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("InitGroups", new {id = nextSemester.Id});
+            return RedirectToAction("InitGroups", new { id = nextSemester.Id });
         }
 
         public ActionResult CreateCurrentSemester()
@@ -731,7 +747,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("AdminGroups", new {id = id});
+            return RedirectToAction("AdminGroups", new { id = id });
         }
 
 
@@ -825,8 +841,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courseService = new CourseService(Db);
 
-            var courses = Db.Activities.OfType<Course>().Where(x => x.Owners.Any(y => y.Member.Organiser.Id == org.Id) && 
-                                                                    (!x.Dates.Any() || x.Dates.Any(d => d.End >= DateTime.Today))).ToList();
+            var courses = Db.Activities.OfType<Course>().Where(x =>
+                x.Owners.Any(y => y.Member.Organiser.Id == org.Id) &&
+                (!x.Dates.Any() || x.Dates.Any(d => d.End >= DateTime.Today))).ToList();
 
             foreach (var course in courses)
             {
@@ -852,8 +869,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 var courseService = new CourseService(Db);
 
-                var courses = Db.Activities.OfType<Course>().Where(x => x.Owners.Any(y => y.Member.Organiser.Id == org.Id) &&
-                                                                        (!x.Dates.Any() || x.Dates.Any(d => d.End >= DateTime.Today))).ToList();
+                var courses = Db.Activities.OfType<Course>().Where(x =>
+                    x.Owners.Any(y => y.Member.Organiser.Id == org.Id) &&
+                    (!x.Dates.Any() || x.Dates.Any(d => d.End >= DateTime.Today))).ToList();
 
                 foreach (var course in courses)
                 {
@@ -867,7 +885,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     if (course.Course.Semester != null)
                         continue;
 
-                    var sem = course.Course.SemesterGroups.Select(x => x.Semester).Distinct().OrderByDescending(x => x.StartCourses).ToList();
+                    var sem = course.Course.SemesterGroups.Select(x => x.Semester).Distinct()
+                        .OrderByDescending(x => x.StartCourses).ToList();
 
                     if (sem.Any())
                     {
@@ -982,7 +1001,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var allDates = Db.ActivityDates.Where(x =>
                 x.Activity.SemesterGroups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == cur.Id) &&
                 x.Begin >= begin && x.End < end
-                ).ToList();
+            ).ToList();
 
 
             foreach (var date in allDates)
@@ -1103,7 +1122,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var prevSemester = SemesterService.GetPreviousSemester(semester);
             var yearSemester = SemesterService.GetPreviousSemester(prevSemester);
-            
+
             var currentSemester = SemesterService.GetSemester(DateTime.Today);
             var nextSemester = SemesterService.GetNextSemester(currentSemester);
 
@@ -1130,6 +1149,5 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
-
     }
 }

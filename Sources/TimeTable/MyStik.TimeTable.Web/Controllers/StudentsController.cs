@@ -711,7 +711,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var student = Db.Students.SingleOrDefault(x => x.Id == id);
             var user = UserManager.FindById(student.UserId);
-            var org = GetMyOrganisation();
+            var org = student.Curriculum.Organiser;
 
             var model = new CurriculumSubscriptionViewModel();
             model.User = user;
@@ -721,7 +721,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.IsDual = student.IsDual;
             model.IsPartTime = student.IsPartTime;
 
-            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            ViewBag.Curricula = org.Curricula.Where(x => x.IsPublished).OrderBy(f => f.ShortName).Select(f => new SelectListItem
             {
                 Text = f.Name,
                 Value = f.Id.ToString(),
@@ -1172,6 +1172,19 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Admin", new { id = student.Curriculum.Id });
+        }
+
+
+        public ActionResult ProlongCurriculum(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+
+            student.LastSemester = null;
+            student.HasCompleted = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = student.Id });
         }
 
     }

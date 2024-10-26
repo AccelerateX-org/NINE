@@ -13,49 +13,57 @@
 }
 
 <div class="card">
-    <div class="card-header" id="headingOne">
-        <h2 class="mb-0">
-            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Mitglieder des Gremiums @Model.Name
-            </button>
-        </h2>
+    <div class="card-header">
+        <h4 class="card-title">Gremium @Model.Name</h4>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item">
+                @if (hasChair)
+                {
+                    <div class="btn-group">
+                    <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
+                    </div>
+                }
+
+                @if (isAdmin)
+                {
+                    <div class="btn-group">
+                    <a class="btn btn-outline-primary" href="@Url.Action("EditCommittee", new {id = Model.Id})"><i class="bi bi-gear"></i> Ändern</a>
+                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteCommittee", new {id = Model.Id})"><i class="bi bi-trash"></i> Löschen</a>
+                    </div>
+                }
+            </div>
     </div>
 
-    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-        <div class="card-body">
-            <ul class="fa-ul">
-                @foreach (var c in Model.Members)
-                {
-                    var sIcon = "fa-user";
-
-                    if (c.HasChair)
-                    {
-                        sIcon = "fa-chair";
-                    }
-
-                    <li>
-                        <i class="fas fa-li @sIcon"></i>@c.Member.FullName
-                        @if (hasChair)
-                        {
-                            if (c.HasChair)
-                            {
-                                <a class="btn btn-outline-danger" href="@Url.Action("RemoveChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz entfernen</a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-outline-primary" href="@Url.Action("AddChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz geben</a>
-                            }
-                            <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="bi bi-trash fa-fw"></i> Mitglied entfernen</a>
-
-                        }
-                    </li>
-                }
-            </ul>
-            @if (hasChair)
+    <div class="card-body">
+        <ul class="fa-ul">
+            @foreach (var c in Model.Members)
             {
-                <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
-            }
+                var sIcon = "fa-user";
 
-        </div>
+                if (c.HasChair)
+                {
+                    sIcon = "fa-chair";
+                }
+
+                <li>
+                    <i class="fas fa-li @sIcon"></i>@c.Member.FullName
+                    @if (hasChair)
+                    {
+                        if (c.HasChair)
+                        {
+                            <a class="btn btn-outline-danger" href="@Url.Action("RemoveChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz entfernen</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-primary" href="@Url.Action("AddChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz geben</a>
+                        }
+                        <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="bi bi-trash fa-fw"></i> Mitglied entfernen</a>
+
+                    }
+                </li>
+            }
+        </ul>
     </div>
 </div>
+

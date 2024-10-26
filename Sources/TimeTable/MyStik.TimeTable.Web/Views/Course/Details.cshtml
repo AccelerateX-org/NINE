@@ -1,4 +1,5 @@
 ﻿@using System.Web.ModelBinding
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CourseSelectModel
@@ -11,6 +12,8 @@
     {
         colDetails = "col-md-10";
     }
+
+
 }
 
 @section styles {
@@ -145,6 +148,17 @@
                             Zuordnung Vorlesungsverzeichnis:
                             @Model.Summary.Course.Semester.Name | @Model.Summary.Course.Organiser.ShortName
                         </div>
+                        if (Model.Summary.Course.Segment != null)
+                        {
+                            if (Model.Summary.Course.Segment.Semester.Id == Model.Summary.Course.Semester.Id)
+                            {
+                                <div>Abschnitt: @Model.Summary.Course.Segment.Description (@Model.Summary.Course.Segment.From.ToShortDateString(), @Model.Summary.Course.Segment.To.ToShortDateString())</div>
+                            }
+                            else
+                            {
+                                <div>Abschnitt aus Semester @Model.Summary.Course.Segment.Semester.Name (@Model.Summary.Course.Segment.Description)</div>
+                            }
+                        }
                     }
                     else
                     {
@@ -175,26 +189,40 @@
                                     @Html.LabelLinkList(Model.Summary.Course)
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    Modulbeschreibung(en)
+                            @if (Model.Summary.Course.SubjectTeachings.Any())
+                            {
+                                <div class="row">
+                                    <div class="col-6">
+                                        Modulbeschreibung(en) / Prüfungsleistung(en)
+                                    </div>
+                                    <div class="col-6">
+                                        @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
+                                        {
+                                            <div>
+                                                @if (Model.Summary.Course.Semester != null)
+                                                {
+                                                    <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">@t2.Subject.FullTag</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">@t2.Subject.FullTag</a>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    @foreach (var t2 in Model.Summary.Course.SubjectTeachings)
-                                    {
-                                        <div>
-                                            @if (Model.Summary.Course.Semester != null)
-                                            {
-                                                <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = t2.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">@t2.Subject.FullTag</a>
-                                            }
-                                            else
-                                            {
-                                                <a href="@Url.Action("Details", "ModuleDescription", new { id = t2.Subject.Module.Id })">@t2.Subject.FullTag</a>
-                                            }
-                                        </div>
-                                    }
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-6">
+                                        Modulbeschreibung
+                                    </div>
+                                    <div class="col-6">
+                                        <div><i>nicht verfügbar</i></div>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                             <div class="row">
                                 <div class="col-6">
                                     Inhaltsbeschreibung
@@ -314,7 +342,7 @@
                             </div>
                             @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
                             {
-                                <hr/>
+                                <hr />
                                 <div class="row mt-3">
                                     <div class="col-6">
                                         Meine Eintragung
@@ -377,28 +405,56 @@
 
                         @foreach (var date in Model.Summary.Course.Dates.OrderBy(x => x.Begin))
                         {
-                            <div class="list-group-item">
-                                <div class="row">
-                                    <div class="col-2">
-                                        @string.Format("{0:ddd}", date.Begin)
+                            if (date.Occurrence.IsCanceled)
+                            {
+                                <div class="list-group-item list-group-item-danger">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            @string.Format("{0:ddd}", date.Begin)
+                                        </div>
+                                        <div class="col-4">
+                                            @Html.TimeSpanWithDate(date)
+                                        </div>
+                                        <div class="col-3">
+                                            <div>abgesagt</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div>@Html.LecturerList(date.Hosts)</div>
+                                        </div>
                                     </div>
-                                    <div class="col-4">
-                                        @Html.TimeSpanWithDate(date)
-                                    </div>
-                                    <div class="col-3">
-                                        <div>@Html.RoomList(date.Rooms)</div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div>@Html.LecturerList(date.Hosts)</div>
+                                    <div class="row">
+                                        <div class="offset-2 col-md-10">
+                                            <strong>@date.Title</strong>
+                                            <div>@Html.Raw(date.Description)</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="offset-2 col-md-10">
-                                        <strong>@date.Title</strong>
-                                        <div>@Html.Raw(date.Description)</div>
+                            }
+                            else
+                            {
+                                <div class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            @string.Format("{0:ddd}", date.Begin)
+                                        </div>
+                                        <div class="col-4">
+                                            @Html.TimeSpanWithDate(date)
+                                        </div>
+                                        <div class="col-3">
+                                            <div>@Html.RoomList(date.Rooms)</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div>@Html.LecturerList(date.Hosts)</div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="offset-2 col-md-10">
+                                            <strong>@date.Title</strong>
+                                            <div>@Html.Raw(date.Description)</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
                         }
                     </div>
                 </div>

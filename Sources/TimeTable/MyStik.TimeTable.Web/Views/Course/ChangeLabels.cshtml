@@ -118,11 +118,16 @@
                     success: function(data, success, xhr) {
                         $("#selectCurr").html(data);
                         $("#loading").hide();
+                        selectCurr();
                     }
                 });
 
         }
 
+        function selectCurr() {
+            var org = $("#selectCurr").val();
+            onCurrChanged(org);
+        }
 
         function onCurrChanged(value) {
             var currId = value;

@@ -11,6 +11,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         public ActionResult MissingCourse()
         {
             return View();

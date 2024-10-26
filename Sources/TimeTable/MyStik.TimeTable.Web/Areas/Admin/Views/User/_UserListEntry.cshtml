@@ -17,7 +17,14 @@
     @switch (Model.User.MemberState)
     {
         case MemberState.Student:
-            <div><i class="fa fa-graduation-cap"></i> @Model.Student.Curriculum.ShortName</div>
+            if (Model.Student != null && Model.Student.Curriculum != null)
+            {
+                <div><i class="fa fa-graduation-cap"></i> @Model.Student.Curriculum.ShortName</div>
+            }
+            else
+            {
+                <div><i class="fa fa-graduation-cap"></i> N.N.</div>
+            }
             break;
         case MemberState.Staff:
             <div><i class="fa fa-university text-primary"></i></div>

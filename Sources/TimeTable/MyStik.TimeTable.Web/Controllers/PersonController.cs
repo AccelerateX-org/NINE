@@ -77,6 +77,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var member = Db.Members.SingleOrDefault(x => x.Id == memberId);
             var user = GetCurrentUser();
 
+            var memberUser = GetUser(member.UserId);
+
             if (member == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -84,7 +86,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new PersonViewModel
             {
-                Members = Db.Members.Where(x => x.UserId.Equals(member.UserId)).ToList()
+                Members = memberUser != null ? Db.Members.Where(x => x.UserId.Equals(member.UserId)).ToList() : new List<OrganiserMember>() { member },
             };
 
             if (!string.IsNullOrEmpty(member.UserId))

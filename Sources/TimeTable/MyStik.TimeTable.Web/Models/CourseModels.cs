@@ -336,9 +336,8 @@ namespace MyStik.TimeTable.Web.Models
             return favMember;
         }
 
-
-
     }
+
 
     public class CourseBlockModel
     {
@@ -348,7 +347,6 @@ namespace MyStik.TimeTable.Web.Models
         }
 
         public List<ActivityDate> Dates { get; set; }
-    
     }
 
     public class CourseConflictModel
@@ -995,6 +993,12 @@ namespace MyStik.TimeTable.Web.Models
         public  int optionsAccess { get; set; }
 
         public int optionsLimit { get; set; }
+
+        public Semester PlaningSemester { get; set; }
+
+        public SemesterDate PlaningSegment { get; set; }
+
+        public bool CopyDates { get; set; }
 
     }
 
