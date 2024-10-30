@@ -8,8 +8,6 @@ using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
-using PdfSharp;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {

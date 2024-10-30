@@ -10,9 +10,6 @@ using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
-using PdfSharp;
-using PdfSharp.Pdf;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -253,23 +250,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Order", new { id = id });
-        }
-
-
-        public FileResult OrderDocument(Guid id)
-        {
-            var model = CreateOrderModel(id);
-
-            var html = this.RenderViewToString("_ScriptOrderPrintOut", model);
-            PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-
-            var stream = new MemoryStream();
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-
-            return File(stream.GetBuffer(), "application/pdf", "SkriptBestellung.pdf");
         }
 
 

@@ -3,7 +3,6 @@ using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
-using PdfSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,7 +13,6 @@ using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 using Microsoft.Ajax.Utilities;
 using System.Runtime.InteropServices;
 
@@ -265,85 +263,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-
-
-            bool useBackground = false;
-
-            if (useBackground)
-            {
-                var job = new StudyPlanPrintJobDescription
-                {
-                    CurriculumId = model.Curriculum.Id,
-                    SemesterId = model.Semester.Id,
-                    MemberId = member.Id,
-                    Remark = model.Remark
-                };
-
-                BackgroundJob.Enqueue<StudyPlanPrintJob>(x => x.Print(job));
-            }
-            else
-            {
-                var printModel = new StudyPlanViewModel
-                {
-                    TimeStamp = DateTime.Now,
-                    Remark = model.Remark,
-                    Curriculum = curr,
-                    Semester = semester,
-                    Modules = modules,
-                };
-
-
-                var viewName = "_StudyPlanPrintOutForeground";
-
-                var html = this.RenderViewToString(viewName, printModel);
-
-                var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-
-                var storage = new BinaryStorage
-                {
-                    Category = "Studienplan",
-                    FileType = "application/pdf",
-                    Name =
-                        $"{semester.Name}_{curr.ShortName}_Studienplan_{printModel.TimeStamp.ToString("yyyyMMdd")}.pdf",
-                    Created = DateTime.Now,
-                    Description = "Automatisch erzeugt",
-                };
-
-                using (var stream = new MemoryStream())
-                {
-                    pdf.Save(stream, false);
-                    stream.Position = 0;
-                    storage.BinaryData = stream.GetBuffer();
-                }
-
-                Db.Storages.Add(storage);
-
-                var adv = new Advertisement
-                {
-                    Title = $"Studienplan {curr.ShortName} für Semester {semester.Name}",
-                    Description = model.Remark,
-                    Owner = member,
-                    Created = printModel.TimeStamp,
-                    VisibleUntil = semester.EndCourses,
-                    Attachment = storage,
-                };
-
-                Db.Advertisements.Add(adv);
-
-                var positing = new BoardPosting
-                {
-                    Advertisement = adv,
-                    BulletinBoard = curr.BulletinBoard,
-                    Published = printModel.TimeStamp
-                };
-
-                Db.BoardPosts.Add(positing);
-
-                Db.SaveChanges();
-            }
-
-
-            return RedirectToAction("Curriculum", "BulletinBoards", new { id = model.Curriculum.Id });
+            return RedirectToAction("Doc", "StudyPlan", new { id = model.Curriculum.Id, semId = semester.Id });
         }
 
         public ActionResult Unpublish(Guid currId, Guid semId)
@@ -525,47 +445,6 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Semester = SemesterService.GetSemester(semId);
 
             return View(slot);
-        }
-
-        public FileResult Print(Guid currId, Guid semId)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
-
-            var subjects = Db.ModuleCourses.Where(x =>
-                x.SubjectAccreditations.Any(c =>
-                    c.Slot != null &&
-                    c.Slot.AreaOption != null &&
-                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).Include(moduleSubject => moduleSubject.Module).ToList();
-
-            var modules = subjects.Select(x => x.Module).Distinct().ToList();
-
-
-            var printModel = new StudyPlanViewModel
-            {
-                TimeStamp = DateTime.Now,
-                Remark = "Vorabdruck",
-                Curriculum = curr,
-                Semester = semester,
-                Modules = modules,
-            };
-
-
-            var viewName = "_StudyPlanPrintOutForeground";
-
-            var html = this.RenderViewToString(viewName, printModel);
-
-            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-
-            var stream = new MemoryStream();
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-
-            var docName = $"Studienplan_{curr.ShortName}_{semester.Name}.pdf";
-
-            return File(stream.GetBuffer(), "application/pdf", docName);
         }
     }
 }

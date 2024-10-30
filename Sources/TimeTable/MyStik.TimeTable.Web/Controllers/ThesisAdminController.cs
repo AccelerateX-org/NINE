@@ -8,9 +8,6 @@ using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
-using PdfSharp;
-using System.IO;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -1304,16 +1301,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 Mark = ""
             };
 
-
-            /*
-            var stream = new MemoryStream();
-            var html = this.RenderViewToString("_ThesisPrintOut", tm);
-            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-            */
 
             return View("_ThesisPrintOut", tm);
         }

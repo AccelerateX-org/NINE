@@ -9,8 +9,6 @@ using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
 using Pitchfork.QRGenerator;
 using RoomService = MyStik.TimeTable.Web.Services.RoomService;
 

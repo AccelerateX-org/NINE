@@ -8,8 +8,6 @@ using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
-using PdfSharp;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -378,78 +376,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Details", new { id = thesis.Id });
-        }
-
-
-
-
-        /* Variante E-Mail senden
-        public ActionResult MarkingEmpty(Guid id)
-        {
-            var userService = new UserInfoService();
-            var user = GetCurrentUser();
-
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
-            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
-            var tm = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId),
-                Mark = ""
-            };
-
-
-            // hier zunächst mit Postal - weil es so geht
-            var stream = new MemoryStream();
-
-            var email = new ThesisEmail("ThesisMarked");
-            email.To = user.Email;
-            email.From = MailController.InitSystemFrom();
-            email.Subject = "Notenmeldung Abschlussarbeit";
-            email.Thesis = tm;
-            email.Receiver = user;
-
-            var html = this.RenderViewToString("_ThesisPrintOut", email);
-            PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            //pdf.Save("document.pdf");
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-            email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
-            email.Send();
-
-            return RedirectToAction("Details", new { id = thesis.Id });
-        }
-*/
-        public FileResult MarkingEmpty(Guid id)
-        {
-            var userService = new UserInfoService();
-            var user = GetCurrentUser();
-
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
-            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
-            var tm = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId),
-                Mark = ""
-            };
-
-
-            var stream = new MemoryStream();
-            var html = this.RenderViewToString("_ThesisPrintOut", tm);
-            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-
-            return File(stream.GetBuffer(), "application/pdf", "Notenmeldung.pdf");
         }
 
 

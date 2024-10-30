@@ -14,8 +14,6 @@ using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Utils;
 using Newtonsoft.Json.Converters;
 using Org.BouncyCastle.Asn1.Crmf;
-using PdfSharp;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -666,36 +664,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
         }
 
-
-        public FileResult DownloadPdf(Guid moduleId, Guid semId)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-            var semester = SemesterService.GetSemester(semId);
-
-            var desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
-
-            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
-            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
-
-            var model = new ModuleSemesterView
-            {
-                CurriculumModule = module,
-                Semester = semester,
-                ModuleDescription = desc
-            };
-
-
-
-            var stream = new MemoryStream();
-            var html = this.RenderViewToString("_ModuleDescriptionPrintOut", model);
-            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-
-            return File(stream.GetBuffer(), "application/pdf", "Modulbeschreibung.pdf");
-        }
 
         public ActionResult Exams(Guid moduleId, Guid semId)
         {
