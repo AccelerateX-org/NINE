@@ -67,7 +67,7 @@
                                 }
                                 else
                                 {
-                                    <p>@Model.Curriculum.Description</p>
+                                    <p>@Html.Raw(Model.Curriculum.Description.Trim())</p>
                                 }
                             </div>
                             <div id="item-2">

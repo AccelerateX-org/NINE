@@ -263,7 +263,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Doc", "StudyPlan", new { id = model.Curriculum.Id, semId = semester.Id });
+            return RedirectToAction("Doc", "StudyPlan", new { id = curr.ShortName, semId = semester.Id });
         }
 
         public ActionResult Unpublish(Guid currId, Guid semId)

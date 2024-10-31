@@ -34,9 +34,6 @@
                             <a href="@Url.Action("Curriculum", "BulletinBoards", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
                                 <i class="bi bi-list"></i> Archiv
                             </a>
-                            <a href="@Url.Action("Print", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id  })" class="btn btn-outline-primary">
-                                <i class="bi bi-file-pdf"></i> pdf Erstellen
-                            </a>
                             <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
                                 <i class="bi bi-printer"></i> verabschieden
                             </a>
