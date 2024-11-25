@@ -1,23 +1,26 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.ModuleSemesterView
 @{
     ViewBag.Title = "Modulbeschreibung";
-    @*
-        var subjects = Model.CurriculumModule.ModuleSubjects.ToList();
-        var accrs = Model.CurriculumModule.Accreditations.ToList();
 
-        var tt = new List<TeachingDescription>();
-        foreach (var moduleAccreditation in accrs)
+    @*
+    var db = new TimeTableDbContext();
+    var allSubjects = db.ModuleCourses.Where(x => x.Name.Equals("Vorlesung")).Include(moduleSubject => moduleSubject.Module.ModuleSubjects).ToList();
+
+    foreach (var subject in allSubjects)
+    {
+        if (subject.Module.ModuleSubjects.Count == 1)
         {
-            foreach (var teachingDescription in moduleAccreditation.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
-            {
-                tt.Add(teachingDescription);
-            }
+            subject.Name = string.Empty;
         }
-        var teachings = tt.Distinct();
-    *@
+    }
+
+    db.SaveChanges();
+        *@
+
 var itsMe = false;
 
 if (ViewBag.UserRight.User != null)
@@ -267,14 +270,7 @@ if (showMenu)
                                             <div class="col-8">
                                                 @foreach (var subject in Model.CurriculumModule.ModuleSubjects)
                                                 {
-                                                    if (subject.TeachingFormat != null)
-                                                    {
-                                                        <div>@subject.Name | @subject.TeachingFormat.Tag | @subject.SWS SWS</div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div>@subject.Name | N.N. | @subject.SWS SWS</div>
-                                                    }
+                                                    <div>@subject.FullName</div>
                                                 }
 
                                             </div>
@@ -295,7 +291,7 @@ if (showMenu)
                                             var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == Model.Semester.Id).ToList();
                                             <div class="list-group-item">
                                                 <div>
-                                                    <strong>@subject.Name (@subject.Tag) | @subject.SWS SWS | @subject.TeachingFormat.Tag</strong>
+                                                    <strong>@subject.FullName</strong>
                                                 </div>
                                                 @if (teachings.Any())
                                                 {

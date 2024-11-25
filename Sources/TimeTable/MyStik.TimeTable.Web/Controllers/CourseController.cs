@@ -4125,6 +4125,60 @@ namespace MyStik.TimeTable.Web.Controllers
             return null;
         }
 
+        public ActionResult EditQuotaTargetFraction(Guid id)
+        {
+            var fraction = Db.SeatQuotaFractions.Include(seatQuotaFraction => seatQuotaFraction.Quota).SingleOrDefault(x => x.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Occurrence.Id == fraction.Quota.Occurrence.Id);
+
+            var model = new CourseLabelViewModel()
+            {
+                Fraction = fraction,
+                Quota = fraction.Quota,
+                Course = course,
+                Organisers = Db.Organisers.Where(x => !x.IsStudent && x.IsFaculty).OrderBy(x => x.ShortName).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditQuotaTargetFraction(Guid fractionId, Guid currId, Guid[] labelIds)
+        {
+            var fraction = Db.SeatQuotaFractions.Include(seatQuotaFraction => seatQuotaFraction.ItemLabelSet).SingleOrDefault(x => x.Id == fractionId);
+
+
+            if (fraction != null)
+            {
+                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+                var throwAwayCurr = fraction.Curriculum;
+
+                fraction.Curriculum = curr ?? null;
+
+                fraction.ItemLabelSet.ItemLabels.Clear();
+
+                if (labelIds != null)
+                {
+                    foreach (var labelId in labelIds)
+                    {
+                        var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+                        if (label != null)
+                        {
+                            fraction.ItemLabelSet.ItemLabels.Add(label);
+                        }
+                    }
+                }
+            }
+
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+
+
         public ActionResult Copy(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -4223,11 +4277,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddQuotaTargetFraction(Guid quotaId, Guid currid)
+        public ActionResult AddQuotaTargetFraction(Guid quotaId, Guid currId, Guid[] labelIds)
         {
             var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == quotaId);
 
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currid);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
             var fraction = new SeatQuotaFraction
             {
@@ -4237,6 +4291,19 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             quota.Fractions.Add(fraction);
+
+            if (labelIds != null)
+            {
+                foreach (var labelId in labelIds)
+                {
+                    var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+                    if (label != null)
+                    {
+                        fraction.ItemLabelSet.ItemLabels.Add(label);
+                    }
+                }
+            }
 
             Db.SeatQuotaFractions.Add(fraction);
             Db.ItemLabelSets.Add(fraction.ItemLabelSet);

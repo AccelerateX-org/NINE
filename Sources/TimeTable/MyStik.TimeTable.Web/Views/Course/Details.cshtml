@@ -26,21 +26,24 @@
 }
 
 <div class="row">
-<div class="col-md-12">
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-        @if (Model.Summary.Course.Organiser != null)
-        {
-            <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
-        }
-        @if (Model.Summary.Course.Semester != null)
-        {
-            <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Summary.Course.Semester.Id, orgId = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Semester.Name</a></li>
-        }
-        <li class="breadcrumb-item active" aria-current="page">@Model.Summary.Course.ShortName</li>
-    </ol>
-</nav>
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Summary.Course.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
+                }
+                @if (Model.Summary.Course.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Summary.Course.Semester.Id, orgId = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item active" aria-current="page">@Model.Summary.Course.ShortName</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
 <div class="row">
 @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
 {
@@ -442,6 +445,10 @@
                                         </div>
                                         <div class="col-3">
                                             <div>@Html.RoomList(date.Rooms)</div>
+                                            @if (date.VirtualRooms != null && date.VirtualRooms.Any())
+                                            {
+                                                <div>@Html.RoomList(date.VirtualRooms)</div>
+                                            }
                                         </div>
                                         <div class="col-3">
                                             <div>@Html.LecturerList(date.Hosts)</div>
@@ -464,8 +471,7 @@
 
 </div>
 </div>
-</div>
-</div>
+
 
 
 

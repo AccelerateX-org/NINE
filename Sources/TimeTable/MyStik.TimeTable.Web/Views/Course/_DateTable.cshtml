@@ -17,8 +17,10 @@
             <th>Datum</th>
             <th>Zeitraum</th>
             <th>Ort(e)</th>
-            <th>Raumkonflikte</th>
-            <th>Kohortenkonflikte</th>
+            @*
+        <th>Raumkonflikte</th>
+        <th>Kohortenkonflikte</th>
+            *@
             <th>Dozent</th>
             <th>Titel/Beschreibung</th>
             <th></th>
@@ -117,6 +119,7 @@
                     allConflicts.AddRange(roomConflicts);
                 }
 
+                /*
                 var allLabelConflicts = new Dictionary<ItemLabel, List<ActivityDate>>();
                 var labels = date.Activity.LabelSet.ItemLabels.ToList();
 
@@ -132,6 +135,7 @@
 
                     allLabelConflicts[label] = labelConflicts;
                 }
+                */
 
                 <tr @histAttr>
                     <td>
@@ -146,13 +150,21 @@
                     <td>
                         @if (date.Rooms.Any())
                         {
-                            @Html.RoomList(date.Rooms)<br/>
+                            if (allConflicts.Any())
+                            {
+                                <div>@Html.RoomList(date.Rooms) <a class="badge text-bg-danger" href="@Url.Action("MoveDate", new {id = date.Occurrence.Id})">@allConflicts.Count Konflikte</a> </div>
+                            }
+                            else
+                            {
+                                <div>@Html.RoomList(date.Rooms)</div>
+                            }
                         }
                         @if (date.VirtualRooms != null && date.VirtualRooms.Any())
                         {
-                            @Html.RoomList(date.VirtualRooms)
+                            <div>@Html.RoomList(date.VirtualRooms)</div>
                         }
                     </td>
+                    @*
                     @if (allConflicts.Any())
                     {
                         <td>
@@ -178,6 +190,8 @@
                     {
                         <td></td>
                     }
+                        *@
+                @*
                     <td>
                         @foreach (var c in allLabelConflicts)
                         {
@@ -194,6 +208,7 @@
                         }
 
                     </td>
+                    *@
                     <td>@Html.LecturerList(date.Hosts)</td>
                     <td>
                         @if (!string.IsNullOrEmpty(date.Title))

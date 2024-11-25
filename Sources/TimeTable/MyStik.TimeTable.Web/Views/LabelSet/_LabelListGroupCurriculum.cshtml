@@ -6,13 +6,6 @@
 {
 
     <ul id="@ViewBag.ListName" class="list-group">
-        @foreach (var module in Model.LabelSet.ItemLabels)
-        {
-            <li id="@module.Id" class="list-group-item">
-                <input class="form-check-input me-1" type="checkbox" value="">
-                <label class="form-check-label" for="@module.Id">@module.Name (@Model.ShortName)</label>
-            </li>
-        }
         @if (Model.Organiser.Institution != null && Model.Organiser.Institution.LabelSet != null)
         {
             foreach (var module in Model.Organiser.Institution.LabelSet.ItemLabels)
@@ -22,6 +15,13 @@
                     <label class="form-check-label" for="@module.Id">@module.Name (@Model.Organiser.Institution.Tag)</label>
                 </li>
             }
+        }
+        @foreach (var module in Model.LabelSet.ItemLabels)
+        {
+            <li id="@module.Id" class="list-group-item">
+                <input class="form-check-input me-1" type="checkbox" value="">
+                <label class="form-check-label" for="@module.Id">@module.Name (@Model.ShortName)</label>
+            </li>
         }
     </ul>
 }

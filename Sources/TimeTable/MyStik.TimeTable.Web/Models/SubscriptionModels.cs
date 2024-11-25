@@ -225,6 +225,8 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Teilzeit")]
         public bool IsPartTime { get; set; }
 
+        
+        public bool IsIncomer { get; set; }
 
 
         [Display(Name = "Duales Studium (Angabe frewillig)")]

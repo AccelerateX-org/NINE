@@ -1,6 +1,9 @@
-﻿@model MyStik.TimeTable.Web.Models.LecturerOverviewModel
+﻿@using MyStik.TimeTable.DataServices
+@model MyStik.TimeTable.Web.Models.LecturerOverviewModel
 @{
     ViewBag.Title = "Index";
+
+    var semService = new SemesterService();
 }
 
 @section styles
@@ -53,7 +56,29 @@
                                 }
                                 else
                                 {
-                                    <td>ohne Semester</td>
+                                    if (course.Course.Semester != null)
+                                    {
+                                        <td>@course.Course.Semester.Name</td>
+                                    }
+                                    else
+                                    {
+                                        if (course.Course.Dates.Any())
+                                        {
+                                            var sem = semService.GetSemester(course.Course.Dates.First().Begin);
+                                            if (sem != null)
+                                            {
+                                                <td>@sem.Name</td>
+                                            }
+                                            else
+                                            {
+                                                <td>keine Termine</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>ohne Semester</td>
+                                        }
+                                    }
                                 }
                                 <td>@course.Course.ShortName</td>
                                 <td>

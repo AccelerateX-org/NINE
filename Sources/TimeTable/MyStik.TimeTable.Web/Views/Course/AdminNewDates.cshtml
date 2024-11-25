@@ -2,10 +2,28 @@
 
 
 @{
-    ViewBag.Title = "Verwaltung";
+    ViewBag.Title = "Termine";
 }
 
-@Html.Partial("_CourseSummaryHeader", Model.Summary)
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Summary.Course.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
+                }
+                @if (Model.Summary.Course.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Summary.Course.Semester.Id, orgId = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Course", new { id = Model.Summary.Course.Id })">@Model.Summary.Course.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Termine</li>
+            </ol>
+        </nav>
+    </div>
+</div>
 
 
 @if (Model.Course.IsInternal && !(ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
@@ -13,7 +31,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="alert alert-info">
-                <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
+                <h5><i class="bi bi-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
             </div>
         </div>
     </div>
@@ -24,19 +42,16 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-                <h4>Termine</h4>
-            </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group me-2">
-                            <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
+                            <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="bi bi-chevron-left"></i> Zurück</a>
                         </div>
                         @if (!Model.Summary.Course.IsInternal || (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
                         {
                             <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
-                                <i class="fa fa-plus-circle"></i> Termin anlegen
+                                <i class="bi bi-plus-circle"></i> Termin anlegen
                             </a>
                             <div id="dropDownMenu" class="btn-group me-2" role="group">
                                 <a id="cancelAll" href="#" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="absagen"><i class="bi bi-x"></i></a>

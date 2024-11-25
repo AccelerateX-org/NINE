@@ -21,10 +21,11 @@
                         @Html.HiddenFor(model => model.IsDual)
                         @Html.HiddenFor(model => model.IsFullTime)
                         @Html.HiddenFor(model => model.IsPartTime)
+                        @Html.HiddenFor(model => model.IsIncomer)
 
 
 
-                    <fieldset>
+                        <fieldset>
                         <div class="mb-3 row">
                             @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 col-form-label" })
                             <div class="col-sm-8">
@@ -61,6 +62,17 @@
                                 </div>
                             </div>
                         }
+
+                        @if (Model.IsIncomer)
+                        {
+                            <div class="mb-3 row bg-warning">
+                                <label class="col-sm-4 col-form-label">CIE</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-plaintext">I am an international guest student, enrolled in Courses in Englisch (CIE)</p>
+                                </div>
+                            </div>
+                        }
+
 
                         <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Bestätigen</button>
                         <a href="@Url.Action("Curricula")" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> Abbrechen</a>

@@ -111,16 +111,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new { id = curr.Organiser.Id });
         }
 
-        public ActionResult DeleteLabel(Guid currId, Guid labelId)
+        public ActionResult DeleteLabel(Guid orgId, Guid labelId)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
 
             Db.ItemLabels.Remove(label);
             Db.SaveChanges();
 
-
-            return RedirectToAction("Index", new { id = curr.Organiser.Id });
+            return RedirectToAction("Index", new { id = orgId });
         }
 
 

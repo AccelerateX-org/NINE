@@ -103,9 +103,6 @@ namespace MyStik.TimeTable.DataServices.Booking
                     return checkLabelSet;
                 }
             }
-
-            result.Remark = "Fehlerhaftes Kontingent";
-            return result;
         }
 
         private QuotaCheckResponse CheckLabelSet(ItemLabelSet labelSet, ICollection<ItemLabel> labels)

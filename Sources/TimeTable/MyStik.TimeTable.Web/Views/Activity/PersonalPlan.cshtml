@@ -16,13 +16,13 @@
             <li class="breadcrumb-item active" aria-current="page">@Resources.MyCalendar</li>
         </ol>
     </nav>
-
-
+</div>
+<div class="row">
     <div id="panelCalendar" class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title">
-                    <i class="bi bi-calendar"></i>
+                    <a href="@Url.Action("Index", "UserProfile")" class="btn btn-outline-primary"><i class="bi bi-calendar-event"></i> iCal</a>
                     @Resources.MyCalendar
                     <span id="loading"><i class="spinner-border text-muted"></i></span>
                 </h4>

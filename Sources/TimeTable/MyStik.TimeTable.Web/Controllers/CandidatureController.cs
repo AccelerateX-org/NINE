@@ -36,15 +36,6 @@ namespace MyStik.TimeTable.Web.Controllers
             if (candidature == null)
             {
                 return View(assessment);
-                candidature = new Candidature
-                {
-                    Assessment = assessment,
-                    Joined = DateTime.Now,
-                    UserId = user.Id,
-                };
-
-                Db.Candidatures.Add(candidature);
-                Db.SaveChanges();
             }
 
             return RedirectToAction("MyRoom", new {id = candidature.Id});

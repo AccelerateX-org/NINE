@@ -33,7 +33,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public PartialViewResult GetLabelListCurriculum(Guid currId)
+        public PartialViewResult GetLabelListCurriculum(Guid? orgId, Guid currId)
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
@@ -43,11 +43,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 return PartialView("_LabelListGroupCurriculum", curr);
             }
 
-            var inst = Db.Institutions.SingleOrDefault(x => x.Id == currId);
-            if (inst != null)
+            if (orgId != null)
             {
-                ViewBag.ListName = inst.Id.ToString();
-                return PartialView("_LabelListGroupInstitution", inst);
+                var inst = Db.Institutions.SingleOrDefault(x => x.Id == orgId);
+                if (inst != null)
+                {
+                    ViewBag.ListName = inst.Id.ToString();
+                    return PartialView("_LabelListGroupInstitution", inst);
+                }
             }
 
             return null;

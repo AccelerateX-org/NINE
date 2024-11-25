@@ -6,7 +6,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Zielgruppe für Platzkontingent festlegen</h4>
+                <h4>Zielgruppe für Platzkontingent ändern</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -22,10 +22,10 @@
                 <div class="row">
                     <div class="col-4">
                         <div class="row">
-                            <h5>Kapazität</h5>
+                            <h5>Angaben zum Platzkontingent</h5>
                         </div>
                         <div class="row">
-                            <div class="col-4">Anzahl Plätze</div>
+                            <div class="col-4">Kapazität</div>
                             <div class="col-8">
                                 @if (Model.Quota.MaxCapacity == int.MaxValue)
                                 {
@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">Aktuelle Zielgruppe</div>
+                            <div class="col-4">Zielgruppen</div>
                             <div class="col-8">
                                 @if (Model.Quota.Curriculum != null)
                                 {
@@ -46,7 +46,27 @@
                                 }
                                 else
                                 {
-                                    <div>alle Studiengänge</div>
+                                    if (Model.Quota.Fractions.Any())
+                                    {
+                                        foreach (var fraction in Model.Quota.Fractions)
+                                        {
+                                            bool isFraction = fraction.Id == Model.Fraction.Id;
+                                            var text = isFraction ? "text-danger" : "";
+
+                                            if (fraction != Model.Quota.Fractions.Last())
+                                            {
+                                                <div><span class="@text">@fraction.FullName</span> <i>oder</i></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="@text">@fraction.FullName</div>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>offen für alle Studiengänge</div>
+                                    }
                                 }
                             </div>
                         </div>
@@ -77,6 +97,7 @@
                         <div class="row">
                             <div class="col-4">Kohorten</div>
                             <div class="col-8">
+                                <div id="sourceLabelList"></div>
                             </div>
                         </div>
                     </div>
@@ -122,6 +143,7 @@
 
 
         function onCurrChanged(value) {
+            var orgId = $("#selectOrg").val();
             var currId = value;
             $("#loading").show();
 
@@ -130,6 +152,7 @@
                     type: "POST",
                     url: '@Url.Action("GetLabelListCurriculum", "LabelSet")',
                     data: {
+                        orgId: orgId,
                         currId: currId
                     },
                     success: function(data, success, xhr) {
@@ -143,16 +166,27 @@
 
         function saveChanges() {
             // Zielkatalog
-            var quotaId = "@Model.Quota.Id.ToString()";
+            var fractionId = "@Model.Fraction.Id.ToString()";
             var currId = $("#selectCurr").val();
+
+            var list = $("#sourceLabelList > ul > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+
+            var moduleIdList = new Array();
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+                }
+            }
 
             $.ajax(
                 {
                     type: "POST",
-                    url: '@Url.Action("EditQuotaTarget")',
+                    url: '@Url.Action("EditQuotaTargetFraction")',
                     data: {
-                        quotaId: quotaId,
+                        fractionId: fractionId,
                         currId: currId,
+                        labelIds: moduleIdList
                     },
                     success: function(data, success, xhr) {
                         window.location.replace("@Url.Action("AdminNewRules", new { id = Model.Course.Id })");

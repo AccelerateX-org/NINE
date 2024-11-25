@@ -33,10 +33,12 @@
             <table id="tabPlan" class="table">
                 <thead>
                     <tr>
-                        <th>Slot</th>
-                        <th>Modul</th>
+                        <th>Slot ID</th>
+                        <th>Modul ID</th>
+                        <th>Modultitel (de)</th>
+                        <th>Modultitel (en)</th>
                         <th>Fach</th>
-                        <th>Lehrveranstaltungen</th>
+                        <th>#LVs</th>
                         <th>Prüfungsform</th>
                         <th>Prüfer:innen</th>
                         <th>Details</th>
@@ -65,7 +67,9 @@
                                             {
                                                 <tr>
                                                     <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Tag</a></td>
                                                     <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Name</a></td>
+                                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.NameEn</a></td>
                                                     <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Name</a></td>
                                                     <td>@teachings.Count</td>
                                                     <td>@exam.ExaminationOption.OptionName</td>
@@ -87,16 +91,18 @@
                                         }
                                         else
                                         {
-                                            <tr>
-                                                <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
-                                                <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Name</a></td>
-                                                <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Name</a></td>
-                                                <td>@teachings.Count</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>Kein Prüfungsangebot</td>
-                                                <td></td>
-                                            </tr>
+                <tr>
+                    <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Tag</a></td>
+                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.Name</a></td>
+                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Module.NameEn</a></td>
+                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = subjectAccreditation.Subject.Module.Id })">@subjectAccreditation.Subject.Name</a></td>
+                    <td>@teachings.Count</td>
+                    <td></td>
+                    <td></td>
+                    <td>Kein Prüfungsangebot</td>
+                    <td></td>
+                </tr>
                                         }
 
 

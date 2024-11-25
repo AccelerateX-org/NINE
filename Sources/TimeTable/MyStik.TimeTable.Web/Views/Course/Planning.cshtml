@@ -136,7 +136,7 @@
                                     <div class="col-md-5"><strong>@historicSemester.Name</strong></div>
                                     <div class="col-md-5">@historicSemester.StartCourses.ToShortDateString() bis @historicSemester.EndCourses.ToShortDateString()</div>
                                 </div>
-                                @if (!historicSegment.Description.IsNullOrEmpty())
+                                @if (!string.IsNullOrEmpty(historicSegment.Description))
                                 {
                                     <div class="row">
                                         <div class="col-md-2">Abschnitt</div>

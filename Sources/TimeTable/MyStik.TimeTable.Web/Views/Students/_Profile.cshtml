@@ -4,15 +4,16 @@
 
     <table id="tabStud" class="table table-sm table-hover">
         <thead>
-        <tr>
-            <th></th>
-            <th>Nachname</th>
-            <th>Vorname</th>
-            <th>Studiengang</th>
-            <th>Studienbeginn</th>
-            <th>@ViewBag.CurrentSemester.Name</th>
-            <th></th>
-        </tr>
+            <tr>
+                <th></th>
+                <th>Nachname</th>
+                <th>Vorname</th>
+                <th>Studiengang</th>
+                <th>Kohorte(n)</th>
+                <th>Studienbeginn</th>
+                <th>@ViewBag.CurrentSemester.Name</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
         @foreach (var user in Model)
@@ -25,27 +26,38 @@
                 else
                 {
                     <td></td>
-                    
+
                 }
-            <td>
-                @user.User.LastName
-            </td>
+                <td>
+                    @user.User.LastName
+                </td>
                 <td>@user.User.FirstName</td>
                 @if (user.Student != null)
                 {
                     if (user.Student.Curriculum != null && user.Student.FirstSemester != null)
                     {
                         <td>@user.Student.Curriculum.ShortName</td>
+                        <td>
+                            @if (user.Student.LabelSet != null)
+                            {
+                                foreach (var label in user.Student.LabelSet.ItemLabels)
+                                {
+                                    <div>@label.Name</div>
+                                }
+                            }
+                        </td>
                         <td>@user.Student.FirstSemester.Name</td>
                     }
                     else
                     {
                         <td></td>
                         <td></td>
+                        <td></td>
                     }
                 }
                 else
                 {
+                    <td></td>
                     <td></td>
                     <td></td>
                 }

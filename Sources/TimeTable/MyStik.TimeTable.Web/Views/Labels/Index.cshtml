@@ -131,7 +131,7 @@
                                 @if (ViewBag.UserRight.IsInstitutionAdmin)
                                 {
                                     <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
-                                    <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                    <a href="@Url.Action("DeleteLabel", new { orgId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
                                 }
                             </td>
                         </tr>
@@ -149,7 +149,7 @@
                             @if (ViewBag.UserRight.IsOrgAdmin)
                             {
                                 <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
-                                <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                <a href="@Url.Action("DeleteLabel", new { orgId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
                             }
                         </td>
                     </tr>
@@ -171,7 +171,7 @@
                                     {
                                         <a href="@Url.Action("EditLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
                                         <a href="@Url.Action("MergeLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Übertragen</a>
-                                        <a href="@Url.Action("DeleteLabel", new { currId = curr.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                        <a href="@Url.Action("DeleteLabel", new { orgId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
                                     }
                                 </td>
                             </tr>

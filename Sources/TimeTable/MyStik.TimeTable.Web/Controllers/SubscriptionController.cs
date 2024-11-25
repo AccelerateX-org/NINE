@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
@@ -324,10 +325,30 @@ namespace MyStik.TimeTable.Web.Controllers
 
             student.Created = DateTime.Now;
             student.FirstSemester = semester;
-            student.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            student.Curriculum = Db.Curricula.Include(curriculum =>
+                curriculum.Organiser.Institution.LabelSet.ItemLabels).SingleOrDefault(x => x.Id == model.CurrId);
             student.IsDual = model.IsDual;
             student.IsPartTime = !model.IsFullTime;
             student.HasCompleted = false;
+
+            // CIE
+            if (model.IsIncomer)
+            {
+                if (student.LabelSet == null)
+                {
+                    student.LabelSet = new ItemLabelSet();
+                    //Db.ItemLabelSets.Add(student.LabelSet);
+                }
+
+                var inst = student.Curriculum.Organiser.Institution;
+
+                var cieLabel = inst?.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals("CIE"));
+
+                if (cieLabel != null)
+                {
+                    student.LabelSet.ItemLabels.Add(cieLabel);
+                }
+            }
 
             Db.SaveChanges();
 

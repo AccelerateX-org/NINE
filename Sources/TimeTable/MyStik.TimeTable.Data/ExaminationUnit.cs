@@ -98,7 +98,7 @@ namespace MyStik.TimeTable.Data
                 {
                     foreach (var fraction in Fractions)
                     {
-                        if (Fractions != Fractions.Last())
+                        if (fraction != Fractions.Last())
                         {
                             sb.AppendFormat("{0} {1:P0} und ", fraction.Form.ShortName, fraction.Weight);
                         }

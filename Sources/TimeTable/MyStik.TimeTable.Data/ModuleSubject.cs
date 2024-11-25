@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace MyStik.TimeTable.Data
 {
@@ -61,6 +62,40 @@ namespace MyStik.TimeTable.Data
         public string Tag { get; set; }
 
         public string FullTag => $"{Module.FullTag}#{Tag}";
+
+        public string FullName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                if (TeachingFormat != null)
+                {
+                    if (!string.IsNullOrEmpty(Name))
+                    {
+                        sb.AppendFormat("{0} | {1} | {2} SWS", Name, TeachingFormat.Tag, SWS);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0} | {1} SWS", TeachingFormat.Tag, SWS);
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(Name))
+                    {
+                        sb.AppendFormat("{0} | {1} SWS", Name, SWS);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("LV | {0} SWS", SWS);
+                    }
+                }
+
+                return sb.ToString();
+
+            }
+        }
 
         /// <summary>
         /// Das zugehörige Modul

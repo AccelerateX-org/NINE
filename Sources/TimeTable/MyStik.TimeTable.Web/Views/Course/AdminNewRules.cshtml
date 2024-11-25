@@ -79,15 +79,15 @@
                                                 }
                                             </div>
                                             <div class="col-md-6">
-                                                @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
-                                                {
-                                                    <input name="quotaId" hidden value="@quota.Id" />
-                                                    <input name="courseId" hidden value="@Model.Course.Id" />
-                                                    <div class="input-group mb-1">
-                                                        <input type="text" name="delta" id="delta" class="form-control" placeholder="Neuer Wert (für unbegrenzt Wert < 0 angeben)">
-                                                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-123"></i> Wert übernehmen</button>
-                                                    </div>
-                                                }
+                                                    @using (Html.BeginForm("SetQuota", "Course", FormMethod.Post, new { @class = "row g-3", role = "form" }))
+                                                    {
+                                                        <input name="quotaId" hidden value="@quota.Id" />
+                                                        <input name="courseId" hidden value="@Model.Course.Id" />
+                                                        <div class="input-group mb-1">
+                                                            <input type="text" name="delta" id="delta" class="form-control" placeholder="Neuer Wert (für unbegrenzt Wert < 0 angeben)">
+                                                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-123"></i> Wert übernehmen</button>
+                                                        </div>
+                                                    }
                                             </div>
                                         </div>
                                         <hr/>
@@ -100,14 +100,7 @@
                                                     {
                                                         <div class="row">
                                                             <div class="col-md-4">
-                                                                @if (quotaFraction.Curriculum != null)
-                                                                {
-                                                                    <div>@quotaFraction.Curriculum.ShortName</div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div>Offen für alle Studiengänge</div>
-                                                                }
+                                                                <div>@quotaFraction.FullName</div>
                                                             </div>
                                                             <div class="col-md-8">
                                                                 <div class="btn-group">
@@ -171,35 +164,38 @@
                                                 </div>
                                                 
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="input-group mb-3">
-                                                            <input id="txtTest" type="text" class="form-control" placeholder="[Studiengang]:[Kohorte]" aria-label="Recipient's username" aria-describedby="button-addon2">
-                                                            <a href="javascript:onTest('@quota.Id')" class="btn btn-outline-secondary" type="button" id="button-addon2">Test</a>
+                                            @if (ViewBag.UserRight.IsCourseAdmin)
+                                            {
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="input-group mb-3">
+                                                                <input id="txtTest" type="text" class="form-control" placeholder="[Studiengang]:[Kohorte]" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                                                <a href="javascript:onTest('@quota.Id')" class="btn btn-outline-secondary" type="button" id="button-addon2">Test</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div id="testResponse">
+                                                                <div class="text-secondary">
+                                                                    <i class="bi bi-question"></i>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <div id="testResponse">
-                                                            <div class="text-secondary">
-                                                                <i class="bi bi-question"></i>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="alert alert-info">
+                                                                Hier kann getestet werden, ob sich Studierende einer bestimmten Zielgruppe eintragen können. Folgende Varianten sind möglich:
+                                                                <ul>
+                                                                    <li>Nur Studiengang, z.B. WI, BABW</li>
+                                                                    <li>Hochschulweite Kohorte (d.h. alle Studiengänge), z.B. HM:CIE</li>
+                                                                    <li>Mehrere Kohorten in einem Studiengang, z.B. MBE:ING/NW,CIE => Studierender eines Zugangstyps UND Incomer</li>
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="alert alert-info">
-                                                            Hier kann getestet werden, ob sich Studierende einer bestimmten Zielgruppe eintragen können. Folgende Varianten sind möglich:
-                                                            <ul>
-                                                                <li>Nur Studiengang, z.B. WI, BABW</li>
-                                                                <li>Hochschulweite Kohorte (d.h. alle Studiengänge), z.B. HM:CIE</li>
-                                                                <li>Mehrere Kohorten in einem Studiengang, z.B. MBE:ING/NW,CIE => Studierender eines Zugangstyps UND Incomer</li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>

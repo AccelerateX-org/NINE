@@ -1345,6 +1345,8 @@ namespace MyStik.TimeTable.Web.Models
         public List<ActivityOrganiser> Organisers { get; set; }
 
         public SeatQuota Quota { get; set; }
+
+        public SeatQuotaFraction Fraction { get; set; }
     }
 
     public class CourseStateModel

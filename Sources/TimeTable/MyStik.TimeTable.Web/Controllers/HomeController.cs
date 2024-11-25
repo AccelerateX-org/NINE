@@ -35,17 +35,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("Index", "Home", new {area = "Admin"});
 
 
-            if (Session["SemesterName"] == null)
-            {
-                var sem = SemesterService.GetSemester(DateTime.Today);
-                if (sem != null)
-                {
-                    Session["SemesterName"] = sem.Name;
-                    Session["SemesterId"] = sem.Id;
-                }
-            }
-
-
             // Verteiler nach Rolle
             var user = GetCurrentUser();
             var student = GetCurrentStudent(user.Id);

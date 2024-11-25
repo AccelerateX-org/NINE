@@ -183,6 +183,8 @@ namespace MyStik.TimeTable.Data
                 {
                     foreach (var fraction in Fractions)
                     {
+                        sb.Append(fraction.FullName);
+                        /*
                         if (fraction.Curriculum != null)
                         {
                             sb.Append(fraction.Curriculum.ShortName);
@@ -191,6 +193,7 @@ namespace MyStik.TimeTable.Data
                         {
                             sb.Append("offen für alle Studiengänge");
                         }
+                        */
                         if (fraction != Fractions.Last())
                         {
                             sb.Append(" oder ");
@@ -234,6 +237,41 @@ namespace MyStik.TimeTable.Data
         /// Und Verknüpfung
         /// </summary>
         public virtual ItemLabelSet ItemLabelSet { get; set; }
+
+        public string FullName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                if (Curriculum != null)
+                {
+                    sb.Append(Curriculum.ShortName);
+                }
+                else
+                {
+                    sb.Append("Offen für alle Studiengänge");
+                }
+
+                if (ItemLabelSet?.ItemLabels != null && ItemLabelSet.ItemLabels.Any())
+                {
+                    sb.Append(" mit Kohorte(n): ");
+                    foreach (var label in ItemLabelSet.ItemLabels)
+                    {
+                        if (label != ItemLabelSet.ItemLabels.Last())
+                        {
+                            sb.AppendFormat("{0}, ", label.Name);
+                        }
+                        else
+                        {
+                            sb.AppendFormat("{0}", label.Name);
+                        }
+                    }
+                }
+
+                return sb.ToString();
+            }
+        }
     }
 
 }
