@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -139,28 +140,44 @@ namespace MyStik.TimeTable.DataServices.IO.Json
             db.ItemLabelSets.Add(courseLabelSet);
 
             long msStart = sw.ElapsedMilliseconds;
-            var course = new Course
+
+            var course = db.Activities.OfType<Course>().Include(activity => activity.LabelSet)
+                .Include(activity1 => activity1.SemesterGroups).Include(activity2 => activity2.Dates).FirstOrDefault(x =>
+                x.Semester.Id == sem.Id && x.Organiser.Id == organiser.Id &&
+                x.ExternalSource.Equals("JSON") && x.ExternalId.Equals(scheduleCourse.CourseId));
+
+            var isUpdate = true;
+            if (course == null)
             {
-                ExternalSource = "JSON",
-                ExternalId = scheduleCourse.CourseId,
-                Organiser = organiser,
-                Semester = sem,
-                ShortName = scheduleCourse.ShortName,
-                Name = scheduleCourse.Name,
-                Description = scheduleCourse.Description,
-                Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction ?? 0),
-                IsInternal = true,
-                IsProjected = true,
-                LabelSet = courseLabelSet
-            };
-            // Kurs sofort speichern, damit die ID gesichert ist
-            db.Activities.Add(course);
-            db.SaveChanges();
+                isUpdate = false;
+                course = new Course
+                {
+                    ExternalSource = "JSON",
+                    ExternalId = scheduleCourse.CourseId,
+                    Organiser = organiser,
+                    Semester = sem,
+                    ShortName = scheduleCourse.ShortName,
+                    Name = scheduleCourse.Name,
+                    Description = scheduleCourse.Description,
+                    Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction ?? 0),
+                    IsInternal = true,
+                    IsProjected = true,
+                    LabelSet = courseLabelSet
+                };
+                // Kurs sofort speichern, damit die ID gesichert ist
+                db.Activities.Add(course);
+                db.SaveChanges();
+            }
+
             long msEnd = sw.ElapsedMilliseconds;
             _Logger.DebugFormat("Dauer: {0}ms", msEnd - msStart);
             msStart = msEnd;
 
             _report.AppendLine("<h2>Bezeichnungen</h2>");
+            if (isUpdate)
+            {
+                _report.AppendLine("<h3>Aktualisiert</h2>");
+            }
             _report.AppendLine("<table>");
             _report.AppendFormat("<tr><td>Name</td><td>{0}</td></tr>", course.Name);
             _report.AppendFormat("<tr><td>Kurzname</td><td>{0}</td></tr>", course.ShortName);
@@ -168,217 +185,58 @@ namespace MyStik.TimeTable.DataServices.IO.Json
             _report.AppendLine("</table>");
 
             // aus den Gruppen nur nch die Labels bauen
-            foreach (var scheduleGroup in scheduleCourse.Groups)
+            if (!isUpdate)
             {
-                // Fakultät ermitteln
-                var org = db.Organisers.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.FacultyName));
-
-                // Studiengang innerhalb der Fakultät ermitteln
-                var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.CurriculumShortName));
-                if (curr == null)
+                foreach (var scheduleGroup in scheduleCourse.Groups)
                 {
-                    curr = new TimeTable.Data.Curriculum
+                    // Fakultät ermitteln
+                    var org = db.Organisers.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.FacultyName));
+
+                    // Studiengang innerhalb der Fakultät ermitteln
+                    var curr = org.Curricula.SingleOrDefault(x =>
+                        x.ShortName.Equals(scheduleGroup.CurriculumShortName));
+                    if (curr == null)
                     {
-                        ShortName = scheduleGroup.CurriculumShortName,
-                        Name = scheduleGroup.CurriculumName,
-                        Organiser = org
-                    };
-                    db.Curricula.Add(curr);
-                    db.SaveChanges();
-                }
-
-                if (curr.LabelSet == null)
-                {
-                    var labelSet = new ItemLabelSet();
-                    db.ItemLabelSets.Add(labelSet);
-                    curr.LabelSet = labelSet;
-                    db.SaveChanges();
-                }
-
-                // jetzt das Label im Studiengang finden
-                if (!string.IsNullOrEmpty(scheduleGroup.GroupName))
-                {
-                    var labelName = $"{curr.ShortName}-{scheduleGroup.GroupName}";
-                    var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
-
-                    if (label == null)
-                    {
-                        label = new ItemLabel
+                        curr = new TimeTable.Data.Curriculum
                         {
-                            Name = labelName
+                            ShortName = scheduleGroup.CurriculumShortName,
+                            Name = scheduleGroup.CurriculumName,
+                            Organiser = org
                         };
-
-                        db.ItemLabels.Add(label);
-                        curr.LabelSet.ItemLabels.Add(label);
+                        db.Curricula.Add(curr);
                         db.SaveChanges();
                     }
 
-                    course.LabelSet.ItemLabels.Add(label);
+                    if (curr.LabelSet == null)
+                    {
+                        var labelSet = new ItemLabelSet();
+                        db.ItemLabelSets.Add(labelSet);
+                        curr.LabelSet = labelSet;
+                        db.SaveChanges();
+                    }
+
+                    // jetzt das Label im Studiengang finden
+                    if (!string.IsNullOrEmpty(scheduleGroup.GroupName))
+                    {
+                        var labelName = $"{curr.ShortName}-{scheduleGroup.GroupName}";
+                        var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
+
+                        if (label == null)
+                        {
+                            label = new ItemLabel
+                            {
+                                Name = labelName
+                            };
+
+                            db.ItemLabels.Add(label);
+                            curr.LabelSet.ItemLabels.Add(label);
+                            db.SaveChanges();
+                        }
+
+                        course.LabelSet.ItemLabels.Add(label);
+                    }
                 }
             }
-
-            // jetzt die Gruppen => Veraltet
-            /*
-            foreach (var scheduleGroup in scheduleCourse.Groups)
-            {
-                // Fakultät ermitteln
-                var org = db.Organisers.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.FacultyName));
-
-                // Studiengang innerhalb der Fakultät ermitteln
-                var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.CurriculumShortName));
-                if (curr == null)
-                {
-                    curr = new TimeTable.Data.Curriculum
-                    {
-                        ShortName = scheduleGroup.CurriculumShortName,
-                        Name = scheduleGroup.CurriculumName,
-                        Organiser = org
-                    };
-                    db.Curricula.Add(curr);
-                    db.SaveChanges();
-                }
-
-                // Studiengruppe innerhalb des Studiengangs ermitteln
-                var groupName = scheduleGroup.GroupName;
-
-                var currGroup = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(groupName));
-                if (currGroup == null)
-                {
-                    currGroup = new CurriculumGroup
-                    {
-                        Curriculum = curr,
-                        Name = groupName,
-                        IsSubscribable = true,
-                    };
-                    db.CurriculumGroups.Add(currGroup);
-                    db.SaveChanges();
-                }
-
-                // Kapazitätsgruppe innerhalb der Studiengruppe ermitteln
-                CapacityGroup capGroup = null;
-                if (string.IsNullOrEmpty(scheduleGroup.SubGroupName))
-                {
-                    capGroup = currGroup.CapacityGroups.SingleOrDefault(x => string.IsNullOrEmpty(x.Name));
-                    if (capGroup == null)
-                    {
-                        capGroup = new CapacityGroup
-                        {
-                            CurriculumGroup = currGroup,
-                            Name = string.Empty,
-                            InSS = scheduleGroup.SemesterName.StartsWith("SS"),
-                            InWS = scheduleGroup.SemesterName.StartsWith("WS")
-                        };
-                        db.CapacityGroups.Add(capGroup);
-                        db.SaveChanges();
-                    }
-                }
-                else
-                {
-                    capGroup = currGroup.CapacityGroups.SingleOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name.Equals(scheduleGroup.SubGroupName));
-                    if (capGroup == null)
-                    {
-                        capGroup = new CapacityGroup
-                        {
-                            CurriculumGroup = currGroup,
-                            Name = scheduleGroup.SubGroupName,
-                            InSS = scheduleGroup.SemesterName.StartsWith("SS"),
-                            InWS = scheduleGroup.SemesterName.StartsWith("WS")
-                        };
-                        db.CapacityGroups.Add(capGroup);
-                        db.SaveChanges();
-                    }
-
-                }
-
-                // Semester ermitteln
-                var semester = db.Semesters.SingleOrDefault(x => x.Name.Equals(scheduleGroup.SemesterName));
-
-                if (semester.Id == sem.Id)
-                {
-                    // jetzt können wir die Semestergruppe ermitteln
-                    var semGroup =
-                        db.SemesterGroups.SingleOrDefault(x => x.Semester.Id == semester.Id &&
-                                                               x.CapacityGroup.Id == capGroup.Id);
-                    if (semGroup == null)
-                    {
-                        semGroup = new SemesterGroup
-                        {
-                            Semester = semester,
-                            CapacityGroup = capGroup,
-                            IsAvailable = false // zu Beginn nicht freigegeben
-                        };
-                        db.SemesterGroups.Add(semGroup);
-                        db.SaveChanges();
-                    }
-
-                    course.SemesterGroups.Add(semGroup);
-                    semGroup.Activities.Add(course);
-
-                    // zu jeder Semestergruppe gibt es dann noch eine 
-                    // Gruppe für Platzverlosung
-                    var occGroup =
-                        course.Occurrence.Groups.SingleOrDefault(
-                            gg => gg.SemesterGroups.Any(s => s.Id == semGroup.Id));
-
-                    if (occGroup == null)
-                    {
-                        occGroup = new OccurrenceGroup
-                        {
-                            Capacity = 0,
-                            FitToCurriculumOnly = true,
-                            Occurrence = course.Occurrence
-                        };
-                        occGroup.SemesterGroups.Add(semGroup);
-                        semGroup.OccurrenceGroups.Add(occGroup);
-                        course.Occurrence.Groups.Add(occGroup);
-                        db.OccurrenceGroups.Add(occGroup);
-                    }
-
-                    // NEU: Chapter und Topics
-                    if (!string.IsNullOrEmpty(scheduleGroup.ChapterName) &&
-                        !string.IsNullOrEmpty(scheduleGroup.TopicName))
-                    {
-                        var chapter = curr.Chapters.FirstOrDefault(x => x.Name.Equals(scheduleGroup.ChapterName));
-                        if (chapter == null)
-                        {
-                            chapter = new CurriculumChapter
-                            {
-                                Curriculum = curr,
-                                Name = scheduleGroup.ChapterName
-                            };
-                            db.CurriculumChapters.Add(chapter);
-                        }
-
-                        var topic = chapter.Topics.FirstOrDefault(x => x.Name.Equals(scheduleGroup.TopicName));
-                        if (topic == null)
-                        {
-                            topic = new CurriculumTopic
-                            {
-                                Chapter = chapter,
-                                Name = scheduleGroup.TopicName
-                            };
-                            db.CurriculumTopics.Add(topic);
-                        }
-
-                        var semTopic = db.SemesterTopics.FirstOrDefault(x =>
-                            x.Semester.Id == sem.Id && x.Topic.Id == topic.Id);
-
-                        if (semTopic == null)
-                        {
-                            semTopic = new SemesterTopic
-                            {
-                                Semester = sem,
-                                Topic = topic,
-                            };
-                            db.SemesterTopics.Add(semTopic);
-                        }
-
-                        semTopic.Activities.Add(course);
-                    }
-                }
-                // else => Semestergruppe wird nicht angelegt
-            }
-            */
 
             db.SaveChanges();
 
@@ -410,95 +268,107 @@ namespace MyStik.TimeTable.DataServices.IO.Json
 
                 if (isVorlesung)
                 {
-                    var occ = new ActivityDate
-                    {
-                        Begin = scheduleDate.Begin,
-                        End = scheduleDate.End,
-                        Activity = course,
-                        Occurrence = CreateDefaultOccurrence(),
-                    };
-                    _report.AppendLine("<tr>");
-                    _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", occ.Begin.ToShortDateString(), occ.Begin.ToShortTimeString(), occ.End.ToShortTimeString());
+                    var date = course.Dates.FirstOrDefault(x =>
+                        x.Begin == scheduleDate.Begin && x.End == scheduleDate.End);
 
-                    _report.AppendFormat("<td>");
-                    foreach (var scheduleDateRoom in scheduleDate.Rooms)
+                    if (date == null)
                     {
-                        _report.AppendFormat("<p>{0}", scheduleDateRoom.RoomNumber);
-                        if (!string.IsNullOrEmpty(scheduleDateRoom.RoomNumber))
+                        var occ = new ActivityDate
                         {
-                            var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
-                            if (room == null)
-                            {
-                                room = new Room
-                                {
-                                    Number = scheduleDateRoom.RoomNumber,
-                                    Capacity = 0,
-                                    Description = string.Empty,
-                                    Owner = string.Empty,
-                                };
-                                db.Rooms.Add(room);
-                                db.SaveChanges();
+                            Begin = scheduleDate.Begin,
+                            End = scheduleDate.End,
+                            Activity = course,
+                            Occurrence = CreateDefaultOccurrence(),
+                        };
+                        course.Dates.Add(occ);
+                        _report.AppendLine("<tr>");
+                        _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", occ.Begin.ToShortDateString(),
+                            occ.Begin.ToShortTimeString(), occ.End.ToShortTimeString());
 
-                                _numRooms++;
-                                _report.AppendFormat(" !!!NEUER RAUM!!!");
+                        _report.AppendFormat("<td>");
+                        foreach (var scheduleDateRoom in scheduleDate.Rooms)
+                        {
+                            _report.AppendFormat("<p>{0}", scheduleDateRoom.RoomNumber);
+                            if (!string.IsNullOrEmpty(scheduleDateRoom.RoomNumber))
+                            {
+                                var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
+                                if (room == null)
+                                {
+                                    room = new Room
+                                    {
+                                        Number = scheduleDateRoom.RoomNumber,
+                                        Capacity = 0,
+                                        Description = string.Empty,
+                                        Owner = string.Empty,
+                                    };
+                                    db.Rooms.Add(room);
+                                    db.SaveChanges();
+
+                                    _numRooms++;
+                                    _report.AppendFormat(" !!!NEUER RAUM!!!");
+                                }
+
+
+                                var assignment = db.RoomAssignments.SingleOrDefault(x =>
+                                    x.Room.Id == room.Id &&
+                                    x.Organiser.Id == organiser.Id);
+                                if (assignment == null)
+                                {
+                                    assignment = new RoomAssignment
+                                    {
+                                        Organiser = organiser,
+                                        InternalNeedConfirmation = false, // offen für interne
+                                        ExternalNeedConfirmation = true // geschlossen für externe
+                                    };
+
+                                    room.Assignments.Add(assignment);
+                                    db.RoomAssignments.Add(assignment);
+                                    db.SaveChanges();
+                                }
+
+                                occ.Rooms.Add(room);
+                                _report.AppendFormat("</p>");
+                            }
+                        }
+
+                        _report.AppendFormat("</td>");
+
+                        _report.AppendFormat("<td>");
+                        foreach (var scheduleDateLecturer in scheduleDate.Lecturers)
+                        {
+                            _report.AppendFormat("<p>{0} ({1})", scheduleDateLecturer.Name,
+                                scheduleDateLecturer.ShortName);
+
+                            var lecturer = organiser.Members.SingleOrDefault(l =>
+                                l.ShortName.Equals(scheduleDateLecturer.ShortName));
+                            if (lecturer == null)
+                            {
+                                lecturer = new OrganiserMember
+                                {
+                                    ShortName = scheduleDateLecturer.ShortName,
+                                    Name = scheduleDateLecturer.Name,
+                                    Role = String.Empty,
+                                    Description = String.Empty
+                                };
+                                organiser.Members.Add(lecturer);
+                                db.Members.Add(lecturer);
+                                db.SaveChanges();
+                                _numLecturers++;
+                                _report.AppendFormat(" !!!NEUER DOZENT!!!");
                             }
 
-
-                            var assignment = db.RoomAssignments.SingleOrDefault(x =>
-                                x.Room.Id == room.Id &&
-                                x.Organiser.Id == organiser.Id);
-                            if (assignment == null)
-                            {
-                                assignment = new RoomAssignment
-                                {
-                                    Organiser = organiser,
-                                    InternalNeedConfirmation = false, // offen für interne
-                                    ExternalNeedConfirmation = true // geschlossen für externe
-                                };
-
-                                room.Assignments.Add(assignment);
-                                db.RoomAssignments.Add(assignment);
-                                db.SaveChanges();
-                            }
-
-                            occ.Rooms.Add(room);
+                            occ.Hosts.Add(lecturer);
                             _report.AppendFormat("</p>");
                         }
+
+                        _report.AppendFormat("</td>");
+
+                        db.ActivityDates.Add(occ);
+
+                        _report.AppendLine();
+                        _report.AppendLine("</tr>");
+
                     }
-                    _report.AppendFormat("</td>");
-
-                    _report.AppendFormat("<td>");
-                    foreach (var scheduleDateLecturer in scheduleDate.Lecturers)
-                    {
-                        _report.AppendFormat("<p>{0} ({1})", scheduleDateLecturer.Name, scheduleDateLecturer.ShortName);
-
-                        var lecturer = organiser.Members.SingleOrDefault(l => l.ShortName.Equals(scheduleDateLecturer.ShortName));
-                        if (lecturer == null)
-                        {
-                            lecturer = new OrganiserMember
-                            {
-                                ShortName = scheduleDateLecturer.ShortName,
-                                Name = scheduleDateLecturer.Name,
-                                Role = String.Empty,
-                                Description = String.Empty
-                            };
-                            organiser.Members.Add(lecturer);
-                            db.Members.Add(lecturer);
-                            db.SaveChanges();
-                            _numLecturers++;
-                            _report.AppendFormat(" !!!NEUER DOZENT!!!");
-                        }
-
-                        occ.Hosts.Add(lecturer);
-                        _report.AppendFormat("</p>");
-                    }
-                    _report.AppendFormat("</td>");
-
-                    db.ActivityDates.Add(occ);
-
-                    _report.AppendLine();
-                    _report.AppendLine("</tr>");
-
                 }
             }
 

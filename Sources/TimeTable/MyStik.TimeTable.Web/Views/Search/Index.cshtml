@@ -7,86 +7,112 @@
 }
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                @if (Model.Organiser != null)
-                {
-                    <h4><i class="bi bi-search"></i> Suchergebnisse für "@Model.SearchText" in @Model.Organiser.ShortName</h4>
-                }
-                else
-                {
-                    <h4><i class="bi bi-search"></i> Suchergebnisse für "@Model.SearchText" - global</h4>
-                }
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a class="btn btn-outline-primary" href="@Url.Action("Index", "Search", new {searchText=Model.SearchText, isGlobal=true})">global suchen</a>
-                    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Search", new {searchText = Model.SearchText})">Suche: <strong>@Model.SearchText</strong></a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <div class="btn-group">
+                    @if (ViewBag.PrevSemester != null)
+                    {
+                        <a href="@Url.Action("Index", "Search", new {searchText = Model.SearchText, semId=ViewBag.PrevSemester.Id})"><i class="bi bi-chevron-double-left"></i></a>
+                    }
+                    else
+                    {
+                        <a class="disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
+                    }
+                    <span class="ms-2 me-2">@ViewBag.CurrentSemester.Name</span>
+                    @if (ViewBag.NextSemester != null)
+                    {
+                        <a href="@Url.Action("Index", "Search", new {searchText = Model.SearchText, semId=ViewBag.NextSemester.Id})"><i class="bi bi-chevron-double-right"></i></a>
+                    }
+                    else
+                    {
+                        <a class="disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
+                    }
                 </div>
-            </div>
-            
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        @if (Model.Courses.Any())
-                        {
-                            <div class="list-group">
-                                @foreach (var summary in Model.Courses)
-                                {
-                                    var show = !summary.Course.IsProjected || (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null);
+            </li>
 
-                                    if (show)
-                                    {
-                                        <a id="@summary.Course.Id.ToString()" class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
-                                            <div class="card-title">
-                                                @summary.Course.ShortName @Html.LabelList(summary.Course)
-                                            </div>
-                                            <div class="card-text">@summary.Course.Name</div>
-                                            <div class="row">
-                                                <div class="col-md-8">@Html.DateList(summary.Dates)</div>
-                                                <div class="col-md-4">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
-                                            </div>
-                                        </a>
-                                    }
-                                }
-                            </div>
-                        }
-                        else
+        </ol>
+    </nav>
+</div>
+
+
+<div class="row">
+    <div class="col-md-4">
+        @if (Model.Courses.Any())
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lehrveranstaltungen</h5>
+                </div>
+
+                <div class="list-group">
+                    @foreach (var summary in Model.Courses)
+                    {
+                        var show = !summary.Course.IsProjected || (ViewBag.UserRight.IsCurriculumAdmin || ViewBag.UserRight.Member != null);
+
+                        if (show)
                         {
-                            <div class="alert alert-info">
-                                Keine Lehrveranstaltungen gefunden
-                            </div>
+                            <a id="@summary.Course.Id.ToString()" class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
+                                <div class="card-title">
+                                    @summary.Course.ShortName @Html.LabelList(summary.Course)
+                                </div>
+                                <div class="card-text">@summary.Course.Name</div>
+                                <div class="row">
+                                    <div class="col-md-8">@Html.DateList(summary.Dates)</div>
+                                    <div class="col-md-4">@Html.LecturerList(summary.Lecturers, showLinks: false)</div>
+                                </div>
+                            </a>
                         }
-                    </div>
-                    <div class="col-md-4">
-                        @if (Model.Lecturers.Any())
-                        {
-                            <div class="list-group">
-                                @foreach (var doz in Model.Lecturers)
-                                {
-                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Private", "Person", new { memberId = doz.Lecturer.Id })">@doz.Lecturer.FullName</a>
-                                }
-                            </div>
-                        }
-                    </div>
-                    <div class="col-md-4">
-                        @if (Model.Rooms.Any())
-                        {
-                            <div class="list-group">
-                                @foreach (var r in Model.Rooms)
-                                {
-                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Room", new {id = r.Id})">@r.FullName</a>
-                                }
-                            </div>
-                        }
-                    </div>
+                    }
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                Keine Lehrveranstaltungen gefunden
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        @if (Model.Lecturers.Any())
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lehrende</h5>
+                </div>
+
+                <div class="list-group">
+                    @foreach (var doz in Model.Lecturers)
+                    {
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("Private", "Person", new { memberId = doz.Lecturer.Id })">@doz.Lecturer.FullName</a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        @if (Model.Rooms.Any())
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Räume</h5>
+                </div>
+                <div class="list-group">
+                    @foreach (var r in Model.Rooms)
+                    {
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Room", new {id = r.Id})">@r.FullName</a>
+                    }
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+
 
 
 

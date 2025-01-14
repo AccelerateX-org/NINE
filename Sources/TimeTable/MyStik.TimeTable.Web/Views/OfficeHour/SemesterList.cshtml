@@ -51,6 +51,12 @@
                                         {
                                             <li><i class="fa fa-li fa-user"></i>Mein Anliegen: @ohDate.Subscription.SubscriberRemark</li>
                                         }
+                                        <li>
+                                            @Html.RoomList(ohDate.Date.Rooms, false, false)
+                                        </li>
+                                        <li>
+                                            @Html.RoomList(ohDate.Date.VirtualRooms, false, false)
+                                        </li>
                                     </ul>
                                 </div>
                             </a>

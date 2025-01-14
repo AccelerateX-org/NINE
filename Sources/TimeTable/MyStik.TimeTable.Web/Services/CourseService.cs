@@ -143,7 +143,7 @@ namespace MyStik.TimeTable.Web.Services
             return list.OrderBy(l => l.Semester.Name).ThenBy(l => l.Course.Name).ToList();
         }
 
-        public List<CourseSummaryModel> SearchCourses(string searchString, ActivityOrganiser organiser)
+        public List<CourseSummaryModel> SearchCourses(string searchString, ActivityOrganiser organiser, Semester semester)
         {
 
             if (organiser != null)
@@ -152,7 +152,7 @@ namespace MyStik.TimeTable.Web.Services
                     Db.Activities.OfType<Course>().Where(
                         c => 
                              c.Organiser.Id == organiser.Id &&
-                             c.Dates.Any(d => d.End > DateTime.Now) &&
+                             c.Semester != null && c.Semester.Id == semester.Id &&
                              (c.Name.ToUpper().Contains(searchString) ||
                               c.ShortName.ToUpper().Contains(searchString) ||
                               c.Dates.Any(
@@ -170,7 +170,7 @@ namespace MyStik.TimeTable.Web.Services
                 var courses =
                     Db.Activities.OfType<Course>().Where(
                         c => 
-                             c.Dates.Any(d => d.End > DateTime.Now) &&
+                             c.Semester != null && c.Semester.Id == semester.Id &&
                              (c.Name.ToUpper().Contains(searchString) ||
                               c.ShortName.ToUpper().Contains(searchString) ||
                               c.Dates.Any(

@@ -13,6 +13,7 @@ using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.IO.GpUntis.Data;
 using MyStik.TimeTable.Web.Api.DTOs;
+using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using NodaTime;
 
@@ -126,123 +127,201 @@ namespace MyStik.TimeTable.Web.Api.Controller
         }
 
 
-
-        /*
         /// <summary>
-        /// Suche nach Räumen
+        /// Suche nach freien Räumen
         /// </summary>
         /// <param name="number">Nummer des Raumes</param>
         /// <returns></returns>
-        [System.Web.Http.Route("search")]
-        [System.Web.Mvc.HttpPost]
-        public IQueryable<OccupancyDto> Search([FromBody] RoomSearchRequest request)
+        [System.Web.Http.Route("available")]
+        public IQueryable<FreeRoomDto> GetFreeRooms(RoomSearchModelApi model)
         {
-            // ohne state => alle suchen
-            var from = DateTime.Now;
-            var until = from.AddMinutes(30);
-            bool? isAvailable = null;
+            var result = new List<FreeRoomDto>();
 
-            if (request.state != null)
+
+            // 1. HM-weit oder in FK?
+            var isInstitutionWide = model.OrgName.Equals("HM");
+            var isRoomAdmin = false;
+            var members = new List<OrganiserMember>();
+            ActivityOrganiser org = null;
+
+            if (isInstitutionWide)
             {
-                isAvailable = request.state.isAvailable;
-                if (request.state.from != null)
-                    from = request.state.from.Value;
-                if (request.state.until != null)
-                    until = request.state.until.Value;
+                // ist user instAdmin?
+                isRoomAdmin = members.Any(x => x.IsInstitutionAdmin);
+            }
+            else
+            {
+                // bin ich in der ausgewählten Fakultät Raum Admin?
+                org = Db.Organisers.FirstOrDefault(x => x.ShortName.Equals(model.OrgName));
+                isRoomAdmin = members.Any(x => x.Organiser.Id == org.Id && x.IsRoomAdmin);
             }
 
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
 
+            var from = model.From;
+            var until = model.To;
 
+            var roomList = roomService.GetFreeRooms(org?.Id, isRoomAdmin, from, until);
 
-            var rooms = Db.Rooms.Where(r => r.Number.StartsWith(request.number)) .ToList();
+            // jetzt noch die anderen Filterkriterien
+            roomList = roomList.Where(x => x.Capacity >= model.MinCapacity && x.Capacity <= model.MaxCapacity)
+                .ToList();
 
-            var result = new List<OccupancyDto>();
-
-            foreach (var room in rooms)
+            if (model.BuildingName.Equals("HM"))
             {
-                var occDto = new OccupancyDto();
-                occDto.Room.Number = room.Number;
-                occDto.Room.Name = room.Name;
-                occDto.Room.Description = room.Description;
-                if (room.Number.StartsWith("K") || room.Number.StartsWith("L"))
-                {
-                    occDto.Room.Campus = "Pasing";
-                }
-                else if (room.Number.StartsWith("F"))
-                {
-                    occDto.Room.Campus = "Karlstrasse";
-                }
-                else
-                {
-                    occDto.Room.Campus = "Lothstrasse";
-                }
 
-
-                // aktuelle Belegung
-                var currentDates = room.Dates
-                    .Where(d =>
-                            (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
-                            (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
-                            (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
-                    )
-                    .OrderBy(x => x.Begin)
-                    .ToList();
-
-                bool include = true;
-                if (isAvailable.HasValue)
-                {
-                    if ((currentDates.Any() && isAvailable.Value) || // es werden freie gesucht, aber sind Belegungen vorhanden
-                        (!currentDates.Any() && !isAvailable.Value)
-                        )   
-                    {
-                        include = false;
-                    }
-                }
-
-                if (include)
-                {
-                    // aktuelle Belegung aufbauen
-                    foreach (var currentDate in currentDates)
-                    {
-                        var resDto = new ReservationDto
-                        {
-                            Id = currentDate.Id,
-                            Begin = currentDate.Begin,
-                            End = currentDate.End,
-                            Name = currentDate.Activity.Name,
-                            ShortName = currentDate.Activity.ShortName
-                        };
-
-
-                        occDto.Current.Add(resDto);
-                    }
-
-                    // nächste Belegung
-                    var nextDate = room.Dates.OrderBy(x => x.Begin).FirstOrDefault(x => x.Begin > from);
-                    if (nextDate != null)
-                    {
-                        var resDto = new ReservationDto
-                        {
-                            Id = nextDate.Id,
-                            Begin = nextDate.Begin,
-                            End = nextDate.End,
-                            Name = nextDate.Activity.Name,
-                            ShortName = nextDate.Activity.ShortName
-                        };
-
-
-                        occDto.Next.Add(resDto);
-                    }
-
-                    result.Add(occDto);
-                }
             }
+            else
+            {
+                roomList = roomList.Where(x => x.Number.StartsWith(model.BuildingName));
+            }
+
+            // jetzt noch die Daten aufbereiten
+
+            var day = model.From.Date;
+            var endOdDay = day.AddDays(1);
+            var minDate = day.Add(TimeSpan.FromHours(8.25));
+            var maxDate = day.Add(TimeSpan.FromHours(22.0));
+
+
+            foreach (var room in roomList)
+            {
+                var occDto = new FreeRoomDto();
+                occDto.RoomNumber = room.Number;
+                occDto.RoomName = room.Name;
+                occDto.Capacity = room.Capacity;
+
+                // bezogen auf den Tag
+                var nextDate = room.Dates.Where(d => d.Begin >= day && d.End < endOdDay && d.Begin >= until).OrderBy(d => d.Begin).FirstOrDefault();
+                var prevDate = room.Dates.Where(d => d.Begin >= day && d.End < endOdDay && d.End <= from).OrderBy(d => d.End).LastOrDefault();
+
+                var freeBegin = minDate;
+                if (prevDate != null)
+                {
+                    freeBegin = prevDate.End;
+                }
+
+                var freeEnd = maxDate;
+                if (nextDate != null)
+                {
+                    freeEnd = nextDate.Begin;
+                }
+
+                occDto.FreeFrom = freeBegin;
+                occDto.FreeTo = freeEnd;
+
+                if (nextDate != null)
+                {
+                    occDto.NextEventName = nextDate.Activity.Name;
+                }
+
+                result.Add(occDto);
+            }
+
 
             return result.AsQueryable();
         }
 
 
 
+        /// <summary>
+        /// Suche nach freien Räumen
+        /// </summary>
+        /// <param name="number">Nummer des Raumes</param>
+        /// <returns></returns>
+        [System.Web.Http.Route("free")]
+        [System.Web.Mvc.HttpPost]
+        public IQueryable<FreeRoomDto> PostFreeRooms([FromBody] RoomSearchModelApi model)
+        {
+            var result = new List<FreeRoomDto>();
+
+
+            // 1. HM-weit oder in FK?
+            var isInstitutionWide = model.OrgName.Equals("HM");
+            var isRoomAdmin = false;
+            var members = new List<OrganiserMember>();
+            ActivityOrganiser org = null;
+
+            if (isInstitutionWide)
+            {
+                // ist user instAdmin?
+                isRoomAdmin = members.Any(x => x.IsInstitutionAdmin);
+            }
+            else
+            {
+                // bin ich in der ausgewählten Fakultät Raum Admin?
+                org = Db.Organisers.FirstOrDefault(x => x.ShortName.Equals(model.OrgName));
+                isRoomAdmin = members.Any(x => x.Organiser.Id == org.Id && x.IsRoomAdmin);
+            }
+
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+
+            var from = model.From;
+            var until = model.To;
+
+            var roomList = roomService.GetFreeRooms(org?.Id, isRoomAdmin, from, until);
+
+            // jetzt noch die anderen Filterkriterien
+            roomList = roomList.Where(x => x.Capacity >= model.MinCapacity && x.Capacity <= model.MaxCapacity)
+                .ToList();
+
+            if (model.BuildingName.Equals("HM"))
+            {
+
+            }
+            else
+            {
+                roomList = roomList.Where(x => x.Number.StartsWith(model.BuildingName));
+            }
+
+            // jetzt noch die Daten aufbereiten
+
+            var day = model.From.Date;
+            var endOdDay = day.AddDays(1);
+            var minDate = day.Add(TimeSpan.FromHours(8.25));
+            var maxDate = day.Add(TimeSpan.FromHours(22.0));
+
+
+            foreach (var room in roomList)
+            {
+                var occDto = new FreeRoomDto();
+                occDto.RoomNumber = room.Number;
+                occDto.RoomName = room.Name;
+                occDto.Capacity = room.Capacity;
+
+                // bezogen auf den Tag
+                var nextDate = room.Dates.Where(d => d.Begin >= day && d.End < endOdDay && d.Begin >= until).OrderBy(d => d.Begin).FirstOrDefault();
+                var prevDate = room.Dates.Where(d => d.Begin >= day && d.End < endOdDay && d.End <= from).OrderBy(d => d.End).LastOrDefault();
+
+                var freeBegin = minDate;
+                if (prevDate != null)
+                {
+                    freeBegin = prevDate.End;
+                }
+
+                var freeEnd = maxDate;
+                if (nextDate != null)
+                {
+                    freeEnd = nextDate.Begin;
+                }
+
+                occDto.FreeFrom = freeBegin;
+                occDto.FreeTo = freeEnd;
+
+                if (nextDate != null)
+                {
+                    occDto.NextEventName = nextDate.Activity.Name;
+                }
+
+                result.Add(occDto);
+            }
+
+
+            return result.AsQueryable();
+        }
+        
+
+        /*
         /// <summary>
         /// 
         /// </summary>

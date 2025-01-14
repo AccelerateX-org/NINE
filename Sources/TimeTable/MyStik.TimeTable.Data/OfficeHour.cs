@@ -11,6 +11,11 @@
         /// </summary>
         public bool ByAgreement { get; set; }
 
+        /// <summary>
+        /// offene Tür, d.h. keine Terminbuchung erforderlich
+        /// </summary>
+        public bool? IsOpenDoor { get; set; }
+
 
         /// <summary>
         /// Anzahl der Slots pro Termin

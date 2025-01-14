@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MyStik.TimeTable.Web.Api.DTOs;
 
 namespace MyStik.TimeTable.Web.Api.Contracts
 {
@@ -176,6 +177,10 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// 
         /// </summary>
         public ICollection<AvailableSlotModel> AvailableSlots { get; set; }
+
+        public ICollection<CourseDto> Courses { get; set; }
+        public ICollection<CourseDto> OfficeHours { get; set; }
+        public ICollection<ModuleDtoVersion2> Modules { get; set; }
     }
 
     /// <summary>

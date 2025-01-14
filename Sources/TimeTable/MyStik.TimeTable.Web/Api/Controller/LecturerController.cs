@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
+using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
@@ -58,38 +60,29 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <returns>Liste aller verfügbaren Dozenten</returns>
         [System.Web.Http.Route("")]
-        public LecturersResponseExtended GetAllLecture()
+        public IQueryable<LecturerContractExtended> GetAllLecture()
         {
-            var lecturerService = new LecturerInfoService();
-
-            // Fakultät
-            var orgService = new OrganizerService();
-            var faculty = orgService.GetOrganiser("FK 09");
-                
-    
-            // Lehrveranstaltungen im aktuellen Semester
-            var semesterService = new SemesterService();
-            var semester = semesterService.GetSemester(DateTime.Today);
-
-            // Dozenten, die Lehrveranstaltungen im aktuellen Semester anbieten
-            var activeLecturers = orgService.GetLecturers(faculty, semester);
-
-            // Benutzerdaten
             var userService = new UserInfoService();
-            
 
-            // für jeden Dozenten
+            var lecturerUserList = Db.Members.Where(x => x.IsAssociated && !string.IsNullOrEmpty(x.UserId)).Select(x => x.UserId)
+                .Distinct().ToList();
+
             var LecturerList = new List<LecturerContractExtended>();
 
-            foreach (var lecturer in activeLecturers)
+            var semester = new SemesterService().GetSemester(DateTime.Today);
+
+            foreach (var userId in lecturerUserList)
             {
+                var members = Db.Members.Where(x => !string.IsNullOrEmpty(x.UserId) && x.UserId.Equals(userId)).ToList();
+                var mainMember = members.FirstOrDefault();
+
                 var lecModel = new LecturerContractExtended();
 
-                lecModel.Title = lecturer.Role;
+                lecModel.Title = mainMember.Role;
                 lecModel.Room = "";
 
                 // Details zum Benutzerkonto
-                var user = userService.GetUser(lecturer.UserId);
+                var user = userService.GetUser(mainMember.UserId);
 
                 if (user != null)
                 {
@@ -99,26 +92,70 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 }
                 else
                 {
-                    lecModel.LastName = lecturer.Name;
+                    lecModel.LastName = "N. N.";
                 }
 
                 // gibt es noch nicht
                 lecModel.Functions = new List<string>();
 
+                lecModel.Courses = new List<CourseDto>();
+                lecModel.OfficeHours = new List<CourseDto>();
+                lecModel.Modules = new List<ModuleDtoVersion2>();
+                foreach (var member in members)
+                {
+                    var courses = Db.Activities.OfType<Course>()
+                            .Where(x =>
+                                x.Semester != null && x.Semester.Id == semester.Id &&
+                                x.Dates.Any(d => d.Hosts.Any(h => h.Id == member.Id)))
+                            .ToList();
+
+                    foreach (var course in courses)
+                    {
+                        var courseDto = new CourseDto
+                        {
+                            Name = course.Name,
+                            ShortName = course.ShortName,
+                            Id = course.Id
+                        };
+                        lecModel.Courses.Add(courseDto);
+                    }
+
+
+                    var officeHours = Db.Activities.OfType<OfficeHour>()
+                        .Where(x => x.Owners.Any(o => o.Member.Id == member.Id) && x.Semester.Id == semester.Id).ToList();
+
+                    foreach (var course in officeHours)
+                    {
+                        var courseDto = new CourseDto
+                        {
+                            Name = course.Name,
+                            ShortName = course.ShortName,
+                            Id = course.Id
+                        };
+                        lecModel.Courses.Add(courseDto);
+                    }
+
+                    var modules = Db.CurriculumModules.Where(x => x.ModuleResponsibilities.Any(r => r.Member.Id == member.Id)).ToList();
+
+                    foreach (var module in modules)
+                    {
+                        var moduleDto = new ModuleDtoVersion2
+                        {
+                            CatalogId = module.FullTag,
+                            Title = module.Name
+                        };
+                        lecModel.Modules.Add(moduleDto);
+                    }
+
+                }
+
                 // Averfügbar Slots
                 //lecModel.AvailableSlots = lecturerService.GetAvailabeSlots(lecturer, semester);
-                
+
                 LecturerList.Add(lecModel);
             }
 
-
-
-            var response = new LecturersResponseExtended()
-            {
-                Lecturers = LecturerList
-            };
-
-            return response;
+            return LecturerList.AsQueryable();
         }
 
         /// <summary>

@@ -7,9 +7,11 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Hangfire;
 using Microsoft.Owin;
+using Microsoft.Owin.Security.OAuth;
 using MyStik.Gym.Data;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
+using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Migrations;
 using MyStik.TimeTable.Web.Models;
 using Owin;
@@ -35,12 +37,18 @@ namespace MyStik.TimeTable.Web
             app.MapSignalR();
             ConfigureAuth(app);
             ConfigureOAuth(app);
+            // ConfigureAuth0(app);
+            // ConfigureSSO(app);
+            // ConfigureOIDC(app);
+
 
             HttpConfiguration = new HttpConfiguration();
 
             SwaggerConfig.Register(HttpConfiguration);
-            WebApiConfig.Register(HttpConfiguration);
+
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            WebApiConfig.Register(HttpConfiguration);
+            
             app.UseWebApi(HttpConfiguration);
 
 

@@ -1,0 +1,70 @@
+﻿@using MyStik.TimeTable.Data
+@model ICollection<MyStik.TimeTable.Web.Models.RoomInfoModel>
+
+@{
+    var minDate = (DateTime)ViewBag.SearchDate.Add(TimeSpan.FromHours(8.25));
+    var maxDate = (DateTime)ViewBag.SearchDate.Add(TimeSpan.FromHours(22.0));
+
+}
+
+<table id="tabRooms"  class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Nummer</th>
+            <th>Plätze</th>
+            <th>Ab</th>
+            <th>Bis</th>
+            <th>Dauer [h]</th>
+            <th>Nächste Veranstaltung</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var room in Model.OrderBy(r => r.Room.Number))
+    {
+        var freeBegin = minDate;
+        if (room.PreviousDate != null)
+        {
+            freeBegin = room.PreviousDate.End;
+        }
+
+        var freeEnd = maxDate;
+        if (room.NextDate != null)
+        {
+            freeEnd = room.NextDate.Begin;
+        }
+
+        var freeMinutes = freeEnd - freeBegin;
+
+        <tr id="@room.Room.Id">
+            <td>
+                <a href="@Url.Action("Details", "Room", new {id = room.Room.Id})">@room.Room.FullName</a>
+            </td>
+            <td>@room.Room.Capacity</td>
+            <td>@freeBegin.ToShortTimeString()</td>
+            <td>@freeEnd.ToShortTimeString()</td>
+            <td>@freeMinutes.TotalHours</td>
+            @if (room.NextDate != null)
+            {
+                <td>
+                    @if (room.NextDate.Activity is Course)
+                    {
+                        <a href="@Url.Action("Details", "Course", new { id = room.NextDate.Activity.Id })">@room.NextDate.Activity.Name</a>
+                    }
+                    else if (room.NextDate.Activity is Reservation)
+                    {
+                        <a href="@Url.Action("Details", "Reservation", new { id = room.NextDate.Activity.Id })">@room.NextDate.Activity.Name</a>
+                    }
+                    else
+                    {
+                        @room.NextDate.Activity.Name
+                    }
+                </td>
+            }
+            else
+            {
+                <td></td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>

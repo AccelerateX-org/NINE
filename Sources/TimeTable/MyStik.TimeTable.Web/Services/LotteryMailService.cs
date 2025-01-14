@@ -85,34 +85,28 @@ namespace MyStik.TimeTable.Web.Services
         {
             foreach (var game in Drawing.Games)
             {
-                var nNeeded = game.CoursesWanted - game.Seats.Count;
-
-                // Versand nur an jene, die Plätze auf der Warteliste haben
-                if (nNeeded > 0)
+                var email = new LotteryDrawingStudentEmail("LotteryClearedStudent")
                 {
-                    var email = new LotteryDrawingStudentEmail("LotteryClearedStudent")
-                    {
-                        Subject = "[nine] Wahlverfahren " + Drawing.Lottery.Name,
-                        Game = game,
-                        User = UserService.GetUser(game.Student.UserId),
-                        Drawing = drawing,
-                        Member = member
-                    };
+                    Subject = "[nine] Wahlverfahren " + Drawing.Lottery.Name,
+                    Game = game,
+                    User = UserService.GetUser(game.Student.UserId),
+                    Drawing = drawing,
+                    Member = member
+                };
 
-                    try
+                try
+                {
+                    if (email.User != null)
                     {
-                        if (email.User != null)
-                        {
 
-                            EmailService.Send(email);
-                            Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
-                        }
+                        EmailService.Send(email);
+                        Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
                     }
-                    catch (Exception exMail)
-                    {
-                        Logger.ErrorFormat("Fehler bei E-Mail Versand an: {0} - Ursache {1}", email.User.Email,
-                            exMail.Message);
-                    }
+                }
+                catch (Exception exMail)
+                {
+                    Logger.ErrorFormat("Fehler bei E-Mail Versand an: {0} - Ursache {1}", email.User.Email,
+                        exMail.Message);
                 }
             }
         }

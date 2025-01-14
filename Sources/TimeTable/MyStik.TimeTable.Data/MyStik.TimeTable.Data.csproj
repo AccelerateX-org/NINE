@@ -621,6 +621,14 @@
     <Compile Include="Migrations\202406110713469_CurrModules.Designer.cs">
       <DependentUpon>202406110713469_CurrModules.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202501111438304_RoomOwnerV3.cs" />
+    <Compile Include="Migrations\202501111438304_RoomOwnerV3.Designer.cs">
+      <DependentUpon>202501111438304_RoomOwnerV3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202501121647564_RoomOwnerV4.cs" />
+    <Compile Include="Migrations\202501121647564_RoomOwnerV4.Designer.cs">
+      <DependentUpon>202501121647564_RoomOwnerV4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -996,6 +1004,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202406110713469_CurrModules.resx">
       <DependentUpon>202406110713469_CurrModules.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202501111438304_RoomOwnerV3.resx">
+      <DependentUpon>202501111438304_RoomOwnerV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202501121647564_RoomOwnerV4.resx">
+      <DependentUpon>202501121647564_RoomOwnerV4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

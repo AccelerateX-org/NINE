@@ -469,6 +469,9 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Beschreibung")]
         public string Description { get; set; }
 
+
+        public bool isOpenDoor { get; set; }
+
     }
 
 

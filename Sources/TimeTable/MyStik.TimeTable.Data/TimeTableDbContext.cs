@@ -54,6 +54,8 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<RoomAllocation> RoomAllocations { get; set; }
 
+        public DbSet<RoomAccess> RoomAccesses { get; set; }
+
 
         public DbSet<BookingConfirmation> BookingConfirmations { get; set; }
         

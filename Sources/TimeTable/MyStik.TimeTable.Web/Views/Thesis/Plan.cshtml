@@ -9,55 +9,60 @@
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <h4 class="panel-heading">
-                    <i class="fa fa-file-o"></i> Geplanter Bearbeitungszeitraum
-                </h4>
-                <div class="panel-body">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Geplanter Bearbeitungszeitraum = Datum der Anmeldung</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(false)
+                            @Html.HiddenFor(m => m.Thesis.Id)
+                            <div class="row">
+                                <label for="IssueDate" class="col-md-6 col-form-label">Datum der Anmeldung = Beginn des Bearbeitungszeitraums:</label>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.IssueDate, new { @class = "form-control datepicker" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                </div>
+                                <div class="col-sm-6">
+                                    <div>
+                                        Die Bearbeitungsdauer für Abschlussarbeiten in Ihrem Studiengang <strong>@Model.Thesis.Student.Curriculum.ShortName</strong> beträgt <strong>@Model.GetWorkingPeriod() Monate</strong>.
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="alert alert-info">
-                        <strong>Wichtige Hinweise:</strong>
-                        <ul>
-                            <li><strong>Das ist keine Anmeldung der Arbeit - es dient nur im Vorfeld der Planung und Absprache mit den Betreuenden.</strong></li>
-                            <li>Der geplante Bearbeitungszeitraum kann beliebig in der Zukunft liegen.</li>
-                            <li>Die Bearbeitungsdauer für Abschlussarbeiten in Ihrem Studiengang <strong>@Model.Thesis.Student.Curriculum.ShortName</strong> beträgt <strong>@Model.GetWorkingPeriod() Monate</strong>.</li>
-                            <li>Das geplante Abgabedatum wird automatisch bestimmt.</li>
-                            <li>Die Anmeldung erfolgt, nachdem das Thema festgelegt ist sowie die Betreuenden feststehen.</li>
-                            <li>Das Datum der Anmeldung kann dann immer noch beliebig gewählt werden.</li>
-                            <li><strong>Erfolgt bis zum geplanten Beginn keine Anmeldung wird der geplante Zeitraum automatisch als Anmeldung übernommen.</strong></li>
-                        </ul>
+
+                            <div class="form-group mt-3">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> speichern</button>
+                                    <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
+                                </div>
+                            </div>
+                        }
                     </div>
-
-
-
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
-                    {
-                        @Html.ValidationSummary(false)
-                        @Html.HiddenFor(m => m.Thesis.Id)
-                        <div class="form-group">
-                            <label for="IssueDate" class="col-sm-3 control-label">Datum des geplanten Beginns (heute oder später)</label>
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(m => m.IssueDate, new { @class = "form-control datepicker" })
-                            </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <strong>Wichtiger Hinweis:</strong>
+                            <p>Erfolgt bis zum hier angegebenen Datum keine Änderung am Bearbeitungszeitraum, so wird die Arbeit automatisch angemeldet.</p>
                         </div>
-
-
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> speichern</button>
-                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
-                            </div>
-                        </div>
-                    }
-
+                    </div>
                 </div>
+              
+
             </div>
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>

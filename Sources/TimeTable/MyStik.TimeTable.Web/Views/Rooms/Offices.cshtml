@@ -1,0 +1,88 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Büros";
+}
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Büros @Model.Organiser.ShortName</h5>
+            </div>
+
+            <div class="card-body">
+                @using (Html.BeginForm("Upload", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.HiddenFor(m => m.Organiser.Id)
+
+                        <div class="row">
+                            <label class="col-md-4 form-label">JSON-Datei</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="file" name="attachmentRooms" id="Attachment1">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="offset-4 col-md-8">
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-chevron-right"></i> Weiter</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+
+
+            @*
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="btn-group">
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+
+                </div>
+                <div class="col-md-6">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Zugeordnet</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var room in Model.Rooms)
+                        {
+                            if (room.RoomAccesses.Any())
+                            {
+                                if (room.IsBookable == true)
+                                {
+                                    <tr>
+                                        <td>@room.Number</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr class="bg-danger-subtle">
+                                        <td>@room.Number</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+            *@
+        </div>
+    </div>
+</div>

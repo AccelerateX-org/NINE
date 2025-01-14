@@ -3567,7 +3567,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddQuota(Guid courseId, Guid currid, int? capa)
+        public ActionResult AddQuota(Guid courseId, Guid currid, Guid[] labelIds, int? capa)
         {
             var course = Db.Activities.OfType<Course>().Include(activity =>
                 activity.Occurrence.SeatQuotas.Select(seatQuota => seatQuota.Curriculum)).SingleOrDefault(c => c.Id == courseId);
@@ -3585,35 +3585,86 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 var quota = new SeatQuota
                 {
+                    /*
                     Curriculum = curr,
                     ItemLabelSet = new ItemLabelSet(),
+                    */
                     MaxCapacity = cpacity,
                     MinCapacity = 0,
                     Description = string.Empty,
-                    Occurrence = course.Occurrence
+                    Occurrence = course.Occurrence,
+                    Fractions = new List<SeatQuotaFraction>()
                 };
 
+                var fraction = new SeatQuotaFraction
+                {
+                    Quota = quota,
+                    Curriculum = curr,
+                    ItemLabelSet = new ItemLabelSet()
+                };
+
+                quota.Fractions.Add(fraction);
+
+                if (labelIds != null)
+                {
+                    foreach (var labelId in labelIds)
+                    {
+                        var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+                        if (label != null)
+                        {
+                            fraction.ItemLabelSet.ItemLabels.Add(label);
+                        }
+                    }
+                }
+
+                Db.SeatQuotaFractions.Add(fraction);
+                Db.ItemLabelSets.Add(fraction.ItemLabelSet);
                 Db.SeatQuotas.Add(quota);
+
                 Db.SaveChanges();
             }
             else
             {
-                if (course.Occurrence.SeatQuotas.Any(x => x.Curriculum == null))
-                {
-                    return null;
-                }
-
                 var quota = new SeatQuota
                 {
+                    /*
                     Curriculum = null,
                     ItemLabelSet = new ItemLabelSet(),
+                    */
                     MaxCapacity = cpacity,
                     MinCapacity = 0,
                     Description = string.Empty,
-                    Occurrence = course.Occurrence
+                    Occurrence = course.Occurrence,
+                    Fractions = new List<SeatQuotaFraction>()
                 };
 
+                var fraction = new SeatQuotaFraction
+                {
+                    Quota = quota,
+                    Curriculum = curr,
+                    ItemLabelSet = new ItemLabelSet()
+                };
+
+                quota.Fractions.Add(fraction);
+
+                if (labelIds != null)
+                {
+                    foreach (var labelId in labelIds)
+                    {
+                        var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+                        if (label != null)
+                        {
+                            fraction.ItemLabelSet.ItemLabels.Add(label);
+                        }
+                    }
+                }
+
+                Db.SeatQuotaFractions.Add(fraction);
+                Db.ItemLabelSets.Add(fraction.ItemLabelSet);
                 Db.SeatQuotas.Add(quota);
+
                 Db.SaveChanges();
             }
 

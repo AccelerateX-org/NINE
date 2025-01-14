@@ -3383,6 +3383,64 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+
+        public ActionResult IncreaseCapacities(Guid id)
+        {
+            var org = GetMyOrganisation();
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            foreach (var course in model.Courses)
+            {
+                var pots = model.LotPots.Where(x => x.Course.Id == course.Id).ToList();
+
+                foreach (var pot in pots)
+                {
+                    if (pot.BookingList == null) continue;
+                    if (pot.BookingList.SeatQuota == null) continue;
+
+                    if (pot.BookingList.SeatQuota.MaxCapacity != int.MaxValue)
+                    {
+                        pot.BookingList.SeatQuota.MaxCapacity += 1;
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Capacities", new {id = id});
+        }
+
+        public ActionResult DecreaseCapacities(Guid id)
+        {
+            var org = GetMyOrganisation();
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            foreach (var course in model.Courses)
+            {
+                var pots = model.LotPots.Where(x => x.Course.Id == course.Id).ToList();
+
+                foreach (var pot in pots)
+                {
+                    if (pot.BookingList == null) continue;
+                    if (pot.BookingList.SeatQuota == null) continue;
+
+                    if (pot.BookingList.SeatQuota.MaxCapacity != int.MaxValue && pot.BookingList.SeatQuota.MaxCapacity > 0)
+                    {
+                        pot.BookingList.SeatQuota.MaxCapacity -= 1;
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Capacities", new { id = id });
+        }
+
     }
 
 }

@@ -75,8 +75,12 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">Kohorten</div>
+                            <div class="col-4">
+                                <div>Kohorten</div>
+                                <div><i>Ohne Angabe von Kohorten bedeutet "offen für alle Kohorten" (in dem angegebenen Studiengang)</i></div>
+                            </div>
                             <div class="col-8">
+                                <div id="sourceLabelList"></div>
                             </div>
                         </div>
                     </div>
@@ -122,6 +126,7 @@
 
 
         function onCurrChanged(value) {
+            var orgId = $("#selectOrg").val();
             var currId = value;
             $("#loading").show();
 
@@ -130,6 +135,7 @@
                     type: "POST",
                     url: '@Url.Action("GetLabelListCurriculum", "LabelSet")',
                     data: {
+                        orgId: orgId,
                         currId: currId
                     },
                     success: function(data, success, xhr) {
@@ -151,6 +157,17 @@
                 capa = $("#capa").val();
             }
 
+            var list = $("#sourceLabelList > ul > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+
+            var moduleIdList = new Array();
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+                }
+            }
+
+
             $.ajax(
                 {
                     type: "POST",
@@ -158,6 +175,7 @@
                     data: {
                         courseId: courseId,
                         currId: currId,
+                        labelIds: moduleIdList,
                         capa: capa
                     },
                     success: function(data, success, xhr) {

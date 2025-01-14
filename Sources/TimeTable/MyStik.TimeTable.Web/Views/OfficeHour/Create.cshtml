@@ -8,44 +8,59 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Sprechstunde (@Model.Semester.Name) anlegen</h4>
+                <h5 class="card-title">Sprechstunde (@Model.Semester.Name) anlegen</h5>
             </div>
-            <div class="list-group">
-                @if (Model.Member.IsAssociated)
-                {
-                    <div class="list-group-item list-group-item-info">
-                        <h5>
-                            Hinweis
-                        </h5>
-                        <p>
-                            Als Lehrbeauftragter oder Gast besteht keine Verpflichtung zum Anbieten einer Sprechstunde
-                        </p>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <h5><strong>Sprechstunde mit Terminen</strong></h5>
+                            </div>
+                            <a href="@Url.Action("CreateSlotSystem", "OfficeHour", new { semId = Model.Semester.Id, dozId = Model.Member.Id })" class="list-group-item">
+                                <h5>
+                                    Slotsystem
+                                </h5>
+                                <p>
+                                    Aufteilung eines Termins in kleinere Einheiten (Slots).
+                                </p>
+                            </a>
+                            <a href="@Url.Action("CreateOpenSystem", "OfficeHour", new { semId = Model.Semester.Id, dozId = Model.Member.Id, isOpenDoor=false })" class="list-group-item">
+                                <h5>
+                                    Offene Sprechstunde
+                                </h5>
+                                <p>
+                                    Angabe eines Zeitraums. Anzahl an Eintragungen zu einem Termin kann beschränkt werden.
+                                </p>
+                            </a>
+                            @*
+                            <a href="@Url.Action("CreateOpenSystem", "OfficeHour", new { semId = Model.Semester.Id, dozId = Model.Member.Id, isOpenDoor=true })" class="list-group-item">
+                                <h5>
+                                    Offene Sprechstunde <strong>ohne Buchung</strong>
+                                </h5>
+                                <p>
+                                    Studierende müssen keinen Termin buchen, z.B. für Prüfungseinsichten.
+                                </p>
+                            </a>
+                            *@
+                        </div>
                     </div>
-                }
-                <a href="@Url.Action("CreateOpenSystem", "OfficeHour", new {semId = Model.Semester.Id, dozId=Model.Member.Id })" class="list-group-item">
-                    <h5>
-                        Offene Sprechstunde
-                    </h5>
-                    <p>
-                        Angabe eines Zeitraums. Anzahl an Eintragungen zu einem Termin kann beschränkt werden.
-                    </p>
-                </a>
-                <a href="@Url.Action("CreateSlotSystem", "OfficeHour", new {semId = Model.Semester.Id, dozId=Model.Member.Id})" class="list-group-item">
-                    <h5>
-                        Slotsystem
-                    </h5>
-                    <p>
-                        Aufteilung eines Termins in kleinere Einheiten (Slots).
-                    </p>
-                </a>
-                <a href="@Url.Action("CreateByAgreement", "OfficeHour", new {semId = Model.Semester.Id, dozId=Model.Member.Id})" class="list-group-item">
-                    <h5>
-                        Nach Vereinbarung
-                    </h5>
-                    <p>
-                        Es werden keine Termine angelegt. In Übersichten erscheint lediglich ein Hinweis.
-                    </p>
-                </a>
+                    <div class="col-md-6">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <h5><strong>Sprechstunde ohne Termine</strong></h5>
+                            </div>
+                            <a href="@Url.Action("CreateByAgreement", "OfficeHour", new { semId = Model.Semester.Id, dozId = Model.Member.Id })" class="list-group-item">
+                                <h5>
+                                    Nach Vereinbarung
+                                </h5>
+                                <p>
+                                    Es werden keine Termine angelegt. In Übersichten erscheint lediglich ein Hinweis.
+                                </p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -21,19 +21,9 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Self()
         {
             var user = GetCurrentUser();
+            var member = GetMyMembership();
 
-            var model = new PersonViewModel
-            {
-                User = user,
-                Members = Db.Members.Where(x => x.UserId.Equals(user.Id)).ToList()
-            };
-            
-            FillModel(model);
-
-            ViewBag.IsSelf = true;
-            ViewBag.UserRight = GetUserRight();
-
-            return View("Profile", model);
+            return RedirectToAction("Card", new {memberId = member.Id});
         }
 
         public ActionResult Link()
@@ -51,7 +41,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        private void FillModel(PersonViewModel model)
+        private void FillModel(PersonViewModel model, Semester semester)
         {
             model.Courses = new List<Course>();
             model.OfficeHours = new List<OfficeHour>();
@@ -60,11 +50,13 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 model.Courses.AddRange(
                     Db.Activities.OfType<Course>()
-                        .Where(x => x.Dates.Any(d => d.Hosts.Any(h => h.Id == member.Id) && d.End >= DateTime.Today))
+                        .Where(x => 
+                            x.Semester != null && x.Semester.Id == semester.Id &&
+                            x.Dates.Any(d => d.Hosts.Any(h => h.Id == member.Id)))
                         .ToList());
 
                 model.OfficeHours.AddRange(Db.Activities.OfType<OfficeHour>()
-                    .Where(x => x.Owners.Any(o => o.Member.Id == member.Id) && x.Semester.EndCourses >= DateTime.Today).ToList());
+                    .Where(x => x.Owners.Any(o => o.Member.Id == member.Id) && x.Semester.Id == semester.Id).ToList());
 
                 model.Modules.AddRange(
                 Db.CurriculumModules.Where(x => x.ModuleResponsibilities.Any(r => r.Member.Id == member.Id)).ToList());
@@ -74,15 +66,26 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Private(Guid memberId)
         {
+            return RedirectToAction("Card", new { memberId = memberId });
+        }
+
+
+        public ActionResult Card(Guid memberId, Guid? semId)
+        {
+            var semester = semId != null ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var previousSemester = SemesterService.GetPreviousSemester(semester);
+
+
             var member = Db.Members.SingleOrDefault(x => x.Id == memberId);
             var user = GetCurrentUser();
-
-            var memberUser = GetUser(member.UserId);
 
             if (member == null)
             {
                 return RedirectToAction("Index", "Home");
             }
+
+            var memberUser = GetUser(member.UserId);
 
             var model = new PersonViewModel
             {
@@ -94,10 +97,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.User = GetUser(member.UserId);
             }
 
-            FillModel(model);
+            FillModel(model, semester);
 
             ViewBag.IsSelf = user.Id.Equals(member.UserId);
             ViewBag.UserRight = GetUserRight();
+            ViewBag.PrevSemester = previousSemester;
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = nextSemester;
 
             return View("Profile", model);
         }

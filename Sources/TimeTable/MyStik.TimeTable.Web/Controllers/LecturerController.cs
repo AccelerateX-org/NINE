@@ -444,8 +444,91 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Date = date;
             model.Subscriptions.AddRange(infoService.GetSubscriptions(date));
 
+            var member = officeHour.Owners.FirstOrDefault();
+
+            ViewBag.VirtualRooms = Db.VirtualRooms.Where(x => x.Owner.Id == member.Member.Id).ToList();
+
             return View(model);
         }
+
+        public ActionResult AddVirtualRoom(Guid dateId, Guid roomId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
+            var vRoom = Db.VirtualRooms.SingleOrDefault(x => x.Id == roomId);
+
+            if (vRoom != null)
+            {
+                var roomAssign = date.VirtualRooms.FirstOrDefault(x => x.Room.Id == vRoom.Id);
+                if (roomAssign == null)
+                {
+                    roomAssign = new VirtualRoomAccess
+                    {
+                        Date = date,
+                        Room = vRoom,
+                        isDefault = true
+                    };
+
+
+                    date.VirtualRooms.Add(roomAssign);
+
+                    Db.VirtualRoomAccesses.Add(roomAssign);
+
+                    Db.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("DateDetails", new {id = date.Id});
+        }
+
+
+        public ActionResult RemoveVirtualRoom(Guid dateId, Guid roomId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
+            var vRoom = Db.VirtualRooms.SingleOrDefault(x => x.Id == roomId);
+
+            if (vRoom != null)
+            {
+                var roomAssign = date.VirtualRooms.FirstOrDefault(x => x.Room.Id == vRoom.Id);
+                if (roomAssign != null)
+                {
+                    date.VirtualRooms.Remove(roomAssign);
+                    Db.VirtualRoomAccesses.Remove(roomAssign);
+                    Db.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("DateDetails", new { id = date.Id });
+        }
+
+        [HttpPost]
+        public ActionResult AddRoom(Guid dateId, string roomNumber)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
+            var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
+
+            if (room != null)
+            {
+                date.Rooms.Add(room);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("DateDetails", new { id = date.Id });
+        }
+
+        public ActionResult RemoveRooms(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
+
+            if (date != null)
+            {
+                date.Rooms.Clear();
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("DateDetails", new { id = date.Id });
+
+        }
+
 
         public ActionResult Responsibilities(Guid id)
         {

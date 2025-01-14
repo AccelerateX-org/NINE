@@ -11,6 +11,11 @@ using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using Pitchfork.QRGenerator;
 using RoomService = MyStik.TimeTable.Web.Services.RoomService;
+using System.Web.Http.Results;
+using System.Threading;
+using System.Windows.Forms;
+using MyStik.TimeTable.Web.Services;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 
 namespace MyStik.TimeTable.Web.Controllers
 { 
@@ -298,8 +303,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Free()
         {
+
+            /*
             var from = DateTime.Now;
-            var to = from;
+            var to = from.AddMinutes(45);
 
             var model = new FreeRoomSummaryModel();
             var org = GetMyOrganisation();
@@ -320,6 +327,63 @@ namespace MyStik.TimeTable.Web.Controllers
             model.AvailableRooms = model.AvailableRooms.OrderBy(r => r.Room.Number).ToList();
 
             ViewBag.Organiser = fk09.ShortName;
+            */
+            var org = GetMyOrganisation();
+
+            var model = new RoomSearchModel
+            {
+                Date = DateTime.Today,
+                Begin = DateTime.Now.TimeOfDay,
+                End = DateTime.Now.AddMinutes(45).TimeOfDay,
+                OrgName = org.ShortName,
+                CampusName = "HM",
+                BuildingName = "HM",
+                MinCapacity = 0,
+                MaxCapacity = Db.Rooms.Max(x => x.Capacity)
+            };
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+            var orgs = Db.Organisers.Where(x => !x.IsStudent).OrderBy(x => x.ShortName).ToList();
+            var orgList = new List<SelectListItem>();
+            orgList.Add(new SelectListItem
+            {
+                Text = "HM",
+                Value = "HM",
+
+            });
+            foreach (var o in orgs)
+            {
+                orgList.Add(new SelectListItem
+                {
+                    Text = o.ShortName,
+                    Value = o.ShortName,
+                });
+            }
+            ViewBag.Organiser = orgList;
+
+            // Liste der Gebäude
+            var rooms = Db.Rooms.Select(x => x.Number).Distinct().ToList();
+            var buildings = rooms.Where(x => !string.IsNullOrEmpty(x)).Select(x => x[0]).Distinct().ToList();
+            var buildingList = new List<SelectListItem>();
+            buildingList.Add(new SelectListItem
+            {
+                Text = "HM",
+                Value = "HM",
+
+            });
+            foreach (var building in buildings)
+            {
+                buildingList.Add(new SelectListItem
+                {
+                    Text = building.ToString(),
+                    Value = building.ToString(),
+
+                });
+            }
+            ViewBag.Buildings = buildingList;
+
 
             return View("Free", model);
         }
@@ -343,6 +407,69 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             return View(model);
+        }
+
+        public PartialViewResult SearchByDay(RoomSearchModel model)
+        {
+            // 1. HM-weit oder in FK?
+            var isInstitutionWide = model.OrgName.Equals("HM");
+            var isRoomAdmin = false;
+            var members = GetMyMemberships();
+            ActivityOrganiser org = null;
+
+            if (isInstitutionWide)
+            {
+                // ist user instAdmin?
+                isRoomAdmin = members.Any(x => x.IsInstitutionAdmin);
+            }
+            else
+            {
+                // bin ich in der ausgewählten Fakultät Raum Admin?
+                org = Db.Organisers.FirstOrDefault(x => x.ShortName.Equals(model.OrgName));
+                isRoomAdmin = members.Any(x => x.Organiser.Id == org.Id && x.IsRoomAdmin);
+            }
+
+            var roomService = new RoomService();
+
+            var from = model.Date.Add(model.Begin);
+            var until = model.Date.Add(model.End);
+
+            var roomList = roomService.GetFreeRooms(org?.Id, isRoomAdmin, from, until);
+
+            // jetzt noch die anderen Filterkriterien
+            roomList = roomList.Where(x => x.Capacity >= model.MinCapacity && x.Capacity <= model.MaxCapacity)
+                .ToList();
+
+            if (model.BuildingName.Equals("HM"))
+            {
+
+            }
+            else
+            {
+                roomList = roomList.Where(x => x.Number.StartsWith(model.BuildingName));
+            }
+
+            // jetzt noch die Daten aufbereiten
+            var roomInfoList = new List<RoomInfoModel>();
+            foreach (var room in roomList)
+            {
+                // bezogen auf den Tag
+                var endOdDay = model.Date.AddDays(1);
+                var nextDate = room.Dates.Where(d => d.Begin >= model.Date && d.End < endOdDay && d.Begin >= until).OrderBy(d => d.Begin).FirstOrDefault();
+                var prevDate = room.Dates.Where(d => d.Begin >= model.Date && d.End < endOdDay && d.End <= from).OrderBy(d => d.End).LastOrDefault();
+
+                roomInfoList.Add(new RoomInfoModel
+                {
+                    Room = room,
+                    NextDate = nextDate,
+                    PreviousDate = prevDate
+                });
+
+            }
+
+            ViewBag.SearchDate = model.Date;
+
+            return PartialView("_RoomSearchList", roomInfoList);
         }
 
         public PartialViewResult Search(RoomLookUpModel model)

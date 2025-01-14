@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web.Http;
+using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 
 namespace MyStik.TimeTable.Web
@@ -17,6 +18,8 @@ namespace MyStik.TimeTable.Web
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            // config.SuppressDefaultHostAuthentication();
+            // config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
             // Web API routes
             config.MapHttpAttributeRoutes();

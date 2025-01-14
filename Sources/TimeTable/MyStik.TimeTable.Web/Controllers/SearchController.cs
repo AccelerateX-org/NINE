@@ -16,16 +16,19 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="searchText"></param>
+        /// <param name="semId"></param>
+        /// <param name="isGlobal"></param>
         /// <returns></returns>
-        public ActionResult Index(string searchText, bool? isGlobal)
+        public ActionResult Index(string searchText, Guid? semId, bool? isGlobal = true)
         {
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
             if (isGlobal.HasValue && isGlobal.Value)
                 org = null;
 
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            var semester = semId != null ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
             var nextSemester = SemesterService.GetNextSemester(semester);
+            var previousSemester = SemesterService.GetPreviousSemester(semester);
 
             if (string.IsNullOrEmpty(searchText))
             {
@@ -45,34 +48,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(defaultModel);
             }
 
-            var courseList = new CourseService(Db).SearchCourses(searchText, org);
+            var courseList = new CourseService(Db).SearchCourses(searchText, org, semester);
             foreach (var course in courseList)
             {
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);
             }
-
-            /*
-            // Veranstaltungen des nächsten Semesters 
-            // user = student => nur wenn freigegeben
-            var nextCoursesList = new List<CourseSummaryModel>();
-            var bSearchForCourses = true;
-            if (user.MemberState != MemberState.Staff && nextSemester != null)
-            {
-                // nur wenn alle Gruppen freigegeben sind
-                var isAvailable = nextSemester.Groups.All(x => x.IsAvailable);
-                bSearchForCourses = isAvailable;
-            }
-
-            if (bSearchForCourses && nextSemester != null)
-            {
-                nextCoursesList.AddRange(new CourseService(Db).SearchCourses(nextSemester.Id, searchText, org));
-                foreach (var course in nextCoursesList)
-                {
-                    course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
-                }
-            }
-            */
-
 
             // alle Mitglieder
             var activeLecturers = org != null ?
@@ -112,6 +92,9 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.UserRight = GetUserRight();
+            ViewBag.PrevSemester = previousSemester;
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = nextSemester;
 
             return View(model);
         }

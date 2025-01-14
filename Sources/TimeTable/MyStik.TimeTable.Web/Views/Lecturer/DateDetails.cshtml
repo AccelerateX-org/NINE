@@ -221,9 +221,50 @@
                                 <a href="@Url.Action("OfficeHourDate", "Print", new {id = Model.Date.Occurrence.Id})"
                                    onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1');return false;"
                                    class="list-group-item"><i class="fa fa-print"></i>drucken</a>
+                                <div class="list-group-item">
+                                    <p>Virtueller Termin</p>
+                                    @if (Model.Date.VirtualRooms.Any())
+                                    {
+                                        <div>
+                                            @Html.RoomList(Model.Date.VirtualRooms, true, false)
+                                        </div>
+                                        <hr/>
+                                    }
+                                    @if (ViewBag.VirtualRooms != null)
+                                    {
+                                        <div>Auswahl virtueller Räume für diesen Termin</div>
+                                        foreach (var vRoom in ViewBag.VirtualRooms)
+                                        {
+                                            <div class="btn-group">
+                                                <a href="@Url.Action("AddVirtualRoom", new { dateId = Model.Date.Id, roomId = vRoom.Id })" class="btn btn-outline-primary">"@vRoom.Name" verwenden</a>
+                                                <a href="@Url.Action("RemoveVirtualRoom", new { dateId = Model.Date.Id, roomId = vRoom.Id })" class="btn btn-outline-danger">"@vRoom.Name" entfernen</a>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>Keine <a href="@Url.Action("Index", "VirtualRoom")">virtuellen Räume</a> vorhanden.</div>
+                                    }
+                                </div>
+                                <div class="list-group-item">
+                                    <p>Präsenztermin</p>
+                                    <div>
+                                        @Html.RoomList(Model.Date.Rooms, true, false)
+                                    </div>
+                                    <div class="alert alert-danger">
+                                        <strong>Hinweis | Achtung | Vorsicht</strong>
+                                        <p>Bitte hier die korrekte Raumnummer (siehe Türschild) des Raums angeben, in dem die Sprechstunde stattfinden soll. Auf Groß-/Kleinschreibung und Leerzeichen achten.</p>
+                                        <p>Im Zuge dieser Aktion werden jetzt auch die Daten zu den Büros erfasst, d.h. es können hier auch Büros angegeben werden.</p>
+                                    </div>
+                                    <form action="@Url.Action("AddRoom")" method="post">
+                                        <input name="dateId" value="@Model.Date.Id" hidden=""/>
+                                        <input name="roomNumber" class="form-control"/>
+                                        <button class="btn btn-outline-primary" type="submit">Speichern</button>
+                                        <a href="@Url.Action("RemoveRooms", new {dateId = Model.Date.Id})" class="btn btn-outline-danger">Räume entfernen</a>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

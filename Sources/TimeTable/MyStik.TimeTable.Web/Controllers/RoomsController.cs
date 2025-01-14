@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Models;
@@ -10,6 +11,8 @@ using System.Net.Http;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using System.Web;
+using MyStik.TimeTable.Web.Areas.Gym.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -91,6 +94,23 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Offices(Guid id)
+        {
+            var org = GetOrganiser(id);
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = org
+            };
+
+            model.Rooms = Db.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == id)).ToList();
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+
         [AllowAnonymous]
         public FileResult GetFamosState(string searchPattern = "")
         {
@@ -163,6 +183,94 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        [HttpPost]
+        public ActionResult Upload(OrganiserViewModel model, HttpPostedFileBase attachmentRooms)
+        {
+            var temp = Db.RoomAssignments.Where(x => x.Organiser == null).ToList();
+            foreach (var roomAssignment in temp)
+            {
+                Db.RoomAssignments.Remove(roomAssignment);
+            }
+
+            Db.SaveChanges();
+
+
+            var org = Db.Organisers.Include(activityOrganiser => activityOrganiser.Members).SingleOrDefault(x => x.Id == model.Organiser.Id);
+
+            var tempFile = Path.GetTempFileName();
+            attachmentRooms.SaveAs(tempFile);
+
+            var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
+
+            var i = 0;
+
+            foreach (var line in lines)
+            {
+                i++;
+                if (i == 1) continue;
+
+                var words = line.Split(';');
+                var name = words[0].Trim();
+                var shortName = words[1].Trim();
+                var roomNumber = words[2].Trim();
+
+                if (string.IsNullOrEmpty(shortName) || string.IsNullOrEmpty(roomNumber)) continue;
+                var member = org.Members.FirstOrDefault(x => x.ShortName.Equals(shortName));
+                if (member == null) continue;
+
+                var room = Db.Rooms.Include(room1 =>
+                    room1.Assignments.Select(roomAssignment => roomAssignment.Organiser)).Include(room2 =>
+                    room2.RoomAccesses.Select(roomAccess => roomAccess.Member)).FirstOrDefault(x => x.Number.Equals(roomNumber));
+
+                if (room == null)
+                {
+                    room = new Room
+                    {
+                        Number = roomNumber,
+                        Name = "Büro",
+                        IsBookable = false,
+                        IsForLearning = false,
+                        Capacity = 0
+                    };
+
+                    Db.Rooms.Add(room);
+                }
+
+                var rAssign = room.Assignments.FirstOrDefault(x => x.Organiser != null && x.Organiser.Id == org.Id);
+
+                if (rAssign == null)
+                {
+                    rAssign = new RoomAssignment
+                    {
+                        Room = room,
+                        Organiser = org,
+                        IsOwner = true,
+                    };
+
+                    Db.RoomAssignments.Add(rAssign);
+                }
+
+                var rAccess = room.RoomAccesses.FirstOrDefault(x => x.Member.Id == member.Id);
+
+                if (rAccess == null)
+                {
+                    rAccess = new RoomAccess
+                    {
+                        Member = member,
+                        IsOwner = true,
+                        MayBook = true,
+                        Room = room
+                    };
+
+                    Db.RoomAccesses.Add(rAccess);
+                }
+
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("Organiser", new { id = org.Id });
+        }
 
     }
 }

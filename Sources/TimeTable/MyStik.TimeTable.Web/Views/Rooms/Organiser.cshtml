@@ -62,7 +62,10 @@
                     <div class="list-group-item">
                         <div class="btn-group" role="group">
                             <a href="@Url.Action("Allocation")" class="btn btn-outline-primary">Allokation</a>
+                            <a href="@Url.Action("Offices", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-list"></i> Büros</a>
+                            @*
                             <a href="@Url.Action("Groups", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-list"></i> Raumgruppen</a>
+                            *@
                             <a href="@Url.Action("Labels", "Room", new { orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-qr-code"></i> Türschilder</a>
                             <a href="@Url.Action("LookupDate", "Room", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-search"></i> Raumsuche</a>
                         </div>
@@ -100,18 +103,25 @@
                                                     </td>
                                                     <td>@room.Name</td>
                                                     <td>@room.Capacity</td>
-                                                    @if (dates.Any())
+                                                    @if (room.IsBookable == true)
                                                     {
-                                                        <td>
-                                                            @foreach(var date in dates)
-                                                            {
-                                                                <div>@date.Activity.ShortName</div>
-                                                            }
-                                                        </td>
+                                                        if (dates.Any())
+                                                        {
+                                                            <td>
+                                                                @foreach (var date in dates)
+                                                                {
+                                                                    <div>@date.Activity.ShortName</div>
+                                                                }
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>aktuell frei</td>
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        <td>aktuell frei</td>
+                                                        <td>nicht buchbar</td>
                                                     }
                                                 </tr>
                                             }

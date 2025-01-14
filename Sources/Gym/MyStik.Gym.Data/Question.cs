@@ -40,6 +40,8 @@ namespace MyStik.Gym.Data
 
         public virtual ICollection<QuestionMapping> Mappings { get; set; }
 
+        public virtual ICollection<QuestionAccreditation> Accreditations { get; set; }
+
         public virtual ICollection<QuizQuestion> Quizzes { get; set; }
     }
 

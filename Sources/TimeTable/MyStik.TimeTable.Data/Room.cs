@@ -14,6 +14,7 @@ namespace MyStik.TimeTable.Data
             Ressources = new HashSet<BinaryStorage>();
             Equipments = new HashSet<RoomEquipment>();
             RoomAllocations = new HashSet<RoomAllocation>();
+            RoomAccesses = new HashSet<RoomAccess>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -56,6 +57,11 @@ namespace MyStik.TimeTable.Data
         public bool HasAccessControl { get; set; }
 
         /// <summary>
+        /// Ist buchbar
+        /// </summary>
+        public bool? IsBookable { get; set; }
+
+        /// <summary>
         /// Die echten Belegungstermine mit Datum und Uhrzeit
         /// many-to-many
         /// </summary>
@@ -79,6 +85,8 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<RoomLayout> Layouts { get; set; }
 
         public virtual ICollection<RoomAllocation> RoomAllocations { get; set; }
+
+        public virtual ICollection<RoomAccess> RoomAccesses { get; set; }
 
 
         public string FullName => string.IsNullOrEmpty(Name) ? Number : $"{Number} ({Name})";

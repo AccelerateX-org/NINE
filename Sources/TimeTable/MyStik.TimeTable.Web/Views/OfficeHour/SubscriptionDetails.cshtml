@@ -19,38 +19,40 @@
                 }
             </div>
             <div class="card-body">
-                    <h4>Informationen zu meinem Sprechstundentermin</h4>
-                    <h5>Mein Anliegen</h5>
-                    <p>@Model.Subscription.SubscriberRemark</p>
+                <h4>Informationen zu meinem Sprechstundentermin</h4>
+                <h5>Mein Anliegen</h5>
+                <p>@Model.Subscription.SubscriberRemark</p>
 
-                    <h5>Allgemeine Informationen zur Sprechstunde</h5>
-                    <p>@Html.Raw(Model.Date.Activity.Description)</p>
+                <h5>Allgemeine Informationen zur Sprechstunde</h5>
+                <p>@Html.Raw(Model.Date.Activity.Description)</p>
+                <p>@Html.RoomList(Model.Date.Rooms, true, false)</p>
+                <p>@Html.RoomList(Model.Date.VirtualRooms, true, false)</p>
 
-                    <div class="btn-group" role="group">
-                        <a href="@Url.Action("Subscriptions", new {id = Model.Semester.Id})" class="btn btn-outline-primary">
-                            <i class="bi bi-arrow-left"></i>
-                            Zurück zu meinen Buchungen
+                <div class="btn-group" role="group">
+                    <a href="@Url.Action("Subscriptions", new {id = Model.Semester.Id})" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i>
+                        Zurück zu meinen Buchungen
+                    </a>
+                    <a href="@Url.Action("EditDateSubscription", new {id = Model.Date.Id})" class="btn btn-outline-primary">
+                        <i class="bi bi-pen"></i> Anliegen ändern
+                    </a>
+                    @if (Model.IsExpired)
+                    {
+                        <a href="" class="btn btn-outline-danger disabled">
+                            <i class="bi bi-trash"></i>
+                            Nach Ende der Eintragungsfrist ist kein Austragen mehr möglich
                         </a>
-                        <a href="@Url.Action("EditDateSubscription", new {id = Model.Date.Id})" class="btn btn-outline-primary">
-                            <i class="bi bi-pen"></i> Anliegen ändern
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("UnsubscribeDateSubscription", new {id = Model.Subscription.Id})" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                            austragen
                         </a>
-                        @if (Model.IsExpired)
-                        {
-                            <a href="" class="btn btn-outline-danger disabled">
-                                <i class="bi bi-trash"></i>
-                                Nach Ende der Eintragungsfrist ist kein Austragen mehr möglich
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("UnsubscribeDateSubscription", new {id = Model.Subscription.Id})" class="btn btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                                austragen
-                            </a>
 
-                        }
-                    </div>
+                    }
                 </div>
+            </div>
 
             </div>
         </div>

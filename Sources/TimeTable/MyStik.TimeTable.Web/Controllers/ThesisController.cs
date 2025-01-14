@@ -564,7 +564,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 User = user,
                 Student = student,
                 Thesis = thesis,
-                IssueDate = DateTime.Today.ToShortDateString()
+                IssueDate = DateTime.Today.AddDays(30).ToShortDateString()
             };
 
             var culture = Thread.CurrentThread.CurrentUICulture;

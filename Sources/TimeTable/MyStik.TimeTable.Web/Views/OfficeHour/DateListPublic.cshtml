@@ -63,6 +63,12 @@
                                         <i class="bi bi-cart"></i>
                                         @Html.TimeSpanWithDate(date.Date)
                                     </div>
+                                    <div>
+                                        @Html.RoomList(date.Date.Rooms, false, false)
+                                    </div>
+                                    <div>
+                                        @Html.RoomList(date.Date.VirtualRooms, false)
+                                    </div>
                                 </a>
                             }
                         }

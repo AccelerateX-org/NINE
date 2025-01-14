@@ -1154,37 +1154,49 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult SwitchToFullTime(Guid id)
         {
-            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var student = Db.Students.Include(student1 => student1.Curriculum).SingleOrDefault(x => x.Id == id);
 
+            if (student != null)
+            {
+                student.IsPartTime = false;
+                Db.SaveChanges();
 
-            student.IsPartTime = false;
-            Db.SaveChanges();
+                return RedirectToAction("Admin", new { id = student.Curriculum.Id });
+            }
 
-            return RedirectToAction("Admin", new {id = student.Curriculum.Id});
+            return RedirectToAction("Index");
         }
 
         public ActionResult SwitchToPartTime(Guid id)
         {
-            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var student = Db.Students.Include(student1 => student1.Curriculum).SingleOrDefault(x => x.Id == id);
 
+            if (student != null)
+            {
+                student.IsPartTime = true;
+                Db.SaveChanges();
 
-            student.IsPartTime = true;
-            Db.SaveChanges();
+                return RedirectToAction("Admin", new { id = student.Curriculum.Id });
+            }
 
-            return RedirectToAction("Admin", new { id = student.Curriculum.Id });
+            return RedirectToAction("Index");
         }
 
 
         public ActionResult ProlongCurriculum(Guid id)
         {
-            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var student = Db.Students.Include(student1 => student1.LastSemester).SingleOrDefault(x => x.Id == id);
 
+            if (student != null)
+            {
+                var sem = student.LastSemester;
+                student.LastSemester = null;
+                student.HasCompleted = false;
+                Db.SaveChanges();
+                return RedirectToAction("Details", new { id = student.Id });
+            }
 
-            student.LastSemester = null;
-            student.HasCompleted = false;
-            Db.SaveChanges();
-
-            return RedirectToAction("Details", new { id = student.Id });
+            return RedirectToAction("Index");
         }
 
     }

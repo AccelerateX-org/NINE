@@ -132,6 +132,7 @@
                         method: 'POST',
                         extraParams: {
                             semId: semId,
+                            segId: segId,
                             orgId: orgId,
                             labelId: labelId,
                             currId: currId,
@@ -506,6 +507,7 @@
             return;
         }
         var semId = $("#Semester_Id").val();
+        var segId = $("#Segment_Id").val();
 
         var rc = "dc-" + memberId;
         var color = $("#" + rc).val();
@@ -521,6 +523,7 @@
                     method: 'POST',
                     extraParams: {
                         semId: semId,
+                        segId: segId,
                         memberId: memberId,
                         color: color
                     },
@@ -693,10 +696,10 @@
                 return;
             }
             var semId = $("#Semester_Id").val();
+            var segId = $("#Segment_Id").val();
 
             var rc = "lc-" + labelId;
             var color = $("#" + rc).val();
-
 
             $("#" + seriesId).addClass("active");
 
@@ -708,6 +711,7 @@
                         method: 'POST',
                         extraParams: {
                             semId: semId,
+                            segId: segId,
                             labelId: labelId,
                             color: color
                         },

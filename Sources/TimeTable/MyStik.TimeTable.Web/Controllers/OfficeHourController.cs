@@ -1431,7 +1431,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult CreateOpenSystem(Guid semId, Guid dozId)
+        public ActionResult CreateOpenSystem(Guid semId, Guid dozId, bool isOpenDoor)
         {
             var semester = SemesterService.GetSemester(semId);
             var member = MemberService.GetMember(dozId);
@@ -1451,7 +1451,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = string.Empty,
                 Semester = semester,
                 NewDateEnd = semester.EndCourses.ToShortDateString(),
-                Member = member
+                Member = member,
+                isOpenDoor = isOpenDoor
             };
 
             SetTimeSelections();
@@ -1501,7 +1502,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 SemesterId = semester.Id,
                 CreateDates = true,
                 Text = model.Description,
-                LastDate = lastDate
+                LastDate = lastDate,
+                isOpenDoor = model.isOpenDoor
             };
 
             var officeHour = ohService.CreateOfficeHour(request);

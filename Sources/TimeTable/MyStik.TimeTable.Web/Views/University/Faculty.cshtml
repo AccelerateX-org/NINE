@@ -78,7 +78,7 @@
                 {
                     <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumreservierungen</a>
                     <a href="@Url.Action("Organiser", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumverzeichnis</a>
-                    <a href="@Url.Action("LookupDate", "Room", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumsuche</a>
+                    <a href="@Url.Action("Free", "Room", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumsuche</a>
                     <a href="@Url.Action("Index", "RoomBookings", new { id = Model.Id })" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">Raumbuchungen</a>
                     <a href="@Url.Action("Reports", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action">Auswertungen und Berichte</a>
                 }

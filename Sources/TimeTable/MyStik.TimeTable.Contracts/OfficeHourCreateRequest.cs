@@ -38,5 +38,7 @@ namespace MyStik.TimeTable.Contracts
 
         public DateTime FirstDate { get; set; }
         public DateTime LastDate { get; set; }
+
+        public bool isOpenDoor { get; set; }
     }
 }

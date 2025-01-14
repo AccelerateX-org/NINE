@@ -3,6 +3,9 @@
 @{
     ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
 
+    var IsAdmin = ViewBag.UserRight.IsCourseAdmin ||
+                  (Model.Lottery.Owner != null && Model.Lottery.Owner.UserId.Equals(ViewBag.UserRight.User.Id));
+
 }
 
 
@@ -41,6 +44,13 @@
                     <div class="btn-group" role="group">
                         <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
                     </div>
+                    @if (IsAdmin)
+                    {
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("IncreaseCapacities", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-cloud-plus"></i> +1 Plätze</a>
+                            <a href="@Url.Action("DecreaseCapacities", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-cloud-minus"></i> -1 Plätze</a>
+                        </div>
+                    }
                 </div>
             </div>
             

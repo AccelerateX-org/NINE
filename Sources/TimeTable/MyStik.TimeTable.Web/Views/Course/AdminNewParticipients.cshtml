@@ -77,12 +77,14 @@
                             <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-hourglass"></i> Alle auf Warteliste setzen</a>
                             <a class="btn btn-outline-danger" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-x"></i> Alle austragen</a>
                         }
+                        @*
                         @if (ViewBag.UserRight.IsCourseAdmin)
                         {
                             <a class="btn btn-outline-secondary" href="@Url.Action("RawAdmin", new {id = Model.Course.Id})" class="btn btn-default">
                                 <i class="fa fa-cogs"></i> Low Level Admin
                             </a>
                         }
+                            *@
                     </div>
                 </div>
             </div>
@@ -189,7 +191,7 @@
 @section scripts
 {
     <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript""></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
 
     <script>

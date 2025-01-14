@@ -52,7 +52,17 @@
                                 <tr>
                                     <td>@date.Begin.ToString("HH:mm")</td>
                                     <td>@date.End.ToString("HH:mm")</td>
-                                    <td>@Html.RoomList(date.Rooms, true, false)</td>
+                                    @if (date.VirtualRooms.Any())
+                                    {
+                                        <td>
+                                            @Html.RoomList(date.Rooms, true, false)
+                                            @Html.RoomList(date.VirtualRooms, true, false)
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>@Html.RoomList(date.Rooms, true, false)</td>
+                                    }
                                     <td>@Html.LecturerList(date.Hosts, true)</td>
                                     <td>@date.Activity.ShortName</td>
                                     @if (date.Activity is Course)

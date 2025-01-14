@@ -18,6 +18,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1>Sprechstunde für @ViewBag.UserRight.User.UserName im @Model.Semester.Name anlegen</h1>
+                    @if (Model.isOpenDoor)
+                    {
+                        <h2>Ohne Terminbuchung</h2>
+                    }
                 </div>
             </div>
         </div>
@@ -39,10 +43,12 @@
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                     {
                         <fieldset>
+                            @Html.AntiForgeryToken()
                             @Html.ValidationSummary()
                             @Html.HiddenFor(model => model.Type)
                             @Html.HiddenFor(model => model.Semester.Id)
                             @Html.HiddenFor(model => model.Member.Id)
+                            @Html.HiddenFor(model => model.isOpenDoor)
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Bezeichnung</label>
                                 <div class="col-sm-6">

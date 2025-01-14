@@ -19,6 +19,7 @@ namespace MyStik.TimeTable.Data
         public OrganiserMember()
         {
             ModuleResponsibilities = new List<ModuleResponsibility>();
+            RoomAccesses = new HashSet<RoomAccess>();
         }
 
 
@@ -153,6 +154,9 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<CommitteeMember> CommitteeMembershios { get; set; }
 
         public virtual ICollection<MemberAvailability> Availabilties { get; set; }
+
+        public virtual ICollection<RoomAccess> RoomAccesses { get; set; }
+
 
         public string FullName
         {

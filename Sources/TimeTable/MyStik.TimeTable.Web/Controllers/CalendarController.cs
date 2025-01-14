@@ -430,7 +430,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult LabelEventsWeekly(string start, string end, Guid semId, Guid? orgId, Guid labelId, Guid? currId, string color, bool isDraggable = false)
+        public JsonResult LabelEventsWeekly(string start, string end, Guid semId, Guid? segId, Guid? orgId, Guid labelId, Guid? currId, string color, bool isDraggable = false)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
@@ -443,29 +443,58 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(semId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
 
+            var segment = segId != null ? semester.Dates.SingleOrDefault(x => x.Id == segId.Value) : null;
+
             var courses = new List<Course>();
 
             if (orgId == null && currId == null)
             {
-                courses.AddRange(Db.Activities.OfType<Course>()
-                    .Where(x =>
-                        x.Semester.Id == semester.Id &&
-                        x.LabelSet != null &&
-                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                    .ToList());
+                if (segment != null)
+                {
+                    courses.AddRange(Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.Segment != null && x.Segment.Id == segment.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList());
+                }
+                else
+                {
+                    courses.AddRange(Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList());
+                }
             }
             else
             {
                 var org = GetOrganiser(orgId.Value);
                 var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-                courses.AddRange(Db.Activities.OfType<Course>()
-                    .Where(x =>
-                        x.Semester.Id == semester.Id &&
-                        x.Organiser.Id == org.Id &&
-                        x.LabelSet != null &&
-                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                    .ToList());
+                if (segment != null)
+                {
+                    courses.AddRange(Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.Segment != null && x.Segment.Id == segment.Id &&
+                            x.Organiser.Id == org.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList());
+                }
+                else
+                {
+                    courses.AddRange(Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.Organiser.Id == org.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList());
+                }
             }
 
 
@@ -1418,7 +1447,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public JsonResult MemberPlanWeekly(string start, string end, Guid? semId, Guid memberId, string color)
+        public JsonResult MemberPlanWeekly(string start, string end, Guid? semId, Guid? segId, Guid memberId, string color)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
@@ -1436,6 +1465,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Alle Events abstrakt nah Wochentag
             var semester = SemesterService.GetSemester(semId);
+            var segment = segId != null ? semester.Dates.SingleOrDefault(x => x.Id == segId.Value) : null;
 
             var courses = new List<Course>();
 
@@ -1443,12 +1473,19 @@ namespace MyStik.TimeTable.Web.Controllers
             var member = MemberService.GetMember(memberId);
             if (member != null)
             {
-                var mylecture =
+                var mylecture = segment != null ?
+                    Db.Activities.OfType<Course>()
+                        .Where(c =>
+                            c.Semester.Id == semester.Id && c.Segment != null && c.Segment.Id == segment.Id &&
+                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == member.Id)))
+                        .ToList() :
                     Db.Activities.OfType<Course>()
                         .Where(c =>
                             c.Semester.Id == semester.Id &&
                             c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == member.Id)))
                         .ToList();
+
+
                 foreach (var lectureCourse in mylecture)
                 {
                     if (!courses.Contains(lectureCourse))
@@ -1516,13 +1553,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public JsonResult RoomPlanWeekly(string start, string end, Guid? semId, Guid roomId, string color)
+        public JsonResult RoomPlanWeekly(string start, string end, Guid? semId, Guid? segId, Guid roomId, string color)
         {
                 var startDate = GetDateTime(start);
                 var endDate = GetDateTime(end);
 
                 var semester = SemesterService.GetSemester(semId);
-                var events = new List<CalendarEventModel>();
+                var segment = segId != null ? semester.Dates.SingleOrDefault(x => x.Id == segId.Value) : null;
+
+
+            var events = new List<CalendarEventModel>();
                 var courses = new List<Course>();
 
                 var bgColor = string.IsNullOrEmpty(color) ? "#feb151" : color;
@@ -1538,7 +1578,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (room != null)
                 {
-                    var mylecture =
+                    var mylecture = segment != null ?
+                        Db.Activities.OfType<Course>()
+                            .Where(c =>
+                                c.Semester.Id == semester.Id &&
+                                c.Segment != null && c.Segment.Id == segment.Id &&
+                                c.Dates.Any(oc => oc.Rooms.Any(l => l.Id == room.Id)))
+                            .ToList() :
                         Db.Activities.OfType<Course>()
                             .Where(c =>
                                 c.Semester.Id == semester.Id &&

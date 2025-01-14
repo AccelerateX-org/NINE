@@ -305,6 +305,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ActivityDate NextDate { get; set; }
 
+        public ActivityDate PreviousDate { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -327,6 +329,40 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ICollection<RoomInfoModel> FutureRooms { get; set; }
     }
+
+    public class RoomSearchModel
+    {
+        public DateTime Date { get; set; }
+        public TimeSpan Begin { get; set; }
+        public TimeSpan End { get; set; }
+
+        public string OrgName { get; set; }
+
+        public string CampusName { get; set; }
+
+        public string BuildingName { get; set; }
+
+        public int MinCapacity { get; set; }
+
+        public int MaxCapacity { get; set; }
+    }
+
+    public class RoomSearchModelApi
+    {
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
+
+        public string OrgName { get; set; }
+
+        public string CampusName { get; set; }
+
+        public string BuildingName { get; set; }
+
+        public int MinCapacity { get; set; }
+
+        public int MaxCapacity { get; set; }
+    }
+
 
     /// <summary>
     /// 

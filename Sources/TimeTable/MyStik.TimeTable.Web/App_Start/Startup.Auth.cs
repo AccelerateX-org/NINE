@@ -21,6 +21,7 @@ using MyStik.TimeTable.Web.Providers;
 using MyStik.TimeTable.Web.Utils;
 using Newtonsoft.Json;
 using Owin;
+using MyStik.TimeTable.Web.Helpers;
 
 namespace MyStik.TimeTable.Web
 {
@@ -66,10 +67,6 @@ namespace MyStik.TimeTable.Web
             // Once you check this option, your second step of verification during the login process will be remembered on the device where you logged in from.
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
-
-            // ConfigureAuth0(app);
-            // ConfigureSSO(app);
-            // ConfigureOIDC(app);
         }
 
 
@@ -319,16 +316,27 @@ namespace MyStik.TimeTable.Web
         /// </summary>
         public void ConfigureOAuth(IAppBuilder app)
         {
-            OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
+            // mit eigenem Provider
+            /*
+            var myProvider = new AuthProvider();
+            var options = new OAuthAuthorizationServerOptions
+            {
+                AllowInsecureHttp = true,
+                TokenEndpointPath = new PathString("/api/v2/token"),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                Provider = myProvider
+            };
+            */
+
+            var options = new OAuthAuthorizationServerOptions()
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 Provider = new SimpleAuthorizationServerProvider()
             };
-
             // Token Generation
-            app.UseOAuthAuthorizationServer(OAuthServerOptions);
+            app.UseOAuthAuthorizationServer(options);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 
         }

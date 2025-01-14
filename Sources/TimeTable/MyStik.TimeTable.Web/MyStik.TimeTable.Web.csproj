@@ -396,7 +396,9 @@
     <Compile Include="Api\Contracts\EventContracts.cs" />
     <Compile Include="Api\Contracts\LecturerContracts.cs" />
     <Compile Include="Api\Contracts\NotificationContracts.cs" />
+    <Compile Include="Api\Contracts\QuestionContracts.cs" />
     <Compile Include="Api\Contracts\RoomContracts.cs" />
+    <Compile Include="Api\Contracts\ScimContracts.cs" />
     <Compile Include="Api\Controller\AgendaController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
     <Compile Include="Api\Controller\ApiBaseController.cs" />
@@ -411,9 +413,11 @@
     <Compile Include="Api\Controller\LoginController.cs" />
     <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
+    <Compile Include="Api\Controller\QuestionsController.cs" />
     <Compile Include="Api\Controller\QuizGameController.cs" />
     <Compile Include="Api\Controller\QuizzesController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
+    <Compile Include="Api\Controller\ScimController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
     <Compile Include="Api\Controller\StudiesController.cs" />
     <Compile Include="Api\Controller\TeachingController.cs" />
@@ -477,6 +481,7 @@
     <Compile Include="Areas\Admin\Models\DataAdminModel.cs" />
     <Compile Include="Areas\Admin\Models\LogModels.cs" />
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
+    <Compile Include="Helpers\OAuthHelpers.cs" />
     <Compile Include="Jobs\AccountJob.cs" />
     <Compile Include="Jobs\LoggingJob.cs" />
     <Compile Include="Areas\Fillter\Controllers\HomeController.cs" />
@@ -4803,6 +4808,8 @@
     <Content Include="Views\Course\_PreviewDateList.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Lecturer\NoMember.cshtml" />
+    <Content Include="Views\Room\_RoomSearchList.cshtml" />
+    <Content Include="Views\Rooms\Offices.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

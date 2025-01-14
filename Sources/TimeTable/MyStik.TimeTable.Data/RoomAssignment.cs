@@ -79,4 +79,25 @@ namespace MyStik.TimeTable.Data
 
         public virtual RoomAllocationGroup Group { get; set; }
     }
+
+    public class RoomAccess
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// z.B. Raumverantwortung, Büro
+        /// </summary>
+        public bool IsOwner { get; set; }
+
+        /// <summary>
+        /// true: darf buchen
+        /// false: darf nicht buchen
+        /// </summary>
+        public bool MayBook { get; set; }
+
+        public virtual Room Room { get; set; }
+
+        public virtual OrganiserMember Member { get; set; }
+    }
 }

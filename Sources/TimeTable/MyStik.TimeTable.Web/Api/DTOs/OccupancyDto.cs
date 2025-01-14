@@ -13,6 +13,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
             Room = new RoomDto();
             Current = new List<ReservationDto>();
             Next = new List<ReservationDto>();
+            Previous = new List<ReservationDto>();
         }
 
         /// <summary>
@@ -29,7 +30,25 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public List<ReservationDto> Next { get; set; }
+        
+        public List<ReservationDto> Previous { get; set; }
     }
+
+    public class FreeRoomDto
+    {
+        public string RoomNumber { get; set; }
+
+        public string RoomName { get; set; }
+
+        public int Capacity { get; set; }
+
+        public DateTime FreeFrom { get; set; }
+
+        public DateTime FreeTo { get; set; }
+
+        public string NextEventName { get; set; }
+    }
+
 
     /// <summary>
     /// 

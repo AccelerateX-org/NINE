@@ -15,7 +15,22 @@ namespace MyStik.TimeTable.Web.Providers
         /// <returns></returns>
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            context.Validated();
+            string clientId;
+            string clientSecret;
+
+            //if (context.TryGetBasicCredentials(out clientId, out clientSecret)) 
+            if (context.TryGetFormCredentials(out clientId, out clientSecret))
+            {
+                // validate the client Id and secret against database or from configuration file.
+                context.Validated();
+            }
+            else
+            {
+                context.SetError("invalid_client", "Client credentials could not be retrieved from the Authorization header");
+                context.Rejected();
+            }
+
+            //context.Validated();
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)

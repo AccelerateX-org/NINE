@@ -39,12 +39,12 @@
                         </div>
                         <div class="col-6">
                             <div class="form-floating mb-3">
-                                <input name="searchText" id="searchText" type="text" class="form-control" placeholder="Teil aus Name oder Kurzname der Lehrveranstaltung">
+                                <input name="searchText" id="searchText" type="text" class="form-control" onkeydown="onEnter()"  placeholder="Teil aus Name oder Kurzname der Lehrveranstaltung">
                                 <label for="searchText">Suchbegriff (Teil aus Name oder Kurzname der Lehrveranstaltung)</label>
                             </div>
                         </div>
                         <div class="col-2">
-                            <button class="btn btn-outline-primary" type="button" id="button-addon2" onclick="search()"><i class="bi bi-search"></i> Suchen</button>
+                            <button class="btn btn-outline-primary" type="submit" id="button-addon2" onclick="search()"><i class="bi bi-search"></i> Suchen</button>
                         </div>
                     </div>
                 </div>
@@ -111,6 +111,12 @@
                 }
             });
 
+        }
+
+        function onEnter() {
+            if (event.key === 'Enter') {
+                search();
+            }
         }
 
         function search() {

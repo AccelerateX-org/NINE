@@ -124,5 +124,27 @@ namespace MyStik.TimeTable.Web.Api.Transformers
             return dtoGame;
         }
 
+        public QuizQuestionDto TransformQuestion(Question q)
+        {
+            var r = new QuizQuestionDto();
+
+            r.answers = new List<QuizQuestionAnswerDto>();
+            r.id = q.Id;
+            r.title = q.Problem;
+            r.description = q.Description;
+
+            foreach (var questionAnswer in q.Answers)
+            {
+                var a = new QuizQuestionAnswerDto();
+
+                a.id = questionAnswer.Id;
+                a.answerText = questionAnswer.Solution;
+                a.isCorrect = questionAnswer.IsCorrect;
+
+                r.answers.Add(a);
+            }
+
+            return r;
+        }
     }
 }
