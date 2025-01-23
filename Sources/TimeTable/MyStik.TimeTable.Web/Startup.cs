@@ -39,7 +39,7 @@ namespace MyStik.TimeTable.Web
             ConfigureOAuth(app);
             // ConfigureAuth0(app);
             // ConfigureSSO(app);
-            // ConfigureOIDC(app);
+            ConfigureOIDC(app);
 
 
             HttpConfiguration = new HttpConfiguration();
