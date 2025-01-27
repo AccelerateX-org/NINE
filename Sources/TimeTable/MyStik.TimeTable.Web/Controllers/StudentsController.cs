@@ -583,8 +583,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 x.Curriculum.Organiser).ToList();
             model.Student = model.Students.FirstOrDefault();
 
-            var org = model.Student.Curriculum.Organiser;
-
             var allCourses = Db.Activities.OfType<Course>()
                 .Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
                 .Include(activity => activity.Semester).ToList();
@@ -608,7 +606,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            var org = student.Curriculum.Organiser;
             ViewBag.UserRight = GetUserRight(org);
+
+            var members = GetMyMemberships();
+            var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
+            ViewBag.IsStudAdmin = adminMember != null;
 
             return View(model);
         }

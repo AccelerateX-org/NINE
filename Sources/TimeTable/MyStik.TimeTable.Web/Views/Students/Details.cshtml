@@ -27,7 +27,7 @@
                         <a class="list-group-item" href="mailto:@Model.User.Email">
                             <i class="bi bi-envelope"></i> E-Mail senden
                         </a>
-                        @if (ViewBag.UserRight.IsCourseAdmin)
+                        @if (ViewBag.IsStudAdmin)
                         {
                             <a class="list-group-item" href="@Url.Action("Logs", new { id = Model.Student.Id })">
                                 <i class="bi bi-list"></i> Logdaten ansehen
