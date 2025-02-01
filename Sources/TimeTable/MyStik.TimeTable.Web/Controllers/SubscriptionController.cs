@@ -301,6 +301,8 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            var nextCurr = Db.Curricula.Include(curriculum =>
+                curriculum.Organiser.Institution.LabelSet.ItemLabels).SingleOrDefault(x => x.Id == model.CurrId);
 
             // gibt es ein aktuelles Studium
             var student = StudentService.GetCurrentStudent(user);
@@ -314,6 +316,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            var currentCurr = student.Curriculum;
+
+            if (currentCurr.Id == nextCurr.Id)
+            {
+                return View("Invalid", student);
+            }
+
 
             // neuen Studiengang beginnen
             student = new Student
@@ -325,8 +334,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             student.Created = DateTime.Now;
             student.FirstSemester = semester;
-            student.Curriculum = Db.Curricula.Include(curriculum =>
-                curriculum.Organiser.Institution.LabelSet.ItemLabels).SingleOrDefault(x => x.Id == model.CurrId);
+            student.Curriculum = nextCurr;
             student.IsDual = model.IsDual;
             student.IsPartTime = !model.IsFullTime;
             student.HasCompleted = false;

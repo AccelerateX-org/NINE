@@ -23,7 +23,8 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-                <li class="breadcrumb-item active" aria-current="page">Studierende</li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Students")">Studierende</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Kohorten</li>
             </ol>
         </nav>
     </div>
@@ -33,42 +34,45 @@
 <div class="row">
     <div class="col-md-2">
         <div class="list-group">
-            <a href="@Url.Action("Labels")" class="list-group-item"><i class="bi-tag"></i> Kohorten</a>
+            <a href="@Url.Action("UploadLabels")" class="list-group-item"><i class="bi-upload"></i> Upload Kohorten</a>
         </div>
     </div>
     <div class="col-md-10">
         <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        @using (Ajax.BeginForm("Search", "Students", null,
-                                    new AjaxOptions
-                                    {
-                                        HttpMethod = "Post",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = "StudList",
-                                        LoadingElementId = "loading",
-                                        OnSuccess = "onDataLoaded()"
-                                    },
-                                    new { @class = "form-inline", role = "form" }))
+            <table id="tabStud" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Studienprogramm</th>
+                    <th>Kohorten</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var student in students)
+                {
+                    var user = userService.GetUser(student.UserId);
+
+                    <tr id="@student.Id">
+                        @if (user != null)
                         {
-                            @Html.AntiForgeryToken()
-
-                            <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-person-vcard"></i></span>
-                                <input type="text" name="searchString" id="searchString" class="form-control" placeholder="Name / Vorname"/>
-                                <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Suchen</button>
-                            </div>
+                            <td>@user.FullName</td>
                         }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>@student.Curriculum.ShortName</td>
+                        <td>
+                            @foreach (var label in student.LabelSet.ItemLabels)
+                            {
+                                <div>@label.Name</div>
+                            }
 
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div id="StudList"></div>
-                    </div>
-                </div>
-            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -83,6 +87,11 @@
     <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            onDataLoaded();
+        });
+        
+
         function onDataLoaded() {
             var t = $('#tabStud').DataTable({
                 language: {
