@@ -145,7 +145,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             }
             else if (!string.IsNullOrEmpty(thread) && string.IsNullOrEmpty(logger))
             {
-                logs = db.Log.Where(l => l.Thread.Contains(logger)).ToList();
+                logs = db.Log.Where(l => l.Thread.Contains(thread)).ToList();
             }
             else if (!string.IsNullOrEmpty(thread) && !string.IsNullOrEmpty(logger))
             {

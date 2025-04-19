@@ -93,7 +93,6 @@ namespace MyStik.TimeTable.Web
 
 
             app.UseHangfireServer();
-
         }
     }
 }

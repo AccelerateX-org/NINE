@@ -3,9 +3,11 @@ using System.Linq;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -28,6 +30,25 @@ namespace MyStik.TimeTable.Web.Controllers
         [AllowAnonymous]
         public ActionResult Index()
         {
+            var adminUser = UserManager.FindByName("admin");
+
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser
+                {
+                    UserName = "admin",
+                    FirstName = "Sys",
+                    LastName = "Admin",
+                };
+
+                UserManager.Create(adminUser, "Pas1234?");
+                var usr = UserManager.FindByName("admin");
+
+                UserManager.AddToRole(usr.Id, "SysAdmin");
+            }
+
+
+
             if (!Request.IsAuthenticated)
                 return View("Landing");
 

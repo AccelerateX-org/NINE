@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Hangfire;
@@ -120,7 +121,10 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         [HttpPost]
         public PartialViewResult LatestRegistrations()
         {
-            var userList = _db.Users.Where(u => u.Registered.HasValue).OrderByDescending(u => u.Registered.Value).Take(50).ToList();
+            var userList = _db.Users
+                .Where(u => u.Registered.HasValue)
+                .OrderByDescending(u => u.Registered.Value)
+                .Take(50).ToList();
 
             var model = CreateUserList(userList);
 

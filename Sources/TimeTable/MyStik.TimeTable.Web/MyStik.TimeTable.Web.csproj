@@ -4810,6 +4810,7 @@
     <Content Include="Views\Lecturer\NoMember.cshtml" />
     <Content Include="Views\Room\_RoomSearchList.cshtml" />
     <Content Include="Views\Rooms\Offices.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailureAccount.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
