@@ -4810,6 +4810,7 @@
     <Content Include="Views\Lecturer\NoMember.cshtml" />
     <Content Include="Views\Room\_RoomSearchList.cshtml" />
     <Content Include="Views\Rooms\Offices.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailureAccount.cshtml" />
     <Content Include="Views\Course\PlanningYear.cshtml" />
     <Content Include="Views\Course\_PreviewDateListYear.cshtml" />
     <Content Include="Views\Students\UploadLabels.cshtml" />

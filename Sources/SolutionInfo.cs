@@ -7,7 +7,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AccelerateX")]
 [assembly: AssemblyProduct("NINE")]
-[assembly: AssemblyCopyright("Copyright © 2014-2024")]
+[assembly: AssemblyCopyright("Copyright Â© 2014-2025")]
 [assembly: AssemblyTrademark("ax.nine")]
 [assembly: AssemblyCulture("")]
 

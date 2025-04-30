@@ -15379,6 +15379,21 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.IndexViewModel.CurrentLogins">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.IndexViewModel.OtherLogins">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.IndexViewModel.User">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.ManageLoginsViewModel">
             <summary>
             

@@ -4,9 +4,38 @@
     ViewBag.Title = "Manage your external logins";
 }
 
-<h2>@ViewBag.Title.</h2>
+@if (@ViewBag.LoginInfo != null)
+{
+    <h4>Login Info</h4>
+    <ul>
+        <li>@ViewBag.LoginInfo.Email</li>
+        <li>@ViewBag.UserName</li>
+        <li>@ViewBag.EMail</li>
+        <li>@ViewBag.UserData</li>
+        <li>@ViewBag.LoginInfo.ExternalIdentity.AuthenticationType</li>
+    </ul>
+}
+else
+{
+    <h4>Kein Logininfo</h4>
+}
 
-<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Nachricht vom externen Login Provider</h5>
+                <p class="text-success">@ViewBag.StatusMessage</p>
+                <a href="@Url.Action("Index")" class="btn btn-outline-primary">
+                    Weiter zum Benutzerprofil <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0) {
@@ -68,3 +97,4 @@
         }
     }
 }
+*@

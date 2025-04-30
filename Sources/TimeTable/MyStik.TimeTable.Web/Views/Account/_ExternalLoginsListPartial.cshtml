@@ -14,7 +14,7 @@
                 <p>
                 @foreach (var p in loginProviders)
                 {
-                    <button type="submit" class="btn btn-outline-primary" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                    <button type="submit" class="btn btn-outline-primary" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Login with @p.Caption">Login with @p.Caption</button>
                 }
                 </p>
             </div>

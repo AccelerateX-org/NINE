@@ -61,7 +61,15 @@
     }
 </td>
 <td>@Model.User.Approved</td>
-<td>@Model.User.ExpiryDate</td>
+<td>
+    @Model.User.ExpiryDate
+    @Model.User.Logins.Count
+    @Model.User.Claims.Count
+    @foreach (var login in Model.User.Logins.ToList())
+    {
+        <div>@login.LoginProvider</div>
+    }
+</td>
 
 <td>
     @if (User.IsInRole("SysAdmin"))

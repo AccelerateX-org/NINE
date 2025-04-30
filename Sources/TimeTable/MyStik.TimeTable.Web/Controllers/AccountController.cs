@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,6 +12,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using MyStik.TimeTable.Web.Models;
+using System.Security.Claims;
+using Newtonsoft.Json.Linq;
+using System.Web.Http.Results;
+using Postal;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -46,14 +53,8 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         public IdentifyConfig.ApplicationSignInManager SignInManager
         {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<IdentifyConfig.ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
+            get => _signInManager ?? HttpContext.GetOwinContext().Get<IdentifyConfig.ApplicationSignInManager>();
+            private set => _signInManager = value;
         }
 
 
@@ -720,23 +721,65 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("Login");
             }
 
+            // hier schon mal die Daten holen
+
+
+
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    // TO-DO: hier Daten ggf. aktualisieren
+                    // TO-DO: last Login aktualisieren
+                    var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                    user.LastLogin = DateTime.Now;
+                    var result2 = await UserManager.UpdateAsync(user);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
-                default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
+
+
+            var claims = loginInfo.ExternalIdentity.Claims.ToList();
+            var accessToken = claims.Find(c => c.Type == "access_token");
+
+            var client = new HttpClient()
+            {
+                BaseAddress = new Uri("https://sso.hm.edu/"),
+            };
+
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
+
+            var model = new ExternalLoginConfirmationViewModel();
+
+            var response = await client.GetAsync("idp/profile/oidc/userinfo");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    dynamic obj = JObject.Parse(data);
+                    string email = obj["eduPersonPrincipalName"];
+
+                    model.Email = email;
+                }
+            }
+            else
+            {
+                ViewBag.UserData = await response.Content.ReadAsStringAsync();
+                return View("ExternalLoginFailure");
+            }
+
+
+            // If the user does not have an account, then prompt the user to create an account
+            return View("ExternalLoginConfirmation", model);
+
+
         }
 
         /// <summary>
@@ -757,28 +800,86 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                ViewBag.Message = "Modelstate ok";
+
                 // Get the information about the user from the external login provider
                 var info = await AuthenticationManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
+                    ViewBag.Message = "keine Login Info";
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                var claims = info.ExternalIdentity.Claims.ToList();
+                var accessToken = claims.Find(c => c.Type == "access_token");
+
+                var client = new HttpClient()
+                {
+                    BaseAddress = new Uri("https://sso.hm.edu/"),
+                };
+
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
+
+                var response = await client.GetAsync("idp/profile/oidc/userinfo");
+                var eduPersonPrincipalName = "";
+                var personFirstName = "";
+                var personLastName = "";
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+
+                    if (!String.IsNullOrWhiteSpace(data))
+                    {
+                        dynamic obj = JObject.Parse(data);
+                        eduPersonPrincipalName = obj["eduPersonPrincipalName"];
+                        personFirstName = obj["given_name"];
+                        personLastName = obj["family_name"];
+                    }
+                }
+                else
+                {
+                    ViewBag.UserData = await response.Content.ReadAsStringAsync();
+                    return View("ExternalLoginFailure");
+                }
+
+
+
+                // Neuen Benutzer anlegen
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = personFirstName, LastName = personLastName};
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
+
+                    if (!result.Succeeded)
+                    {
+                        ViewBag.Message = "Fehler beim Hinzufügen des Logins";
+                        return View("ExternalLoginFailure");
+                    }
+
+                    if (info.ExternalIdentity.Claims != null)
+                    {
+                        // claim erzeugen
+                        var claim = new Claim("eduPersonPricipalName", eduPersonPrincipalName);
+                        result = await UserManager.AddClaimAsync(user.Id, claim);
+                    }
+
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
                 }
-                AddErrors(result);
+                ViewBag.Message = "Fehler beim Hinzufügen des Benutzerkontos";
+                return View("ExternalLoginFailureAccount");
+                //AddErrors(result);
             }
 
             ViewBag.ReturnUrl = returnUrl;
-            return View(model);
+            return View("ExternalLoginFailure");
+            //return View(model);
         }
 
         /// <summary>
@@ -832,13 +933,7 @@ namespace MyStik.TimeTable.Web.Controllers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         private void AddErrors(IdentityResult result)
         {
