@@ -1,0 +1,227 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseLabelViewModel
+@{
+    ViewBag.Title = "Kohorten auswählen";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Zuordnung Kohorten</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi bi-save"></i>  Änderungen übernehmen
+                    </a>
+                    <a href="@Url.Action("ChangeLabel", new {id=Model.Student.Id})" class="btn btn-outline-secondary">
+                        <i class="bi bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <h5>Hinweis zur Verwendung</h5>
+                            <ol>
+                                <li>Einrichtung auswählen</li>
+                                <li>Studiengang auswählen</li>
+                                <li>Die Liste der aufgeführten Kohorten enthält dann alle für diesen Studiengang verfügbaren Kohorten bezogen auf die drei Ebenen Studiengang, Einrichtung, Hochschule.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <h5>Aus diesem Katalogen kommen die Kohorten</h5>
+
+                        <div class="row">
+                            <div class="col-4">Einrichtung</div>
+                            <div class="col-8">
+                                <select id="selectOrg" class="form-select slot-option" onchange="onOrgChanged(this.value)">
+                                    @foreach (var org in Model.Organisers)
+                                    {
+                                        <option value="@org.Id">@org.ShortName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Studiengang</div>
+                            <div class="col-8">
+                                <select id="selectCurr" class="form-select slot-option" onchange="onCurrChanged(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Verfügbare Labels</div>
+                            <div class="col-8">
+                                <div id="sourceLabelList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <a id="btnMove" href="javascript:moveModules()" class="btn btn-outline-secondary">>> zuordnen</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <h5>Diesem Studierenden zuordnen</h5>
+                        <div class="row">
+                            <div class="col-4">Name</div>
+                            <div class="col-8">@Model.User.FullName
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Module</div>
+                            <div class="col-8">
+                                <ul id="targetLabelList" class="list-group">
+                                    @foreach (var module in Model.Student.LabelSet.ItemLabels)
+                                    {
+                                        <li id="@module.Id" class="list-group-item">
+                                            <input class="form-check-input me-1" type="checkbox" value="">
+                                            <label class="form-check-label" for="@module.Id">@module.Name</label>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            var org = $("#selectOrg").val();
+            onOrgChanged(org);
+        });
+
+        function onOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CurriculaList2", "Curriculum")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectCurr").html(data);
+                        $("#loading").hide();
+                        selectCurr();
+                    }
+                });
+
+        }
+
+        function selectCurr() {
+            var org = $("#selectCurr").val();
+            onCurrChanged(org);
+        }
+
+        function onCurrChanged(value) {
+            var currId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabelListCurriculum", "LabelSet")',
+                    data: {
+                        currId: currId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceLabelList").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function updateMoveState() {
+            var sourceCat = $('#sourceCat').val();
+            var targetCat = $('#targetCat').val();
+
+            if (targetCat === sourceCat) {
+                $('#btnMove').addClass("disabled");
+            } else {
+                $('#btnMove').removeClass("disabled");
+            }
+
+        }
+
+
+        function moveModules() {
+            //var list = $("#sourceModules > ul > li > input[type='checkbox'][checked='checked']").get();
+            var list = $("#sourceLabelList > ul > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+
+                    var listElemId = '#' + list[i].id;
+                    //alert(listElemId);
+
+                    var listElem = $(listElemId).remove();
+
+                    listElem.addClass('disabled');
+
+                    $('#targetLabelList').append(listElem);
+                }
+
+            }
+        }
+
+        function saveChanges() {
+            // Zielkatalog
+            var catId = "@Model.Student.Id.ToString()";
+
+            // Liste der hinzugekommemen Module
+            var list = $("#targetLabelList > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+                }
+
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("AssignCourseLabels")',
+                        data: {
+                            studentId: catId,
+                            labelIds: moduleIdList
+                        },
+                        success: function(data, success, xhr) {
+                            window.location.replace("@Url.Action("ChangeLabel", new { id = Model.Student.Id })");
+                            $("#loading").hide();
+                        }
+                    });
+
+            }
+
+
+        }
+
+
+    </script>
+}

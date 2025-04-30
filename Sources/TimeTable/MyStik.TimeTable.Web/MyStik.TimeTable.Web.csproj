@@ -4811,6 +4811,15 @@
     <Content Include="Views\Room\_RoomSearchList.cshtml" />
     <Content Include="Views\Rooms\Offices.cshtml" />
     <Content Include="Views\Account\ExternalLoginFailureAccount.cshtml" />
+    <Content Include="Views\Course\PlanningYear.cshtml" />
+    <Content Include="Views\Course\_PreviewDateListYear.cshtml" />
+    <Content Include="Views\Students\UploadLabels.cshtml" />
+    <Content Include="Views\Students\UploadList.cshtml" />
+    <Content Include="Views\Students\ChangeLabel.cshtml" />
+    <Content Include="Views\Students\EditLabel.cshtml" />
+    <Content Include="Views\Students\ChangeLabels.cshtml" />
+    <Content Include="Views\Subscription\Invalid.cshtml" />
+    <Content Include="Views\Students\Labels.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

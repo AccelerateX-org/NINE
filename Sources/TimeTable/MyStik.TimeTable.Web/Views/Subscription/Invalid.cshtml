@@ -1,0 +1,14 @@
+﻿@model MyStik.TimeTable.Data.Student
+@{
+    ViewBag.Title = "FEHLER";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-danger">
+            <p>Fehlerhafte Angabe! Ich kann denselben Studiengang nicht noch einmal beginnen.</p>
+            <p>Error: I cannot choose the same curriculum again.</p>
+            <a href="@Url.Action("Curricula")" class="btn btn-outline-primary">zurück zum Studienbuch</a>
+        </div>
+    </div>
+</div>

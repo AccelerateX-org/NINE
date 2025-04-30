@@ -4402,6 +4402,32 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
+        public ActionResult PlanningYear(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+            var courseService = new CourseService(Db);
+
+            var nextSemester = SemesterService.GetNextSemester(course.Semester);
+            var yearSemester = SemesterService.GetNextSemester(nextSemester);
+
+            var model = new CourseDetailViewModel()
+            {
+                Course = course,
+                Summary = courseService.GetCourseSummary(course),
+                PlaningSemester = yearSemester,
+                CopyDates = true
+            };
+
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
+
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+
         public PartialViewResult PreviewDateList(Guid courseId, Guid segmentId)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
@@ -4414,6 +4440,20 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             return PartialView("_PreviewDateList", model);
+        }
+
+        public PartialViewResult PreviewDateListYear(Guid courseId, Guid segmentId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var segement = Db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var model = new CourseDetailViewModel
+            {
+                Course = course,
+                PlaningSegment = segement
+            };
+
+            return PartialView("_PreviewDateListYear", model);
         }
 
 

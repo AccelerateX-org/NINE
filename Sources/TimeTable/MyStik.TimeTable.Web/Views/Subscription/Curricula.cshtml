@@ -132,8 +132,10 @@
                                     @if (isActive)
                                     {
                                         <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-outline-primary">Matrikelnummer ändern</a>
-                                        <a href="@Url.Action("ChangeLabel", new {id = student.Student.Id})" class="btn btn-outline-primary">Kohorten ändern</a>
-                                        <a href="@Url.Action("LeaveCurriculum", new {id = student.Student.Id})" class="btn btn-outline-danger">Studium beenden</a>
+                                        @*
+            <a href="@Url.Action("ChangeLabel", new {id = student.Student.Id})" class="btn btn-outline-primary">Kohorten ändern</a>
+            <a href="@Url.Action("LeaveCurriculum", new {id = student.Student.Id})" class="btn btn-outline-danger">Studium beenden</a>
+                                        *@
                                     }
                                     else
                                     {

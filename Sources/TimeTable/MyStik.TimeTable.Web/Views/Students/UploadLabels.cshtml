@@ -1,0 +1,56 @@
+﻿@model MyStik.TimeTable.Web.Models.InvitationFileModel
+@{
+    ViewBag.Title = "Upload Kohorten";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Beschreibung</h5>
+            </div>
+
+
+
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Schritt 1: Datei auswählen und hochladen</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info ">
+                    <strong>Erwartetes Format der Datei:</strong>
+                    <p>CSV-Datei mit Trennzeichen ; sowie Kopfzeile. Aufbau der Spalten:</p>
+                    <p>E-Mail;Ebene;Kohorte</p>
+                </div>
+
+                @using (Html.BeginForm("Invitation", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.AntiForgeryToken()
+                        <div class="row mb-3">
+                            <label class="col-md-2 form-label">Datei mit Einladungsdaten</label>
+                            <div class="col-md-10">
+                                <div>
+                                    <input type="file" name="Attachments" id="Attachment1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-2 col-md-10">
+                                <input type="submit" value="Hochladen" class="btn btn-outline-primary"/>
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

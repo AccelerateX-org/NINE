@@ -28,15 +28,36 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
-            
-            var orgs = MemberService.GetFacultyMemberships(user.Id);
-            
-            if (!orgs.Any()) 
+
+            var members = GetMyMemberships();
+            var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
+            var isAdmin = adminMember != null;
+
+            ViewBag.IsStudAdmin = isAdmin;
+
+            if (!isAdmin) 
                 return View("_NoAccess");
 
             var model = new List<StudentStatisticsModel>();
             return View(model);
+        }
 
+
+        public ActionResult Labels(Guid? id)
+        {
+            var user = GetCurrentUser();
+
+            var members = GetMyMemberships();
+            var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
+            var isAdmin = adminMember != null;
+
+            ViewBag.IsStudAdmin = isAdmin;
+
+            if (!isAdmin)
+                return View("_NoAccess");
+
+            var model = new List<StudentStatisticsModel>();
+            return View(model);
         }
 
 
@@ -251,11 +272,8 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Invitation()
+
+        public ActionResult UploadLabels()
         {
             return View();
         }
@@ -266,7 +284,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Invitation(InvitationFileModel model)
+        public ActionResult UploadLabels(InvitationFileModel model)
         {
             InvitationCheckModel invitationList = new InvitationCheckModel();
             //var sem = SemesterService.GetSemester(DateTime.Today);
@@ -274,84 +292,134 @@ namespace MyStik.TimeTable.Web.Controllers
             try
             {
 
-            foreach (var attachment in model.Attachments)
-            {
-
-                if (attachment != null)
+                foreach (var attachment in model.Attachments)
                 {
-                    var bytes = new byte[attachment.ContentLength];
-                    attachment.InputStream.Read(bytes, 0, attachment.ContentLength);
 
-                    var stream = new System.IO.MemoryStream(bytes);
-                    var reader = new System.IO.StreamReader(stream, Encoding.Default);
-                    var text = reader.ReadToEnd();
-
-                    string[] lines = text.Split('\n');
-
-
-                    var i = 0;
-                    foreach (var line in lines)
+                    if (attachment != null)
                     {
-                        if (i > 0)
+                        var bytes = new byte[attachment.ContentLength];
+                        attachment.InputStream.Read(bytes, 0, attachment.ContentLength);
+
+                        var stream = new System.IO.MemoryStream(bytes);
+                        var reader = new System.IO.StreamReader(stream, Encoding.Default);
+                        var text = reader.ReadToEnd();
+
+                        string[] lines = text.Split('\n');
+
+
+                        var i = 0;
+                        foreach (var line in lines)
                         {
-                            string newline = line.Trim();
-
-                            if (!string.IsNullOrEmpty(newline))
+                            if (i > 0)
                             {
-                                string[] words = newline.Split(';');
+                                string newline = line.Trim();
 
-                                var invitation = new StudentInvitationModel
+                                if (!string.IsNullOrEmpty(newline))
                                 {
-                                    LastName = words[0].Trim(),
-                                    FirstName = words[1].Trim(),
-                                    Email = words[2].Trim(),
-                                    Organiser = words[3].Trim(),
-                                    Curriculum = words[4].Trim(),
-                                    Semester = words[5].Trim(),
-                                    Invite = true
-                                };
+                                    string[] words = newline.Split(';');
 
+                                    var invitation = new StudentInvitationModel
+                                    {
+                                        Email = words[0].Trim(),
+                                        LabelLevel = words[1].Trim(),    // Ebene
+                                        LabelName = words[2].Trim(),   // Label
+                                        Invite = true
+                                    };
+                                    invitationList.Invitations.Add(invitation);
 
-                                var user = UserManager.FindByEmail(invitation.Email);
-                                if (user != null)
-                                {
-                                    invitation.Invite = false;
-                                    invitation.Remark = "Hat bereits ein Benutzerkonto";
-                                }
-
-                                var sem = SemesterService.GetSemester(invitation.Semester);
-                                if (sem == null)
-                                {
-                                    invitation.Invite = false;
-                                    invitation.Remark += "Semester unbekannt";
-                                }
-
-                                var org = Db.Organisers.SingleOrDefault(x =>
-                                    x.ShortName.Equals(invitation.Organiser));
-
-                                if (org == null)
-                                {
-                                    invitation.Invite = false;
-                                    invitation.Remark += "Veranstalter unbekannt";
-                                }
-                                else
-                                {
-                                    var curr = org.Curricula.SingleOrDefault(c => c.ShortName.Equals(invitation.Curriculum));
-                                    if (curr == null)
+                                    // nur bekannte Benutzer
+                                    var user = UserManager.FindByEmail(invitation.Email);
+                                    if (user == null)
                                     {
                                         invitation.Invite = false;
-                                        invitation.Remark += "Studiengang unbekannt";
+                                        invitation.Remark = "Kein Account gefunden";
+                                        continue;
+                                    }
+
+                                    if (string.IsNullOrEmpty(invitation.LabelLevel) || string.IsNullOrEmpty(invitation.LabelName))
+                                    {
+                                        invitation.Invite = false;
+                                        invitation.Remark = "Fehlende Angabe zu Ebene oder Kohorte";
+                                        continue;
+                                    }
+
+                                    ItemLabelSet labelSet = null;
+                                    var levels = invitation.LabelLevel.Split(':'); // HM::FK 10::BWB
+                                    var n = levels.Length;
+                                    if (!(n == 1 || n == 3 || n == 5))
+                                    {
+                                        invitation.Invite = false;
+                                        invitation.Remark = "Falsches Format für Ebene";
+                                        continue;
+                                    }
+
+                                    var inst = Db.Institutions.Include(institution => institution.LabelSet.ItemLabels).Include(institution1 => institution1.Organisers.Select(activityOrganiser => activityOrganiser.LabelSet.ItemLabels)).Include(institution => institution.Organisers.Select(activityOrganiser1 => activityOrganiser1.Curricula.Select(curriculum =>
+                                        curriculum.LabelSet.ItemLabels))).SingleOrDefault(x => x.Tag.Equals(levels[0]));
+                                    invitation.Institution = inst;
+
+                                    if (inst == null)
+                                    {
+                                        invitation.Invite = false;
+                                        invitation.Remark = "Unbekannte Institution";
+                                        continue;
+                                    }
+
+                                    if (n > 1)
+                                    {
+                                        var org = inst.Organisers.SingleOrDefault(x => x.ShortName.Equals(levels[2]));
+                                        invitation.Organiser = org;
+
+                                        if (org == null)
+                                        {
+                                            invitation.Invite = false;
+                                            invitation.Remark = "Unbekannte Einrichtung";
+                                            continue;
+                                        }
+
+                                        if (n > 3)
+                                        {
+                                            var curr = org.Curricula.SingleOrDefault(x =>
+                                                x.ShortName.Equals(levels[4]));
+                                            invitation.Curriculum = curr;
+
+                                            if (curr == null)
+                                            {
+                                                invitation.Invite = false;
+                                                invitation.Remark = "Unbekannter Studiengang";
+                                                continue;
+                                            }
+
+                                            labelSet = curr.LabelSet;
+                                        }
+                                        else
+                                        {
+                                            labelSet = org.LabelSet;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        labelSet = inst.LabelSet;
+                                    }
+
+                                    if (labelSet != null)
+                                    {
+                                        var label = labelSet.ItemLabels.FirstOrDefault(x =>
+                                            x.Name.Equals(invitation.LabelName));
+                                        invitation.Label = label;
+                                    }
+                                    else
+                                    {
+                                        invitation.Invite = false;
+                                        invitation.Remark = "FEHLER: kein Labelset gefunden";
+                                        continue;
                                     }
                                 }
-
-                                invitationList.Invitations.Add(invitation);
-                                }
                             }
-                        i++;
+                            i++;
+                        }
                     }
                 }
-            }
-                Session["InvitationList"] = invitationList;
             }
             catch (Exception ex)
             {
@@ -359,8 +427,10 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return View("InvitationList", invitationList);
+            return View("UploadList", invitationList);
         }
+
+
 
 
         /// <summary>
@@ -571,10 +641,19 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = new StudentDetailViewModel();
 
-            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var student = Db.Students.Include(student1 => student1.LabelSet).Include(student2 =>
+                student2.Curriculum.Organiser).SingleOrDefault(x => x.Id == id);
 
             if (student == null)
                 return RedirectToAction("Index");
+
+            if (student.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                Db.ItemLabelSets.Add(labelSet);
+                student.LabelSet = labelSet;
+                Db.SaveChanges();
+            }
 
             var user = UserManager.FindById(student.UserId);
 
@@ -582,8 +661,6 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).Include(x =>
                 x.Curriculum.Organiser).ToList();
             model.Student = model.Students.FirstOrDefault();
-
-            var org = model.Student.Curriculum.Organiser;
 
             var allCourses = Db.Activities.OfType<Course>()
                 .Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
@@ -608,7 +685,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            var org = student.Curriculum.Organiser;
             ViewBag.UserRight = GetUserRight(org);
+
+            var members = GetMyMemberships();
+            var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
+            ViewBag.IsStudAdmin = adminMember != null;
 
             return View(model);
         }
@@ -1197,6 +1279,95 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+
+        public ActionResult ChangeLabel(Guid id)
+        {
+            var student = Db.Students.Include(student1 => student1.LastSemester).SingleOrDefault(x => x.Id == id);
+
+            if (student == null)
+                return RedirectToAction("Index");
+
+            var model = new StudentDetailViewModel();
+
+            var user = UserManager.FindById(student.UserId);
+
+            model.User = user;
+            model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).Include(x =>
+                x.Curriculum.Organiser).ToList();
+            model.Student = model.Students.FirstOrDefault();
+
+            var org = student.Curriculum.Organiser;
+            ViewBag.UserRight = GetUserRight(org);
+
+            var members = GetMyMemberships();
+            var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
+            ViewBag.IsStudAdmin = adminMember != null;
+
+
+            return View(model);
+        }
+
+
+        public ActionResult EditLabel(Guid studentId, Guid labelId)
+        {
+            var student = Db.Students.Include(student1 => student1.LabelSet.ItemLabels).SingleOrDefault(c => c.Id == studentId);
+            var label = student.LabelSet.ItemLabels.FirstOrDefault(x => x.Id == labelId);
+
+            ViewBag.Student = student;
+
+            return View(label);
+        }
+
+
+        public ActionResult ChangeLabels(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(c => c.Id == id);
+            var user = UserManager.FindById(student.UserId);
+
+            var model = new CourseLabelViewModel()
+            {
+                Student = student,
+                User = user,
+                Organisers = Db.Organisers.Where(x => x.LabelSet != null && !x.IsStudent && x.Curricula.Any()).OrderBy(x => x.ShortName).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AssignCourseLabels(Guid studentId, Guid[] labelIds)
+        {
+            var student = Db.Students.Include(x => x.LabelSet.ItemLabels).SingleOrDefault(c => c.Id == studentId);
+
+            foreach (var labelId in labelIds)
+            {
+                var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+                if (label != null && !student.LabelSet.ItemLabels.Contains(label))
+                {
+                    student.LabelSet.ItemLabels.Add(label);
+                }
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+        public ActionResult RemoveLabel(Guid studentId, Guid labelId)
+        {
+            var student = Db.Students.SingleOrDefault(c => c.Id == studentId);
+            var label = student.LabelSet.ItemLabels.FirstOrDefault(x => x.Id == labelId);
+
+            if (label != null)
+            {
+                student.LabelSet.ItemLabels.Remove(label);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Details", new { id = student.Id });
         }
 
     }

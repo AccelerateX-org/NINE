@@ -4,18 +4,32 @@
 @{
     ViewBag.Title = "Lehrangebot";
 
-    /*
+    @*
     var db = new TimeTableDbContext();
 
     var match = false;
     if (Model.Organiser.ShortName == "FK 11" &&
-        Model.Semester.Name == "SoSe 2025")
+        Model.Semester.Name == "WiSe 2024")
     {
         match = true;
+        var org = db.Organisers.SingleOrDefault(x => x.Id == Model.Organiser.Id);
+        var sem = db.Semesters.SingleOrDefault(x => x.Id == Model.Semester.Id);
+
+        var seg = sem.Dates.FirstOrDefault(x => x.Description.Equals("Semesterbegleitend"));
 
         foreach (var c in Model.Courses)
         {
+            // Abschnitt anfügen
+            if (c.Course.Segment == null && seg != null)
+            {
+                var course = db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == c.Course.Id);
+                if (course != null)
+                {
+                    course.Segment = seg;
+                }
+
             // keine Kontingente aber Plätze
+            /*
             if (!c.Course.Occurrence.SeatQuotas.Any() && c.Course.Occurrence.Capacity > 0)
             {
                 foreach (var label in c.Course.LabelSet.ItemLabels)
@@ -39,12 +53,13 @@
 
                     }
                 }
+            */
             }
         }
 
         db.SaveChanges();
     }
-    */
+        *@
 }
 
 @section styles
