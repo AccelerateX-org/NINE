@@ -95,6 +95,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ActivityOrganiser Organiser { get; set; }
 
+        public Student Student { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

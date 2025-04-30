@@ -308,6 +308,13 @@ namespace MyStik.TimeTable.Web.Controllers
             var student = StudentService.GetCurrentStudent(user);
             if (student != null)
             {
+                var currentCurr = student.Curriculum;
+
+                if (currentCurr.Id == nextCurr.Id)
+                {
+                    return View("Invalid", student);
+                }
+
                 // dieses Studium abschliessen
                 if (student.LastSemester == null)
                 {
@@ -316,12 +323,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
-            var currentCurr = student.Curriculum;
-
-            if (currentCurr.Id == nextCurr.Id)
-            {
-                return View("Invalid", student);
-            }
 
 
             // neuen Studiengang beginnen

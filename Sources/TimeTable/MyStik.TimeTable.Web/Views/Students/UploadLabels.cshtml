@@ -4,37 +4,72 @@
 }
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">Beschreibung</h5>
             </div>
-
-
-
-            <div class="card-body">
-            </div>
-        </div>
-    </div>
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Schritt 1: Datei auswählen und hochladen</h5>
-            </div>
             <div class="card-body">
                 <div class="alert alert-info ">
                     <strong>Erwartetes Format der Datei:</strong>
-                    <p>CSV-Datei mit Trennzeichen ; sowie Kopfzeile. Aufbau der Spalten:</p>
-                    <p>E-Mail;Ebene;Kohorte</p>
+                    <p>CSV-Datei mit Trennzeichen ; sowie Kopfzeile:</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>E-Mail</th>
+                                    <th>Ebene</th>
+                                    <th>Kohorte</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>abcd@xyz.mno</td>
+                                        <td>WIB</td>
+                                        <td>INF</td>
+                                    </tr>
+                                    <tr>
+                                        <td>abcd@xyz.mno</td>
+                                        <td>HM</td>
+                                        <td>CIE</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Es muss ein Account existieren</li>
+                                <li>Zu dem Account muss ein aktuelles Studium vorhanden sein</li>
+                                <li>Auf Basis des Studiums muss die angegebene Ebene existieren
+                                    <ul>
+                                        <li>Institution (z.B. HM)</li>
+                                        <li>Einrichtung (z.B. FK xx)</li>
+                                        <li>Studienprogramm (z.B BWB)</li>
+                                    </ul>
+                                </li>
+                                <li>Die Kohorte muss in der jeweiligen Ebene existieren.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Datei auswählen und hochladen</h5>
+            </div>
+            <div class="card-body">
 
                 @using (Html.BeginForm("Invitation", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
                 {
                     <fieldset>
                         @Html.AntiForgeryToken()
                         <div class="row mb-3">
-                            <label class="col-md-2 form-label">Datei mit Einladungsdaten</label>
-                            <div class="col-md-10">
+                            <label class="col-md-6 form-label">Datei mit Einladungsdaten</label>
+                            <div class="col-md-6">
                                 <div>
                                     <input type="file" name="Attachments" id="Attachment1"/>
                                 </div>

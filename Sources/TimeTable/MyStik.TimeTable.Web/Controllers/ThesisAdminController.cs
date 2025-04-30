@@ -1082,8 +1082,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Annahme: Damit ist auch das Studium beendet
-            var sem = SemesterService.GetSemester(DateTime.Today);
-            thesis.Student.LastSemester = sem;
+            // und das ist falsch!!
+            // var sem = SemesterService.GetSemester(DateTime.Today);
+            // thesis.Student.LastSemester = sem;
 
             Db.SaveChanges();
 

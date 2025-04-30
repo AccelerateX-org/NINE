@@ -186,7 +186,16 @@
                                         }
 
                                         <a href="@Url.Action("ChangeCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang korrigieren</a>
-                                        <a href="@Url.Action("DeleteStudent", new { id = student.Id })" class="btn btn-outline-danger">Studiengang löschen</a>
+                                        if (theses.Any())
+                                        {
+                                            <div class="alert alert-danger">
+                                                Für diesen Studiengang existiert eine Abschlussarbeit. Daher kann dieser Eintrag nicht gelöscht werden. Es muss zuerst die Abschlussarbeit gelöscht werden.
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("DeleteStudent", new { id = student.Id })" class="btn btn-outline-danger">Studiengang löschen</a>
+                                        }
                                     }
                                 </div>
                             </div>
