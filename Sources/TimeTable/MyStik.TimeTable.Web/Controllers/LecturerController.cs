@@ -58,8 +58,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult PersonalDates(Guid id)
         {
-            var user = GetCurrentUser();
             var semester = SemesterService.GetSemester(id);
+
+            var user = GetCurrentUser();
+            if (user == null)
+            {
+                return View("NoMember");
+            }
 
             var members = MemberService.GetFacultyMemberships(user.Id);
 
@@ -69,26 +74,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (orgs.Any())
                 {
-                    var org = orgs.FirstOrDefault();
-                    var member = MemberService.GetMember(user.Id, org.Id);
-
-                    var segment =
-                        semester.Dates.FirstOrDefault(x =>
-                            x.HasCourses && x.Organiser != null && x.Organiser.Id == org.Id);
-                    var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
-                        x.Organiser.Id == org.Id && x.Segment.Id == segment.Id &&
-                        x.Owners.Any(o => o.Member.Id == member.Id));
-
-
                     var summaryModel = new LecturerSummaryModel()
                     {
                         Memberships = members,
                         Semester = semester,
                         Dates = new List<PersonalDate>(),
                     };
-                    if (personalDate != null)
+
+                    var org = orgs.FirstOrDefault();
+                    var member = MemberService.GetMember(user.Id, org.Id);
+
+                    var segment =
+                        semester.Dates.FirstOrDefault(x =>
+                            x.HasCourses && x.Organiser != null && x.Organiser.Id == org.Id);
+
+                    if (segment != null)
                     {
-                        summaryModel.Dates.Add(personalDate);
+                        var personalDate = Db.Activities.OfType<PersonalDate>().FirstOrDefault(x =>
+                            x.Organiser.Id == org.Id && x.Segment.Id == segment.Id &&
+                            x.Owners.Any(o => o.Member.Id == member.Id));
+
+                        if (personalDate != null)
+                        {
+                            summaryModel.Dates.Add(personalDate);
+                        }
+
                     }
 
                     ViewBag.Segments = semester.Dates
@@ -99,6 +109,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                     Text = c.Description,
                                     Value = c.Id.ToString(),
                                 });
+
 
                     ViewBag.Organiser = orgs.OrderBy(x => x.ShortName).Select(c => new SelectListItem
                     {

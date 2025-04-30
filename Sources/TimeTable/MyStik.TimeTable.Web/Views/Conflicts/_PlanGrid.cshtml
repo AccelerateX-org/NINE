@@ -3,6 +3,7 @@
 @model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 
 @{
+    var db = new TimeTableDbContext();
 
     var allLecturers = new List<OrganiserMember>();
     var allRooms = new List<Room>();
@@ -86,9 +87,16 @@
                                     <div class="list-group">
                                         @foreach (var label in allLabels)
                                         {
+                                            var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                                            var labelName = label.Name;
+                                            if (curr != null)
+                                            {
+                                                labelName = string.Format("{0}:{1}", curr.ShortName, label.Name);
+                                            }
+
                                             <div class="list-group-item">
                                                 <div class="row">
-                                                    <div class="col-md-6">@label.Name</div>
+                                                    <div class="col-md-6">@labelName</div>
                                                     <div class="col-md-6">
                                                         <div class="btn btn-group">
                                                             <input type="color" class="form-control form-control-color" id="lc-@label.Id" value="#47aba1" title="Choose your color">

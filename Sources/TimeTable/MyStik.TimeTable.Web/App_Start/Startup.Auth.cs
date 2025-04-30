@@ -77,6 +77,10 @@ namespace MyStik.TimeTable.Web
         private void ConfigureOIDC(IAppBuilder app)
         {
             var OidcCaption = ConfigurationManager.AppSettings["oidc:Caption"];
+
+            if (string.IsNullOrEmpty(OidcCaption))
+                return;
+
             var OidcAuthority = ConfigurationManager.AppSettings["oidc:Authority"];
             var OidcRedirectUrl = ConfigurationManager.AppSettings["oidc:RedirectUrl"];
             var OidcClientId = ConfigurationManager.AppSettings["oidc:ClientId"];
