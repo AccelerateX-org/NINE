@@ -1,73 +1,264 @@
-﻿@model MyStik.TimeTable.Web.Models.IndexViewModel
+﻿@using Microsoft.AspNet.Identity
+@using Microsoft.Owin.Security
+@model MyStik.TimeTable.Web.Models.IndexViewModel
 @{
     ViewBag.Title = Resources.ManageProfileHeading;
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-hm">
+@*
+<ul>
+    @foreach (var auth in loginProviders)
+    {
+        <li>@auth.AuthenticationType | @auth.Caption</li>
+    }
+</ul>
+
+<ul>
+    @foreach (var login in Model.CurrentLogins)
+    {
+        <li>@login.LoginProvider</li>
+    }
+</ul>
+*@
+
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item active">Benutzerkonto</li>
+        </ol>
+    </nav>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Profildaten</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div>
+                                @Model.User.FirstName @Model.User.LastName
+                            </div>
+                            @if (ViewBag.HasImage == true)
+                            {
+                                <img src="@Url.Action("GetProfileImage")" class="card-img-top" alt="Profile image" />
+                            }
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="btn-group-vertical">
+                                <a href="#" class="btn btn-outline-primary">Change Name</a>
+                                <a href="#" class="btn btn-outline-primary">Upload Image</a>
+                                @if (ViewBag.HasImage == true)
+                                {
+                                    <a href="@Url.Action("DeleteProfileImage")" class="btn btn-outline-primary"><i class="bi bi-trash"></i> Profilbild löschen</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div>
+                                Ich möchte keine E-Mails über die Funktion "Aktuelles / Mailing" erhalten.
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-outline-primary">Change</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div>
+                                URL für iCal Feed: <span class="text-primary">@Url.Action("Feed", "Calendar", new { token = ViewBag.CalendarToken }, "https")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div>
+                                Claims
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                @foreach (var claim in Model.User.Claims)
+                                {
+                                    <li>@claim.ClaimType | @claim.ClaimValue</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Login Optionen</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div>NINE User Account</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="btn-group-vertical">
+                                @if (Model.HasPassword)
+                                {
+                                    <a href="@Url.Action("ChangePassword")" class="btn btn-outline-primary">
+                                        <i class="bi bi-key"></i> @Resources.ChangePasswordButton
+                                    </a>
+                                    <a href="@Url.Action("ChangeEMail")" class="btn btn-outline-primary">
+                                        <i class="bi bi-envelope"></i> @Resources.ChangeEMailButton
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("SetPassword")" class="btn btn-outline-primary">
+                                        <i class="bi bi-key"></i> @Resources.SetPasswordButton
+                                    </a>
+                                }
+                                <a href="@Url.Action("DeleteAccount", "Account")" class="btn btn-outline-primary">
+                                    <i class="bi bi-trash"></i> @Resources.DeleteAccountButton
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                @if (Model.CurrentLogins.Count > 0)
+                {
+                    foreach (var account in Model.CurrentLogins)
+                    {
+                        var provider = loginProviders.FirstOrDefault(x => x.AuthenticationType == account.LoginProvider);
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div>@provider.Caption | @account.LoginProvider</div>
+                                </div>
+                                <div class="col-md-6">
+                                    @if (ViewBag.ShowRemoveButton)
+                                    {
+                                        using (Html.BeginForm("RemoveLogin", "Manage"))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <div>
+                                                @Html.Hidden("loginProvider", account.LoginProvider)
+                                                @Html.Hidden("providerKey", account.ProviderKey)
+                                                <input type="submit" class="btn btn-outline-primary" value="Remove" title="Remove this @account.LoginProvider login from your account"/>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @: &nbsp;
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                @if (Model.OtherLogins.Count > 0)
+                {
+                    using (Html.BeginForm("LinkLogin", "Manage"))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div id="socialLoginList">
+                            @foreach (AuthenticationDescription p in Model.OtherLogins)
+                            {
+                                <div class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div>@p.Caption</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="submit" class="btn btn-outline-primary" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="bi bi-link"></i> Connect</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@*
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1>@Resources.ManageProfileHeading</h1>
+                <p class="text-success">@ViewBag.StatusMessage</p>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <p class="text-success">@ViewBag.StatusMessage</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-user"></i> @Resources.LocalUserAccountHeading
+        <div class="row">
+            <div class="col-md-6">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-user"></i> @Resources.LocalUserAccountHeading
+                        </div>
+                        <div class="actions">
+                        </div>
                     </div>
-                    <div class="actions">
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <div class="list-group">
-                        @if (Model.HasPassword)
-                        {
-                            <a href="@Url.Action("ChangePassword")" class="list-group-item">
-                                <i class="fa fa-key fa-fw"></i> @Resources.ChangePasswordButton
+                    <div class="portlet-body">
+                        <div class="list-group">
+                            @if (Model.HasPassword)
+                            {
+                                <a href="@Url.Action("ChangePassword")" class="list-group-item">
+                                    <i class="fa fa-key fa-fw"></i> @Resources.ChangePasswordButton
+                                </a>
+                                <a href="@Url.Action("ChangeEMail")" class="list-group-item">
+                                    <i class="fa fa-envelope fa-fw"></i> @Resources.ChangeEMailButton
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetPassword")" class="list-group-item">
+                                    <i class="fa fa-key fa-fw"></i> @Resources.SetPasswordButton
+                                </a>
+                            }
+                            <a href="@Url.Action("DeleteAccount", "Account")" class="list-group-item">
+                                <i class="fa fa-trash fa-fw"></i> @Resources.DeleteAccountButton
                             </a>
-                            <a href="@Url.Action("ChangeEMail")" class="list-group-item">
-                                <i class="fa fa-envelope fa-fw"></i> @Resources.ChangeEMailButton
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("SetPassword")" class="list-group-item">
-                                <i class="fa fa-key fa-fw"></i> @Resources.SetPasswordButton
-                            </a>
-                        }
-                        <a href="@Url.Action("DeleteAccount", "Account")" class="list-group-item">
-                            <i class="fa fa-trash fa-fw"></i> @Resources.DeleteAccountButton
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-user"></i> @Resources.AvailableLoginServices
+            <div class="col-md-6">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-user"></i> @Resources.AvailableLoginServices
+                        </div>
+                        <div class="actions">
+                        </div>
                     </div>
-                    <div class="actions">
+                    <div class="portlet-body">
+                        @Model.Logins.Count [
+                        @Html.ActionLink(Resources.ManageLoginsLink, "ManageLogins") ]
                     </div>
-                </div>
-                <div class="portlet-body">
-                    @Model.Logins.Count [
-                    @Html.ActionLink(Resources.ManageLoginsLink, "ManageLogins") ]
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+*@

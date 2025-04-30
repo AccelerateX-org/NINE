@@ -34,6 +34,22 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public bool BrowserRemembered { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IList<UserLoginInfo> CurrentLogins { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IList<AuthenticationDescription> OtherLogins { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ApplicationUser User { get; set; }
+
     }
 
     /// <summary>
