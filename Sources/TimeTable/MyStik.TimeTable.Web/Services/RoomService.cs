@@ -272,7 +272,7 @@ namespace MyStik.TimeTable.Web.Services
 
             var end = start.AddMinutes(offset);
 
-            return GetAvaliableRooms(orgId, start, end);
+            return GetOwnAvaliableRooms(orgId, start, end);
         }
 
         /// <summary>
@@ -340,6 +340,34 @@ namespace MyStik.TimeTable.Web.Services
 
             return roomList;
         }
+
+        public ICollection<RoomInfoModel> GetOwnAvaliableRooms(Guid orgId, DateTime from, DateTime until)
+        {
+            var roomList = new List<RoomInfoModel>();
+
+            List<Room> rooms;
+
+            rooms = _db.Rooms.Where(room =>
+                room.Assignments.Any(a => a.Organiser.Id == orgId && a.IsOwner == true) &&
+                !room.Dates.Any(d =>
+                        (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                        (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                        (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                )).ToList();
+
+            foreach (var room in rooms)
+            {
+                roomList.Add(new RoomInfoModel
+                {
+                    Room = room,
+                    NextDate = GetNextDate(room)
+                });
+            }
+
+            return roomList;
+        }
+
+
 
         /// <summary>
         /// 

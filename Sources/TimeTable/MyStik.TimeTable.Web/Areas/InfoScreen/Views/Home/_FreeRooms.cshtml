@@ -1,112 +1,51 @@
 ﻿@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.InfoscreenModel
 
-<input id="tokenPanelRight" type="hidden" name="tokenPanelRight" value="@ViewBag.Token">
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="portlet light">
-            <div class="portlet-title">
-                <div class="caption">
-                    <h1>Derzeit noch mindestens 45 min frei sind...</h1>
-                </div>
-            </div>
-            <div class="portlet-body infoscreen">
-                @if (Model.CurrentFreeRooms.Any())
-                {
-                    <div class="infoscreen">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Raum</th>
-                                    <th>Heute noch frei bis</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var room in Model.CurrentFreeRooms)
-                            {
-                                <tr>
-                                    <td>@room.Room.Number</td>
-                                    @if (room.NextDate != null)
-                                    {
-                                        if (room.NextDate.Begin > DateTime.Today.AddDays(1))
-                                        {
-                                            <td>Abends</td>
-                                        }
-                                        else
-                                        {
-                                            <td>@room.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <td>Abends</td>
-                                    }
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <h1 class="text-success">...keine Räume</h1>
-                }
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="portlet light">
-            <div class="portlet-title">
-                <div class="caption">
-                    <h1>In den nächsten 15 min werden frei...</h1>
-                </div>
-            </div>
-            <div class="portlet-body infoscreen">
-                @if (Model.NextFreeRooms.Any())
-                {
-                    <div class="infoscreen">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Um</th>
-                                    <th>Raum</th>
-                                    <th>frei bis</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var room in Model.NextFreeRooms)
-                            {
-                                <tr>
-                                    <td></td>
-                                    <td>@room.Room.Number</td>
-                                    @if (room.NextDate != null)
-                                    {
-                                        if (room.NextDate.Begin > DateTime.Today.AddDays(1))
-                                        {
-                                            <td>Abends</td>
-                                        }
-                                        else
-                                        {
-                                            <td>@room.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <td>Abends</td>
-                                    }
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <h1 class="text-success">...keine weiteren Räume</h1>
-                }
-            </div>
-        </div>
-    </div>
+<div>
+    <h4>Derzeit noch mindestens 45 min frei sind die folgenden Räume...</h4>
+    @if (Model.CurrentFreeRooms.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Raum</th>
+                <th>Heute noch frei bis</th>
+                <th>Nächste Veranstaltung</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var room in Model.CurrentFreeRooms)
+            {
+                <tr>
+                    <td>@room.Room.Number</td>
+                    @if (room.NextDate != null)
+                    {
+                        if (room.NextDate.Begin > DateTime.Today.AddDays(1))
+                        {
+                            <td>Abends</td>
+                            <td></td>
+                        }
+                        else
+                        {
+                            <td>@room.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                            <td>@room.NextDate.Activity.Name</td>
+                        }
+                    }
+                    else
+                    {
+                        <td>Abends</td>
+                        <td></td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h1>...keine</h1>
+    }
 </div>
+
 
 

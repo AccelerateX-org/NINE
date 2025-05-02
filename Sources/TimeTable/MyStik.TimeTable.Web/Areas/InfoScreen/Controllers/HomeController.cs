@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -28,68 +29,28 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         {
             // leere Seite nur mir Uhr
             ViewBag.Location = id;
-            return View();
+            return View("Main");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="location"></param>
-        /// <returns></returns>
         [HttpPost]
         [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]
-        public PartialViewResult LeftPanel(string token, string location)
+        public PartialViewResult ContentForPage(int page)
         {
-            // Während der Öffnungszeiten der Mensa 
-            // abwechselnd MVG und Mensa
-            // sonst
-            // nur MVG
-
-            // Bei Start immer MVG
-            if (string.IsNullOrEmpty(token))
-                return MVG(location);
-
-            // wenn es MVG war, dann Mensa
-            if (token.Equals("MVG"))
+            switch (page)
             {
-                // Nach 14:00 keinen Speiseplan mehr anzeigen
-                if (DateTime.Now > DateTime.Today.AddHours(14))
-                    return MVG(location);
-                
-                return Mensa(location);
+                case 0:
+                    return CurrentCourses();
+                case 1:
+                    return NextCourses();
+                case 2:
+                    return FreeRooms();
             }
 
-            // default MVG
-            return MVG(location);
+            return PartialView("_Dummy");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="location"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]
-        public PartialViewResult RightPanel(string token, string location)
-        {
-            if (string.IsNullOrEmpty(token))
-                return CurrentCourses(location);
 
-            if (token.Equals("NowPlaying"))
-                return CurrentCourses(location);
 
-            if (token.Equals("WhatsNext"))
-                return NextCourses(location);
-
-            if (token.Equals("FreeRooms"))
-                return FreeRooms(location);
-
-            // Theoretisch darf das nicht passieren
-            // Default: Zeig die aktuellen Kurse
-            return CurrentCourses(location);
-        }
 
 
         #region LeftPanel
@@ -98,67 +59,6 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// Haltestelle Lothstrasse (Hochschule München)
         /// </summary>
         /// <returns></returns>
-        public PartialViewResult MVG(string location)
-        {
-            var model = new InfoscreenModel();
-
-
-            // TODO: Abfrage MVV
-            model.MVVallDepartures = new List<MvvViewModel>();
-
-            var url = "";
-
-            if (location.Equals("FK 10") || location.Equals("FK 11"))
-            {
-                url = "http://www.mvg-live.de/ims/dfiStaticAnzeige.svc?haltestelle=Avenariusplatz&ubahn=checked&bus=checked&tram=checked&sbahn=checked";
-            }
-            else
-            {
-                url = "http://www.mvg-live.de/ims/dfiStaticAnzeige.svc?haltestelle=Hochschule+M%fcnchen+(Lothstra%dfe)&ubahn=checked&bus=checked&tram=checked&sbahn=checked";
-            }
-
-            var req = (HttpWebRequest)WebRequest.Create(url);
-            req.Method = "GET";
-            var res = (HttpWebResponse)req.GetResponse();
-
-            // Verwendung des HTML Agility Package zum Parsen des HTMLs
-            var doc = new HtmlDocument();
-            doc.Load(res.GetResponseStream());
-
-            // geht!
-            // erste und letzte Zeile der Tabelle müssen ignoriert werden
-
-            // Alle <tr> Elemente im ganzen HTML-Dokument auswählen
-            //var trNodes = doc.DocumentNode.SelectNodes("//tr").Take(10).ToList(); 
-            var trNodes = doc.DocumentNode.SelectNodes("//tr").ToList();
-
-            // Es ist bekannt: das erste Element und die beiden letzten Elemente enthalten keine Abfahrtszeiten
-            for (var i = 1; i < trNodes.Count - 2; i++)
-            {
-                // pro <tr>-Element alle <td>-Elemente auswählen
-                var tdNodes = trNodes[i].SelectNodes("td");
-
-                // Zur Sicherheit: nur <tr>-Elemente, die exakt 3 <td>-Elemente besitzen nehmen
-                if (tdNodes.Count == 3)
-                {
-                    // im Ziel steht ggf. noch Leerzeichen drin => löschen
-                    var ziel = tdNodes[1].InnerText;
-                    ziel = ziel.Replace("&nbsp;", "").Trim();
-
-                    // Das Objekt aufbauem
-                    var mvv = new MvvViewModel
-                    {
-                        Liniennummer = tdNodes[0].InnerText,
-                        Richtung = ziel,
-                        AbfahrtszeitInMin = int.Parse(tdNodes[2].InnerText)
-                    };
-                    // Das Objekt zur Liste hinzufügen
-                    model.MVVallDepartures.Add(mvv);
-                }
-            }
-
-            return PartialView("_MVG", model);
-        }
 
         /// <summary>
         /// Aktueller Mensaspeiseplan
@@ -246,10 +146,6 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
                 model.SpeiseplanHeute = m.Tage.FirstOrDefault();
             }
 
-            // wenn es keine Daten gibt, dann doch lieber MVG aufrufen
-            if (model.SpeiseplanHeute == null)
-                return MVG(location);
-
             // 3. Model an den View übergeben
             return PartialView("_Mensa", model);
         }
@@ -264,7 +160,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public PartialViewResult CurrentCourses(string location)
+        public PartialViewResult CurrentCourses(string location = "FK 09")
         {
             var now = DateTime.Now;
             var maxEntries = 14;
@@ -274,9 +170,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
             var fk = location;
 
 
-            var nowPlaying = Db.ActivityDates.Where(d => 
-            d.Activity.Organiser.ShortName.Equals(fk) &&
-            d.Begin <= now && now < d.End).OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+            var nowPlaying = Db.ActivityDates.Where(d =>
+                    d.Activity.Organiser.ShortName.Equals(fk) &&
+                    d.Begin <= now && now < d.End).OrderBy(d => d.Begin).ThenBy(d => d.End)
+                .Include(activityDate => activityDate.Activity).ToList();
 
             model.NowPlayingDates = nowPlaying.Where(date => date.Activity is Course).Take(maxEntries).ToList();
 
@@ -287,7 +184,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public PartialViewResult NextCourses(string location)
+        public PartialViewResult NextCourses(string location = "FK 09")
         {
             var now = DateTime.Now;
             var maxEntries = 14;
@@ -313,7 +210,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public PartialViewResult FreeRooms(string location)
+        public PartialViewResult FreeRooms(string location = "FK 09")
         {
             var model = new InfoscreenModel();
 
@@ -336,11 +233,13 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
                 // nur R-Bau
                 model.CurrentFreeRooms = allRooms.Where(r => r.Room.Number.StartsWith(b)).OrderBy(r => r.Room.Number).Take(14).ToList();
 
+                /*
                 var nextRooms = roomService.GetAvaliableRoomsNext(fk09.Id, 15, 45);
 
                 // aus nextRooms alle rauswerfen, die in allrooms schon drin sind
                 var additionalFreeRooms = nextRooms.Where(room => allRooms.All(r => r.Room.Id != room.Room.Id)).ToList();
                 model.NextFreeRooms = additionalFreeRooms.Where(r => r.Room.Number.StartsWith(b)).OrderBy(r => r.Room.Number).Take(14).ToList();
+                */
             }
             else
             {
