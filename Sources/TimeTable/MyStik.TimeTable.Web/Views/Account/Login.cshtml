@@ -14,12 +14,19 @@
                     <h4>@Resources.LoginHeading</h4>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <p>In Kürze wird es möglich sein, sich bei NINE zusätzlich zum bestehenden NINE Benutzerkonto mit dem HM Account anzumelden. 
-                            Alle, die diese Möglichkeit nutzen möchten, können unter der Funktion "Mein Benutzerkonto" die Verknüpfung mit dem HM Account anlegen.</p>
-                        <p>Wer sich weiterhin mit dem NINE Account anmelden möchte, muss dazu in Zukunft zwingend über die <a href="https://nine.hm.edu">Startseite</a> gehen, um zu dieser Login-Seite zu gelangen.</p>
-                        <p>Wer interne Seiten, z.B. das Dashboard als Favorit gespeichert hat bzw. verwendet wird immer auf der Seite für den HM Account landen (der ist leider dominant).</p>
+                    <div class="alert alert-danger">
+                        <p>Aktuell läuft der Testbetrieb für die Nutzung des HM User-Accounts. Sollte es zu unerwarteten Schwierigkeiten kommen, wird die Integration wieder deaktiviert.</p>
+                        <p>In diesem Zuge eingerichtete Verknüpfungen bleiben bestehen.</p>
+                        <p>Ein Login mit bestehen NINE Accounts ist immer möglich.</p>
                     </div>
+                    @*
+        <div class="alert alert-info">
+            <p>In Kürze wird es möglich sein, sich bei NINE zusätzlich zum bestehenden NINE Benutzerkonto mit dem HM Account anzumelden.
+                Alle, die diese Möglichkeit nutzen möchten, können unter der Funktion "Mein Benutzerkonto" die Verknüpfung mit dem HM Account anlegen.</p>
+            <p>Wer sich weiterhin mit dem NINE Account anmelden möchte, muss dazu in Zukunft zwingend über die <a href="https://nine.hm.edu">Startseite</a> gehen, um zu dieser Login-Seite zu gelangen.</p>
+            <p>Wer interne Seiten, z.B. das Dashboard als Favorit gespeichert hat bzw. verwendet wird immer auf der Seite für den HM Account landen (der ist leider dominant).</p>
+        </div>
+                    *@
 
                     @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form", role = "form" }))
                     {
@@ -43,12 +50,12 @@
                             </button>
                         </div>
                     }
-                    <hr/>
+                    <hr />
                     <ul class="fa-ul mt-2">
                         <li><i class="fas fa-question fa-li text-primary"></i>@Html.ActionLink(Resources.ForgotPasswordLink, "ForgotPassword")</li>
                         <li><i class="fas fa-pen fa-li text-primary"></i>@Html.ActionLink(Resources.RegisterLink, "Register")</li>
                     </ul>
-                    <hr/>
+                    <hr />
                     <div class="form-group">
                         @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
                     </div>
