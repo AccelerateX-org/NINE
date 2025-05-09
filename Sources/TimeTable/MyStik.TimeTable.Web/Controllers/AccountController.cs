@@ -721,28 +721,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("Login");
             }
 
-            // hier schon mal die Daten holen
-
-
-
-            // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    // TO-DO: hier Daten ggf. aktualisieren
-                    // TO-DO: last Login aktualisieren
-                    var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                    user.LastLogin = DateTime.Now;
-                    var result2 = await UserManager.UpdateAsync(user);
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-            }
-
-
             var claims = loginInfo.ExternalIdentity.Claims.ToList();
             var accessToken = claims.Find(c => c.Type == "access_token");
 
@@ -754,32 +732,70 @@ namespace MyStik.TimeTable.Web.Controllers
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
 
-            var model = new ExternalLoginConfirmationViewModel();
-
             var response = await client.GetAsync("idp/profile/oidc/userinfo");
+            dynamic userInfo = null;
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
 
                 if (!string.IsNullOrWhiteSpace(data))
                 {
-                    dynamic obj = JObject.Parse(data);
-                    string email = obj["eduPersonPrincipalName"];
-
-                    model.Email = email;
+                    userInfo = JObject.Parse(data);
                 }
+            }
+            
+            // Sign in the user with this external login provider if the user already has a login
+            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    // TO-DO: hier Daten ggf. aktualisieren
+
+                    var claim = loginInfo.ExternalIdentity.Claims.SingleOrDefault(c => c.Type == "eduPersonPrincipalName");
+                    if (claim != null)
+                    {
+                        var user = await UserManager.FindByNameAsync(claim.Value);
+                        if (user != null)
+                        {
+                            // Update user info claims
+                            var userClaims = await UserManager.GetClaimsAsync(user.Id);
+                            var hasCHange = false;
+                            foreach (var property in userInfo.Properties())
+                            {
+                                var userClaim = userClaims.FirstOrDefault(c => c.Type == property.Name);
+                                if (userClaim != null)
+                                {
+                                    await UserManager.RemoveClaimAsync(user.Id, userClaim);
+                                }
+
+                                var infoClaim = new Claim(property.Name, property.Value.ToString());
+                                await UserManager.AddClaimAsync(user.Id, infoClaim);
+                            }
+
+                            await UserManager.StoreLogInAsync(user.Id);
+                        }
+                    }
+                    return RedirectToLocal(returnUrl);
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+                case SignInStatus.RequiresVerification:
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+            }
+
+
+            if (userInfo != null)
+            {
+                var model = new ExternalLoginConfirmationViewModel
+                {
+                    Email = userInfo["eduPersonPrincipalName"]
+                };
+                return View("ExternalLoginConfirmation", model);
             }
             else
             {
                 ViewBag.UserData = await response.Content.ReadAsStringAsync();
                 return View("ExternalLoginFailure");
             }
-
-
-            // If the user does not have an account, then prompt the user to create an account
-            return View("ExternalLoginConfirmation", model);
-
-
         }
 
         /// <summary>
@@ -822,32 +838,29 @@ namespace MyStik.TimeTable.Web.Controllers
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
 
                 var response = await client.GetAsync("idp/profile/oidc/userinfo");
-                var eduPersonPrincipalName = "";
-                var personFirstName = "";
-                var personLastName = "";
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = await response.Content.ReadAsStringAsync();
-
-                    if (!String.IsNullOrWhiteSpace(data))
-                    {
-                        dynamic obj = JObject.Parse(data);
-                        eduPersonPrincipalName = obj["eduPersonPrincipalName"];
-                        personFirstName = obj["given_name"];
-                        personLastName = obj["family_name"];
-                    }
-                }
-                else
+                if (!response.IsSuccessStatusCode)
                 {
                     ViewBag.UserData = await response.Content.ReadAsStringAsync();
                     return View("ExternalLoginFailure");
                 }
 
+                var data = await response.Content.ReadAsStringAsync();
 
+                if (String.IsNullOrWhiteSpace(data))
+                {
+                    ViewBag.UserData = await response.Content.ReadAsStringAsync();
+                    return View("ExternalLoginFailure");
+                }
+
+                dynamic userInfo = JObject.Parse(data);
+                var eduPersonPrincipalName = userInfo["eduPersonPrincipalName"];
+                var personFirstName = userInfo["given_name"];
+                var personLastName = userInfo["family_name"];
+                var personEmail = userInfo["email"];
 
                 // Neuen Benutzer anlegen
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = personFirstName, LastName = personLastName};
+                var user = new ApplicationUser { UserName = eduPersonPrincipalName, Email = personEmail, FirstName = personFirstName, LastName = personLastName};
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -859,16 +872,17 @@ namespace MyStik.TimeTable.Web.Controllers
                         return View("ExternalLoginFailure");
                     }
 
-                    if (info.ExternalIdentity.Claims != null)
+                    // jetzt die Claims anlegen aus den Daten die per userinfo abgefragt worden sind.
+                    foreach (var property in userInfo.Properties())
                     {
-                        // claim erzeugen
-                        var claim = new Claim("eduPersonPricipalName", eduPersonPrincipalName);
+                        var claim = new Claim(property.Name, property.Value.ToString());
                         result = await UserManager.AddClaimAsync(user.Id, claim);
                     }
 
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await UserManager.StoreLogInAsync(user.Id);
                         return RedirectToLocal(returnUrl);
                     }
                 }

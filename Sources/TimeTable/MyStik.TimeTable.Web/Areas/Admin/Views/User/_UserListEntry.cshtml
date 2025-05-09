@@ -40,36 +40,53 @@
 </td>
 <td>@Model.User.Registered</td>
 <td>@Model.User.LastLogin</td>
-<td>
-    @if (!Model.User.IsApproved)
-    {
-        <i class="fa fa-ban text-danger"></i>
-    }
-    else
-    {
-        <i class="fa fa-check text-success"></i>
-    }
-</td>
-<td>
-    @if (!Model.User.EmailConfirmed)
-    {
-        <i class="fa fa-ban text-danger"></i>
-    }
-    else
-    {
-        <i class="fa fa-check text-success"></i>
-    }
-</td>
-<td>@Model.User.Approved</td>
-<td>
-    @Model.User.ExpiryDate
-    @Model.User.Logins.Count
-    @Model.User.Claims.Count
-    @foreach (var login in Model.User.Logins.ToList())
-    {
-        <div>@login.LoginProvider</div>
-    }
-</td>
+@if (Model.User.Logins.Any())
+{
+    <td>
+        @foreach (var login in Model.User.Logins.ToList())
+        {
+            <div>@login.LoginProvider</div>
+        }
+    </td>
+    <td>SSO</td>
+    <td>SSO</td>
+    <td>
+        @Model.User.ExpiryDate
+    </td>
+}
+else
+{
+    <td>
+        @if (!Model.User.IsApproved)
+        {
+            <i class="fa fa-ban text-danger"></i>
+        }
+        else
+        {
+            <i class="fa fa-check text-success"></i>
+        }
+    </td>
+    <td>
+        @if (!Model.User.EmailConfirmed)
+        {
+            <i class="fa fa-ban text-danger"></i>
+        }
+        else
+        {
+            <i class="fa fa-check text-success"></i>
+        }
+    </td>
+    <td>@Model.User.Approved</td>
+    <td>
+        @Model.User.ExpiryDate
+        @Model.User.Logins.Count
+        @Model.User.Claims.Count
+        @foreach (var login in Model.User.Logins.ToList())
+        {
+            <div>@login.LoginProvider</div>
+        }
+    </td>
+}
 
 <td>
     @if (User.IsInRole("SysAdmin"))

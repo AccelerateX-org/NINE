@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http;
@@ -13,6 +15,7 @@ using MyStik.TimeTable.Web.Models;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger;
 using System.Security.Claims;
+using static MyStik.TimeTable.DataServices.BaseImportContext;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -145,7 +148,13 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 message = ManageMessageId.Error;
             }
-            return RedirectToAction("ManageLogins", new { Message = message });
+
+            var model = new ExternalLoginStatus
+            {
+                IsConnect = false,
+                Errors = new List<string>(result.Errors)
+            };
+            return RedirectToAction("Index");
         }
 
         /// <summary>
@@ -421,18 +430,20 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<ActionResult> ManageLogins(ManageMessageId? message)
+        public async Task<ActionResult> ManageLogins(ExternalLoginStatus status)
         {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : "";
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
             {
                 return View("Error");
             }
+
+
+            return View();
+
+            /*
             var userLogins = await UserManager.GetLoginsAsync(User.Identity.GetUserId());
             var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
@@ -442,7 +453,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (loginInfo != null)
             {
-                
+
                 var claims = loginInfo.ExternalIdentity.Claims.ToList();
                 ViewBag.Claims = claims;
 
@@ -490,6 +501,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 CurrentLogins = userLogins,
                 OtherLogins = otherLogins
             });
+            */
         }
 
         /// <summary>
@@ -514,7 +526,13 @@ namespace MyStik.TimeTable.Web.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
             {
-                return RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
+                var model = new ExternalLoginStatus
+                {
+                    IsConnect = true,
+                    Errors = new List<string> { "Keine Benutzerinfos verfügbar" }
+                };
+                
+                return RedirectToAction("Index");
             }
             var result = await UserManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
 
@@ -535,7 +553,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
 
                 var response = await client.GetAsync("idp/profile/oidc/userinfo");
-                var eduPersonPrincipalName = "";
+                dynamic userInfo = null;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -543,72 +561,37 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     if (!String.IsNullOrWhiteSpace(data))
                     {
-                        dynamic obj = JObject.Parse(data);
-                        eduPersonPrincipalName = obj["eduPersonPrincipalName"];
+                        userInfo = JObject.Parse(data);
                     }
                 }
 
-                var claim = new Claim("eduPersonPricipalName", eduPersonPrincipalName);
-                result = await UserManager.AddClaimAsync(User.Identity.GetUserId(), claim);
-            }
-
-            // original
-            return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
-
-            /*
-            if (!result.Succeeded)
-            {
-                return RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
-            }
-
-            var claims = loginInfo.ExternalIdentity.Claims.ToList();
-            ViewBag.Claims = claims;
-
-            var accessToken = claims.Find(c => c.Type == "access_token");
-
-            var client = new HttpClient()
-            {
-                BaseAddress = new Uri("https://sso.hm.edu/"),
-            };
-
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
-
-            var response = await client.GetAsync("idp/profile/oidc/userinfo");
-
-            ViewBag.UserName = "unknown";
-            ViewBag.Email = "unknown";
-
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-                ViewBag.UserData = data;
-
-                if (!String.IsNullOrWhiteSpace(data))
+                if (userInfo != null)
                 {
-                    dynamic obj = JObject.Parse(data);
+                    var userId = User.Identity.GetUserId();
+                    var userClaims = await UserManager.GetClaimsAsync(userId);
+                    foreach (var property in userInfo.Properties())
+                    {
+                        var userClaim = userClaims.FirstOrDefault(c => c.Type == property.Name);
+                        if (userClaim != null)
+                        {
+                            await UserManager.RemoveClaimAsync(userId, userClaim);
+                        }
 
-                    string userName = obj["eduPersonPrincipalName"];
-                    string email = obj["eduPersonPrincipalName"];
-
-                    ViewBag.UserName = userName;
-                    ViewBag.Email = email;
+                        var infoClaim = new Claim(property.Name, property.Value.ToString());
+                        await UserManager.AddClaimAsync(userId, infoClaim);
+                    }
 
                 }
             }
-            else
+
+            var model2 = new ExternalLoginStatus
             {
-                ViewBag.UserData = await response.Content.ReadAsStringAsync();
-                return RedirectToAction("ManageLogins", new { Message = "No user info" });
-            }
+                IsConnect = true,
+                Errors = new List<string>(result.Errors)
+            };
 
-
-            // If the user does not have an account, then prompt the user to create an account
-            ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-            ViewBag.LoginInfo = loginInfo;
-            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
-            */
+            // original
+            return RedirectToAction("Index");
         }
 
         /// <summary>
@@ -727,5 +710,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         #endregion
+    }
+
+    public class ExternalLoginStatus
+    {
+        public bool IsConnect { get; set; }
+        public List<string> Errors { get; set; }
     }
 }

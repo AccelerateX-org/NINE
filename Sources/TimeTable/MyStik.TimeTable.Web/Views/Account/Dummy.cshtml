@@ -1,0 +1,19 @@
+﻿@model Microsoft.AspNet.Identity.Owin.ExternalLoginInfo
+@{
+    ViewBag.Title = "Register";
+}
+
+<ul>
+    @foreach (var claim in Model.ExternalIdentity.Claims)
+    {
+        <li>@claim.Type: @claim.Value</li>
+    }
+</ul>
+
+<div>Daten</div>
+<ul>
+    @foreach (var p in ViewBag.JObject.Properties())
+    {
+        <li>@p.Name: @p.Value</li>
+    }
+</ul>

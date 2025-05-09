@@ -4,7 +4,40 @@
 }
 
 
-<h2>@Model.User.FullName</h2>
-<h4>@Model.Student.Curriculum.ShortName - @Model.Student.FirstSemester.Name</h4>
-<a href="@Url.Action("DeleteStudent", new {id=Model.Student.Id})">Löschen</a>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">@Model.User.FullName</h4>
+                @if (Model.Student != null)
+                {
+                    <p>@Model.Student.Curriculum.ShortName - @Model.Student.FirstSemester.Name</p>
+                    <a href="@Url.Action("DeleteStudent", new {id=Model.Student.Id})">Löschen</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var c in Model.User.Claims)
+                {
+                    <tr>
+                        <td>@c.ClaimType</td>
+                        <td>@c.ClaimValue</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 

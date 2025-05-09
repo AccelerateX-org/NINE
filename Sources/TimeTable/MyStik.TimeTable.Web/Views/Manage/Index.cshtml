@@ -163,7 +163,9 @@
                                             <div>
                                                 @Html.Hidden("loginProvider", account.LoginProvider)
                                                 @Html.Hidden("providerKey", account.ProviderKey)
-                                                <input type="submit" class="btn btn-outline-primary" value="Remove" title="Remove this @account.LoginProvider login from your account"/>
+                                                <button type="submit" class="btn btn-outline-primary" title="Remove this @account.LoginProvider login from your account">
+                                                    <i class="bi bi-trash"> Remove from my account</i>
+                                                </button>
                                             </div>
                                         }
                                     }
