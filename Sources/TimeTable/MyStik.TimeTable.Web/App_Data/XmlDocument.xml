@@ -7260,11 +7260,12 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ManageController.ManageLogins(System.Nullable{MyStik.TimeTable.Web.Controllers.ManageController.ManageMessageId})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.ManageController.ManageLogins(MyStik.TimeTable.Web.Controllers.ExternalLoginStatus)">
             <summary>
             
             </summary>
             <param name="message"></param>
+            <param name="status"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ManageController.LinkLogin(System.String)">
@@ -9825,13 +9826,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.StudentsController.Invitation">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.StudentsController.Invitation(MyStik.TimeTable.Web.Models.InvitationFileModel)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.StudentsController.UploadLabels(MyStik.TimeTable.Web.Models.InvitationFileModel)">
             <summary>
             
             </summary>
@@ -17842,11 +17837,6 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.StudentInvitationModel.User">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.StudentInvitationModel.SemGroup">
             <summary>
             
             </summary>

@@ -1,23 +1,7 @@
-﻿@model MyStik.TimeTable.Web.Models.ManageLoginsViewModel
+﻿@model MyStik.TimeTable.Web.Controllers.ExternalLoginStatus
 @using Microsoft.Owin.Security
 @{
     ViewBag.Title = "Manage your external logins";
-}
-
-@if (@ViewBag.LoginInfo != null)
-{
-    <h4>Login Info</h4>
-    <ul>
-        <li>@ViewBag.LoginInfo.Email</li>
-        <li>@ViewBag.UserName</li>
-        <li>@ViewBag.EMail</li>
-        <li>@ViewBag.UserData</li>
-        <li>@ViewBag.LoginInfo.ExternalIdentity.AuthenticationType</li>
-    </ul>
-}
-else
-{
-    <h4>Kein Logininfo</h4>
 }
 
 <div class="row">
@@ -25,7 +9,27 @@ else
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Nachricht vom externen Login Provider</h5>
-                <p class="text-success">@ViewBag.StatusMessage</p>
+                @if (Model.Errors == null || !Model.Errors.Any())
+                {
+                    if (Model.IsConnect == true)
+                    {
+                        <p class="text-success">Verknüpfung erfolgreich hergestellt.</p>
+                    }
+                    else
+                    {
+                        <p class="text-success">Verknüpfung erfolgreich getrennt.</p>
+                    }
+                }
+                else
+                {
+                    <p class="text-danger">Bei der Verknüpfung sind folgende Fehler aufgetreten:</p>
+                    <ul>
+                        @foreach (var txt in Model.Errors)
+                        {
+                            <li>@txt</li>
+                        }
+                    </ul>
+                }
                 <a href="@Url.Action("Index")" class="btn btn-outline-primary">
                     Weiter zum Benutzerprofil <i class="bi bi-chevron-right"></i>
                 </a>
