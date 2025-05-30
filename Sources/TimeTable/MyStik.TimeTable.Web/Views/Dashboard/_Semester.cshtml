@@ -17,12 +17,12 @@
 
 
 <div class="card mb-3">
-<div class="card-header">
+<div class="card-header bg-white">
     <div class="d-flex justify-content-between align-items-start">
         <div class="btn-group">
             @if (Model.PrevSemester != null)
             {
-                <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.PrevSemester.Id')"><i class="bi bi-chevron-double-left"></i></a>
+                <a aria-label="Go to previous semester" class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.PrevSemester.Id')"><i class="bi bi-chevron-double-left"></i></a>
             }
             else
             {
@@ -30,7 +30,7 @@
             }
             @if (Model.NextSemester != null)
             {
-                <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.NextSemester.Id')"><i class="bi bi-chevron-double-right"></i></a>
+                <a aria-label="Go to next semester" class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.NextSemester.Id')"><i class="bi bi-chevron-double-right"></i></a>
             }
             else
             {

@@ -19,15 +19,15 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+            <li class="breadcrumb-item"><a aria-label="Go to Dashboard" href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a aria-label="Go to campus" href="@Url.Action("Campus", "University")">HM</a></li>
 
             @if (Model.Organisers.Any())
             {
                 <li class="breadcrumb-item">
                     @foreach (var org in Model.Organisers.OrderBy(x => x.ShortName))
                     {
-                        <a href="@Url.Action("Faculty", "University", new { id = org.Id })">@org.ShortName</a>
+                        <a aria-label="Go to @org.ShortName" href="@Url.Action("Faculty", "University", new { id = org.Id })">@org.ShortName</a>
                     }
                 </li>
             }
@@ -44,7 +44,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-3">
-                    <div class="card-header">
+                    <div class="card-header bg-white">
                         <div class="d-flex justify-content-between align-items-start">
                             <h5 class="card-title">Meine Aufnahmeverfahren</h5>
                         </div>
@@ -61,7 +61,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-3">
-                    <div class="card-header">
+                    <div class="card-header bg-white">
                         <div class="d-flex justify-content-between align-items-start">
                             <h5 class="card-title">Ich studiere <strong>@Model.Student.Curriculum.ShortName</strong> seit @Model.Student.FirstSemester.Name</h5>
                             @if (Model.Student.LabelSet != null && Model.Student.LabelSet.ItemLabels.Any())
@@ -165,10 +165,10 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-3">
-                <div class="card-header">
+                <div class="card-header bg-white">
                     <div class="d-flex justify-content-between align-items-start">
                         <h5 class="card-title">Agenda</h5>
-                        <input id="dateAgenda" type="text" class="form-control form-control-sm datepicker" onchange="onDateChanged(value)" value="@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)" />
+                        <input id="dateAgenda" type="text" class="form-control form-control-sm datepicker" aria-label="Current date" onchange="onDateChanged(value)" value="@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)" />
                         <div class="btn-group">
 
                             @if (Model.Organisers.Any())
@@ -176,14 +176,14 @@
                                 if (Model.Organisers.Count == 1)
                                 {
                                     var org = Model.Organisers.First();
-                                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Today", "Activity", new { id = org.Id })">
+                                    <a aria-label="day" class="btn btn-sm btn-outline-secondary" href="@Url.Action("Today", "Activity", new { id = org.Id })">
                                         <i class="bi bi-calendar-day"></i>
                                     </a>
                                 }
                                 else
                                 {
                                     <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Select faculty">
                                             <i class="bi bi-calendar-day"></i>
                                         </button>
                                         <ul class="dropdown-menu">
@@ -198,8 +198,8 @@
                                 }
                             }
 
-                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-heart"></i></a>
-                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Free", "Room")"><i class="bi bi-building-check"></i></a>
+                            <a aria-label="Personal Plan" class="btn btn-sm btn-outline-secondary" href="@Url.Action("PersonalPlan", "Activity")"><i class="bi bi-calendar-heart"></i></a>
+                            <a aria-label="Free Rooms" class="btn btn-sm btn-outline-secondary" href="@Url.Action("Free", "Room")"><i class="bi bi-building-check"></i></a>
                         </div>
                     </div>
                 </div>
@@ -237,7 +237,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card mb-3">
-                        <div class="card-header">
+                        <div class="card-header bg-white">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h5 class="card-title">Aktuell freie Lernräume</h5>
                             </div>
@@ -336,7 +336,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card mb-3">
-                        <div class="card-header">
+                        <div class="card-header bg-white">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h5 class="card-title">BA/MA-Arbeiten</h5>
                                 <div class="dropdown">

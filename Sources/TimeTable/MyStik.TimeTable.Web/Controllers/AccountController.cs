@@ -630,6 +630,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 var mailModel = new DeleteUserMailModel { User = user };
                 new MailController().DeleteUserMail(mailModel).Deliver();
 
+                logger.InfoFormat("User Accout deleted: {0}", user.Email);
+
                 // Abmelden und byebye anzeigen
                 AuthenticationManager.SignOut();
 
@@ -662,6 +664,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
+            logger.InfoFormat("External Login for provider: {0}", provider);
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
@@ -715,9 +718,11 @@ namespace MyStik.TimeTable.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            logger.Info("ExternalLoginCallback");
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
+                logger.Error("ExternalLoginCallback: noe login Information from Auth-Manage");
                 return RedirectToAction("Login");
             }
 
@@ -744,6 +749,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
             
+            logger.InfoFormat("ExternalLoginCallback: Response from userinfo endpoint: {0}", response);
+
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
@@ -789,11 +796,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     Email = userInfo["eduPersonPrincipalName"]
                 };
+                logger.InfoFormat("ExternalLoginCallback: Unknown User: {0}", model.Email);
                 return View("ExternalLoginConfirmation", model);
             }
             else
             {
-                ViewBag.UserData = await response.Content.ReadAsStringAsync();
+                var msg = await response.Content.ReadAsStringAsync();
+                ViewBag.UserData = msg;
+                logger.ErrorFormat("ExternalLoginCallback: Unknown User Error: {0}", msg);
                 return View("ExternalLoginFailure");
             }
         }
@@ -844,6 +854,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     ViewBag.UserData = await response.Content.ReadAsStringAsync();
                     return View("ExternalLoginFailure");
                 }
+                logger.InfoFormat("ExternalLoginConfirmation: Response from userinfo endpoint: {0}", response);
 
                 var data = await response.Content.ReadAsStringAsync();
 

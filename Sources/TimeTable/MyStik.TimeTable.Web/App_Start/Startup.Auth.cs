@@ -134,6 +134,16 @@ namespace MyStik.TimeTable.Web
                         var logger = LogManager.GetLogger("OIDC");
                         logger.Debug("in AuthenticationFailed");
                         logger.DebugFormat("obje: {0}", n);
+
+                        // https://learn.microsoft.com/en-us/answers/questions/137574/azure-active-directory-authentication-error-owin
+                        if (n.Exception.Message.Contains("IDX21323"))
+                        {
+                            n.HandleResponse();
+                            n.OwinContext.Authentication.Challenge();
+                        }
+
+                        await Task.FromResult(true);
+
                     },
                     RedirectToIdentityProvider = async n =>
                     {

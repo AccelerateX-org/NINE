@@ -12,7 +12,7 @@
     var org = Model.Organiser;
 
     var from = sem.StartCourses.Date;
-    var until = from.AddDays(140);
+    var until = sem.EndCourses.Date;
 
     var rooms = db.Rooms.Where(x =>
         x.Capacity > 0 &&

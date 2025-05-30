@@ -40,7 +40,7 @@
     }
     *@
 </head>
-<body style="background-color: #e1e1e1">
+<body style="background-color: #ffffff">
     @{
         var userService = new UserInfoService();
         var user = userService.GetUser(User.Identity.GetUserId());
@@ -49,7 +49,7 @@
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
     <div class="container-fluid">
-        <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><i class="bi bi-list"></i></a>
+        <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample" aria-label="Main menu"><i class="bi bi-list"></i></a>
 
         @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
         {
@@ -80,7 +80,7 @@
             </li>
             *@
             <li class="nav-item">
-                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
+                <a aria-label="Logout" href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
             </li>
         }
         else
@@ -99,7 +99,7 @@
 
 
 
-<footer class="row bg-light mt-3">
+<footer class="row mt-3"  style="background-color: #ffffff">
     <div class="col">
         <div class="d-flex flex-row mb-3">
             <a class="p-2" href="https://github.com/AccelerateX-org">nine @Html.AssemblyVersion()</a>
@@ -107,10 +107,10 @@
             <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
 
             <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
-                <img src="~/Assets/img/flags/de.png" />
+                <img alt="Language de" aria-label="Switch to language de" src="~/Assets/img/flags/de.png" />
             </a>
             <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
-                <img src="~/Assets/img/flags/gb.png" />
+                <img alt="Language en" aria-label="Switch to language en" src="~/Assets/img/flags/gb.png" />
             </a>
         </div>
     </div>
