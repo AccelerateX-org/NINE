@@ -1,0 +1,34 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
+
+<table id="tabStud" class="table table-sm table-hover">
+    <thead>
+        <tr>
+            <th>Nachname</th>
+            <th>Vorname</th>
+            <th>Studienbeginn</th>
+            <th>Kohorte</th>
+            <th>Kurse</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr id="@user.Student.Id">
+                <td>@user.User.LastName</td>
+                <td>@user.User.FirstName</td>
+                <td>@user.Student.FirstSemester.Name</td>
+                @if (user.HasLabel)
+                {
+                    <td>ja</td>
+                }
+                else
+                {
+                    <td>nein</td>
+                }
+                <td>@user.CurrentCourses.Count</td>
+            </tr>
+        }
+    </tbody>
+
+</table>

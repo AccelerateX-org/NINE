@@ -24,6 +24,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public Student Student { get; set; }
 
+        public bool HasLabel { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

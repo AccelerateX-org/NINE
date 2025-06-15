@@ -463,7 +463,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var writer = new StreamWriter(ms, Encoding.Default);
 
 
-            writer.Write("Studiengang;Gruppe;Kürzel;Vorname;Nachname;E-Mail;Kurzname;Titel;Eintragungen");
+            writer.Write("Studienangebot;Gruppe;Kürzel;Vorname;Nachname;E-Mail;Kurzname;Titel;Eintragungen");
             writer.Write(Environment.NewLine);
 
 
@@ -520,7 +520,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var writer = new StreamWriter(ms, Encoding.Default);
 
 
-            writer.Write("Studiengang;Gruppe;Kürzel;Vorname;Nachname;Kurzname;Titel;Datum");
+            writer.Write("Studienangebot;Gruppe;Kürzel;Vorname;Nachname;Kurzname;Titel;Datum");
             writer.Write(Environment.NewLine);
 
 

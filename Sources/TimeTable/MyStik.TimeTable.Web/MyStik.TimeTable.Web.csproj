@@ -4823,6 +4823,10 @@
     <Content Include="Views\Subscription\Invalid.cshtml" />
     <Content Include="Views\Students\Labels.cshtml" />
     <Content Include="Views\Account\Dummy.cshtml" />
+    <Content Include="Views\University\Members.cshtml" />
+    <Content Include="Views\Labels\Details.cshtml" />
+    <Content Include="Views\Labels\DeleteLabel.cshtml" />
+    <Content Include="Views\Students\_StudentsList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

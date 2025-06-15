@@ -2208,7 +2208,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (student?.Curriculum == null || myBookingList == null)
                 {
                     isSelectable = false;
-                    msg.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht für Ihren Studiengang nicht zur Verfügung</li>");
+                    msg.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht für Ihr Studium nicht zur Verfügung</li>");
                 }
 
                 if (!course.Occurrence.IsAvailable)

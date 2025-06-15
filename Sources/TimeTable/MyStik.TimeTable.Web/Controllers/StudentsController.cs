@@ -7,6 +7,8 @@ using System.Net.Mail;
 using System.Text;
 using System.Web.Mvc;
 using log4net;
+using Microsoft.Ajax.Utilities;
+
 
 //using System.Web.Security;
 using Microsoft.AspNet.Identity;
@@ -31,24 +33,20 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
 
             var members = GetMyMemberships();
-            var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
-            var isAdmin = adminMember != null;
 
-            ViewBag.IsStudAdmin = isAdmin;
+            if (id != null)
+            {
+                var member = members.FirstOrDefault(x => x.Organiser.Id == id.Value);
+                if (member == null)
+                {
+                    return View("_NoAccess");
+                }
 
-            if (!isAdmin) 
-                return View("_NoAccess");
+                ViewBag.Organiser = member.Organiser;
+                ViewBag.UserRight = GetUserRight(member.Organiser);
+                return View(new List<StudentStatisticsModel>());
+            }
 
-            var model = new List<StudentStatisticsModel>();
-            return View(model);
-        }
-
-
-        public ActionResult Labels(Guid? id)
-        {
-            var user = GetCurrentUser();
-
-            var members = GetMyMemberships();
             var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
             var isAdmin = adminMember != null;
 
@@ -57,7 +55,88 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!isAdmin)
                 return View("_NoAccess");
 
+            ViewBag.Organiser = adminMember.Organiser;
+            ViewBag.UserRight = GetUserRight(adminMember.Organiser);
+
             var model = new List<StudentStatisticsModel>();
+            return View(model);
+        }
+
+
+        public ActionResult Labels(Guid? orgId, Guid? currId, Guid? labelId)
+        {
+            var user = GetCurrentUser();
+
+            var members = GetMyMemberships();
+            ActivityOrganiser org = null;
+
+            if (orgId != null)
+            {
+                var member = members.FirstOrDefault(x => x.Organiser.Id == orgId.Value);
+                if (member == null)
+                {
+                    return View("_NoAccess");
+                }
+                org = member.Organiser;
+            }
+            else
+            {
+                var adminMember = members.FirstOrDefault(x => x.IsStudentAdmin);
+                var isAdmin = adminMember != null;
+
+                ViewBag.IsStudAdmin = isAdmin;
+
+                if (!isAdmin)
+                    return View("_NoAccess");
+
+                org = adminMember.Organiser;
+            }
+
+
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var curr = currId.HasValue ?
+                Db.Curricula.SingleOrDefault(x => x.Id == currId.Value) :
+                Db.Curricula.Where(x => x.Organiser.Id == org.Id && !x.IsDeprecated).OrderBy(x => x.ShortName).FirstOrDefault();
+
+
+            var label = labelId.HasValue ?
+                Db.ItemLabels.SingleOrDefault(x => x.Id == labelId.Value) :
+                curr.LabelSet.ItemLabels.FirstOrDefault();
+
+
+            var model = new SemesterActiveViewModel
+            {
+                Curriculum = curr,
+                Semester = semester,
+                Organiser = org,
+                Label = label,
+                Courses = new List<CourseSummaryModel>()
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Organisers = Db.Organisers.Where(x => x.Id == org.Id).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+            ViewBag.Semesters = Db.Semesters.Where(x => x.Id == semester.Id).Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            });
+            ViewBag.Curricula = Db.Curricula.Where(x => x.Organiser.Id == org.Id && !x.IsDeprecated).OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+            ViewBag.Labels = curr.LabelSet.ItemLabels.OrderBy(x => x.Name).Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            });
+
+
             return View(model);
         }
 
@@ -1368,5 +1447,59 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = student.Id });
         }
 
+        public PartialViewResult GetStudentList(Guid semId, Guid currId, Guid labelId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            if (semester == null || curr == null || label == null)
+            {
+                return PartialView("_StudentList", new List<StudentViewModel>());
+            }
+
+            var userInfoService = new UserInfoService();
+
+            // Alle aktiven Students mit diesem Curriculum
+            var students = Db.Students
+                .Where(x => x.Curriculum.Id == currId && x.LastSemester == null)
+                .ToList();
+
+            // Alle Kurse aus dem Semester, die das Label haben
+            var courses = Db.Activities.OfType<Course>()
+                .Where(c => c.Semester.Id == semId && c.LabelSet != null && c.LabelSet.ItemLabels.Any(l => l.Id == label.Id)).Include(activity =>
+                    activity.Occurrence.Subscriptions)
+                .ToList();
+
+            var model = new List<StudentViewModel>();
+
+            foreach (var student in students)
+            {
+                var user = userInfoService.GetUser(student.UserId);
+                if (user == null)
+                    continue;
+
+                // Prüfen, in welchen Kursen des Semesters der Student eingeschrieben ist
+                var courseList = courses.Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId == user.Id)).ToList();
+
+                if (!courseList.Any()) continue;
+
+                var hasLabel = student.LabelSet != null && student.LabelSet.ItemLabels.Any(l => l.Id == labelId);
+
+                var studModel = new StudentViewModel
+                {
+                    User = user,
+                    Student = student,
+                    CurrentCourses = courseList,
+                    HasLabel = hasLabel,
+                };
+
+                model.Add(studModel);
+            }
+
+
+
+            return PartialView("_StudentsList", model);
+        }
     }
 }

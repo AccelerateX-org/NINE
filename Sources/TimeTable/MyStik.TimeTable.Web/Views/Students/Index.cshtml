@@ -33,7 +33,7 @@
 <div class="row">
     <div class="col-md-2">
         <div class="list-group">
-            <a href="@Url.Action("Labels")" class="list-group-item"><i class="bi-tag"></i> Kohorten</a>
+            <a href="@Url.Action("Labels", new {orgId=ViewBag.Organiser.Id})" class="list-group-item"><i class="bi bi-list"></i> Studienangebotslisten</a>
         </div>
     </div>
     <div class="col-md-10">

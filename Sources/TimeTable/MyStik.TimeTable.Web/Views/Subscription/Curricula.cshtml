@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Collections.Immutable
+@using MyStik.TimeTable.Data
 @model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
 @{
     ViewBag.Title = "Studienbuch";
@@ -90,19 +91,17 @@
                                         @if (theses.Any())
                                         {
                                             <div class="col-6">
-                                                <ul>
-                                                    @foreach (var t in theses)
+                                                @foreach (var t in theses)
+                                                {
+                                                    if (string.IsNullOrEmpty(t.TitleDe))
                                                     {
-                                                        if (t.GradeDate == null)
-                                                        {
-                                                            <li>@t.TitleDe (in Bearbeitung)</li>
-                                                        }
-                                                        else
-                                                        {
-                                                            <li>@t.TitleDe (abgeschlossen)</li>
-                                                        }
+                                                        <div><a href="@Url.Action("Index", "Thesis", new { id = t.Id })">ohne Titel</a></div>
                                                     }
-                                                </ul>
+                                                    else
+                                                    {
+                                                        <div><a href="@Url.Action("Index", "Thesis", new { id = t.Id })">@t.TitleDe</a></div>
+                                                    }
+                                                }
                                             </div>
                                         }
                                         else
@@ -150,15 +149,9 @@
                                     }
                                     <hr />
                                     <div class="row">
-                                        <div class="col-6">Angaben falsch?<br /> Dann an eine der folgenden Personen wenden:</div>
-                                        <div class="col-6">
-                                            <ul>
-                                                @foreach (var admin in admins)
-                                                {
-                                                    <li>@admin.FullName</li>
-                                                }
-                                            </ul>
-
+                                        <div class="alert alert-info">
+                                            <p>Die hier aufgeführten Daten habe ich selber eingegeben. 
+                                                Bei Unstimmigkeiten mit anderen Systemen wie primuss wende ich mich an die mir bekannten Ansprechpartner:innen meines Studienangebots.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -168,10 +161,6 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <div class="alert alert-info mt-3">
-                                    Die Angaben hier habe ich selbst gemacht. Für Korrekturen wende ich mich an die jeweils pro Studiengang aufgeführten Personen.
-                                </div>
-
                                 <a href="@Url.Action("StartCurriculum")" class="btn btn-outline-primary">Neuen Studiengang beginnen / Select Curriculum</a>
                             </div>
                         </div>

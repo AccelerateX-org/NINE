@@ -4,7 +4,6 @@
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() > 0)
     {
-        <h4>@Resources.LoginProviderHeading</h4>
         // string action = Model.Action;
         // string returnUrl = Model.ReturnUrl;
         using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))

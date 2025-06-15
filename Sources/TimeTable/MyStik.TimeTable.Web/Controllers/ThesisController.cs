@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -16,20 +17,42 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class ThesisController : BaseController
     {
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
-            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
-            var model = new ThesisStateModel
+            if (id != null)
+            {
+                // eine bestimmte Arbeit anzeigen
+                var thesis = Db.Theses.Include(thesis1 => thesis1.Student).FirstOrDefault(x => x.Id == id);
+                if (thesis == null)
+                {
+                    return HttpNotFound();
+                }
+                var model = new ThesisStateModel
+                {
+                    User = user,
+                    Student = thesis.Student,
+                    Thesis = thesis
+                };
+                return View(model);
+            }
+
+            var student = StudentService.GetCurrentStudent(user);
+            var t = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+            if (t == null)
+            {
+                return HttpNotFound();
+            }
+
+            var m = new ThesisStateModel
             {
                 User = user,
                 Student = student,
-                Thesis = thesis
+                Thesis = t
             };
 
-            return View(model);
+            return View(m);
         }
         public ActionResult Request()
         {

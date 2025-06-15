@@ -133,19 +133,31 @@
                                         @if (theses.Any())
                                         {
                                             <div class="col-6">
-                                                <ul>
-                                                    @foreach (var t in theses)
+                                                @foreach (var t in theses)
+                                                {
+                                                    if (ViewBag.UserRight.IsStudentAdmin)
                                                     {
                                                         if (t.GradeDate == null)
                                                         {
-                                                            <li>in Bearbeitung</li>
+                                                            <div><a href="@Url.Action("Details", "ThesisAdmin", new {id=t.Id})">in Bearbeitung</a></div>
                                                         }
                                                         else
                                                         {
-                                                            <li>abgeschlossen (@t.GradeDate.Value.ToShortDateString())</li>
+                                                            <div><a href="@Url.Action("Details", "ThesisAdmin", new {id=t.Id})">abgeschlossen (@t.GradeDate.Value.ToShortDateString())</a></div>
                                                         }
                                                     }
-                                                </ul>
+                                                    else
+                                                    {
+                                                        if (t.GradeDate == null)
+                                                        {
+                                                            <div>in Bearbeitung</div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div>abgeschlossen</div>
+                                                        }
+                                                    }
+                                                }
                                             </div>
                                         }
                                         else

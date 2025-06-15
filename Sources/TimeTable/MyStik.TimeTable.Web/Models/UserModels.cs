@@ -311,4 +311,16 @@ namespace MyStik.TimeTable.Web.Models
         public string EMail { get; set; }
 
     }
+
+    public class UserMemberModel
+    {
+        public UserMemberModel()
+        {
+            Members = new List<OrganiserMember>();
+        }
+
+        public ApplicationUser User { get; set; }
+
+        public ICollection<OrganiserMember> Members { get; set; }
+    }
 }

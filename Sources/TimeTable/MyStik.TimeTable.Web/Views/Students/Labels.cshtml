@@ -1,7 +1,7 @@
 ﻿@using System.Data.Entity
 @using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Services
-@model ICollection<MyStik.TimeTable.Web.Models.StudentStatisticsModel>
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @{
     ViewBag.Title = "Studierende";
 
@@ -24,11 +24,77 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Students")">Studierende</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Kohorten</li>
+                <li class="breadcrumb-item active" aria-current="page">Studienangebotslisten</li>
             </ol>
         </nav>
     </div>
 </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Studienangebotsliste</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Organiser.Id, (IEnumerable<SelectListItem>)ViewBag.Organisers, new { @class = "form-control", onchange = "onOrgChanged()" })
+                                <label for="Organiser.Id">Einrichtung</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Semester.Id, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control", onchange = "onSemChanged()" })
+                                <label for="Semester.Id">Semester</label>
+                            </div>
+                        </div>
+                    @*
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Segment.Id, (IEnumerable<SelectListItem>)ViewBag.Segments, new { @class = "form-control", onchange = "onSegmentChanged()" })
+                                <label for="Segment.Id">Abschnitt</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="selectCat" onchange="onCatalogChanged()" disabled>
+                                </select>
+                                <label for="selectCat">Modulkatalog</label>
+                            </div>
+                        </div>
+                        *@
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Curriculum.Id, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                                <label for="Curriculum.Id">Studiengang</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(model => model.Label.Id, (IEnumerable<SelectListItem>)ViewBag.Labels, new { @class = "form-control", onchange = "onLabelChanged()" })
+                                <label for="Label.Id">Kohorte</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span id="loading" class="spinner-border"></span>
+            </div>
+            <div id="planGrid" class="card-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*
 
 
 <div class="row">
@@ -41,42 +107,42 @@
         <div class="card">
             <table id="tabStud" class="table table-hover">
                 <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Studienprogramm</th>
-                    <th>Kohorten</th>
-                </tr>
+                    <tr>
+                        <th>Name</th>
+                        <th>Studienprogramm</th>
+                        <th>Kohorten</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var student in students)
-                {
-                    var user = userService.GetUser(student.UserId);
+                    @foreach (var student in students)
+                    {
+                        var user = userService.GetUser(student.UserId);
 
-                    <tr id="@student.Id">
-                        @if (user != null)
-                        {
-                            <td>@user.FullName</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        <td>@student.Curriculum.ShortName</td>
-                        <td>
-                            @foreach (var label in student.LabelSet.ItemLabels)
+                        <tr id="@student.Id">
+                            @if (user != null)
                             {
-                                <div>@label.Name</div>
+                                <td>@user.FullName</td>
                             }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td>@student.Curriculum.ShortName</td>
+                            <td>
+                                @foreach (var label in student.LabelSet.ItemLabels)
+                                {
+                                    <div>@label.Name</div>
+                                }
 
-                        </td>
-                    </tr>
-                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
+    *@
 
 
 
@@ -88,9 +154,100 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            onDataLoaded();
+            //onDataLoaded();
+            loadStudentList();
         });
-        
+
+        function onOrgChanged() {
+            // Studiengänge laden
+            loadCurricula();
+        }
+
+        function onSemChanged() {
+        }
+
+
+        function onCurriculumChanged() {
+            // Jetzt den Kalender neu aufbauen
+            loadLabels();
+        }
+
+        function onLabelChanged() {
+            // Jetzt den Kalender neu aufbauen
+            //loadPlanGrid();
+            loadStudentList();
+        }
+
+
+
+        function loadCurricula() {
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCurricula", "Conflicts")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#Curriculum_Id").html(data);
+                        onCurriculumChanged();
+                    }
+                });
+        }
+
+
+        function loadLabels() {
+            var orgId = $("#Organiser_Id").val();
+            var semId = $("#Semester_Id").val();
+            var currId = $("#Curriculum_Id").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabels", "Conflicts")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId,
+                        currId: currId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#Label_Id").html(data);
+                        onLabelChanged();
+                    }
+                });
+        }
+
+        function loadStudentList() {
+
+            $('#loading').show();
+
+            var semId = $("#Semester_Id").val();
+            var currId = $("#Curriculum_Id").val();
+            var labelId = $("#Label_Id").val();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetStudentList", "Students")',
+                    data: {
+                        semId: semId,
+                        currId: currId,
+                        labelId: labelId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#planGrid").html(data);
+                        $('#loading').hide();
+                        onDataLoaded();
+                    }
+                });
+
+        }
+
+
+
 
         function onDataLoaded() {
             var t = $('#tabStud').DataTable({
