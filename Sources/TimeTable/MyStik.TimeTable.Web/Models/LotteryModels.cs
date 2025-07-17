@@ -802,6 +802,8 @@ namespace MyStik.TimeTable.Web.Models
     {
         public Semester Semester { get; set; }
 
+        public ActivityOrganiser Organiser { get; set; }
+
         public List<Lottery> Lottery { get; set; }
     }
 }

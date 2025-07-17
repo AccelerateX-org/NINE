@@ -33,14 +33,25 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Faculty(Guid id)
+        public ActionResult Faculty(Guid id, Guid? semId)
         {
+            var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
+
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
             var user = GetCurrentUser();
             if (user != null)
             {
                 ViewBag.UserRight = GetUserRight(org);
             }
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
             return View(org);
         }

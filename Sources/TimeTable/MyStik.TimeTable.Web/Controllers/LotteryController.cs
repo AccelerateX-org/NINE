@@ -25,30 +25,19 @@ namespace MyStik.TimeTable.Web.Controllers
         private ILog logger = LogManager.GetLogger("Lottery");
 
 
-        public ActionResult Organiser(Guid id)
+        public ActionResult Organiser(Guid orgId, Guid? semId)
         {
             var user = GetCurrentUser();
-            var org = GetOrganisation(id);
+            var org = GetOrganisation(orgId);
 
-            var model = new List<LotterySemesterSummaryModel>();
+            var model = new LotterySemesterSummaryModel();
 
             // aktuelles Semester
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
+
+            var currentSemester = semester;
             var nextSemester = SemesterService.GetNextSemester(semester);
-
-            if (nextSemester != null)
-            {
-                var allNextLotteries = Db.Lotteries.Where(x =>
-                    x.Semester != null && x.Semester.Id == nextSemester.Id &&
-                    x.Organiser != null && x.Organiser.Id == org.Id).ToList();
-
-
-                model.Add(new LotterySemesterSummaryModel
-                {
-                    Semester = nextSemester,
-                    Lottery = allNextLotteries
-                });
-            }
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
 
             if (semester != null)
             {
@@ -57,18 +46,43 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.Organiser != null && x.Organiser.Id == org.Id).ToList();
 
 
-                model.Add(new LotterySemesterSummaryModel
-                {
-                    Semester = semester,
-                    Lottery = allLotteries
-                });
+                model.Semester = semester;
+                model.Organiser = org;
+                model.Lottery = allLotteries;
             }
 
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
             ViewBag.Organiser = org;
             ViewBag.userRight = GetUserRight(org);
 
-            return View("Index", model);
+            return View(model);
         }
+
+        public ActionResult Index(Guid? id)
+        {
+            var model = new HomeViewModel();
+
+            var sem = id.HasValue ? SemesterService.GetSemester(id) : SemesterService.GetSemester(DateTime.Today);
+
+            var currentSemester = sem;
+            var nextSemester = SemesterService.GetNextSemester(sem);
+            var prevSemester = SemesterService.GetPreviousSemester(sem);
+
+            model.Organisers.AddRange(Db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).ToList());
+
+            model.Institutions.AddRange(model.Organisers.Select(x => x.Institution).Distinct().ToList());
+
+            model.CurrentSemester = sem;
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
+            return View(model);
+        }
+
 
         /// <summary>
         /// 
@@ -76,7 +90,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="id"></param>
         /// <param name="orgId"></param>
         /// <returns></returns>
-        public ActionResult Index(Guid? id, Guid? orgId)
+        public ActionResult Admin(Guid? id, Guid? orgId)
         {
             var user = GetCurrentUser();
             var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
@@ -352,6 +366,60 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult EditProperties(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+
+            var model = new LotteryCreateModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+                Name = lottery.Name,
+                IsAvailableFrom = lottery.IsActiveFrom.Value.ToShortDateString(),
+                IsAvailableUntil = lottery.IsActiveUntil.Value.ToShortDateString(),
+                IsAvailableFromTime = lottery.IsActiveFrom.Value.TimeOfDay.ToString(),
+                IsAvailableUntilTime = lottery.IsActiveUntil.Value.TimeOfDay.ToString(),
+                FirstDrawing = lottery.FirstDrawing.ToShortDateString(),
+                LastDrawing = lottery.LastDrawing.ToShortDateString(),
+                FirstDrawingTime = lottery.FirstDrawing.TimeOfDay.ToString(),
+                LastDrawingTime = lottery.LastDrawing.TimeOfDay.ToString(),
+                MaxConfirm = lottery.MaxConfirm,
+                MaxConfirmException = lottery.MaxExceptionConfirm
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditProperties(LotteryCreateModel model)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == model.LotteryId);
+
+            var time = DateTime.Parse(model.FirstDrawing);
+            var time2 = DateTime.Parse(model.LastDrawing);
+            var time3 = DateTime.Parse(model.IsAvailableFrom);
+            var time4 = DateTime.Parse(model.IsAvailableUntil);
+            lottery.IsActiveFrom = new DateTime?(time3.Add(TimeSpan.Parse(model.IsAvailableFromTime)));
+            lottery.IsActiveUntil = new DateTime?(time4.Add(TimeSpan.Parse(model.IsAvailableUntilTime)));
+            lottery.FirstDrawing = time.Add(TimeSpan.Parse(model.FirstDrawingTime));
+            lottery.LastDrawing = time2.Add(TimeSpan.Parse(model.LastDrawingTime));
+            lottery.MaxConfirm = model.MaxConfirm;
+            lottery.MaxExceptionConfirm = model.MaxConfirmException;
+
+            Db.SaveChanges();
+            logger.InfoFormat("Einstellungen zu Lotterie {0} verändert", lottery.Name);
+
+            return RedirectToAction("Details", new { id = lottery.Id });
+        }
+
+
+
         public ActionResult EditSubscriptionPeriod(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
@@ -446,7 +514,70 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (user.MemberState == MemberState.Student)
             {
-                var currentStudent = service2.GetCurrentStudent(user);
+                var currentStudent = service2.GetCurrentStudent(user).FirstOrDefault();
+                if (currentStudent != null)
+                {
+                    model.Student = currentStudent;
+                    model.Game = lottery.Games.FirstOrDefault<LotteryGame>(x => x.UserId.Equals(user.Id));
+                }
+            }
+            var lotteryCourseList = service1.GetLotteryCourseList();
+
+            foreach (var course in lotteryCourseList)
+            {
+                var item = new LotteryOverviewCourseModel();
+                item.CourseSummary = service.GetCourseSummary(course);
+                model.Courses.Add(item);
+            }
+            foreach (var course2 in lotteryCourseList)
+            {
+                var subscription = course2.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+                if (subscription != null)
+                {
+                    var model4 = new LotteryOverviewCourseModel();
+                    model4.CourseSummary = service.GetCourseSummary(course2);
+                    model4.Subscription = subscription;
+                    model.CoursesSelected.Add(model4);
+                }
+            }
+
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View("Details", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DetailsNew(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var service = new CourseService(Db);
+            var service2 = new StudentService(Db);
+            var service1 = new LotteryService(Db, id);
+            var lottery = service1.GetLottery();
+            if (lottery.IsActiveFrom == null)
+            {
+                lottery.IsActiveFrom = new DateTime?(DateTime.MaxValue);
+                Db.SaveChanges();
+            }
+            if (lottery.IsActiveUntil == null)
+            {
+                lottery.IsActiveUntil = new DateTime?(DateTime.MaxValue);
+                Db.SaveChanges();
+            }
+            var model1 = new LotteryOverviewModel();
+            model1.Lottery = lottery;
+            var model = model1;
+            var user = GetCurrentUser();
+
+            if (user.MemberState == MemberState.Student)
+            {
+                var currentStudent = service2.GetCurrentStudent(user).FirstOrDefault();
                 if (currentStudent != null)
                 {
                     model.Student = currentStudent;
@@ -482,7 +613,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-
         public ActionResult DrawingPots(Guid id)
         {
             var org = GetMyOrganisation();
@@ -504,12 +634,18 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(org);
 
+            /*
             if (model.Lottery.MaxConfirm == 0 && model.Lottery.MaxExceptionConfirm == 0)
             {
                 return View("StudentsSamePrio", model);
             }
 
             return !model.Lottery.IsFixed ? View(model) : View("StudentsPrio", model);
+            */
+
+            // nur noch eine Ansicht für alle Vergabeverfahren
+            // Sortierung und Filterung über die Tabelle
+            return View(model);
         }
 
 
@@ -757,38 +893,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult DetailsOld(Guid id)
-        {
-            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
-            var org = GetMyOrganisation();
-
-            var model = new LotteryLotPotModel
-            {
-                Lottery = lottery,
-                LotteryId = lottery.Id,
-            };
-
-
-            var actService = new ActivityService(Db);
-            var courseService = new CourseService(Db);
-
-            foreach (var occurrence in lottery.Occurrences)
-            {
-                var actSummary = actService.GetSummary(occurrence);
-                var courseSummary = courseService.GetCourseSummary(actSummary.Activity as Course);
-
-                model.PotElements.Add(new LotteryLotPotCourseModel
-                {
-                    ActivitySummary = actSummary,
-                    CourseSummary = courseSummary
-                });
-            }
-
-            ViewBag.UserRight = GetUserRight(org);
-
-
-            return View(model);
-        }
 
 
         /// <summary>
@@ -894,6 +998,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             logger.InfoFormat("Manuelle Ausführung Lotterie {0} Mailversand beendet", drawing.Lottery.Name);
 
+            var org = drawing.Lottery.Organiser;
+            ViewBag.UserRight = GetUserRight(org);
 
             return View("DrawingPots", model);
 
@@ -2045,7 +2151,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("ForStudentsOnly");
 
 
-            var student = studentService.GetCurrentStudent(user);
+            var students = studentService.GetCurrentStudent(user);
+            var student = students.FirstOrDefault();
             if (student == null)
                 return View("ForStudentsOnly");
 
@@ -2153,7 +2260,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var service2 = new SubscriptionService(Db);
 
             var user = GetCurrentUser();
-            var student = studentService.GetCurrentStudent(user);
+            var student = studentService.GetCurrentStudent(user).FirstOrDefault();
             var lottery = lotteryService.GetLottery();
             var courses = lotteryService.GetLotteryCourseList();
 
@@ -2246,7 +2353,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var studentService = new StudentService(Db);
 
             var user = GetCurrentUser();
-            var student = studentService.GetCurrentStudent(user);
+            var student = studentService.GetCurrentStudent(user).FirstOrDefault();
             var lottery = lotteryService.GetLottery();
             var courses = lotteryService.GetLotteryCourseList();
 
@@ -2286,7 +2393,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var studentService = new StudentService(Db);
 
             var user = GetCurrentUser();
-            var student = studentService.GetCurrentStudent(user);
+            var student = studentService.GetCurrentStudent(user).FirstOrDefault();
             var lottery = lotteryService.GetLottery();
             var courses = lotteryService.GetLotteryCourseList();
 
@@ -2325,7 +2432,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var subscriptionService = new SubscriptionService(Db);
 
             var user = GetCurrentUser();
-            var student = studentService.GetCurrentStudent(user);
+            var student = studentService.GetCurrentStudent(user).FirstOrDefault();
             var lottery = lotteryService.GetLottery();
             var courses = lotteryService.GetLotteryCourseList();
 
@@ -3015,7 +3122,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
             if (user.MemberState == MemberState.Student)
             {
-                var currentStudent = service2.GetCurrentStudent(user);
+                var currentStudent = service2.GetCurrentStudent(user).FirstOrDefault();
                 if (currentStudent != null)
                 {
                     model.Student = currentStudent;
@@ -3100,7 +3207,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var service = new CourseService(Db);
             var service2 = new SubscriptionService(Db);
             var user = GetCurrentUser();
-            var currentStudent = new StudentService(Db).GetCurrentStudent(user);
+            var currentStudent = new StudentService(Db).GetCurrentStudent(user).FirstOrDefault();
             var service1 = new LotteryService(Db, id);
             var lottery = service1.GetLottery();
             var game = lottery.Games.FirstOrDefault<LotteryGame>(x => x.UserId.Equals(user.Id));
@@ -3441,6 +3548,113 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Capacities", new { id = id });
         }
 
+
+        public ActionResult CheckSelection(Guid id)
+        {
+            var courseService = new CourseService(Db);
+            var lotteryService = new LotteryService(Db, id);
+            var studentService = new StudentService(Db);
+            var service2 = new SubscriptionService(Db);
+
+            var user = GetCurrentUser();
+            var student = studentService.GetCurrentStudent(user).FirstOrDefault();
+            var lottery = lotteryService.GetLottery();
+            var courses = lotteryService.GetLotteryCourseList();
+
+            var game = lottery.Games.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+            // nur noch die Kurse, die gewählt werden können
+
+
+            var model = new LotteryOverviewModel
+            {
+                Lottery = lottery,
+                Student = student,
+                Game = game
+            };
+
+            // Die Liste der Kurse
+            foreach (var course in courses)
+            {
+                var courseSummary = courseService.GetCourseSummary(course);
+
+                if (courseSummary.Course.Dates.Any())
+                {
+                    var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
+                    var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
+
+                    var activities = Db.Activities.OfType<Course>().Where(a =>
+                        a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
+                        a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
+                    courseSummary.ConflictingDates = courseService.GetConflictingDates(course, activities);
+                }
+
+
+                courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
+
+                var bookingService = new BookingServiceQuotas(Db, course.Occurrence);
+                var bookingLists = bookingService.GetBookingLists();
+                var myBookingList = bookingService.GetBookingList(student);
+
+                var bookingState = new BookingState
+                {
+                    Student = student,
+                    Occurrence = course.Occurrence,
+                    BookingLists = bookingLists,
+                    MyBookingList = myBookingList
+                };
+                bookingState.Init();
+
+
+                var isSelectable = true;
+                var msg = new StringBuilder();
+
+                if (student?.Curriculum == null || myBookingList == null)
+                {
+                    isSelectable = false;
+                    msg.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht für Ihr Studium nicht zur Verfügung</li>");
+                }
+
+                if (!course.Occurrence.IsAvailable)
+                {
+                    isSelectable = false;
+                    msg.AppendLine("<li><i class=\"fa fa-li fa-lock\"></i>Lehrveranstaltung ist für Eintragungen gesperrt</li>");
+                }
+
+                if (bookingState.MyBookingList != null && bookingState.MyBookingList.FreeSeats < 1)
+                {
+                    isSelectable = false;
+                    msg.AppendLine("<li><i class=\"fa fa-li fa-times\"></i>Keine freien Plätze in der Lehrveranstaltung verfügbar</li>");
+                }
+
+                model.Courses.Add(new LotteryOverviewCourseModel
+                {
+                    CourseSummary = courseSummary,
+                    IsSelectable = isSelectable,
+                    Message = msg.ToString(),
+                    BookingState = bookingState
+                });
+
+            }
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult SetCapacity(Guid id, int cap)
+        {
+            var quota = Db.SeatQuotas.SingleOrDefault(x => x.Id == id);
+
+            if (quota != null) { 
+                quota.MinCapacity = cap;
+                quota.MaxCapacity = cap;
+
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
     }
 
 }

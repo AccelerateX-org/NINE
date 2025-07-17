@@ -18,7 +18,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             // den Benutzer
             var user = GetCurrentUser();
-            var student = GetCurrentStudent(user.Id);
+            var student = GetCurrentStudent(user.Id).FirstOrDefault();
             var cand = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
             var meberships = MemberService.GetFacultyMemberships(user.Id);
 

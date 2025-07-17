@@ -80,7 +80,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public SemesterGroup SemesterGroup { get; set; }
 
-        public Student Student { get; set; }
+        public ICollection<Student> Students { get; set; }
     }
 
     /// <summary>

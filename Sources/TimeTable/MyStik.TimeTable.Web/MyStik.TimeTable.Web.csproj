@@ -3632,6 +3632,8 @@
     <Content Include="Areas\Admin\Views\User\Index.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\Main.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\_Dummy.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Claims.cshtml" />
+    <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
     <None Include="Properties\PublishProfiles\SystemTest.pubxml" />
@@ -4827,6 +4829,10 @@
     <Content Include="Views\Labels\Details.cshtml" />
     <Content Include="Views\Labels\DeleteLabel.cshtml" />
     <Content Include="Views\Students\_StudentsList.cshtml" />
+    <Content Include="Views\Lottery\CheckSelection.cshtml" />
+    <Content Include="Views\Lottery\Organiser.cshtml" />
+    <Content Include="Views\Lottery\Details.cshtml" />
+    <Content Include="Views\Lottery\EditProperties.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

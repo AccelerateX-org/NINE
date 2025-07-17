@@ -152,7 +152,7 @@
                         {
                             if (allConflicts.Any())
                             {
-                                <div>@Html.RoomList(date.Rooms) <a class="badge text-bg-danger" href="@Url.Action("MoveDate", new {id = date.Occurrence.Id})">@allConflicts.Count Konflikte</a> </div>
+                                <div>@Html.RoomList(date.Rooms) <a class="badge text-bg-danger" href="@Url.Action("MoveDate", new {id = date.Id})">@allConflicts.Count Konflikte</a> </div>
                             }
                             else
                             {
@@ -232,8 +232,8 @@
                             {
                                 <div class="btn-group pull-right" role="group">
                                     @Html.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
-                                        new {dateId = date.Id},
-                                        new {@class = "btn btn-outline-primary btn-sm" }
+                                        new { dateId = date.Id },
+                                        new { @class = "btn btn-outline-primary btn-sm" }
                                         )
                                 </div>
                             }
@@ -243,21 +243,21 @@
                             {
                                 <div class="btn-group pull-right" role="group">
                                     @Ajax.ActionButton("fa-times", "absagen", "CancelDate2", "Course",
-                                        new {dateId = date.Id},
-                                        new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
-                                        new {@class = "btn btn-outline-primary btn-sm"}
+                                        new { dateId = date.Id },
+                                        new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable" },
+                                        new { @class = "btn btn-outline-primary btn-sm" }
                                         )
 
-                                    @Html.ActionButton("fa-cogs", "ändern", "MoveDate", "Course", new { id = date.Occurrence.Id }, new { @class = "btn btn-outline-primary btn-sm" })
+                                    @Html.ActionButton("fa-cogs", "ändern", "MoveDate", "Course", new { id = date.Id }, new { @class = "btn btn-outline-primary btn-sm" })
 
 
                                     @Html.ActionButton("fa-trash", "löschen", "DeleteDateConfirm", "Course",
-                                        new {dateId = date.Id},
-                                        new {@class = "btn btn-outline-danger btn-sm" }
+                                        new { dateId = date.Id },
+                                        new { @class = "btn btn-outline-danger btn-sm" }
                                         )
 
                                 </div>
-                             
+
                             }
                         }
                         else
@@ -266,15 +266,11 @@
                             {
                                 @Html.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
                                     new { dateId = date.Id },
-                                    
+
                                     new { @class = "btn btn-danger btn-sm" }
                                     )
                             }
                         }
-
-
-
-
                     </td>
                 </tr>
             }

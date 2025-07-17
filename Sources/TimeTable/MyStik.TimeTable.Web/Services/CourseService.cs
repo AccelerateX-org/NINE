@@ -644,7 +644,7 @@ namespace MyStik.TimeTable.Web.Services
             if (!string.IsNullOrEmpty(userId))
             {
                 var studentService = new StudentService(Db);
-                var student = studentService.GetCurrentStudent(userId);
+                var student = studentService.GetCurrentStudent(userId).FirstOrDefault();
 
                 var subscriptionService = new SubscriptionService(Db);
                 var subscription = subscriptionService.GetSubscription(summary.Course.Occurrence.Id, userId);

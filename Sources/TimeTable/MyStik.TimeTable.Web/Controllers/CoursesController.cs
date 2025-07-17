@@ -1149,5 +1149,45 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public PartialViewResult TogglePublished(Guid id, bool isPublished)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+            if (course != null)
+            {
+                course.IsProjected = !isPublished;
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public PartialViewResult ToggleLocked(Guid id, bool isLocked)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+            if (course != null)
+            {
+                course.IsInternal = isLocked;
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public PartialViewResult ToggleSubscribable(Guid id, bool isAvailable)
+        {
+            var occ = Db.Occurrences.SingleOrDefault(x => x.Id == id);
+            if (occ != null)
+            {
+                occ.IsAvailable = isAvailable;
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
     }
 }

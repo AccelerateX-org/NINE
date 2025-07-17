@@ -111,10 +111,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(label);
         }
 
-
-        public ActionResult DeleteLabelConfirm(Guid labelId)
+        [HttpPost]
+        public ActionResult DeleteLabelConfirm(Guid id)
         {
-            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == id);
 
             var institutions = Db.Institutions
                 .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == label.Id))

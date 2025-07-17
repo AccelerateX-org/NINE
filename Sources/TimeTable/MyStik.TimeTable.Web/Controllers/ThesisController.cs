@@ -38,12 +38,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(model);
             }
 
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var t = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
-            if (t == null)
-            {
-                return HttpNotFound();
-            }
 
             var m = new ThesisStateModel
             {
@@ -57,7 +53,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Request()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             // Eine evtl. vorhandene alte Anfrage löschen
@@ -85,7 +81,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Request(ThesisDetailModel model)
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
 
@@ -114,7 +110,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Check()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             // Eine evtl. vorhandene alte Anfrage löschen
@@ -142,7 +138,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Check(ThesisDetailModel model)
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
 
@@ -324,7 +320,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Issue()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             var model = new ThesisStateModel
@@ -355,7 +351,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (date < DateTime.Today)
             {
                 var user = GetCurrentUser();
-                var student = StudentService.GetCurrentStudent(user);
+                var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
                 var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
                 var model2 = new ThesisStateModel
@@ -393,7 +389,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult MoveIssue()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             if (thesis.PlannedBegin.HasValue && thesis.IssueDate.HasValue &&
@@ -410,7 +406,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Prolong()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             var model = new ThesisStateModel
@@ -437,7 +433,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (date < DateTime.Today)
             {
-                var student = StudentService.GetCurrentStudent(user);
+                var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
                 var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
                 var model2 = new ThesisStateModel
@@ -492,7 +488,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ProlongAgain()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             var model = new ThesisStateModel
@@ -519,7 +515,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (date < DateTime.Today)
             {
-                var student = StudentService.GetCurrentStudent(user);
+                var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
                 var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
                 var model2 = new ThesisStateModel
@@ -579,7 +575,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Plan()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             var model = new ThesisStateModel
@@ -605,7 +601,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (date < DateTime.Today)
             {
                 var user = GetCurrentUser();
-                var student = StudentService.GetCurrentStudent(user);
+                var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
                 var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
                 var model2 = new ThesisStateModel

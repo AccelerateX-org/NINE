@@ -42,7 +42,14 @@ Content-Type: text/html; charset=utf-8
         }
         else
         {
+            if (Model.Member != null)
+            {
+                <p>für die Lehrveranstaltung "@Model.Course.Name (@Model.Course.ShortName)" wurden Sie von  @Model.Member.FullName ausgetragen.</p>
+            }
+            else
+            {
                 <p>für die Lehrveranstaltung "@Model.Course.Name (@Model.Course.ShortName)" wurden Sie von  @Model.Actor.FullName ausgetragen.</p>
+            }
         }
 
         <hr />

@@ -319,7 +319,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var user in users)
                 {
-                    var student = studentService.GetCurrentStudent(user.Id);
+                    var student = studentService.GetCurrentStudent(user.Id).FirstOrDefault();
                     /*
                     var student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
                         .FirstOrDefault();
@@ -421,7 +421,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                 continue;
                             }
 
-                            var student = studentService.GetCurrentStudent(user.Id);
+                            var student = studentService.GetCurrentStudent(user.Id).FirstOrDefault();
                             if (student == null)
                             {
                                 invitation.Invite = false;

@@ -199,9 +199,15 @@ namespace MyStik.TimeTable.Web.Models
 
         public OccurrenceSubscription Subscription { get; set; }
 
+        /// <summary>
+        /// Der user, der die Aktion auslöst
+        /// </summary>
         public ApplicationUser Actor { get; set; }
 
+
         public ApplicationUser Student { get; set; }
+
+        public OrganiserMember Member { get; set; }
 
     }
 

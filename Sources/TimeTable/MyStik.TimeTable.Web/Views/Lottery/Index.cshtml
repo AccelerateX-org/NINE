@@ -1,56 +1,82 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model ICollection <LotterySemesterSummaryModel>
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.HomeViewModel
+
 @{
     ViewBag.Title = "Wahlverfahren";
-    var i = 0;
+
+    var db = new TimeTableDbContext();
 }
 
 
 
-
 <div class="row">
-    <div class="col-md-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Wahlverfahren</li>
-            </ol>
-        </nav>
-
-        @foreach (var s in Model)
-        {
-            <div class="row mb-3">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>
-                                @s.Semester.Name
-                            </h4>
-                            @if (ViewBag.UserRight.IsOrgMember)
-                            {
-                                <a class="btn btn-outline-primary" href="@Url.Action("Index", new { id = s.Semester.Id, orgId = ViewBag.Organiser.Id })"><i class="bi bi-gear"></i> Verwaltung</a>
-                            }
-                        </div>
-                        <div class="list-group">
-                            @foreach (var l in s.Lottery)
-                            {
-                                if (l.IsActive)
-                                {
-                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Details", new { id = l.Id })">
-                                        <strong>@l.Name</strong>
-                                        <small>@l.IsActiveFrom.Value.ToShortDateString() - @l.IsActiveUntil.Value.ToShortDateString()</small>
-                                    </a>
-                                }
-                            }
-                        </div>
-                    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Wahlverfahren</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <div class="btn-group">
+                    @if (ViewBag.PrevSemester != null)
+                    {
+                        <a href="@Url.Action("Index", "Lottery", new {id=ViewBag.PrevSemester.Id})"><i class="bi bi-chevron-double-left"></i></a>
+                    }
+                    else
+                    {
+                        <a class="disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
+                    }
+                    <span class="ms-2 me-2">@ViewBag.CurrentSemester.Name</span>
+                    @if (ViewBag.NextSemester != null)
+                    {
+                        <a href="@Url.Action("Index", "Lottery", new {id=ViewBag.NextSemester.Id})"><i class="bi bi-chevron-double-right"></i></a>
+                    }
+                    else
+                    {
+                        <a class="disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
+                    }
                 </div>
-            </div>
-        }
-    </div>
+            </li>
+        </ol>
+    </nav>
 </div>
 
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Angebote der Fakultäten</h5>
+            </div>
+            <div class="list-group">
+                @foreach (var org in Model.Organisers.OrderBy(x => x.ShortName))
+                {
+                    var hasCourses = db.Lotteries.Count(x =>
+                        x.Organiser != null && x.Organiser.Id == org.Id &&
+                        x.Semester != null && x.Semester.Id == Model.CurrentSemester.Id);
 
+                    if (hasCourses > 0)
+                    {
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="@Url.Action("Organiser", "Lottery", new { semId = ViewBag.CurrentSemester.Id, orgId = org.Id })">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">@org.ShortName | @org.Name</div>
+                            </div>
+                            <span class="badge text-bg-primary rounded-pill">@hasCourses</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="list-group-item disabled">@org.ShortName | @org.Name</div>
+                    }
 
-
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Hochschulweite Angebote</h5>
+            </div>
+        </div>
+    </div>
+</div>

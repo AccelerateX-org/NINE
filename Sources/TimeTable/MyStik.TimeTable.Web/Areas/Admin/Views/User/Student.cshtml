@@ -9,10 +9,13 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">@Model.User.FullName</h4>
-                @if (Model.Student != null)
+                @if (Model.Students.Any())
                 {
-                    <p>@Model.Student.Curriculum.ShortName - @Model.Student.FirstSemester.Name</p>
-                    <a href="@Url.Action("DeleteStudent", new {id=Model.Student.Id})">Löschen</a>
+                    foreach (var student in Model.Students)
+                    {
+                        <p>@student.Curriculum.ShortName - @student.FirstSemester.Name</p>
+                        <a href="@Url.Action("DeleteStudent", new {id=student.Id})">Löschen</a>
+                    }
                 }
             </div>
         </div>

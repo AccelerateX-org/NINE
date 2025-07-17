@@ -144,14 +144,16 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
 
-                var student = studentService.GetCurrentStudent(user);
-                if (student == null)
+                var students = studentService.GetCurrentStudent(user);
+                if (!students.Any())
                 {
-                    student = new Student();
-                    student.Created = DateTime.Now;
-                    student.Curriculum = invitation.Curriculum;
-                    student.FirstSemester = invitation.Semester;
-                    student.UserId = user.Id;
+                    var student = new Student
+                    {
+                        Created = DateTime.Now,
+                        Curriculum = invitation.Curriculum,
+                        FirstSemester = invitation.Semester,
+                        UserId = user.Id
+                    };
 
                     Db.Students.Add(student);
                 }
@@ -164,12 +166,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     if (subscription == null)
                     {
-                        subscription = new OccurrenceSubscription();
-                        subscription.TimeStamp = DateTime.Now;
-                        subscription.UserId = user.Id;
-                        subscription.OnWaitingList = invitation.OnWaitinglist;
-                        subscription.Occurrence = invitation.Course.Occurrence;
-                        subscription.HostRemark = invitation.Remark;
+                        subscription = new OccurrenceSubscription
+                        {
+                            TimeStamp = DateTime.Now,
+                            UserId = user.Id,
+                            OnWaitingList = invitation.OnWaitinglist,
+                            Occurrence = invitation.Course.Occurrence,
+                            HostRemark = invitation.Remark
+                        };
                         invitation.Course.Occurrence.Subscriptions.Add(subscription);
                     }
                 }

@@ -1,0 +1,543 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    ViewBag.Title = "Auswahl";
+    var nPreSelected = 0;
+}
+
+@section styles
+{
+    <style>
+        .selectable {
+            position: absolute;
+            left: -24px;
+            top: 24px;
+            cursor: pointer;
+        }
+
+        .unselectable {
+            position: absolute;
+            left: -24px;
+            top: 24px;
+        }
+
+
+        .projektliste {
+            list-style-type: none;
+            margin: 1.5rem 0;
+        }
+
+            .projektliste li {
+                margin: 0.8rem 0;
+                padding: 0.4rem 0.4rem 0.1rem 0.4rem;
+                border-radius: 4px;
+                position: relative;
+            }
+
+        .ui-draggable, .ui-droppable {
+            background-position: top
+        }
+
+        #sortable {
+            position: relative;
+            left: 1rem;
+            width: 80%;
+            max-width: 500px
+        }
+
+            #sortable .deselect {
+                position: absolute;
+                right: -12px;
+                top: -12px;
+                width: 28px;
+                cursor: pointer
+            }
+
+            #sortable li {
+                -webkit-box-shadow: 0 0 3px 2px rgba(0,0,0,0.05);
+                box-shadow: 0 0 3px 2px rgba(0,0,0,0.05);
+                cursor: move
+            }
+
+                #sortable li::before {
+                    position: absolute;
+                    left: -1.6rem;
+                    top: 0rem;
+                    color: #a1a1a1;
+                    font-weight: 600;
+                    font-size: 180%
+                }
+
+                #sortable li:nth-of-type(1)::before {
+                    content: '1'
+                }
+
+                #sortable li:nth-of-type(2)::before {
+                    content: '2'
+                }
+
+                #sortable li:nth-of-type(3)::before {
+                    content: '3'
+                }
+
+                #sortable li:nth-of-type(4)::before {
+                    content: '4'
+                }
+
+                #sortable li:nth-of-type(5)::before {
+                    content: '5'
+                }
+
+                #sortable li:nth-of-type(6)::before {
+                    content: '6'
+                }
+
+                #sortable li:nth-of-type(7)::before {
+                    content: '7'
+                }
+
+                #sortable li:nth-of-type(8)::before {
+                    content: '8'
+                }
+
+                #sortable li:nth-of-type(9)::before {
+                    content: '9'
+                }
+
+                #sortable li:nth-of-type(10)::before {
+                    content: '10'
+                }
+
+        .ui-state-highlight {
+            height: 3px;
+            position: relative;
+            left: -15px;
+            background: #a1a1a1;
+            border: none;
+            width: 120%
+        }
+
+        #sortable li.ui-sortable-helper {
+            background: #e6e5e5;
+            -webkit-box-shadow: 0 0 4px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 0 4px 3px rgba(0,0,0,0.2)
+        }
+
+            #sortable li.ui-state-highlight::before, #sortable li.ui-sortable-helper::before {
+                content: '' !important
+            }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-offset-1 col-md-10">
+            <div id="dialogPanel">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-shopping-cart"></i> Schritt 1: Vorauswahl der Lehrveranstaltungen</h4>
+                        <p class="mb-3">Bitte wählen Sie zwischen @Model.Lottery.MinSubscription und @Model.Lottery.MaxSubscription Lehrveranstaltungen aus.</p>
+                        <p>
+                            Sie haben aktuell <strong><span id="projektanzahl">4</span> Lehrveranstaltungen</strong> vorausgewählt.
+                            <span id="minProjekte">Sie müssen jedoch mindestens <span id="minProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
+                            <span id="maxProjekte">Sie können maximal <span id="maxProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
+                        </p>
+                    </div>
+                    <div class="list-group">
+                        @foreach (var course in Model.Courses)
+                        {
+                            var color = "";
+                            if (!course.IsSelectable)
+                            {
+                                color = "list-group-item-danger";
+                            }
+                            <div class="list-group-item @color">
+                                <div class="list-group-item-heading">
+                                    <h5>@course.Course.Name (@course.Course.ShortName)</h5>
+                                </div>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li>
+                                            <i class="fa-li fa fa-user-md"></i>
+                                            @if (course.CourseSummary.Lecturers.Any())
+                                            {
+                                                @Html.LecturerList(course.CourseSummary.Lecturers, showLinks: false)
+                                            }
+                                            else
+                                            {
+                                                <i>Keine Angabe zu Lehrenden verfügbar</i>
+                                            }
+                                        </li>
+                                        <li>
+                                            @if (course.CourseSummary.Dates.Count == 1)
+                                            {
+                                                <i class="fa-li fa fa-calendar"></i>
+                                                <span>immer @Html.Date(course.CourseSummary.Dates.First()) in [@Html.RoomList(course.CourseSummary.Rooms, showLinks: false)]</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa-li fa fa-calendar"></i>
+                                                <span>insgesamt @course.CourseSummary.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+                                            }
+                                            @if (course.CourseSummary.ConflictingDates.Any(x => x.Value.Any()))
+                                            {
+                                                <span class="badge bg-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
+                                            }
+                                        </li>
+                                        @if (course.CourseSummary.Course.Occurrence.SeatQuotas.Any())
+                                        {
+                                            <li>
+                                                <i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen
+                                                <ul>
+                                                    @foreach (var quota in course.BookingState.BookingLists)
+                                                    {
+                                                        if (quota.SeatQuota != null)
+                                                        {
+                                                            <li>@quota.SeatQuota.Summary: @quota.FreeSeats freie Plätze</li>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (!quota.IsLost)
+                                                            {
+                                                                <li>@quota.Name</li>
+                                                            }
+                                                        }
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            if (course.BookingState.MyBookingList != null)
+                                            {
+                                                <li><i class="fa-li fa fa-bed"></i> Offene Liste</li>
+                                            }
+                                        }
+
+                                    @*
+                                        @if (course.CourseSummary.Course.Occurrence.Capacity < 0)
+                                        {
+                                            if (course.CourseSummary.Course.Occurrence.UseGroups)
+                                            {
+                                                <li><i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen</li>
+                                                foreach (var ocg in course.CourseSummary.Course.Occurrence.Groups)
+                                                {
+                                                    if (ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.Id == Model.Student.Curriculum.Id)
+                                                    {
+                                                        <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze <span class="badge bg-primary">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge bg-warning text-dark">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span></li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</li>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa-li fa fa-bed"></i>keine Platzbeschränkungen</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (course.CourseSummary.Course.Occurrence.UseGroups)
+                                            {
+                                                <li><i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen</li>
+                                                foreach (var ocg in course.CourseSummary.Course.Occurrence.Groups)
+                                                {
+                                                    if (ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.Id == Model.Student.Curriculum.Id)
+                                                    {
+                                                        <li>
+                                                            <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze <span class="badge bg-primary">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge bg-warning text-dark">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
+                                                        </li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>
+                                                            <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze
+                                                        </li>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (@course.BookingState.MyBookingList != null)
+                                                {
+                                                    if (@course.BookingState.MyBookingList.IsMisc)
+                                                    {
+                                                        <li>
+                                                            <i class="fa-li fa fa-ban"></i> In dieser Lehrveranstaltung werden die Plätze vorrangig an Studierende der angegebenen Studiengänge vergeben. Ihr Eintrag landet auf der Warteliste und wird bei der Verlosung nicht berücksichtigt. Eine Vergabe von Plätzen erfolgt nach Absprache mit den jeweiligen Dozenten. 
+                                                        </li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>
+                                                            <i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @course.CourseSummary.Course.Occurrence.Capacity Plätze - <span class="badge bg-primary">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge bg-warning text-dark">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
+                                                        </li>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        *@
+                                    </ul>
+                                    @if (!course.IsSelectable)
+                                    {
+                                        <ul class="fa-ul">@Html.Raw(course.Message)</ul>
+                                    }
+                                </div>
+                                @if (course.IsSelectable)
+                                {
+                                    if (course.Subscription != null && course.Subscription.OnWaitingList)
+                                    {
+                                        nPreSelected++;
+                                        <img id="@course.Course.Id" class="selectable ausgewaehlt" src="@Url.Content("~/Assets/fillter/img/selected.svg")" alt="auswählen">
+                                    }
+                                    else
+                                    {
+                                        <img id="@course.Course.Id" class="selectable" src="@Url.Content("~/Assets/fillter/img/selectable.svg")" alt="auswählen">
+                                    }
+                                }
+                                else
+                                {
+                                    <img class="unselectable" src="@Url.Content("~/Assets/fillter/img/deselect.svg")" alt="nicht verfügbar">
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                
+                <div id="btnBox1">
+                    <a class="btn btn-primary btn-block disabled" id="hauptbutton">Weiter mit Schritt 2: Reihenfolge bzw. Priorisierung festlegen</a>
+                </div>
+
+                <div id="loading1" hidden>
+                    <div class="d-flex align-items-center">
+                        <strong>Loading...</strong>
+                        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    @*
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js")"></script>
+        *@
+
+    <script>
+        $(function() {
+            var Projektanzahl = @nPreSelected;
+            var minProjekte = @Model.Lottery.MinSubscription;
+            var maxProjekte = @Model.Lottery.MaxSubscription;
+            $('#projektanzahl').text(Projektanzahl);
+            $('#minProjektanzahl').text(minProjekte);
+            $('#maxProjektanzahl').text(maxProjekte);
+
+            if (Projektanzahl >= minProjekte) {
+                $('#minProjekte').hide();
+            } else {
+                $('#minProjekte').show();
+            }
+
+            if (Projektanzahl <= maxProjekte) {
+                $('#maxProjekte').hide();
+            } else {
+                $('#maxProjekte').show();
+            }
+
+
+            // Wählen bzw. Abwählen eines Projekte, diese bekommt dann ein Häkchen
+            $('.selectable').click(function() {
+                if ($(this).hasClass('ausgewaehlt')) {
+                    $(this).removeClass('ausgewaehlt');
+                    $(this).attr({ src: '@Url.Content("~/Assets/fillter/img/selectable.svg")' });
+                    Projektanzahl--;
+                } else {
+                    $(this).addClass('ausgewaehlt');
+                    $(this).attr({ src: '@Url.Content("~/Assets/fillter/img/selected.svg")' });
+                    Projektanzahl++;
+                }
+
+                // gibt an, wieviele Projekt aktuell ausgewählt sind
+                $('#projektanzahl').text(Projektanzahl);
+
+                // erst wenn mehr als 3 Projekte ausgewählt sind
+                // fällt der Text "Sie müssen mind. 4 Projekte vorauswählen" weg
+                // außerdem ändert sich die Farbe des Buttons "Reihenfolge festlegen"
+
+                if (Projektanzahl >= minProjekte) {
+                    $('#minProjekte').hide();
+                } else {
+                    $('#minProjekte').show();
+                }
+
+                if (Projektanzahl <= maxProjekte) {
+                    $('#maxProjekte').hide();
+                } else {
+                    $('#maxProjekte').show();
+                }
+
+
+                if (Projektanzahl >= minProjekte && Projektanzahl <= maxProjekte) {
+                    $('#hauptbutton')
+                        .removeClass('disabled')
+                        .addClass('hauptbutton');
+                } else {
+
+                    $('#hauptbutton')
+                        .addClass('disabled')
+                        .removeClass('hauptbutton');
+                }
+
+            });
+
+
+            $('#hauptbutton').click(function() {
+
+
+                $('#btnBox1').hide();
+                $('#loading1').show();
+
+
+                var list = $('.ausgewaehlt').get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("CoursesSelected")',
+                            data: {
+                                lotteryId: '@Model.Lottery.Id',
+                                courseIds: dateList
+                            },
+                            success: function(data, success, xhr) {
+                                $("#dialogPanel").html(data);
+                                initPrioPage();
+                            }
+                        });
+                }
+
+            });
+
+
+        });
+
+
+        function initPrioPage() {
+            $('#sortable').sortable({
+                placeholder: 'ui-state-highlight',
+                axis: 'y',
+                delay: 150,
+                containment: 'parent'
+            });
+            $('#sortable').disableSelection();
+
+            $('#acceptAny').click(function() {
+                $('#acceptAny').addClass('active');
+                $('#acceptNop').removeClass('active');
+            });
+
+            $('#acceptNop').click(function() {
+                $('#acceptNop').addClass('active');
+                $('#acceptAny').removeClass('active');
+            });
+
+            $('#hauptbutton2').click(function() {
+
+                $('#btnBox2').hide();
+                $('#loading2').show();
+
+
+                var list = $('.ui-state-default').get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var nConfirm = $('#confirm').val();
+                    var acceptAny = $('#acceptAny').is(":checked");
+                    var acceptNope = $('#acceptNope').is(":checked");
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("CoursesOrdered")',
+                            data: {
+                                lotteryId: '@Model.Lottery.Id',
+                                courseIds: dateList,
+                                confirm: nConfirm,
+                                acceptAny: acceptAny
+                            },
+                            success: function(data, success, xhr) {
+                                $("#dialogPanel").html(data);
+                                initConfirmPage();
+                            }
+                        });
+                }
+
+            });
+
+        }
+
+        function initConfirmPage() {
+            $('#hauptbutton3').click(function() {
+
+                $('#btnBox3').hide();
+                $('#loading3').show();
+                
+
+                var list = $('.ui-state-default').get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var nConfirm = $('#confirm').val();
+                    var acc = $('#acceptAny').val();
+                    var acceptAny = true;
+                    if (acc === '0')
+                        acceptAny = false;
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("SelectionConfirmed")',
+                            data: {
+                                lotteryId: '@Model.Lottery.Id',
+                                courseIds: dateList,
+                                confirm: nConfirm,
+                                acceptAny: acceptAny
+                            },
+                            success: function(data, success, xhr) {
+                                $("#dialogPanel").html(data);
+                                initConfirmPage();
+                            }
+                        });
+                }
+
+            });
+
+        }
+
+    </script>
+
+}

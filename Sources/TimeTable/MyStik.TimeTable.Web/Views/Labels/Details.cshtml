@@ -226,9 +226,10 @@
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <a href="@Url.Action("EditLabel", new { labelId = Model.Id })" class="btn btn-sm btn-outline-primary"><i class="bi bi-gear"></i> Ändern</a>
-                                @*
-            <a href="@Url.Action("MergeLabel", new { labelId = Model.Id })" class="btn btn-sm btn-outline-primary"><i class="bi bi-recycle"></i> Übertragen</a>
-                                *@
+                                foreach (var curr in currs)
+                                {
+                                    <a href="@Url.Action("MergeLabel", new { currId=curr.Id, labelId = Model.Id })" class="btn btn-sm btn-outline-primary"><i class="bi bi-recycle"></i> Übertragen</a>
+                                }
                                 <a href="@Url.Action("DeleteLabel", new { labelId = Model.Id })" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Löschen</a>
                             }
                         </div>

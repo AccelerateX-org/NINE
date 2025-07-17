@@ -305,7 +305,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 curriculum.Organiser.Institution.LabelSet.ItemLabels).SingleOrDefault(x => x.Id == model.CurrId);
 
             // gibt es ein aktuelles Studium
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             if (student != null)
             {
                 var currentCurr = student.Curriculum;

@@ -21,7 +21,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(semId);
             var user = AppUser;
 
-            var student = StudentService.GetCurrentStudent(user);
+            var students = StudentService.GetCurrentStudent(user);
+            var student = students.FirstOrDefault();
+
             if (student?.FirstSemester == null || student.Curriculum == null || student.HasCompleted)
             {
                 return RedirectToAction("Change", "Subscription");
@@ -380,7 +382,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(id);
             var user = AppUser;
 
-            var student = StudentService.GetCurrentStudent(user);
+            var students = StudentService.GetCurrentStudent(user);
+            var student = students.FirstOrDefault();
 
 
             var wd = new List<SelectionHelper>
@@ -436,7 +439,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var semester = SemesterService.GetSemester(semId);
             var user = AppUser;
-            var student = StudentService.GetCurrentStudent(user);
+            var students = StudentService.GetCurrentStudent(user);
+            var student = students.FirstOrDefault();
 
 
 
@@ -763,7 +767,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Semester = semester;
             model.User = user;
-            model.Student = StudentService.GetCurrentStudent(user);
+            model.Student = StudentService.GetCurrentStudent(user).FirstOrDefault();
 
             if (model.Student != null)
             {
@@ -1024,7 +1028,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 .OrderByDescending(x => x.StartCourses)
                 .ToList();
 
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
 
             var model = new StudentPlanerModel();
             model.User = user;

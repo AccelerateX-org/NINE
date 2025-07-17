@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Web.Services
 
         }
 
-        public void SendSubscriptionEMail(Course course, string userId, ApplicationUser host)
+        public void SendSubscriptionEMail(Course course, string userId, ApplicationUser host, OrganiserMember member = null)
         {
             var user = UserService.GetUser(userId);
 
@@ -44,7 +44,8 @@ namespace MyStik.TimeTable.Web.Services
                     Course = course,
                     Subscription = null,
                     Actor = host,
-                    Student = UserService.GetUser(userId)
+                    Student = UserService.GetUser(userId),
+                    Member = member
                 };
 
                 try

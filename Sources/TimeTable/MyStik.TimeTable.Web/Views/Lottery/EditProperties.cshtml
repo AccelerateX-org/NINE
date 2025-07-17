@@ -1,0 +1,381 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryCreateModel
+@{
+    ViewBag.Title = "Wahlverfahren";
+}
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Lottery.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Organiser.ShortName</a></li>
+                }
+                @if (Model.Lottery.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { semId = Model.Lottery.Semester.Id, orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Lottery", new { id = Model.Lottery.Id })">@Model.Lottery.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Einstellungen</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Zusammenfassung</strong></h5>
+                <h6 class="card-subtitle">Anzeige für Studierende</h6>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div><strong>Wahl</strong></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">Zeitraum</div>
+                    <div class="col-md-6"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6">min 1 / max 2 Kurse wählen</div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div><strong>Voreinschreibung</strong></div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div><strong>Platzvergabe</strong></div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div><strong>Nachwahl</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+            ))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            @Html.HiddenFor(m => m.LotteryId)
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>Details</strong></h5>
+                    <h6 class="card-subtitle">Einstellungen entlang der einzelnen Schritte</h6>
+
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#method">Methode</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#step01">Schritt 1: Wahl</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#step02">Schritt 2: Voreinschreibung</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#step03">Schritt 3: Platzvergabe</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#step04">Schritt 4: Nachwahl</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="method">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle">Auswahl der Methode</h6>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div class="radio-list">
+                                                <label>
+                                                    @Html.RadioButtonFor(m => m.ProcessType, 1)
+                                                    Windhundverfahren:
+                                                </label>
+                                                <ul>
+                                                    <li>Eintragungen werden nach zeitlicher Reihenfolge berücksichtigt.</li>
+                                                    <li>Eintragungen erfolgen jeweils unmittelbar auf die Teilnehmer- oder Wartelliste</li>
+                                                </ul>
+                                            </div>
+                                            <div class="radio-list">
+                                                <label>
+                                                    @Html.RadioButtonFor(m => m.ProcessType, 2)
+                                                    Platzverlosung:
+                                                </label>
+                                                <ul>
+                                                    <li>Alle Eintragungen landen auf den jeweiligen Wartelisten.</li>
+                                                    <li>Studierende priorisieren ihre Auswahl und geben an, wie viele Plätze sie benötigen.</li>
+                                                    <li>Platzvergabe durch Losverfahren.</li>
+                                                    <li>Pechvogelregel: etwas anders akzeptieren oder "leer" ausgehen</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane" id="step01">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle">Studierende tragen sich auf Wartelisten ein</h6>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Zeitplan</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Von</div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.IsAvailableFrom, new { @class = "form-control datepicker" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.IsAvailableFromTime, new { @class = "form-control timepicker timepicker-24" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Bis</div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.IsAvailableUntil, new { @class = "form-control datepicker" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.IsAvailableUntilTime, new { @class = "form-control timepicker timepicker-24" })
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Anzahl Wahlmöglichkeiten</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">min / max</div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(m => m.MinSubscription, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(m => m.MaxSubscription, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1">
+                                                <label class="form-check-label" for="radioDefault1">
+                                                    Mit Priorierung
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault2" checked>
+                                                <label class="form-check-label" for="radioDefault2">
+                                                    Keine Priorisierung
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Anzahl Platzzuweisungen</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">min / max</div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(m => m.MaxConfirm, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(m => m.MaxConfirmException, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="step02">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle">Lehrende führen Vorselektion durch</h6>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Verwendung</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @Html.CheckBoxFor(item => item.AllowManualSubscription)
+                                            @Html.LabelFor(item => item.AllowManualSubscription, new { @class = "control-label" })
+                                            <ul>
+                                                <li>Lehrende können Studierende von der Warteliste auf die Teilnehmerliste übenehmen.</li>
+                                                <li>Bei Windhundverfahren können alle Eintragungen übernommen werden.</li>
+                                                <li>Bei Platzverlosungen können nur "Prio 1" Eintragungen übernommen werden.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Zeitplan</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Von</div>
+                                        <div class="col-md-8">
+                                            Ende Schritt 1
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Bis</div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.FirstDrawing, new { @class = "form-control datepicker" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.FirstDrawingTime, new { @class = "form-control timepicker timepicker-24" })
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Motivationsschreiben</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @Html.CheckBoxFor(item => item.LoIneeded)
+                                            @Html.LabelFor(item => item.LoIneeded, new { @class = "control-label" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="step03">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle">Durchführug der Platzverlosung</h6>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Ablauf</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Vorbereitung</div>
+                                        <div class="col-md-4">Status überprüfen</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Verlosung</div>
+                                        <div class="col-md-4">Ausführen und Warten</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Nachbereitung</div>
+                                        <div class="col-md-4">Wartelisten leeren</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @Html.CheckBoxFor(item => item.UseJinx)
+                                            @Html.LabelFor(item => item.UseJinx, new { @class = "control-label" })
+                                            <ul>
+                                                <li>An: Studierende können Pechvogelregel wählen</li>
+                                                <li>Aus: Pechvogelregel kommt generell nicht zur Anwendung</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="step04">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle">Studierende können Wahl ändern  / ergänzen</h6>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Zeitplan</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">Ab</div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.LastDrawing, new { @class = "form-control datepicker" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.LastDrawingTime, new { @class = "form-control timepicker timepicker-24" })
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col-md-12">
+                                            <div><strong>Verbindlichkeit</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @Html.CheckBoxFor(item => item.UseLock)
+                                            @Html.LabelFor(item => item.UseLock, new { @class = "control-label" })
+                                            <ul>
+                                                <li>An: Studierende können zugeloste Plätze nicht zurückgeben</li>
+                                                <li>Aus: Studierende können zueloste Plätze zurückgeben, d.h. ihre Wahl nachträglich ändern.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+     </div>
+</div>
+
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+        });
+
+    </script>
+}
+
+

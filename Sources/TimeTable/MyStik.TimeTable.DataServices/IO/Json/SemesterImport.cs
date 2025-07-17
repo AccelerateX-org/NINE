@@ -135,6 +135,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
 
             var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
             var sem = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            var seg = sem.Dates.FirstOrDefault(x => x.Description.Equals("Semesterbegleitend"));
 
             var courseLabelSet = new ItemLabelSet();
             db.ItemLabelSets.Add(courseLabelSet);
@@ -142,7 +143,8 @@ namespace MyStik.TimeTable.DataServices.IO.Json
             long msStart = sw.ElapsedMilliseconds;
 
             var course = db.Activities.OfType<Course>().Include(activity => activity.LabelSet)
-                .Include(activity1 => activity1.SemesterGroups).Include(activity2 => activity2.Dates).FirstOrDefault(x =>
+                .Include(activity1 => activity1.SemesterGroups).Include(activity2 => activity2.Dates)
+                .Include(activity3 => activity3.Occurrence).FirstOrDefault(x =>
                 x.Semester.Id == sem.Id && x.Organiser.Id == organiser.Id &&
                 x.ExternalSource.Equals("JSON") && x.ExternalId.Equals(scheduleCourse.CourseId));
 
@@ -156,16 +158,19 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                     ExternalId = scheduleCourse.CourseId,
                     Organiser = organiser,
                     Semester = sem,
+                    Segment = seg,
                     ShortName = scheduleCourse.ShortName,
                     Name = scheduleCourse.Name,
                     Description = scheduleCourse.Description,
-                    Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction ?? 0),
+                    // Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction ?? 0),
+                    Occurrence = CreateDefaultOccurrence(),
                     IsInternal = true,
                     IsProjected = true,
                     LabelSet = courseLabelSet
                 };
                 // Kurs sofort speichern, damit die ID gesichert ist
                 db.Activities.Add(course);
+                db.Occurrences.Add(course.Occurrence);
                 db.SaveChanges();
             }
 
@@ -190,7 +195,8 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                 foreach (var scheduleGroup in scheduleCourse.Groups)
                 {
                     // Fakultät ermitteln
-                    var org = db.Organisers.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.FacultyName));
+                    var org = db.Organisers.Include(activityOrganiser => activityOrganiser.Curricula.Select(curriculum =>
+                        curriculum.LabelSet.ItemLabels)).SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.FacultyName));
 
                     // Studiengang innerhalb der Fakultät ermitteln
                     var curr = org.Curricula.SingleOrDefault(x =>
@@ -234,6 +240,27 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                         }
 
                         course.LabelSet.ItemLabels.Add(label);
+
+                        // jetzt die Platzkontingente anlegen
+                        // Annahme: in der Regel gibt es nur ene Gruppe pro LV, damit auc nur einen Studiengang
+                        // und damit auch nur ein Label
+                        // Ein angegebenes Platzkontingent wird allen Labels zugeordnet
+                        if (!scheduleCourse.SeatRestriction.HasValue || scheduleCourse.SeatRestriction.Value <= 0)
+                            continue;
+
+                        var capacity = scheduleCourse.SeatRestriction.Value;
+
+                        var quota = new SeatQuota
+                        {
+                            Curriculum = curr,
+                            ItemLabelSet = new ItemLabelSet(),
+                            MaxCapacity = capacity,
+                            MinCapacity = 0,
+                            Description = string.Empty,
+                            Occurrence = course.Occurrence
+                        };
+
+                        db.SeatQuotas.Add(quota);
                     }
                 }
             }
@@ -281,6 +308,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                             Occurrence = CreateDefaultOccurrence(),
                         };
                         course.Dates.Add(occ);
+                        
                         _report.AppendLine("<tr>");
                         _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", occ.Begin.ToShortDateString(),
                             occ.Begin.ToShortTimeString(), occ.End.ToShortTimeString());
@@ -302,7 +330,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                                         Owner = string.Empty,
                                     };
                                     db.Rooms.Add(room);
-                                    db.SaveChanges();
+                                    //db.SaveChanges();
 
                                     _numRooms++;
                                     _report.AppendFormat(" !!!NEUER RAUM!!!");
@@ -323,7 +351,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
 
                                     room.Assignments.Add(assignment);
                                     db.RoomAssignments.Add(assignment);
-                                    db.SaveChanges();
+                                    //db.SaveChanges();
                                 }
 
                                 occ.Rooms.Add(room);
@@ -352,7 +380,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                                 };
                                 organiser.Members.Add(lecturer);
                                 db.Members.Add(lecturer);
-                                db.SaveChanges();
+                                //db.SaveChanges();
                                 _numLecturers++;
                                 _report.AppendFormat(" !!!NEUER DOZENT!!!");
                             }
@@ -364,6 +392,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                         _report.AppendFormat("</td>");
 
                         db.ActivityDates.Add(occ);
+                        db.Occurrences.Add(occ.Occurrence);
 
                         _report.AppendLine();
                         _report.AppendLine("</tr>");

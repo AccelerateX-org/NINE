@@ -915,7 +915,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult RequestIncomplete()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
 

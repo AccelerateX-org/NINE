@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
@@ -29,7 +30,9 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             var user = GetCurrentUser();
-            var student = GetCurrentStudent(user.Id);
+            var students = GetCurrentStudent(user.Id);
+            var student = students.FirstOrDefault();
+
             var org = student.Curriculum.Organiser;
 
             // Der Bestellzeitraum, welcher als erstes in der Zukunft endet
@@ -152,12 +155,13 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult OrderConfirmed(Guid id)
         {
             var user = GetCurrentUser();
-            var student = GetCurrentStudent(user.Id);
+            var student = GetCurrentStudent(user.Id).FirstOrDefault();
             var org = student.Curriculum.Organiser;
 
             // Der Bestellzeitraum, welcher als erstes in der Zukunft endet
             var period = Db.OrderPeriods.Where(x => x.Organiser.Id == org.Id && x.End >= DateTime.Today)
-                .OrderByDescending(x => x.End).ToList().LastOrDefault();
+                .OrderByDescending(x => x.End).Include(orderPeriod => orderPeriod.Baskets.Select(orderBasket =>
+                    orderBasket.Orders.Select(scriptOrder => scriptOrder.ScriptDocument))).ToList().LastOrDefault();
 
             if (period == null)
             {

@@ -17,13 +17,16 @@
     @switch (Model.User.MemberState)
     {
         case MemberState.Student:
-            if (Model.Student != null && Model.Student.Curriculum != null)
+            foreach (var student in Model.Students)
             {
-                <div><i class="fa fa-graduation-cap"></i> @Model.Student.Curriculum.ShortName</div>
-            }
-            else
-            {
-                <div><i class="fa fa-graduation-cap"></i> N.N.</div>
+                if (student.Curriculum != null)
+                {
+                    <div><i class="fa fa-graduation-cap"></i> @student.Curriculum.ShortName</div>
+                }
+                else
+                {
+                    <div><i class="fa fa-graduation-cap"></i> N.N.</div>
+                }
             }
             break;
         case MemberState.Staff:

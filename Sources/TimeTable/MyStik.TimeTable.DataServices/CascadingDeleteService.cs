@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using MyStik.TimeTable.Data;
 
@@ -14,14 +15,18 @@ namespace MyStik.TimeTable.DataServices
         }
 
 
-        public void DeleteActivityDate(Guid id)
+        public void DeleteActivityDate(Guid id, bool deleteOccurrence = true)
         {
-            var date = _db.ActivityDates.SingleOrDefault(x => x.Id == id);
+            var date = _db.ActivityDates.Include(activityDate => activityDate.Occurrence).Include(activityDate1 => activityDate1.VirtualRooms).Include(activityDate2 =>
+                activityDate2.Changes.Select(activityDateChange => activityDateChange.NotificationStates)).SingleOrDefault(x => x.Id == id);
 
             if (date == null)
                 return;
 
-            DeleteOccurrence(date.Occurrence);
+            if (deleteOccurrence)
+            {
+                DeleteOccurrence(date.Occurrence);
+            }
 
 
             // Änderungen löschen

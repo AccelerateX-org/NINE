@@ -16,19 +16,24 @@ namespace MyStik.TimeTable.Web.Services
         {
         }
 
+
         /// <summary>
         /// Der zuletzt angelegte Studiengang
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Student GetCurrentStudent(string userId)
+        public ICollection<Student> GetCurrentStudent(string userId)
         {
             // alt return Db.Students.Where(x => x.UserId.Equals(userId) && x.LastSemester == null).OrderByDescending(x => x.Created)
             if (string.IsNullOrEmpty(userId))
-                return null;
+                return new List<Student>();
             
-            return Db.Students.Where(x => x.UserId.Equals(userId) && x.FirstSemester != null).OrderByDescending(x => x.FirstSemester.StartCourses)
-                .FirstOrDefault();
+            return Db.Students
+                .Where(x => 
+                    x.UserId.Equals(userId) && 
+                    x.FirstSemester != null && x.LastSemester == null)
+                .OrderBy(x => x.Created)
+                .ToList();
         }
 
         /// <summary>
@@ -36,23 +41,14 @@ namespace MyStik.TimeTable.Web.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Student GetCurrentStudent(ApplicationUser user)
+        public ICollection<Student> GetCurrentStudent(ApplicationUser user)
         {
             if (user == null)
-                return null;
+                return new List<Student>();
 
             return GetCurrentStudent(user.Id);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public List<Student> GetStudentHistory(ApplicationUser user)
-        {
-            return Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).ToList();
-        }
 
         /// <summary>
         /// 

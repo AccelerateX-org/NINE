@@ -30,6 +30,27 @@
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.ShortName</li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <div class="btn-group">
+                        @if (ViewBag.PrevSemester != null)
+                        {
+                            <a href="@Url.Action("Faculty", "University", new {semId=ViewBag.PrevSemester.Id, orgId=Model.Id})"><i class="bi bi-chevron-double-left"></i></a>
+                        }
+                        else
+                        {
+                            <a class="disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
+                        }
+                        <span class="ms-2 me-2">@ViewBag.CurrentSemester.Name</span>
+                        @if (ViewBag.NextSemester != null)
+                        {
+                            <a href="@Url.Action("Faculty", "University", new {semId=ViewBag.NextSemester.Id, orgId=Model.Id})"><i class="bi bi-chevron-double-right"></i></a>
+                        }
+                        else
+                        {
+                            <a class="disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
+                        }
+                    </div>
+                </li>
             </ol>
         </nav>
     </div>
@@ -51,11 +72,7 @@
                     <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
                 }
                 <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studienangebote</a>
-                @if (nSem != null)
-                {
-                    <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = nSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @nSem.Name</a>
-                }
-                <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = cSem.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis @cSem.Name</a>
+                <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
                 <a href="@Url.Action("Organiser", "Events", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungsverzeichnis</a>
 
                 @if (!isStudent)
@@ -122,7 +139,7 @@
             </div>
             <div class="list-group">
                 <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action">Abschlussarbeiten</a>
-                <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
+                <a href="@Url.Action("Organiser", "Lottery", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
                 @if (!isStudent)
                 {
                     <a href="@Url.Action("CreateCoursePortal", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>

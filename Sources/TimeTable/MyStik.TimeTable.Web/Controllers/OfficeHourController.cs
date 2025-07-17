@@ -1697,6 +1697,22 @@ namespace MyStik.TimeTable.Web.Controllers
                         Db.Subscriptions.Remove(sub);
                     }
 
+                    var bookings = Db.RoomBookings.Where(x => x.Date.Id == date.Id).ToList();
+
+                    foreach (var booking in bookings)
+                    {
+                        Db.RoomBookings.Remove(booking);
+                    }
+
+
+                    date.Hosts.Clear();
+                    date.Rooms.Clear();
+
+                    foreach (var vRoom in date.VirtualRooms.ToList())
+                    {
+                        Db.VirtualRoomAccesses.Remove(vRoom);
+                    }
+
                     Db.Occurrences.Remove(date.Occurrence);
                     officeHour.Dates.Remove(date);
                     Db.ActivityDates.Remove(date);

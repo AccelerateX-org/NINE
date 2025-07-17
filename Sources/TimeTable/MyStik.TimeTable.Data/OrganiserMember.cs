@@ -164,17 +164,18 @@ namespace MyStik.TimeTable.Data
             {
                 var sb = new StringBuilder();
 
-                sb.Append(Name);
+                if (!string.IsNullOrEmpty(Title))
+                {
+                    sb.AppendFormat("{0} ", Title);
+                }
 
                 if (!string.IsNullOrEmpty(FirstName))
                 {
-                    sb.AppendFormat(", {0} ", FirstName);
+                    sb.AppendFormat("{0} ", FirstName);
                 }
 
-                if (!string.IsNullOrEmpty(Title))
-                {
-                    sb.AppendFormat(" ({0})", Title);
-                }
+                sb.Append(Name);
+
 
                 return sb.ToString();
             }

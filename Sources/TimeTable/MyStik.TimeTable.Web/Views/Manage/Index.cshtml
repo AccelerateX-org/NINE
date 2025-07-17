@@ -27,7 +27,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-            <li class="breadcrumb-item active">Benutzerkonto</li>
+            <li class="breadcrumb-item active">Mein Benutzerkonto</li>
         </ol>
     </nav>
 </div>
@@ -36,43 +36,55 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header">
-                <h5>Profildaten</h5>
-            </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div>
-                                @Model.User.FirstName @Model.User.LastName
-                            </div>
+                        <div class="col-md-4">
+                            <h5 class="card-title">Profilbild</h5>
                             @if (ViewBag.HasImage == true)
                             {
                                 <img src="@Url.Action("GetProfileImage")" class="card-img-top" alt="Profile image" />
                             }
-
+                            else
+                            {
+                                <span class="text-muted">Kein Profilbild vorhanden</span>
+                            }
                         </div>
-                        <div class="col-md-6">
-                            <div class="btn-group-vertical">
-                                <a href="#" class="btn btn-outline-primary">Change Name</a>
-                                <a href="#" class="btn btn-outline-primary">Upload Image</a>
-                                @if (ViewBag.HasImage == true)
-                                {
-                                    <a href="@Url.Action("DeleteProfileImage")" class="btn btn-outline-primary"><i class="bi bi-trash"></i> Profilbild löschen</a>
-                                }
+                        <div class="col-md-8">
+                            <h5 class="card-title">Persönliche Angaben</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div>Vorname</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div>@Model.User.FirstName</div>
+                                </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">Nachname</div>
+                                <div class="col-md-6">@Model.User.LastName</div>
+                            </div>
+                            @if (Model.User.LikeEMails)
+                            {
+                                <div class="row">
+                                    <div class="col-md-6">Benachrichtigungen</div>
+                                    <div class="col-md-6"><i class="bi bi-check text-success"></i> Ich möchte Nachrichten über Rundmails erhalten.</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-md-6">Benachrichtigungen</div>
+                                    <div class="col-md-6"><i class="bi bi-x text-danger"></i> Ich möchte <strong>keine</strong> Nachrichten über Rundmails erhalten.</div>
+                                </div>
+                            }
                         </div>
                     </div>
-                </div>
-                <div class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div>
-                                Ich möchte keine E-Mails über die Funktion "Aktuelles / Mailing" erhalten.
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="btn-group">
+                                <a href="@Url.Action("EditPersonalData", "UserProfile")" class="btn btn-outline-primary"><i class="bi bi-gear"></i> Angaben ändern</a>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-outline-primary">Change</a>
                         </div>
                     </div>
                 </div>
@@ -108,8 +120,8 @@
 
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header">
-                <h5>Login Optionen</h5>
+            <div class="card-body">
+                <h5 class="card-title">Login Optionen</h5>
             </div>
             <div class="list-group">
                 <div class="list-group-item">

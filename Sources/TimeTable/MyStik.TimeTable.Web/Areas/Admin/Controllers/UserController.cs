@@ -41,7 +41,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                     SubscriptionCount = string.IsNullOrEmpty(user.Id) ? -99 : Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
                     Members = MemberService.GetMemberships(user.Id),
                     SemesterGroup = null,
-                    Student = StudentService.GetCurrentStudent(user)
+                    Students = StudentService.GetCurrentStudent(user)
                 });
             }
 
@@ -466,7 +466,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 SubscriptionCount = Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
                 IsStudent = (StudentService.GetCurrentStudent(user.Id) != null),
                 Members = MemberService.GetMemberships(user.Id),
-                Student = studentService.GetCurrentStudent(user)
+                Students = studentService.GetCurrentStudent(user)
             };
 
             return model;
@@ -561,6 +561,17 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Claims()
+        {
+            var users = _db.Users
+                .Where(u => u.Claims.Any())
+                .Include(u => u.Claims)
+                .OrderBy(u => u.UserName)
+                .ToList();
+
+            return View(users);
         }
 
 

@@ -110,7 +110,7 @@
                     @foreach (var sub in Model.Course.Occurrence.Subscriptions)
                     {
                         var user = userService.GetUser(sub.UserId);
-                        var student = studentService.GetCurrentStudent(sub.UserId);
+                        var student = studentService.GetCurrentStudent(sub.UserId).FirstOrDefault();
 
                         <tr id="@sub.Id">
                             <td></td>

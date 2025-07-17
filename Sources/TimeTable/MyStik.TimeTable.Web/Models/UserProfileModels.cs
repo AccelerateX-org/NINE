@@ -98,6 +98,9 @@ namespace MyStik.TimeTable.Web.Models
         public string Title { get; set; }
 
         public string Email { get; set; }
+
+        [Display(Name = "Ich möchte Nachrichten über Rundmails erhalten")]
+        public bool LikeEMails { get; set; }
     }
 
     /// <summary>

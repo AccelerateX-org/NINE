@@ -31,8 +31,8 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             {
                 var stud = new UserAdminViewModel();
                 stud.User = user;
-                stud.Student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
-                    .FirstOrDefault();
+                stud.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
+                    .ToList();
 
                 model.Add(stud);
             }
