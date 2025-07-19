@@ -3633,6 +3633,7 @@
     <Content Include="Areas\InfoScreen\Views\Home\Main.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\_Dummy.cshtml" />
     <Content Include="Areas\Admin\Views\User\Claims.cshtml" />
+    <Content Include="Areas\Admin\Views\User\AllStudents.cshtml" />
     <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />

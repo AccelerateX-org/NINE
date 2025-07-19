@@ -1,21 +1,23 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
-using System.Net.Mail;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using log4net;
+﻿using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using MyStik.TimeTable.Web.Models;
-using System.Security.Claims;
 using Newtonsoft.Json.Linq;
-using System.Web.Http.Results;
 using Postal;
+using System;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mail;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http.Results;
+using System.Web.Mvc;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -871,7 +873,22 @@ namespace MyStik.TimeTable.Web.Controllers
                 var personEmail = userInfo["email"];
 
                 // Neuen Benutzer anlegen
-                var user = new ApplicationUser { UserName = eduPersonPrincipalName, Email = personEmail, FirstName = personFirstName, LastName = personLastName};
+                var user = new ApplicationUser
+                {
+                    UserName = eduPersonPrincipalName,
+                    Email = personEmail,
+                    FirstName = personFirstName,
+                    LastName = personLastName,
+                    MemberState = MemberState.Student,
+                    Registered = DateTime.Now,
+                    Remark = "Created from SSO",
+                    // user.ExpiryDate = DateTime.Today.AddDays(14),
+                    // user.Submitted = now
+                    Approved = DateTime.Now,
+                    IsApproved = true
+                };
+
+
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

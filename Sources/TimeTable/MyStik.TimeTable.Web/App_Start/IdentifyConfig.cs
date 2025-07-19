@@ -128,6 +128,11 @@ namespace MyStik.TimeTable.Web
                 var now = DateTime.Now;
                 user.LastLogin = now;
 
+                if (user.MemberState == MemberState.Guest) 
+                {
+                    user.MemberState = MemberState.Student;
+                }
+
                 // in jedem Fall wieder auf aktiv für E-Mail setzen
                 user.IsApproved = true;
                 

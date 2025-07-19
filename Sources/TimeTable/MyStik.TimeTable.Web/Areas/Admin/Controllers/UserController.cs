@@ -575,5 +575,12 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         }
 
 
+        public ActionResult AllStudents()
+        {
+            var model = Db.Students.ToList();
+            return View(model);
+        }
+
+
     }
 }
