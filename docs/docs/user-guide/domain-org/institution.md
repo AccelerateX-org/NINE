@@ -1,10 +1,13 @@
-# Institutionen und Einrichtungen
+---
+sidebar_position: 1
+---
 
-Eine Institution ist eine Bildungseinrichtung, welche auf Basis von Lehrperioden verschiedene Studienprogramme anbietet.
+# Institutionen
 
-Organisatorisch ist eine Institution in mehrere Einrichtungen unterteilt. Einrichtungen obliegt die Durchführung der Studienprogramme in Form von Lehrveranstaltungen und Prüfungen unter Einsatz zugeordneter Ressourcen (Räume, Personen).
+Wer etwas veranstaltet.
 
-## Institution
+
+## Allgemeines
 
 Eine Institution ist gekennzeichnet durch einen innerhalb einer Systeminstanz eindeutigen Kurznamen, eine Bezeichnung, eine Bildmarke sowie eine Domain.
 

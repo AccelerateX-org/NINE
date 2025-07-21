@@ -1,4 +1,8 @@
-# Modulkataloge, Module und Modulbeschreibungen
+---
+sidebar_position: 1
+---
+
+# Module
 
 Das Lehrangebot einer Institution ist in Module untergegliedert, wobei Module in Modulkatalogen organisiert sind. Ein Modul ist dabei immer eindeutig einem Modulkatalog zugeordnet. Ein Modul selbst kann in Teilmodule (=Fächer) unterteilt werden. Darüber hinaus können auf Ebene eines Moduls Prüfungsangebote definiert werden.
 

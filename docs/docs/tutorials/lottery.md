@@ -1,4 +1,10 @@
+---
+sidebar_position: 1
+---
+
 # Wahlverfahren
+
+Plätze vergeben.
 
 ## Zusammensetzung
 

@@ -1,4 +1,10 @@
-# Gebäude und Räume
+---
+sidebar_position: 3
+---
+
+# Orte
+
+Wo etwas stattfindet.
 
 Angaben zu Gebäuden und Räumen orientierten sich an den Bedürfnissen zur Durchführung von Lehrveranstaltungen und Prüfungen. Funktionen zur Raumverwaltung im Sinne eines Gebäudemanagements sind bestenfalls rudimentär vorhanden.
 
@@ -35,7 +41,4 @@ Die Zuordnung eines Raumes beeinflusst das Ergebnis der Raumsuche.
 
 Ein Raum kann einzelnen Mitgliedern zugeordnet werden, entweder im Sinne einer "Raumverantwortung" für Labore und/oder als "Büro".
  
-
-
-
 
