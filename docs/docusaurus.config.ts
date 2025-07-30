@@ -87,7 +87,7 @@ const config: Config = {
           position: 'left',
           label: 'Dokumentation',
         },
-       // {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/blog', label: 'Change Log', position: 'left'},
         {
           href: 'https://github.com/AccelerateX-org/NINE',
           label: 'GitHub',
@@ -102,8 +102,16 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Use NINE',
-              to: '/docs/intro',
+              label: 'Benutzerhandbuch',
+              to: '/docs/category/benutzerhandbuch',
+            },
+            {
+              label: 'Tutorien',
+              to: '/docs/category/tutorien',
+            },
+            {
+              label: 'Administration',
+              to: '/docs/category/administration',
             },
           ],
         },
@@ -124,7 +132,7 @@ const config: Config = {
           title: 'More',
           items: [
             {
-              label: 'Blog',
+              label: 'Change Log',
               to: '/blog',
             },
             {

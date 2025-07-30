@@ -1,3 +1,13 @@
+olavhinz:
+  name: Olav Hinz
+  title: founder and major maintainer
+  url: https://www.linkedin.com/in/olav-hinz-347a2493/
+  image_url: https://github.com/olavhinz.png
+  page: true
+  socials:
+    linkedin: olav-hinz-347a2493
+    github: olavhinz
+    newsletter: https://lucx.wi.hm.edu
 yangshun:
   name: Yangshun Tay
   title: Ex-Meta Staff Engineer, Co-founder GreatFrontEnd
@@ -9,7 +19,6 @@ yangshun:
     linkedin: yangshun
     github: yangshun
     newsletter: https://www.greatfrontend.com
-
 slorber:
   name: Sébastien Lorber
   title: Docusaurus maintainer

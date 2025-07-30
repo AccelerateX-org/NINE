@@ -1,3 +1,8 @@
+release:
+  label: release
+  permalink: /release
+  description: The major releases
+  
 facebook:
   label: Facebook
   permalink: /facebook

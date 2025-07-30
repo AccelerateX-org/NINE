@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
+  icon: string;
   Svg: React.ComponentType<React.ComponentProps<'svg'>>;
   description: ReactNode;
 };
@@ -12,6 +13,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Dezentrale Administration',
+    icon: "bi bi-people",
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
@@ -21,6 +23,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Modularer Aufbau',
+    icon: "bi bi-boxes",
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
@@ -30,6 +33,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Integrierbar',
+    icon: "bi bi-plug",
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
@@ -39,11 +43,11 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, icon, Svg, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <h1><i className={icon}></i></h1>
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
