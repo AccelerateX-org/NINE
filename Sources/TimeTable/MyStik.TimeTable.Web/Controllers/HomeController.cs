@@ -15,6 +15,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// 
     /// </summary>
     //[CookieConsent]
+    [HandleError(View = "~/Views/Error/Index")]
     public class HomeController : BaseController
     {
         [AllowAnonymous]

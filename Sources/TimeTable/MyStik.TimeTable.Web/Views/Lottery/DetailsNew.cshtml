@@ -52,9 +52,15 @@
             </div>
         </div>
         <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Vorbereitung</h5>
+            </div>
             <div class="list-group">
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("EditGeneral", new {id = Model.Lottery.Id})">
                     <i class="bi bi-gear"></i> Allgemeine Angaben
+                </a>
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("EditMethod", new {id = Model.Lottery.Id})">
+                    <i class="bi bi-ticket"></i> Vergabemethode
                 </a>
                 <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("EditProperties", new {id = Model.Lottery.Id})">
                     <i class="bi bi-stopwatch"></i> Einstellungen
@@ -65,22 +71,44 @@
             </div>
         </div>
         <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Aktionen</h5>
+            </div>
             <div class="list-group">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("EditProperties", new {id = Model.Lottery.Id})">
+                    <i class="bi bi-lock"></i> Freigabe
+                </a>
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Lottery.Id})">
+                    <i class="bi bi-play-circle"></i> Verlosung
+                </a>
+                <a class="list-group-item list-group-item-action disabled" href="@Url.Action("Lottery", "Mailing", new {id=Model.Lottery.Id})">
+                    <i class="bi bi-envelope"></i> Nachricht
+                </a>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Auswertungen</h5>
+            </div>
+            <div class="list-group">
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("Courses", new {id = Model.Lottery.Id})">
+                    <i class="bi bi-list"></i> Lehrveranstaltungen
+                </a>
                 <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("DrawingPots", new {id = Model.Lottery.Id})">
                     <i class="bi bi-basket"></i> Platzkontingente
                 </a>
                 <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("Students", new {id = Model.Lottery.Id})">
                     <i class="bi bi-people"></i> Teilnehmende
                 </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Lottery.Id})">
-                    <i class="bi bi-play-circle"></i> Durchführung
-                </a>
-                <a class="list-group-item list-group-item-action disabled" href="@Url.Action("Lottery", "Mailing", new {id=Model.Lottery.Id})">
-                    <i class="bi bi-envelope"></i> Nachricht senden
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("Reports", new {id = Model.Lottery.Id})">
+                    <i class="bi bi-file-lock"></i> Ziehungsberichte
                 </a>
             </div>
         </div>
         <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Administration</h5>
+            </div>
             <div class="list-group">
                 <a href="@Url.Action("Delete", new {id = Model.Lottery.Id})" class="list-group-item list-group-item-action list-group-item-danger"><i class="bi bi-trash"></i> Löschen</a>
             </div>

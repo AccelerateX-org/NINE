@@ -5,6 +5,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
         /// <summary>
@@ -12,6 +13,14 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <returns></returns>
         public ActionResult Index()
+        {
+            return View();
+        }
+        public ActionResult NotFound()
+        {
+            return View();
+        }
+        public ActionResult ServerError()
         {
             return View();
         }
@@ -25,7 +34,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         public ActionResult AntiForgery()
         {
             return View();

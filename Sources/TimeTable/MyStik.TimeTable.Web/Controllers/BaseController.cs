@@ -18,6 +18,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [HandleError]
     public class BaseController : Controller
     {
         /// <summary>

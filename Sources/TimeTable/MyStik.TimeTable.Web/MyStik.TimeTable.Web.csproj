@@ -4834,6 +4834,10 @@
     <Content Include="Views\Lottery\Organiser.cshtml" />
     <Content Include="Views\Lottery\Details.cshtml" />
     <Content Include="Views\Lottery\EditProperties.cshtml" />
+    <Content Include="Views\Lottery\Courses.cshtml" />
+    <Content Include="Views\Error\ServerError.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Lottery\EditMethod.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

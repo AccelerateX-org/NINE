@@ -319,7 +319,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var user in users)
                 {
-                    var student = studentService.GetCurrentStudent(user.Id).FirstOrDefault();
+                    var student = studentService.GetStudent(user.Id).FirstOrDefault();
                     /*
                     var student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
                         .FirstOrDefault();

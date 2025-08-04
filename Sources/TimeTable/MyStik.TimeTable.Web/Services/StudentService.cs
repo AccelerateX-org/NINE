@@ -16,6 +16,19 @@ namespace MyStik.TimeTable.Web.Services
         {
         }
 
+        public ICollection<Student> GetStudent(string userId)
+        {
+            // alt return Db.Students.Where(x => x.UserId.Equals(userId) && x.LastSemester == null).OrderByDescending(x => x.Created)
+            if (string.IsNullOrEmpty(userId))
+                return new List<Student>();
+
+            return Db.Students
+                .Where(x =>
+                    x.UserId.Equals(userId))
+                .OrderBy(x => x.Created)
+                .ToList();
+        }
+
 
         /// <summary>
         /// Der zuletzt angelegte Studiengang

@@ -365,6 +365,43 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = lottery.Id });
         }
 
+        public ActionResult EditMethod(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            var model = new LotteryCreateModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+                Name = lottery.Name,
+                ProcessType = lottery.IsFixed ? 2 : 1
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditMethod(LotteryCreateModel model)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == model.LotteryId);
+
+
+            lottery.IsFixed = model.ProcessType != 1;
+
+
+            Db.SaveChanges();
+            logger.InfoFormat("Einstellungen zu Lotterie {0} verändert", lottery.Name);
+
+            return RedirectToAction("Details", new { id = lottery.Id });
+        }
+
+
+
 
         public ActionResult EditProperties(Guid id)
         {
@@ -611,6 +648,17 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+
+        public ActionResult Courses(Guid id)
+        {
+            var org = GetMyOrganisation();
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
 
 
         public ActionResult DrawingPots(Guid id)

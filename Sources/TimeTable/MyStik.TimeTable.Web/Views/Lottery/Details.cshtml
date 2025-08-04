@@ -48,8 +48,16 @@
                                 {
                                     <a href="@Url.Action("Show", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-unlock"></i> Sichtbar machen</a>
                                 }
-                                <a href="@Url.Action("DrawingPots", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-basket"></i> Teilnehmerlisten</a>
-                                <a href="@Url.Action("Students", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-people"></i> Studierende</a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-list"></i> Listen
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="@Url.Action("Courses", new {id = Model.Lottery.Id})">Nach Lehrveranstaltungen</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("DrawingPots", new {id = Model.Lottery.Id})">Nach Buchungslisten (Platzkontingente)</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Students", new {id = Model.Lottery.Id})">Nach Eintragungen (Studierende)</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
