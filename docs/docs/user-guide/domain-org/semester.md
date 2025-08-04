@@ -1,4 +1,10 @@
-# Lehrperioden (=Semester)
+---
+sidebar_position: 2
+---
+
+# Lehrperioden
+
+Semester und Semesterabschnitte
 
 Eine Lehrperiode ist eine organisatorische Einheit mit Angaben zum zeitlichen Ausmaß.
 

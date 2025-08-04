@@ -1,0 +1,8 @@
+{
+  "label": "Studienangebot",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Module, Studienangebote, Lehrveranstaltungen und Prüfungen."
+  }
+}

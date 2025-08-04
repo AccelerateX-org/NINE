@@ -1,4 +1,8 @@
-# Studienprogramm
+---
+sidebar_position: 3
+---
+
+# Studienprogramme
 
 Ein Studienprogramm ist Teil des Studienangebots einer Institution. Ein Studienprogramm ist immer genau einer Einrichtung zugeordnet. Die Aufgabe der Einrichtung liegt in der Durchführung des Studienprogramms durch das Anbieten von Lehrveranstaltungen und Prüfungen.
 

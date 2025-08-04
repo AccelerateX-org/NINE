@@ -1,5 +1,7 @@
 # Rollen und Rechte
 
+Wer darf was - und warum.
+
 Die Verwaltung von Rollen und Rechten ist getrennt von der Verwaltung der Benutzerkonten. Dies erlaubt die folgenden Konstellationen:
 
 - Eine Person kann innerhalb eines Benutzerkontos mehrere Rollen ausüben (Standard)
