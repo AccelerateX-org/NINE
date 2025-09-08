@@ -39,6 +39,14 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        /// <summary>
+        /// Korrespondiert zur Reihenfolge der Seiten
+        /// </summary>
+        public int Index { get; set; }
+
+        /// <summary>
+        /// Wenn gesetzt, dann wird das als Untertitel angezeigt
+        /// </summary>
         public string Name { get; set; }
 
         public InfoscreeenPageType Type { get; set; }

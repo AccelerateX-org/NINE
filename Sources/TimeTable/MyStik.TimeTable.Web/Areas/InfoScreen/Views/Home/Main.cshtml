@@ -3,63 +3,52 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-8 col-sm-6">
+        <div class="col-12">
             <h1>Infoscreen R-Bau | FK 09</h1>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-8 col-sm-6">
             <div id="contentCarousel" class="carousel slide" data-bs-ride="carousel">
-            @*
-                <div class="progress" role="progressbar" aria-label="Example 1px high" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="height: 1px">
-                    <div class="progress-bar" style="width: 100%"></div>
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#contentCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#contentCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#contentCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
                 </div>
-                *@
                 <div class="carousel-inner">
                     <div class="carousel-item active" data-bs-interval="20000">
                         <div id="page0">
-                            <h4>Aktuell läuft</h4>
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Wann</th>
-                                    <th>Was</th>
-                                    <th>Wer</th>
-                                    <th>Wo</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>x</td>
-                                    <td>x</td>
-                                    <td>x</td>
-                                    <td>x</td>
-                                </tr>
-                                <tr>
-                                    <td>x</td>
-                                    <td>x</td>
-                                    <td>x</td>
-                                    <td>x</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div class="card" aria-hidden="true">
+                                <div class="card-body">
+                                    <h5 class="card-title placeholder-glow">
+                                        <span class="placeholder col-6"></span>
+                                    </h5>
+                                    <p class="card-text placeholder-glow">
+                                        <span class="placeholder col-7"></span>
+                                        <span class="placeholder col-4"></span>
+                                        <span class="placeholder col-4"></span>
+                                        <span class="placeholder col-6"></span>
+                                        <span class="placeholder col-8"></span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="carousel-item" data-bs-interval="20000">
                         <div id="page1">
-                            <h4>Demnächst beginnt</h4>
-                        </div>
-                    </div>
-                    <div class="carousel-item" data-bs-interval="20000">
-                        <div id="page2">
-                            <h4>Aktuell freie Räume</h4>
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                <!--
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+        -->
             </div>
         </div>
         <div class="col-md-4 col-sm-6">
@@ -82,6 +71,7 @@
                 url: '@Url.Action("ContentForPage")',
                 type: 'POST',
                 data: {
+                    id: '@ViewBag.Location',
                     page: 0,
                 },
                 success: function(result) {
@@ -103,32 +93,16 @@
                         url: '@Url.Action("ContentForPage")',
                         type: 'POST',
                         data: {
+                            id: '@ViewBag.Location',
                             page: event.to,
                         },
                         success: function(result) {
                             window.$(`#${target}`).html(result);
-                            startCounter();
                         }
                     });
 
                 });
         });
-
-        /*
-        function startCounter() {
-            var i = 100;
-
-            var counterBack = setInterval(function () {
-                i = i - 5;
-                if (i > 0) {
-                    $('.progress-bar').css('width', i + '%');
-                } else {
-                    clearInterval(counterBack);
-                }
-
-            }, 950);
-        }
-        */
 
     </script>
 }

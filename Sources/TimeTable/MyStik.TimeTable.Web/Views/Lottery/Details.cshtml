@@ -178,6 +178,7 @@
                     </div>
                     @if (Model.Student != null)
                     {
+                        // Zugang, wenn Wahlverfahren aktiv ist oder Student zugelassen ist
                         if (Model.Lottery.IsActive)
                         {
                             bool hasAccess = true;

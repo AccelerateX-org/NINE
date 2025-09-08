@@ -2102,7 +2102,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /*
         private LotteryGambleCourseViewModel GetCourseViewModel(Lottery lottery, Course wpm, ApplicationUser user)
         {
             var courseService = new CourseService(Db);
@@ -2180,6 +2180,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return courseModel;
         }
+        */
 
         /// <summary>
         /// 

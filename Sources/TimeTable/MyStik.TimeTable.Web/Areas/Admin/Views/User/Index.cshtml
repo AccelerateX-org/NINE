@@ -4,16 +4,14 @@
 }
 
 
-<div class="page-header">
-    <h1>
-        Benutzer <small>Status des Benutzerkontos, keine Fachinformationen</small><span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
-    </h1>
-    <div>
-        <a href="@Url.Action("Statistics")">Statistiken</a>
-    </div>
-</div>
 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Benutzerkonten</h4>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-2">
             <div class="row">
@@ -64,6 +62,17 @@
                                 LoadingElementId = "loading"
                             }, null)
                         </div>
+                        <div class="list-group-item">
+                            @Ajax.ActionLink("Ungültige (\"Gäste\")", "GuestAccounts", null, new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "userTable",
+                                LoadingElementId = "loading"
+                            }, null)
+                        </div>
+
+
 
                         <div class="list-group-item">
                             @Ajax.ActionLink("Duplikate", "Doubles", null, new AjaxOptions
@@ -75,38 +84,9 @@
                             }, null)
                         </div>
 
-                        <div class="list-group-item">
-                            @Ajax.ActionLink("Gäste", "GuestAccounts", null, new AjaxOptions
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "userTable",
-                                LoadingElementId = "loading"
-                            }, null)
-                        </div>
 
                         <div class="list-group-item">
-                            @Ajax.ActionLink("Inaktive Gäste", "InactiveGuests", null, new AjaxOptions
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "userTable",
-                                LoadingElementId = "loading"
-                            }, null)
-                        </div>
-
-                        <div class="list-group-item">
-                            @Ajax.ActionLink("Inaktive Studierende", "InactiveStudents", null, new AjaxOptions
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "userTable",
-                                LoadingElementId = "loading"
-                            }, null)
-                        </div>
-
-                        <div class="list-group-item">
-                            @Ajax.ActionLink("Inaktive Lehrende", "InactiveStaff", null, new AjaxOptions
+                            @Ajax.ActionLink("Inaktive (90 Tage)", "InactiveUser", null, new AjaxOptions
                             {
                                 HttpMethod = "Post",
                                 InsertionMode = InsertionMode.Replace,
@@ -144,29 +124,45 @@
                                 LoadingElementId = "loading"
                             }, null)
                         </div>
+                        <div class="list-group-item">
+                            @Ajax.ActionLink("Altlasten", "ColdCases", null, new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "userTable",
+                                LoadingElementId = "loading"
+                            }, null)
+                        </div>
                     </div>
                 </div>
             </div>
 
-
+            @*
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <ul class="nav">
+                                <li><a href="@Url.Action("ConfirmAll")">Alle aktivieren</a></li>
+                                <li><a href="@Url.Action("Jobs")">Hintergrundjobs</a></li>
+                                    <a href="@Url.Action("Statistics")">Statistiken</a>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            *@
             <div class="row">
                 <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <ul class="nav">
-                            <li><a href="@Url.Action("ConfirmAll")">Alle aktivieren</a></li>
-                            <li><a href="@Url.Action("Jobs")">Hintergrundjobs</a></li>
-                        </ul>
-                    </div>
+                    <a href="@Url.Action("DeleteColdCases")" class="btn btn-danger"><i class="bi bi-trash"></i> Aufräumen</a>
                 </div>
             </div>
-
         </div>
         <div class="col-md-10">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div id="userTable">
-                        @Html.Partial("_UserList", Model)
-                    </div>
+            <div class="card">
+                <div id="loading" class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div id="userTable">
+                    @Html.Partial("_UserList", Model)
                 </div>
             </div>
         </div>

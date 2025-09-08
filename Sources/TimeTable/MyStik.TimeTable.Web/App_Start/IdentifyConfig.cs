@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -145,7 +146,15 @@ namespace MyStik.TimeTable.Web
                 // => zurücksetzen
                 if (user.Approved.HasValue)
                     user.Approved = null;
-                
+
+                // Annahme: bei erfolgreichem Login ist die E-Mail Adresse valide
+                if (!user.EmailConfirmed)
+                {
+                    user.EmailConfirmed = true;
+                    user.Remark = string.Empty;
+                    user.Submitted = null;
+                }
+
                 await this.Store.UpdateAsync(user);
                 
                 return now;

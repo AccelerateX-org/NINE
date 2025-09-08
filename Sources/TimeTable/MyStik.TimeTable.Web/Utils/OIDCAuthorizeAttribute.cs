@@ -11,7 +11,9 @@ namespace MyStik.TimeTable.Web.Utils
     {
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
-            var r = filterContext.ActionDescriptor.GetCustomAttributes(true).Any(x => x is AllowAnonymousAttribute);
+            
+            var r = filterContext.ActionDescriptor.GetCustomAttributes(true).Any(x => x is AllowAnonymousAttribute) ||
+                filterContext.ActionDescriptor.ControllerDescriptor.GetCustomAttributes(true).Any(x => x is AllowAnonymousAttribute);
             if (r) return;
 
             if (filterContext.HttpContext.Request.IsAuthenticated) return;

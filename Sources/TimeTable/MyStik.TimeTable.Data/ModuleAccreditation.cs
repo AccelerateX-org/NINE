@@ -13,6 +13,10 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        /// <summary>
+        /// Der Anteil an ECTS-Punkten, der durch das Fach abgedeckt wird
+        /// </summary>
+        public double ECTS { get; set; }
 
         public virtual CurriculumSlot Slot { get; set; }
 

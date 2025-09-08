@@ -35,6 +35,8 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Models
         /// 
         /// </summary>
         public ICollection<ActivityDate> UpcomingDates { get; set; }
+
+        public ICollection<RoomScheduleViewModel> RoomSchedules { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -65,26 +67,21 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Models
     /// <summary>
     /// 
     /// </summary>
-    public class RoomViewModel
+    public class RoomScheduleViewModel
     {
         /// <summary>
         /// 
         /// </summary>
-        public string Raumnummer { get; set; }
+        public Room Room { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public string Beschreibung { get; set; }
+        public ICollection<ActivityDate> CurrentDates { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public string Status { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public int AnzahlSitze { get; set; }
-             
-        }
+        public ICollection<ActivityDate> NextDates { get; set; }
+    }
 
     /// <summary>
     /// 

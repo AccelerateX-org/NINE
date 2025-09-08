@@ -42,7 +42,6 @@
                 <thead>
                     <tr>
                         <th>Titel</th>
-                        <th>Beschreibung</th>
                         <th>Angelegt von</th>
                         <th>Angelegt für</th>
                         <th>Erster Termin</th>
@@ -56,7 +55,6 @@
                         var rName = string.IsNullOrEmpty(res.Reservation.Name) ? "(ohne Bezeichnung)" : res.Reservation.Name;
                         <tr>
                             <td><a href="@Url.Action("Details", new { id = res.Reservation.Id })">@rName</a></td>
-                            <td>@Html.Raw(res.Reservation.Description)</td>
                             @if (res.Owner != null)
                             {
                                 <td>@res.Owner.FirstName @res.Owner.LastName</td>

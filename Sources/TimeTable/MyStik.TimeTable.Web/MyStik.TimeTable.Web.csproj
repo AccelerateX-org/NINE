@@ -838,6 +838,8 @@
     <Content Include="Assets\fillter\scripts\planer.js" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
     <Content Include="Assets\fillter\scripts\datepicker.js" />
+    <Content Include="Assets\img\cap\CAP_Hamster_bw.ico" />
+    <Content Include="Assets\img\cap\CAP_Hamster_bw_3.png" />
     <Content Include="Assets\img\cap\HM_Logo_RGB.png" />
     <Content Include="Assets\img\cap\noun-nine-oclock-218335.png" />
     <Content Include="Assets\img\cap\noun-playground-3357920.png" />
@@ -3634,6 +3636,9 @@
     <Content Include="Areas\InfoScreen\Views\Home\_Dummy.cshtml" />
     <Content Include="Areas\Admin\Views\User\Claims.cshtml" />
     <Content Include="Areas\Admin\Views\User\AllStudents.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_RoomSchedule.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_PublicTransport.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_Ads.cshtml" />
     <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />

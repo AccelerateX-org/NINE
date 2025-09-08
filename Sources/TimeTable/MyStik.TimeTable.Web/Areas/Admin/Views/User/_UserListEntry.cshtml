@@ -5,14 +5,29 @@
 
 <td><a href="@Url.Action("Student", new {id=Model.User.Id})">@Model.User.LastName</a></td>
 <td>@Model.User.FirstName</td>
-<td>
-    @if (!string.IsNullOrEmpty(Model.User.Email))
-    {
+@if (!string.IsNullOrEmpty(Model.User.Email))
+{
+    <td>
         <a href="mailto:@Model.User.Email"> @Model.User.Email</a>
-        <div>(@Model.User.UserName)</div>
-        @*<div>[@Model.User.Id]</div>*@
-    }
-</td>
+        @if (Model.User.EmailConfirmed)
+        {
+            <span>
+                <i class="bi bi-envelope-check text-success"></i>
+            </span>
+        }
+        else
+        {
+            <div>
+                <i class="bi bi-envelope-x text-danger"></i> (@Model.User.Submitted)
+            </div>
+            <div>@Model.User.Remark</div>
+        }
+    </td>
+}
+else
+{
+    <td><i class="bi bi-envelope-exclamation text-danger"></i></td>
+}
 <td>
     @switch (Model.User.MemberState)
     {
@@ -21,28 +36,47 @@
             {
                 if (student.Curriculum != null)
                 {
-                    <div><i class="fa fa-graduation-cap"></i> @student.Curriculum.ShortName</div>
+                    <div><i class="bi bi-mortarboard-fill text-success"></i> @student.Curriculum.ShortName</div>
                 }
                 else
                 {
-                    <div><i class="fa fa-graduation-cap"></i> N.N.</div>
+                    <div><i class="bi bi-mortarboard text-danger"></i> N.N.</div>
                 }
             }
             break;
         case MemberState.Staff:
-            <div><i class="fa fa-university text-primary"></i></div>
+            <div><i class="bi bi-building text-success"></i></div>
             foreach (var m in Model.Members)
             {
                 <div>@m.Organiser.ShortName</div>
             }
             break;
         case MemberState.Guest:
-            <i class="fa fa-globe text-warning"></i>
+            <i class="bi bi-globe text-warning"></i>
             break;
     }
 </td>
 <td>@Model.User.Registered</td>
 <td>@Model.User.LastLogin</td>
+@if (Model.User.IsApproved)
+{
+    <td>
+        @Model.User.UserName
+        <span>
+            <i class="bi bi-check-circle text-success"></i>
+        </span>
+    </td>
+}
+else
+{
+    <td>
+        @Model.User.UserName
+        <span>
+            <i class="bi bi-x-circle text-danger"></i>
+        </span>
+    </td>
+}
+
 @if (Model.User.Logins.Any())
 {
     <td>
@@ -51,45 +85,13 @@
             <div>@login.LoginProvider</div>
         }
     </td>
-    <td>SSO</td>
-    <td>SSO</td>
-    <td>
-        @Model.User.ExpiryDate
-    </td>
 }
 else
 {
     <td>
-        @if (!Model.User.IsApproved)
-        {
-            <i class="fa fa-ban text-danger"></i>
-        }
-        else
-        {
-            <i class="fa fa-check text-success"></i>
-        }
-    </td>
-    <td>
-        @if (!Model.User.EmailConfirmed)
-        {
-            <i class="fa fa-ban text-danger"></i>
-        }
-        else
-        {
-            <i class="fa fa-check text-success"></i>
-        }
-    </td>
-    <td>@Model.User.Approved</td>
-    <td>
-        @Model.User.ExpiryDate
-        @Model.User.Logins.Count
-        @Model.User.Claims.Count
-        @foreach (var login in Model.User.Logins.ToList())
-        {
-            <div>@login.LoginProvider</div>
-        }
     </td>
 }
+<td>@Model.User.ExpiryDate</td>
 
 <td>
     @if (User.IsInRole("SysAdmin"))
@@ -100,40 +102,7 @@ else
             </button>
             <ul class="dropdown-menu">
                 <li>
-                    @Ajax.ActionButton("fa-graduation-cap", "Student", "MakeStudent", "User",
-                        new {id = Model.User.Id},
-                        new AjaxOptions
-                        {
-                            HttpMethod = "Post",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = Model.User.Id
-                        },
-                        null)
-                </li>
-                <li>
-                    @Ajax.ActionButton("fa-university", "Staff", "MakeStaff", "User",
-                        new {id = Model.User.Id},
-                        new AjaxOptions
-                        {
-                            HttpMethod = "Post",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = Model.User.Id
-                        },
-                        null)
-                </li>
-                <li>
-                    @Ajax.ActionButton("fa-user", "Gast", "MakeGuest", "User",
-                        new {id = Model.User.Id},
-                        new AjaxOptions
-                        {
-                            HttpMethod = "Post",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = Model.User.Id
-                        },
-                        null)
-                </li>
-                <li>
-                    @Ajax.ActionButton("fa-wrench", "RepairUser", "RepairUser", "User",
+                    @Ajax.ActionButton("bi bi-mortarboard", "Student", "MakeStudent", "User",
                         new { id = Model.User.Id },
                         new AjaxOptions
                         {
@@ -144,8 +113,8 @@ else
                         null)
                 </li>
                 <li>
-                    @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteUser", "User",
-                        new {id = Model.User.Id},
+                    @Ajax.ActionButton("bi bi-building", "Staff", "MakeStaff", "User",
+                        new { id = Model.User.Id },
                         new AjaxOptions
                         {
                             HttpMethod = "Post",
@@ -155,7 +124,40 @@ else
                         null)
                 </li>
                 <li>
-                    <a href="@Url.Action("ChangeUserName", new {id=Model.User.Id})">Benutzernamen ändern</a>
+                    @Ajax.ActionButton("bi bi-person", "Gast", "MakeGuest", "User",
+                        new { id = Model.User.Id },
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    @Ajax.ActionButton("bi bi-wrench", "RepairUser", "RepairUser", "User",
+                        new { id = Model.User.Id },
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    @Ajax.ActionButton("bi bi-trash", "Löschen", "DeleteUser", "User",
+                        new { id = Model.User.Id },
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    <a href="@Url.Action("ChangeUserName", new {id=Model.User.Id})"><i class="bi bi-person-fill-gear"></i> Benutzernamen ändern</a>
                 </li>
             </ul>
         </div>

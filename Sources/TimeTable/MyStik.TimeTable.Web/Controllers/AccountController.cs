@@ -885,7 +885,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     // user.ExpiryDate = DateTime.Today.AddDays(14),
                     // user.Submitted = now
                     Approved = DateTime.Now,
-                    IsApproved = true
+                    IsApproved = true,
+                    EmailConfirmed = true
                 };
 
 

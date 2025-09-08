@@ -614,13 +614,12 @@ namespace MyStik.TimeTable.Web.Controllers
                                 ErrorMessage = strError
                             });
 
-                            /*
+                            
                             user.EmailConfirmed = false;
-                            // Ein Expiry ist nicht sinnvoll / möglich, da E-Mail Adresse ja ohnehin nicht erreichbar
                             user.Remark = strError;
                             user.Submitted = DateTime.Now;
                             UserManager.Update(user);
-                             */
+                            
                         }
                     }
                 }

@@ -14,7 +14,10 @@
                     <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
                 </ol>
             </nav>
-
+            </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="card">
                 @if (ViewBag.UserRight.IsRoomAdmin)
                 {
@@ -22,51 +25,51 @@
                         <div class="list-group-item">
                             <div class="btn-group" role="group">
                                 <a href="@Url.Action("Index", new { id = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> Zurück</a>
-                    <a href="@Url.Action("CreateDate", new { id = Model.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-file-plus"></i> Neuen Termin anlegen</a>
-                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservation", new { id = Model.Id })"><i class="bi bi-trash"></i> Reservierung löschen</a>
+                                <a href="@Url.Action("CreateDate", new { id = Model.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary"><i class="bi bi-file-plus"></i> Neuen Termin anlegen</a>
+                                <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservation", new { id = Model.Id })"><i class="bi bi-trash"></i> Reservierung löschen</a>
                             </div>
                         </div>
                     </div>
                 }
                 <table class="table">
                     <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Beginn</th>
-                        <th>Ende</th>
-                        <th>Beschreibung</th>
-                        <th>Lehrende</th>
-                        <th>Räume</th>
-                        <th></th>
-                    </tr>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Beginn</th>
+                            <th>Ende</th>
+                            <th>Beschreibung</th>
+                            <th>Lehrende</th>
+                            <th>Räume</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @foreach (var date in Model.Dates.OrderBy(x => x.Begin))
-                    {
-                        <tr>
-                            @if (ViewBag.UserRight.IsRoomAdmin)
-                            {
-
-                                <td><a href="@Url.Action("MoveDate", new { id = date.Id })">@date.Begin.Date.ToShortDateString()</a></td>
-                            }
-                            else
-                            {
-                                <td>@date.Begin.Date.ToShortDateString()</td>
-
-                            }
-                            <td>@date.Begin.ToString("HH:mm")</td>
-                            <td>@date.End.ToString("HH:mm")</td>
-                            <td>@Html.Raw(date.Description)</td>
-                            <td>@Html.LecturerList(date.Hosts)</td>
-                            <td>@Html.RoomList(date.Rooms)</td>
-                            <td>
+                        @foreach (var date in Model.Dates.OrderBy(x => x.Begin))
+                        {
+                            <tr>
                                 @if (ViewBag.UserRight.IsRoomAdmin)
                                 {
-                                    <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservationDate", new { id = date.Id })"><i class="bi bi-trash"></i> löschen</a>
+
+                                    <td><a href="@Url.Action("MoveDate", new { id = date.Id })">@date.Begin.Date.ToShortDateString()</a></td>
                                 }
-                            </td>
-                        </tr>
-                    }
+                                else
+                                {
+                                    <td>@date.Begin.Date.ToShortDateString()</td>
+
+                                }
+                                <td>@date.Begin.ToString("HH:mm")</td>
+                                <td>@date.End.ToString("HH:mm")</td>
+                                <td>@Html.Raw(date.Description)</td>
+                                <td>@Html.LecturerList(date.Hosts)</td>
+                                <td>@Html.RoomList(date.Rooms)</td>
+                                <td>
+                                    @if (ViewBag.UserRight.IsRoomAdmin)
+                                    {
+                                        <a class="btn btn-outline-danger" id="delete" href="@Url.Action("DeleteReservationDate", new { id = date.Id })"><i class="bi bi-trash"></i> löschen</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

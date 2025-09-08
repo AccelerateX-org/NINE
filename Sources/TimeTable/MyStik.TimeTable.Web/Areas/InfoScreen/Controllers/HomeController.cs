@@ -33,17 +33,15 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         }
 
         [HttpPost]
-        [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]
-        public PartialViewResult ContentForPage(int page)
+        [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 10)]
+        public PartialViewResult ContentForPage(string id, int page)
         {
             switch (page)
             {
                 case 0:
-                    return CurrentCourses();
+                    return RoomSchedule(id);
                 case 1:
-                    return NextCourses();
-                case 2:
-                    return FreeRooms();
+                    return Ads(id);
             }
 
             return PartialView("_Dummy");
@@ -155,6 +153,72 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
 
 
         #region RightPanel
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public PartialViewResult RoomSchedule(string id)
+        {
+            var now = new DateTime(2025, 10, 6, 8, 5, 0);
+            var diff = 45 - now.Minute % 15;
+            var next = now.AddMinutes(diff);
+
+            var organiser = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
+
+            var model = new InfoscreenModel { RoomSchedules= new List<RoomScheduleViewModel>() };
+
+            string[] rooms = {"R 1.084", "R 1.085", "R 1.086", "R 1.087", "R 2.088", "R 2.089", "R 2.090", "R 2.091" };
+
+            foreach (var room in rooms)
+            {
+                var r = Db.Rooms.SingleOrDefault(rm => rm.Number.Equals(room));
+
+                if (r != null)
+                {
+                    // was läuft jetzt in dem Raum
+                    var currentDates = Db.ActivityDates.Where(d => d.Begin <= now  && d.End >= now && d.Rooms.Any(rm => rm.Id == r.Id))
+                        .OrderBy(d => d.Begin).ThenBy(d => d.End).Include(d => d.Activity).ToList();
+
+                    var nextDates = Db.ActivityDates.Where(d => d.Begin > now && d.Begin <= next && d.Rooms.Any(rm => rm.Id == r.Id))
+                        .OrderBy(d => d.Begin).ThenBy(d => d.End).Include(d => d.Activity).ToList();
+
+                    // kein Nachfolger im Zeitfenster => nächster Termin heute
+                    if (!nextDates.Any())
+                    {
+                        var nextDay = now.Date.AddDays(1);
+                        nextDates = Db.ActivityDates.Where(d => d.Begin > now && d.Begin < nextDay && d.Rooms.Any(rm => rm.Id == r.Id))
+                            .OrderBy(d => d.Begin).ThenBy(d => d.End).Include(d => d.Activity).ToList();
+
+                    }
+
+                    var sched = new RoomScheduleViewModel { CurrentDates = currentDates, NextDates = nextDates, Room = r };
+
+                    model.RoomSchedules.Add(sched);
+                }
+            }
+
+
+            return PartialView("_RoomSchedule", model);
+        }
+
+        /// <summary>
+        /// https://www.mvv-muenchen.de/fahrplanauskunft/fuer-entwickler/index.html
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public PartialViewResult PublicTransport(string id)
+        {
+            // das mit dem dynamischen Nachladen der Daten klappt nicht
+            return PartialView("_PublicTransport" );
+        }
+
+        public PartialViewResult Ads(string id)
+        {
+            var model = new InfoscreenModel();
+            return PartialView("_Ads", model);
+        }
+
 
         /// <summary>
         /// 

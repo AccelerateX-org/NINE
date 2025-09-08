@@ -629,6 +629,10 @@
     <Compile Include="Migrations\202501121647564_RoomOwnerV4.Designer.cs">
       <DependentUpon>202501121647564_RoomOwnerV4.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509080623190_r_0_19_0.cs" />
+    <Compile Include="Migrations\202509080623190_r_0_19_0.Designer.cs">
+      <DependentUpon>202509080623190_r_0_19_0.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -1010,6 +1014,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202501121647564_RoomOwnerV4.resx">
       <DependentUpon>202501121647564_RoomOwnerV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509080623190_r_0_19_0.resx">
+      <DependentUpon>202509080623190_r_0_19_0.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
