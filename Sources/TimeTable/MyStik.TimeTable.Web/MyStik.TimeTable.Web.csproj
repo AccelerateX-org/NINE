@@ -4843,6 +4843,8 @@
     <Content Include="Views\Error\ServerError.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\Lottery\EditMethod.cshtml" />
+    <Content Include="Views\Lottery\Entitlements.cshtml" />
+    <Content Include="Views\Lottery\_StudentTable.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

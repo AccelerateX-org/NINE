@@ -37,6 +37,7 @@
 
                                 <a href="@Url.Action("EditGeneral", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-gear"></i> Beschreibung</a>
                                 <a href="@Url.Action("Select", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Zusammensetzung</a>
+                                <a href="@Url.Action("Entitlements", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Zulassungen</a>
                                 <a href="@Url.Action("EditSubscriptionPeriod", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Platzvergabe (Methode)</a>
                                 <a href="@Url.Action("EditProcess", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Zeitplan Losverfahren</a>
                                 @if (Model.Lottery.IsActive)

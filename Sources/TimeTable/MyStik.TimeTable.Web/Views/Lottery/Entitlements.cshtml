@@ -12,7 +12,7 @@
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Lottery.Organiser.Id})">@Model.Lottery.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Lottery", new {id = Model.Lottery.Semester.Id})">Wahlverfahren</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Lottery", new {id = Model.Lottery.Id})">@Model.Lottery.Name</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Zusammensetzung</li>
+                <li class="breadcrumb-item active" aria-current="page">Zulassungen</li>
             </ol>
         </nav>
     </div>
@@ -22,8 +22,11 @@
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title">
-                    Wahlverfahren "@Model.Lottery.Name" - Zusammensetzung
+                    Wahlverfahren "@Model.Lottery.Name" - Zulassungen
                 </h4>
+            </div>
+            <div class="card-body">
+                Hier aufgeführte Studierende können am Wahlverfahren mit individuellen Einstellungen (Zeitraum, Umfang Wahlmöglichkeiten) teilnehmen.
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -56,20 +59,78 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Nachname</th>
+                            <th>Vorname</th>
+                            <th>Studiengang</th>
+                            <th>Kohorte(n)</th>
+                            <th>Studienbeginn</th>
                             <th>Status</th>
-                            <th>Bezeichnung</th>
-                            <th>Gruppen</th>
+                            <th>E-Mail</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody id="activityTable">
-                        @foreach (var activity in Model.PotElements)
+                        @foreach (var user in Model.Entitlements)
                         {
-                            <tr id="@activity.ActivitySummary.Activity.Occurrence.Id">
+                            <tr id="@user.Student.Id">
                                 <td>Bestand</td>
-                                <td>@activity.ActivitySummary.Activity.Name (@activity.ActivitySummary.Activity.ShortName)</td>
-                                <td>@Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)</td>
-                                <td><button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@activity.ActivitySummary.Activity.Occurrence.Id');"><i class="bi bi-trash"></i></button></td>
+                                @if (user.Student != null && user.Student.Curriculum != null)
+                                {
+                                    <td>@Html.FacultyLabel(user.Student.Curriculum.Organiser)</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+
+                                }
+                                <td>
+                                    @user.User.LastName
+                                </td>
+                                <td>@user.User.FirstName</td>
+                                @if (user.Student != null)
+                                {
+                                    if (user.Student.Curriculum != null && user.Student.FirstSemester != null)
+                                    {
+                                        <td>@user.Student.Curriculum.ShortName</td>
+                                        <td>
+                                            @if (user.Student.LabelSet != null)
+                                            {
+                                                foreach (var label in user.Student.LabelSet.ItemLabels)
+                                                {
+                                                    <div>@label.Name</div>
+                                                }
+                                            }
+                                        </td>
+                                        <td>@user.Student.FirstSemester.Name</td>
+                                        if (user.Student.LastSemester != null)
+                                        {
+                                            <td>@user.Student.LastSemester.Name</td>
+                                        }
+                                        else
+                                        {
+                                            <td>aktiv</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                }
+                                <td>@user.User.Email</td>
+
+                                <td><button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@user.Student.Id');"><i class="bi bi-trash"></i></button></td>
                             </tr>
                         }
                     </tbody>
@@ -104,7 +165,7 @@
             $.ajax(
             {
                 type: "POST",
-                url: '@Url.Action("ChangeLotPot")',
+                url: '@Url.Action("ChangeEntitlements")',
                 data: {
                     LotteryId: "@Model.LotteryId",
                     CourseIds: groupList
@@ -130,7 +191,7 @@
             $.ajax(
                 {
                     type: 'POST',
-                    url: '@Url.Action("Search")',
+                    url: '@Url.Action("SearchStudents")',
                     data: {
                         searchText: groupId,
                         semId: semId,

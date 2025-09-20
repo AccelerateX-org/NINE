@@ -196,7 +196,10 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<LotteryLotPotCourseModel> PotElements { get; set; }
+
+        public ICollection<StudentViewModel> Entitlements { get; set; }
     }
+
 
     /// <summary>
     /// 
