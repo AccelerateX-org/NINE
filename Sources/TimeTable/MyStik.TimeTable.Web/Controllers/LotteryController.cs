@@ -3706,8 +3706,37 @@ namespace MyStik.TimeTable.Web.Controllers
             return null;
         }
 
-
         public ActionResult Entitlements(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            var semester = lottery.Semester;
+
+            var model = new LotteryLotPotModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+                SemesterId = semester.Id,
+                OrganiserId = lottery.Organiser.Id,
+                Entitlements = new List<StudentViewModel>()
+            };
+
+            foreach (var entitlement in lottery.Entitlements)
+            {
+                var item = new StudentViewModel
+                {
+                    Student = entitlement.Student,
+                    User = UserManager.FindById(entitlement.Student.UserId)
+                };
+                model.Entitlements.Add(item);
+            }
+
+
+            return View(model);
+        }
+
+
+        public ActionResult SelectStudents(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
 
@@ -3817,6 +3846,68 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_StudentTable", model);
         }
+
+        [HttpPost]
+        public PartialViewResult ChangeEntitlements(Guid LotteryId, Guid[] CourseIds)
+        {
+            // Übergeben werden die OccourrenceIds der Kurse!!!
+
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == LotteryId);
+
+
+            if (CourseIds != null)
+            {
+                var oldList = lottery.Entitlements.ToList();
+                foreach (var occId in CourseIds)
+                {
+                    var occ = oldList.SingleOrDefault(o => o.Student.Id == occId);
+                    // schon drin => aus der Liste löschen
+                    if (occ != null)
+                    {
+                        oldList.Remove(occ);
+                    }
+                    else
+                    {
+                        // das ist neu => hinzufügen
+                        var occ2 = Db.Students.SingleOrDefault(o => o.Id == occId);
+
+                        var entitlement = new LotteryEntitlement
+                        {
+                            Lottery = lottery,
+                            Student = occ2
+                        };
+
+                        Db.LotteryEntitlements.Add(entitlement);
+
+                        lottery.Entitlements.Add(entitlement);
+                    }
+
+                }
+                // die in der oldList verbliebenen Einträge kommen raus
+                foreach (var occ in oldList)
+                {
+                    lottery.Entitlements.Remove(occ);
+
+                    Db.LotteryEntitlements.Remove(occ);
+                }
+            }
+            else
+            {
+                // alles raus
+                foreach (var occ in lottery.Entitlements.ToList())
+                {
+                    Db.LotteryEntitlements.Remove(occ);
+                }
+                lottery.Entitlements.Clear();
+            }
+
+
+            Db.SaveChanges();
+
+            //
+            return null;
+        }
+
 
     }
 }

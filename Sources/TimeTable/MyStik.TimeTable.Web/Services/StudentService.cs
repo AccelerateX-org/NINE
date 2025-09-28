@@ -25,7 +25,7 @@ namespace MyStik.TimeTable.Web.Services
             return Db.Students
                 .Where(x =>
                     x.UserId.Equals(userId))
-                .OrderBy(x => x.Created)
+                .OrderByDescending(x => x.Created)
                 .ToList();
         }
 

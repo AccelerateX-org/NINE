@@ -3,81 +3,88 @@
 
 
 <div>
-    <h4>Aktuelle Raumbelegung</h4>
+    @if (Model.Page != null)
+    {
+        <h4>@Model.Page.Name</h4>
+    }
+    else
+    {
+        <h4>Raumbelegung</h4>
+    }
     @if (Model.RoomSchedules.Any())
     {
         <div class="infoscreen">
             <table class="table table-striped">
                 <thead>
-                <tr>
-                    <th>Raum</th>
-                    <th>Aktuell</th>
-                    <th>Anschließend</th>
-                </tr>
+                    <tr>
+                        <th>Raum</th>
+                        <th>Aktuell</th>
+                        <th>Anschließend</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var roomSchedule in Model.RoomSchedules)
-                {
-                    <tr>
-                        <td>@roomSchedule.Room.Number</td>
-                        @if (roomSchedule.CurrentDates.Any() || roomSchedule.NextDates.Any())
-                        {
-                            if (roomSchedule.CurrentDates.Any())
+                    @foreach (var roomSchedule in Model.RoomSchedules)
+                    {
+                        <tr>
+                            <td>@roomSchedule.Room.Number</td>
+                            @if (roomSchedule.CurrentDates.Any() || roomSchedule.NextDates.Any())
                             {
-                                <td>
-                                    @foreach (var date in roomSchedule.CurrentDates)
-                                    {
-                                        if (date.Occurrence != null && date.Occurrence.IsCanceled)
+                                if (roomSchedule.CurrentDates.Any())
+                                {
+                                    <td>
+                                        @foreach (var date in roomSchedule.CurrentDates)
                                         {
-                                            <div class="text-danger">
-                                                @Html.TimeSpan(date) - @date.Activity.Name (abgesagt)
-                                            </div>
+                                            if (date.Occurrence != null && date.Occurrence.IsCanceled)
+                                            {
+                                                <div class="text-danger">
+                                                    @Html.TimeSpan(date) - @date.Activity.Name (abgesagt)
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>
+                                                    @Html.TimeSpan(date) - @date.Activity.Name
+                                                </div>
+                                            }
                                         }
-                                        else
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td><span class="text-success">frei</span></td>
+                                }
+                                if (roomSchedule.NextDates.Any())
+                                {
+                                    <td>
+                                        @foreach (var date in roomSchedule.NextDates)
                                         {
-                                            <div>
-                                                @Html.TimeSpan(date) - @date.Activity.Name
-                                            </div>
+                                            if (date.Occurrence != null && date.Occurrence.IsCanceled)
+                                            {
+                                                <div class="text-danger">
+                                                    @Html.TimeSpan(date) - @date.Activity.Name (abgesagt)
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>
+                                                    @Html.TimeSpan(date) - @date.Activity.Name
+                                                </div>
+                                            }
                                         }
-                                    }
-                                </td>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td><span class="text-success">frei</span></td>
+                                }
                             }
                             else
                             {
                                 <td><span class="text-success">frei</span></td>
+                                <td><span class="text-success">frei</span></td>
                             }
-                            if (roomSchedule.NextDates.Any())
-                            {
-                                <td>
-                                    @foreach (var date in roomSchedule.NextDates)
-                                    {
-                                        if (date.Occurrence != null && date.Occurrence.IsCanceled)
-                                        {
-                                            <div class="text-danger">
-                                                @Html.TimeSpan(date) - @date.Activity.Name (abgesagt)
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>
-                                                @Html.TimeSpan(date) - @date.Activity.Name
-                                            </div>
-                                        }
-                                    }
-                                </td>
-                            }
-                            else
-                            {
-                                <td><span class="text-success">frei</span> <i>heute keine weitere Belegung</i></td>
-                            }
-                        }
-                        else
-                        {
-                            <td><span class="text-success">frei</span></td>
-                            <td><i>heute keine weitere Belegung</i></td>
-                        }
-                    </tr>
-                 }
+                        </tr>
+                    }
 
                 </tbody>
             </table>

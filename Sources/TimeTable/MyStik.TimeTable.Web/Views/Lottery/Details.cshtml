@@ -190,6 +190,8 @@
                                 hasAccess = false;
                             }
 
+                            bool isEntitled = Model.Lottery.Entitlements.Any(e => e.Student.Id == Model.Student.Id);
+
                             if (hasAccess)
                             {
                                 if (!Model.Lottery.IsFixed)
@@ -240,7 +242,7 @@
                                             <h5 class="list-group-item-heading">Habe bisher keine Lehrveranstaltung ausgewählt.</h5>
                                         }
 
-                                        @if (Model.Lottery.IsActiveFrom.Value <= DateTime.Now)
+                                        @if (Model.Lottery.IsActiveFrom.Value <= DateTime.Now || isEntitled)
                                         {
                                             <div class="btn-group" role="group">
                                                 <a href="@Url.Action("ChangeSelection", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-pencil"></i> Meine Auswahl ändern</a>
@@ -322,13 +324,13 @@
                                             <h5><i>Bisher habe ich an diesem Wahlverfahren noch nicht teilgenommen</i></h5>
                                         }
                                     </div>
-                                    if (DateTime.Now < Model.Lottery.IsActiveFrom.Value)
+                                    if (DateTime.Now < Model.Lottery.IsActiveFrom.Value && !isEntitled)
                                     {
                                         <div class="list-group-item list-group-item-warning">
                                             <h5 class="list-group-item-heading">Zeitraum für Eintragungen hat noch nicht begonnen</h5>
                                         </div>
                                     }
-                                    else if (Model.Lottery.IsFixed && DateTime.Now > Model.Lottery.IsActiveUntil.Value && DateTime.Now <= Model.Lottery.LastDrawing)
+                                    else if (Model.Lottery.IsFixed && DateTime.Now > Model.Lottery.IsActiveUntil.Value && DateTime.Now <= Model.Lottery.LastDrawing && !isEntitled)
                                     {
                                         <div class="list-group-item list-group-item-danger">
                                             <p>Aktuell läuft die Platzvergabe. In dieser Zeit ist kein Ein- oder Austragen möglich.</p>

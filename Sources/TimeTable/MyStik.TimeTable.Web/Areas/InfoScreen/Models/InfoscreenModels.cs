@@ -41,6 +41,8 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Models
         /// 
         /// </summary>
         public MensaView_Tag SpeiseplanHeute { get; set; }
+
+        public InfoscreenPage Page { get; set; }
     }
 
     /// <summary>

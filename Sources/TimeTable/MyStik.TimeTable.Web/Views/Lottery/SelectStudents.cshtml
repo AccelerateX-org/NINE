@@ -30,9 +30,28 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <div class="btn-group" role="group">
-                        <a href="@Url.Action("Details", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> zurück</a>
-                        <a href="@Url.Action("SelectStudents", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi bi-basket"></i> Studierende hinzufügen / entfernen</a>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-select" })
+                                <label for="SemesterId">Semester auswählen</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-select", onchange = "onOrganiserChanged()" })
+                                <label for="OrganiserId">Fakultät auswählen</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating mb-3">
+                                <input name="searchText" id="searchText" type="text" class="form-control" onkeydown="onEnter()" placeholder="Teil aus Name oder Kurzname der Lehrveranstaltung">
+                                <label for="searchText">Suchbegriff (Teil aus Name oder Kurzname der Lehrveranstaltung)</label>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-outline-primary" type="submit" id="button-addon2" onclick="search()"><i class="bi bi-search"></i> Suchen</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -40,6 +59,8 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th></th>
+                            <th></th>
                             <th>Nachname</th>
                             <th>Vorname</th>
                             <th>Studiengang</th>
@@ -47,12 +68,14 @@
                             <th>Studienbeginn</th>
                             <th>Status</th>
                             <th>E-Mail</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="activityTable">
                         @foreach (var user in Model.Entitlements)
                         {
                             <tr id="@user.Student.Id">
+                                <td>Bestand</td>
                                 @if (user.Student != null && user.Student.Curriculum != null)
                                 {
                                     <td>@Html.FacultyLabel(user.Student.Curriculum.Organiser)</td>
@@ -107,10 +130,14 @@
                                 }
                                 <td>@user.User.Email</td>
 
+                                <td><button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@user.Student.Id');"><i class="bi bi-trash"></i></button></td>
                             </tr>
                         }
                     </tbody>
                 </table>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary" onclick="saveLotPot()"><i class="fa fa-save"></i> speichern</button>
             </div>
         </div>
     </div>
@@ -120,6 +147,62 @@
 @section Scripts {
 
     <script>
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+        function saveLotPot() {
+            var groupList = new Array();
+
+            var list = $("#CourseTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    groupList[i] = list[i].id;
+                }
+            }
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("ChangeEntitlements")',
+                data: {
+                    LotteryId: "@Model.LotteryId",
+                    CourseIds: groupList
+                },
+                success: function(data, success, xhr) {
+                    window.location.replace("@Url.Action("Entitlements", new {id=Model.Lottery.Id})");
+                }
+            });
+
+        }
+
+        function onEnter() {
+            if (event.key === 'Enter') {
+                search();
+            }
+        }
+
+        function search() {
+            var groupId = $('#searchText').val();
+            var semId = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SearchStudents")',
+                    data: {
+                        searchText: groupId,
+                        semId: semId,
+                        orgId: orgId
+                    },
+                    success: function (data, success, xhr) {
+                        $('#activityTable').append(data);
+                    }
+                });
+
+        }
 
     </script>
 }

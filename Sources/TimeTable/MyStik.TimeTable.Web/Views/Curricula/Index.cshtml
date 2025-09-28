@@ -3,13 +3,6 @@
 @model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
 
 @{
-    var containerType = "container-fluid";
-    if (!Request.IsAuthenticated)
-    {
-        // Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
-        containerType = "container";
-    }
-
     ViewBag.Title = "Studiengänge";
 
     var isMember = ViewBag.UserRight.IsOrgMember;
@@ -19,7 +12,7 @@
     if (Model.Count() == 1)
     {
         myOrg = Model.First();
-        txtMenu = Model.First().Name;
+        txtMenu = Model.First().Name + " (" + Model.First().ShortName + ")";
     }
 }
 
@@ -34,13 +27,16 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Curricula", "University")">Studienangebote</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@txtMenu</li>
             </ol>
         </nav>
-
-
+        </div>
+    </div>
+<div class="row">
+    <div class="col-12">
         <div class="card">
             @if (ViewBag.UserRight.IsCurriculumAdmin && myOrg != null)
             {

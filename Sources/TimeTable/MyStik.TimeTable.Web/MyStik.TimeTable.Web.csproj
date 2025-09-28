@@ -481,6 +481,7 @@
     <Compile Include="Areas\Admin\Models\DataAdminModel.cs" />
     <Compile Include="Areas\Admin\Models\LogModels.cs" />
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
+    <Compile Include="Controllers\InfoscreensController.cs" />
     <Compile Include="Helpers\OAuthHelpers.cs" />
     <Compile Include="Jobs\AccountJob.cs" />
     <Compile Include="Jobs\LoggingJob.cs" />
@@ -4845,6 +4846,9 @@
     <Content Include="Views\Lottery\EditMethod.cshtml" />
     <Content Include="Views\Lottery\Entitlements.cshtml" />
     <Content Include="Views\Lottery\_StudentTable.cshtml" />
+    <Content Include="Views\Lottery\SelectStudents.cshtml" />
+    <Content Include="Views\Infoscreens\Index.cshtml" />
+    <Content Include="Views\Infoscreens\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

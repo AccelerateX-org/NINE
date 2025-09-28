@@ -25,26 +25,24 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(string id="FK 09")
+        public ActionResult Index(string id)
         {
-            // leere Seite nur mir Uhr
-            ViewBag.Location = id;
-            return View("Main");
+            var screen = Db.Infoscreens.SingleOrDefault(x => x.Tag.Equals(id));
+            if (screen == null)
+            {
+                return HttpNotFound("Kein Infoscreen mit dem Tag " + id + " gefunden");
+            }
+
+            return View("Main", screen);
         }
 
         [HttpPost]
         [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 10)]
-        public PartialViewResult ContentForPage(string id, int page)
+        public PartialViewResult ContentForPage(Guid id, int page)
         {
-            switch (page)
-            {
-                case 0:
-                    return RoomSchedule(id);
-                case 1:
-                    return Ads(id);
-            }
+            return RoomSchedule(id, page);
 
-            return PartialView("_Dummy");
+            //return PartialView("_Dummy");
         }
 
 
@@ -158,22 +156,34 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public PartialViewResult RoomSchedule(string id)
+        public PartialViewResult RoomSchedule(Guid id, int page)
         {
-            var now = new DateTime(2025, 10, 6, 8, 5, 0);
+            var screen = Db.Infoscreens.SingleOrDefault(x => x.Id == id);
+
+            if (screen == null)
+            {
+                return PartialView("_RoomSchedule", new InfoscreenModel{ RoomSchedules = new List<RoomScheduleViewModel>() });
+            }   
+
+            var screenPage = screen?.Pages.SingleOrDefault(p => p.Index == page);
+
+            if (screenPage == null)
+            {
+                return PartialView("_RoomSchedule", new InfoscreenModel { RoomSchedules = new List<RoomScheduleViewModel>() });
+            }   
+
+            var now = DateTime.Now;
             var diff = 45 - now.Minute % 15;
             var next = now.AddMinutes(diff);
 
-            var organiser = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
+            var model = new InfoscreenModel { 
+                RoomSchedules= new List<RoomScheduleViewModel>(),
+                Page = screenPage
+            };
 
-            var model = new InfoscreenModel { RoomSchedules= new List<RoomScheduleViewModel>() };
-
-            string[] rooms = {"R 1.084", "R 1.085", "R 1.086", "R 1.087", "R 2.088", "R 2.089", "R 2.090", "R 2.091" };
-
-            foreach (var room in rooms)
+            //foreach (var room in rooms)
+            foreach (var r in screenPage.RoomAllocationGroup.RoomAllocations.Select(ra => ra.Room))
             {
-                var r = Db.Rooms.SingleOrDefault(rm => rm.Number.Equals(room));
-
                 if (r != null)
                 {
                     // was läuft jetzt in dem Raum
@@ -191,6 +201,9 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
                             .OrderBy(d => d.Begin).ThenBy(d => d.End).Include(d => d.Activity).ToList();
 
                     }
+
+                    // nur die nächsten 2 anzeigen
+                    nextDates = nextDates.Take(2).ToList();
 
                     var sched = new RoomScheduleViewModel { CurrentDates = currentDates, NextDates = nextDates, Room = r };
 
