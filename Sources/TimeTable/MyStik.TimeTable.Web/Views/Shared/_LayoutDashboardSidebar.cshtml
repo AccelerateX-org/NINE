@@ -40,7 +40,7 @@
     }
     *@
 </head>
-<body style="background-color: #e1e1e1">
+<body style="background-color: #ffffff">
     @{
         var userService = new UserInfoService();
         var user = userService.GetUser(User.Identity.GetUserId());
@@ -49,47 +49,48 @@
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
     <div class="container-fluid">
-        <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><i class="bi bi-list"></i></a>
+        <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample" aria-label="Main menu"><i class="bi bi-list"></i></a>
 
         @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
         {
             <form class="d-flex" action="@Url.Action("Index", "Search")">
                 <input class="form-control me-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                <a href="https://acceleratex-org.github.io/NINE/" target="_blank" class="btn btn-outline-light"><i class="bi bi-question-circle"></i></a>
                 @*
-                <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
-                    *@
+        <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                *@
             </form>
         }
-    <ul class="navbar-nav">
-        @if (Request.IsAuthenticated)
-        {
-            @*
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-user-circle fa-fw"></i> @user.FullName
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="@Url.Action("PersonalMessage", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
-                    <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
-                    <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
-                    <li>
-                        <div class="dropdown-divider"></div>
-                    </li>
-                    <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
-                </ul>
-            </li>
-            *@
-            <li class="nav-item">
-                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
-            </li>
-        }
-        else
-        {
-            <li class="nav-item">
-                <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi bi-door-open"></i> @Resources.LoginButton</a>
-            </li>
-        }
-    </ul>
+        <ul class="navbar-nav">
+            @if (Request.IsAuthenticated)
+            {
+                @*
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-fw"></i> @user.FullName
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="@Url.Action("PersonalMessage", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
+                        <li>
+                            <div class="dropdown-divider"></div>
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
+                    </ul>
+                </li>
+                *@
+                <li class="nav-item">
+                    <a aria-label="Logout" href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi bi-door-open"></i> @Resources.LoginButton</a>
+                </li>
+            }
+        </ul>
     </div>
 </nav>
     
@@ -99,7 +100,7 @@
 
 
 
-<footer class="row bg-light mt-3">
+<footer class="row mt-3"  style="background-color: #ffffff">
     <div class="col">
         <div class="d-flex flex-row mb-3">
             <a class="p-2" href="https://github.com/AccelerateX-org">nine @Html.AssemblyVersion()</a>
@@ -107,10 +108,10 @@
             <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
 
             <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
-                <img src="~/Assets/img/flags/de.png" />
+                <img alt="Language de" aria-label="Switch to language de" src="~/Assets/img/flags/de.png" />
             </a>
             <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
-                <img src="~/Assets/img/flags/gb.png" />
+                <img alt="Language en" aria-label="Switch to language en" src="~/Assets/img/flags/gb.png" />
             </a>
         </div>
     </div>
@@ -118,34 +119,38 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        @if (Request.IsAuthenticated)
-        {
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">@user.FullName</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        }
-        else
-        {
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">NINE</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        }
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">CAP</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="list-group">
+        @if (Request.IsAuthenticated)
+        {
+            <div class="list-group-item list-group-item-secondary">@user.FullName</div>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dashboard")">
+                <i class="bi bi-grid"></i> Mein Dashboard
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
+                <i class="´bi bi-book"></i> Mein Studienbuch
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Manage")">
+                <i class="´bi bi-person-check"></i> @Resources.MyUserProfile
+            </a>
+        }
+        <div class="list-group-item list-group-item-secondary">Applications</div>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
             <i class="bi bi-house"></i> Startseite
-        </a>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dashboard")">
-            <i class="bi bi-grid"></i> Dashboard
         </a>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
             <i class="bi bi-building"></i> Campus
         </a>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new {@area="Gym"})">
+        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new { @area = "Gym" })">
             <i class="bi bi-controller"></i> Gym
         </a>
+        @*
         <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalMessage", "Notification")"><i class="bi bi-send"></i> Send me a notification</a>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "UserProfile")"><i class="bi bi-gear"></i> @Resources.MySettings</a>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Manage")"><i class="´bi bi-person-check"></i> @Resources.MyUserProfile</a>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")"><i class="´bi bi-book"></i> Mein Studienbuch</a>
+        *@
+
 
     </div>
 </div>

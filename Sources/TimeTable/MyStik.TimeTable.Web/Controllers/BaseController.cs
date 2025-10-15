@@ -18,6 +18,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [HandleError]
     public class BaseController : Controller
     {
         /// <summary>
@@ -432,7 +433,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return UserManager.FindById(userId);
         }
 
-        protected Student GetCurrentStudent(string userId)
+        protected ICollection<Student> GetCurrentStudent(string userId)
         {
             return StudentService.GetCurrentStudent(userId);
         }

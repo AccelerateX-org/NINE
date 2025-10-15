@@ -308,7 +308,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var user = GetUser(basket.UserId);
 
-                var student = studentService.GetCurrentStudent(basket.UserId);
+                var student = studentService.GetCurrentStudent(basket.UserId).FirstOrDefault();
 
                 var personModel = new ScriptOrderPersonModel();
                 personModel.User = user;

@@ -24,6 +24,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public Student Student { get; set; }
 
+        public bool HasLabel { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -87,20 +89,30 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string Email { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Organiser { get; set; }
+
+        public Institution Institution { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Curriculum { get; set; }
+        public ActivityOrganiser Organiser { get; set; }
+
+        public Student Student { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Curriculum Curriculum { get; set; }
+
+        public ItemLabel Label { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public string Semester { get; set; }
+
+        public string LabelLevel { get; set; }
+        public string LabelName { get; set; }
 
         /// <summary>
         /// 
@@ -121,11 +133,6 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ApplicationUser User { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public SemesterGroup SemGroup { get; set; }
 
         public string Course { get; set; }
 

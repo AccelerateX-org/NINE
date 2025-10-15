@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -22,6 +24,7 @@ using MyStik.TimeTable.Web.Utils;
 using Newtonsoft.Json;
 using Owin;
 using MyStik.TimeTable.Web.Helpers;
+using MyStik.TimeTable.Data.Migrations;
 
 namespace MyStik.TimeTable.Web
 {
@@ -73,63 +76,89 @@ namespace MyStik.TimeTable.Web
 
         private void ConfigureOIDC(IAppBuilder app)
         {
+            var OidcCaption = ConfigurationManager.AppSettings["oidc:Caption"];
+
+            if (string.IsNullOrEmpty(OidcCaption))
+                return;
+
             var OidcAuthority = ConfigurationManager.AppSettings["oidc:Authority"];
             var OidcRedirectUrl = ConfigurationManager.AppSettings["oidc:RedirectUrl"];
             var OidcClientId = ConfigurationManager.AppSettings["oidc:ClientId"];
             var OidcClientSecret = ConfigurationManager.AppSettings["oidc:ClientSecret"];
+            var OidcLogoutUrl = ConfigurationManager.AppSettings["oidc:LogoutUrl"];
 
 
             var oidcOptions = new OpenIdConnectAuthenticationOptions
             {
+                AuthenticationType = OidcAuthority,
+                Caption = OidcCaption,
                 Authority = OidcAuthority,
                 ClientId = OidcClientId,
                 ClientSecret = OidcClientSecret,
-                PostLogoutRedirectUri = "https://localhost:44300/",
+                PostLogoutRedirectUri = OidcLogoutUrl,   //"https://localhost:44300/",
                 RedirectUri = OidcRedirectUrl,
                 ResponseType = OpenIdConnectResponseType.Code,
                 //Scope = $"{OpenIdConnectScope.Phone} {OpenIdConnectScope.OpenIdProfile}",
                 Scope = "openid profile email",
                 UsePkce = false,
                 RedeemCode = true,
+                SaveTokens = true,
                 Notifications = new OpenIdConnectAuthenticationNotifications
                 {
-                    MessageReceived = async n => { Console.WriteLine(n); },
-                    AuthorizationCodeReceived = async n => { Console.WriteLine(n); },
-                    TokenResponseReceived = async n => { Console.WriteLine(n); },
-                    SecurityTokenReceived = async n => { Console.WriteLine(n); },
-                    AuthenticationFailed = async n => { Console.WriteLine(n); },
-                    RedirectToIdentityProvider = async n => { Console.WriteLine(n); },
-                    SecurityTokenValidated = async n =>
+                    MessageReceived = async n =>
                     {
-                        Console.WriteLine(n);
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in MessageReceived");
+                        logger.DebugFormat("obje: {0}", n);
+                    },
+                    AuthorizationCodeReceived = async n =>
+                    {
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in AuthorizationCodeReceived");
+                        logger.DebugFormat("obje: {0}", n);
+                    },
+                    TokenResponseReceived = async n =>
+                    {
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in TokenResponseReceived");
+                        logger.DebugFormat("obje: {0}", n);
+                    },
+                    SecurityTokenReceived = async n =>
+                    {
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in SecurityTokenReceived");
+                        logger.DebugFormat("obje: {0}", n);
+                    },
+                    AuthenticationFailed = async n =>
+                    {
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in AuthenticationFailed");
+                        logger.DebugFormat("obje: {0}", n);
 
-                        var id = n.AuthenticationTicket.Identity;
-
-                        var client = new HttpClient()
+                        // https://learn.microsoft.com/en-us/answers/questions/137574/azure-active-directory-authentication-error-owin
+                        if (n.Exception.Message.Contains("IDX21323"))
                         {
-                            BaseAddress = new Uri("https://sso.hm.edu/"),
-                        };
-
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", n.ProtocolMessage.AccessToken);
-
-                        var response = await client.GetAsync("idp/profile/oidc/userinfo");
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var data = await response.Content.ReadAsStringAsync();
-
-                            Console.WriteLine(data);
-
-                            if (!String.IsNullOrWhiteSpace(data))
-                            {
-                                id.AddClaim(new Claim("hmsso", data));
-                            }
+                            n.HandleResponse();
+                            n.OwinContext.Authentication.Challenge();
                         }
 
-                        n.AuthenticationTicket = new AuthenticationTicket(id, n.AuthenticationTicket.Properties);
+                        await Task.FromResult(true);
 
+                    },
+                    RedirectToIdentityProvider = async n =>
+                    {
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in RedirectToIdentityProvider");
+                        logger.DebugFormat("obje: {0}", n);
+                    },
+                    SecurityTokenValidated = async n =>
+                    {
+                        var logger = LogManager.GetLogger("OIDC");
+                        logger.Debug("in SecurityTokenValidated");
+                        logger.DebugFormat("obje: {0}", n);
 
+                        n.AuthenticationTicket.Identity.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
+                        n.AuthenticationTicket.Identity.AddClaim(new Claim("access_token", n.ProtocolMessage.AccessToken));
                     },
                 }
             };

@@ -16,13 +16,15 @@ namespace MyStik.TimeTable.Data
 
         public string Name { get; set; }
 
-        public ICollection<ActivityOrganiser> Organisers { get; set; }
+        public string Description { get; set; }
 
-        //public ICollection<InfoAnnouncement> Announcements { get; set; }
+        public string PublicTransporrtInfo { get; set; }
 
-        //public ICollection<InfoText> InfoTexts { get; set; }
-        
-        public ICollection<InfoscreenPage> Pages { get; set; }
+        public string PublicTransporrtUrl { get; set; }
+
+        public virtual ICollection<ActivityOrganiser> Organisers { get; set; }
+       
+        public virtual ICollection<InfoscreenPage> Pages { get; set; }
 
     }
 
@@ -39,6 +41,14 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        /// <summary>
+        /// Korrespondiert zur Reihenfolge der Seiten
+        /// </summary>
+        public int Index { get; set; }
+
+        /// <summary>
+        /// Wenn gesetzt, dann wird das als Untertitel angezeigt
+        /// </summary>
         public string Name { get; set; }
 
         public InfoscreeenPageType Type { get; set; }

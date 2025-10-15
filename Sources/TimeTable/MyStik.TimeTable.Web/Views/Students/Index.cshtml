@@ -1,6 +1,15 @@
-﻿@model ICollection<MyStik.TimeTable.Web.Models.StudentStatisticsModel>
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
+@model ICollection<MyStik.TimeTable.Web.Models.StudentStatisticsModel>
 @{
     ViewBag.Title = "Studierende";
+
+    var db = new TimeTableDbContext();
+
+    var students = db.Students.Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any()).Include(student => student.Curriculum).Include(student1 => student1.LabelSet.ItemLabels).ToList();
+
+    var userService = new UserInfoService();
 }
 
 @section styles
@@ -22,7 +31,12 @@
 
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-2">
+        <div class="list-group">
+            <a href="@Url.Action("Labels", new {orgId=ViewBag.Organiser.Id})" class="list-group-item"><i class="bi bi-list"></i> Studienangebotslisten</a>
+        </div>
+    </div>
+    <div class="col-md-10">
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -42,7 +56,7 @@
 
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-person-vcard"></i></span>
-                                <input type="text" name="searchString" id="searchString" class="form-control" placeholder="Name / Vorname" />
+                                <input type="text" name="searchString" id="searchString" class="form-control" placeholder="Name / Vorname"/>
                                 <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Suchen</button>
                             </div>
                         }
@@ -56,7 +70,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 

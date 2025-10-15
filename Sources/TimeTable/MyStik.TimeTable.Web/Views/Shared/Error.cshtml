@@ -1,36 +1,46 @@
 ﻿@model System.Web.Mvc.HandleErrorInfo
 
 @{
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
-    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
+    ViewBag.Title = "Fehler";
 }
 
-<h1 class="text-danger">Fehler.</h1>
-<h2 class="text-danger">Es ist ein Fehler aufgetreten.</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Details</h3>
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-danger">
+            <p><strong>Es ist ein Fehler aufgetreten.</strong></p>
+            <a class="btn btn-outline-primary" href="@Url.Action("Index", "Home")">zur Startseite</a>
+        </div>
     </div>
-    <table class="table table-bordered table-condensed">
-        <tbody>
-            <tr>
-                <td>Aktion</td>
-                <td>@Model.ActionName</td>
-            </tr>
-            <tr>
-                <td>Bereich</td>
-                <td>@Model.ControllerName</td>
-            </tr>
-            <tr>
-                <td>Fehlermeldung</td>
-                <td>@Model.Exception.Message</td>
-            </tr>
-            <tr>
-                <td>Aufrufhierarchie</td>
-                <td>@Model.Exception.StackTrace</td>
-            </tr>
-        </tbody>
-    </table>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Details</h5>
+            </div>
+            <table class="table table-sm">
+                <tbody>
+                    <tr>
+                        <td>Aktion</td>
+                        <td>@Model.ActionName</td>
+                    </tr>
+                    <tr>
+                        <td>Bereich</td>
+                        <td>@Model.ControllerName</td>
+                    </tr>
+                    <tr>
+                        <td>Fehlermeldung</td>
+                        <td>@Model.Exception.Message</td>
+                    </tr>
+                    <tr>
+                        <td>Aufrufhierarchie</td>
+                        <td>@Model.Exception.StackTrace</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 

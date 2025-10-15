@@ -40,12 +40,12 @@ namespace MyStik.TimeTable.DataServices.Booking
                             }
                             else
                             {
-                                remark = $"Kein Platzkontingent für Studiengang {curr.ShortName} vorhanden";
+                                remark = $"Kein Platzkontingent für Studienangebot {curr.ShortName} vorhanden";
                             }
                         }
                         else
                         {
-                            remark = $"Angabe des Studiengangs fehlt oder Studiengang existiert nicht";
+                            remark = $"Angabe des Studienangebots fehlt oder Studienangebot existiert nicht";
                         }
                     }
                     else
@@ -86,14 +86,14 @@ namespace MyStik.TimeTable.DataServices.Booking
                         else
                         {
                             checkLabelSet.Success = false;
-                            checkLabelSet.Remark = $"Kein Platzkontingent für Studiengang {curr.ShortName} vorhanden";
+                            checkLabelSet.Remark = $"Kein Platzkontingent für Studienangebot {curr.ShortName} vorhanden";
                             return checkLabelSet;
                         }
                     }
                     else
                     {
                         checkLabelSet.Success = false;
-                        checkLabelSet.Remark = $"Angabe des Studiengangs fehlt oder Studiengang existiert nicht";
+                        checkLabelSet.Remark = $"Angabe des Studienangebots fehlt oder Studienangebot existiert nicht";
                         return checkLabelSet;
                     }
                 }

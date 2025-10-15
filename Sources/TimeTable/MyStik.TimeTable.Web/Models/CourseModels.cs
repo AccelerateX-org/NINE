@@ -1338,6 +1338,10 @@ namespace MyStik.TimeTable.Web.Models
 
     public class CourseLabelViewModel
     {
+        public Student Student { get; set; }
+
+        public ApplicationUser User { get; set; }
+
         public Course Course { get; set; }
 
         public List<Curriculum> Curricula { get; set;}

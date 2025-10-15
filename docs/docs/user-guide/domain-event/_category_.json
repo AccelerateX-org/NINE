@@ -1,0 +1,8 @@
+{
+  "label": "Termine und Raumbelegung",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Seminar bis Sprechstunde."
+  }
+}

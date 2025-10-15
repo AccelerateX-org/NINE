@@ -1,12 +1,13 @@
-﻿using System;
+﻿using log4net;
+using Microsoft.AspNet.Identity;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using log4net;
-using Microsoft.AspNet.Identity;
-using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -31,7 +32,7 @@ namespace MyStik.TimeTable.Web.Controllers
 			var writer = new StreamWriter(ms, Encoding.Default);
 
 			writer.Write(
-				"Name;Vorname;Studiengang;Semester;Status;E-Mail");
+                "Name;Vorname;Studienangebot;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
 
@@ -41,7 +42,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 				if (user != null)
 				{
-					var student = StudentService.GetCurrentStudent(user);
+					var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
 					var group = "";
 					var sem = "";
 
@@ -95,7 +96,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 			writer.Write(
-				"Name;Vorname;Studiengang;Semester;Status;E-Mail");
+                "Name;Vorname;Studienangebot;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
 
@@ -105,8 +106,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
 				if (user != null)
 				{
-					var student = StudentService.GetCurrentStudent(user);
-					var group = "";
+					var students = StudentService.GetCurrentStudent(user);
+                    var student = students.FirstOrDefault();
+
+                    var group = "";
 					var sem = "";
 
 					if (student != null)
@@ -158,7 +161,7 @@ namespace MyStik.TimeTable.Web.Controllers
 			var writer = new StreamWriter(ms, Encoding.Default);
 
 			writer.Write(
-				"Name;Vorname;Studiengang;Semester;Status;E-Mail");
+				"Name;Vorname;Studienangebot;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
 
@@ -168,7 +171,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
 				if (user != null)
 				{
-					var student = StudentService.GetCurrentStudent(user);
+					var students = StudentService.GetCurrentStudent(user);
+                    var student = students.FirstOrDefault();
 
 					var group = "";
 					var sem = "";

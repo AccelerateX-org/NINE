@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -30,14 +33,25 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Faculty(Guid id)
+        public ActionResult Faculty(Guid id, Guid? semId)
         {
+            var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
+
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
             var user = GetCurrentUser();
             if (user != null)
             {
                 ViewBag.UserRight = GetUserRight(org);
             }
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
             return View(org);
         }
@@ -50,6 +64,42 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(orgs);
         }
+
+        public ActionResult Members()
+        {
+            var memberships = Db.Members
+                .Where(x => !string.IsNullOrEmpty(x.UserId))
+                .GroupBy(x => x.UserId);
+
+            var userInfoService = new UserInfoService();
+
+            var model = new List<UserMemberModel>();
+
+            foreach (var membership in memberships)
+            {
+                var user = userInfoService.GetUser(membership.Key);
+
+                if (user == null)
+                {
+                    continue; // user not found
+                }
+
+                var entry = new UserMemberModel
+                {
+                    User = user
+                };
+
+                foreach (var member in membership)
+                {
+                    entry.Members.Add(member);
+                }
+
+                model.Add(entry);
+            }
+
+            return View(model);
+        }
+
 
         public ActionResult Services()
         {

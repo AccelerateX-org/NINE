@@ -1,0 +1,86 @@
+﻿@model MyStik.TimeTable.Data.Infoscreen
+@{
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>@Model.Name</h1>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6 col-sm-6">
+            <div id="contentCarousel" class="carousel slide" data-bs-ride="carousel">
+                @*
+                <div class="carousel-indicators mt-5">
+                    @foreach (var page in Model.Pages.OrderBy(x => x.Index).ToList())
+                    {
+                        var index = page.Index - 1;
+                        <button type="button" data-bs-target="#contentCarousel" data-bs-slide-to="@index" class="@(index == 0 ? "active" : "") bg-dark" aria-current="@(index == 0 ? "true" : "false")" aria-label="Slide @index"></button>
+                    }
+                </div>
+                    *@
+                <div class="carousel-inner">
+                    @foreach (var page in Model.Pages.OrderBy(x => x.Index))
+                    {
+                        var pageIndex = "page" + (page.Index - 1);
+                        <div class="carousel-item @(page.Index == 1 ? "active" : "")" data-bs-interval="20000">
+                            <div id="@pageIndex"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            <div class="mvv-departure-monitor" monitor-configuration="eyJsYW5ndWFnZSI6eyJkZXBhcnR1cmUiOiJBYmZhaHJ0IiwidHJhaW5TdG9wcyI6IkhhbHRlc3RlbGxlbiIsImRpcmVjdGlvbiI6IlJpY2h0dW5nIiwiZm9vdGVyTm90ZSI6IqkgQ29weXJpZ2h0IiwiZm9vdGVyVGV4dCI6IldlaXRlcmUgRmFocnBsYW5hdXNr/G5mdGUgdW50ZXIgd3d3Lm12di1hdXNrdW5mdC5kZSBvZGVyIG1pdCBkZXIgTVZWLUFwcCIsImhlYWRlclRleHQiOiJBYmZhaHJ0ZW4gZvxyIGhldXRlLCAiLCJsYW5ndWFnZSI6ImRlIiwibGluZSI6IkxpbmllIiwibGl2ZSI6IkxpdmUiLCJzdG9wIjoiSGFsdGVzdGVsbGUiLCJ0cmFjayI6IkdsZWlzIn0sImlzRnVsbHNjcmVlbiI6ZmFsc2UsInN0YXRpb25zIjpbeyJzdGF0aW9uIjp7InVzYWdlIjoic2YiLCJ0eXBlIjoiYW55IiwibmFtZSI6Ik38bmNoZW4sIEhvY2hzY2h1bGUgTfxuY2hlbiAoTG90aHN0ci4pIiwic3RhdGVsZXNzIjoiOTEwMDAwMTIiLCJhbnlUeXBlIjoic3RvcCIsInNvcnQiOiIyIiwicXVhbGl0eSI6IjQyOCIsImJlc3QiOiIxIiwib2JqZWN0IjoiSG9jaHNjaHVsZSBN/G5jaGVuIChMb3Roc3RyLikiLCJtYWluTG9jIjoiTfxuY2hlbiIsIm1vZGVzIjoiNCw1IiwicmVmIjp7ImlkIjoiOTEwMDAwMTIiLCJnaWQiOiJkZTowOTE2MjoxMiIsIm9tYyI6IjkxNjIwMDAiLCJwbGFjZUlEIjoiMSIsInBsYWNlIjoiTfxuY2hlbiIsImNvb3JkcyI6IjEyODYxNjcuMDAwMDAsNTg2NzQ0Mi4wMDAwMCJ9LCJpZCI6ImRlOjA5MTYyOjEyIn0sImxpbmVzIjpbeyJudW1iZXIiOiIyMCIsInN5bWJvbCI6IjAyMDIwLnN2ZyIsImRpcmVjdGlvbiI6IkthcmxzcGxhdHogKFN0YWNodXMpIiwic3RhdGVsZXNzIjoic3dtOjAyMDIwOkc6SDowMTUiLCJuYW1lIjoiVHJhbSJ9LHsibnVtYmVyIjoiMjAiLCJzeW1ib2wiOiIwMjAyMC5zdmciLCJkaXJlY3Rpb24iOiJNb29zYWNoIiwic3RhdGVsZXNzIjoic3dtOjAyMDIwOkc6UjowMTUiLCJuYW1lIjoiVHJhbSJ9LHsibnVtYmVyIjoiMjEiLCJzeW1ib2wiOiIwMjAzMS5zdmciLCJkaXJlY3Rpb24iOiJTdC4tVmVpdC1TdHJh32UiLCJzdGF0ZWxlc3MiOiJzd206MDIwMjE6RzpIOjAxNSIsIm5hbWUiOiJUcmFtIn0seyJudW1iZXIiOiIyMSIsInN5bWJvbCI6IjAyMDMxLnN2ZyIsImRpcmVjdGlvbiI6Ildlc3RmcmllZGhvZiIsInN0YXRlbGVzcyI6InN3bTowMjAyMTpHOlI6MDE1IiwibmFtZSI6IlRyYW0ifSx7Im51bWJlciI6Ik4yMCIsInN5bWJvbCI6IjMyTjIwLnN2ZyIsImRpcmVjdGlvbiI6IkthcmxzcGxhdHogKFN0YWNodXMpIiwic3RhdGVsZXNzIjoic3dtOjMyOTIwOkc6SDowMTUiLCJuYW1lIjoiTmFjaHRUcmFtIn0seyJudW1iZXIiOiJOMjAiLCJzeW1ib2wiOiIzMk4yMC5zdmciLCJkaXJlY3Rpb24iOiJNb29zYWNoIiwic3RhdGVsZXNzIjoic3dtOjMyOTIwOkc6UjowMTUiLCJuYW1lIjoiTmFjaHRUcmFtIn0seyJudW1iZXIiOiIxNTMiLCJzeW1ib2wiOiIwMzE1My5zdmciLCJkaXJlY3Rpb24iOiJPZGVvbnNwbGF0eiIsInN0YXRlbGVzcyI6InN3bTowMzE1MzpHOkg6MDE1IiwibmFtZSI6IkJ1cyJ9LHsibnVtYmVyIjoiMTUzIiwic3ltYm9sIjoiMDMxNTMuc3ZnIiwiZGlyZWN0aW9uIjoiVHJhcHBlbnRyZXVzdHJh32UiLCJzdGF0ZWxlc3MiOiJzd206MDMxNTM6RzpSOjAxNSIsIm5hbWUiOiJCdXMifV0sImFsbExpbmVzIjpbeyJudW1iZXIiOiIyMCIsInN5bWJvbCI6IjAyMDIwLnN2ZyIsImRpcmVjdGlvbiI6IkthcmxzcGxhdHogKFN0YWNodXMpIiwic3RhdGVsZXNzIjoic3dtOjAyMDIwOkc6SDowMTUiLCJuYW1lIjoiVHJhbSJ9LHsibnVtYmVyIjoiMjAiLCJzeW1ib2wiOiIwMjAyMC5zdmciLCJkaXJlY3Rpb24iOiJNb29zYWNoIiwic3RhdGVsZXNzIjoic3dtOjAyMDIwOkc6UjowMTUiLCJuYW1lIjoiVHJhbSJ9LHsibnVtYmVyIjoiMjEiLCJzeW1ib2wiOiIwMjAzMS5zdmciLCJkaXJlY3Rpb24iOiJTdC4tVmVpdC1TdHJh32UiLCJzdGF0ZWxlc3MiOiJzd206MDIwMjE6RzpIOjAxNSIsIm5hbWUiOiJUcmFtIn0seyJudW1iZXIiOiIyMSIsInN5bWJvbCI6IjAyMDMxLnN2ZyIsImRpcmVjdGlvbiI6Ildlc3RmcmllZGhvZiIsInN0YXRlbGVzcyI6InN3bTowMjAyMTpHOlI6MDE1IiwibmFtZSI6IlRyYW0ifSx7Im51bWJlciI6Ik4yMCIsInN5bWJvbCI6IjMyTjIwLnN2ZyIsImRpcmVjdGlvbiI6IkthcmxzcGxhdHogKFN0YWNodXMpIiwic3RhdGVsZXNzIjoic3dtOjMyOTIwOkc6SDowMTUiLCJuYW1lIjoiTmFjaHRUcmFtIn0seyJudW1iZXIiOiJOMjAiLCJzeW1ib2wiOiIzMk4yMC5zdmciLCJkaXJlY3Rpb24iOiJNb29zYWNoIiwic3RhdGVsZXNzIjoic3dtOjMyOTIwOkc6UjowMTUiLCJuYW1lIjoiTmFjaHRUcmFtIn0seyJudW1iZXIiOiIxNTMiLCJzeW1ib2wiOiIwMzE1My5zdmciLCJkaXJlY3Rpb24iOiJPZGVvbnNwbGF0eiIsInN0YXRlbGVzcyI6InN3bTowMzE1MzpHOkg6MDE1IiwibmFtZSI6IkJ1cyJ9LHsibnVtYmVyIjoiMTUzIiwic3ltYm9sIjoiMDMxNTMuc3ZnIiwiZGlyZWN0aW9uIjoiVHJhcHBlbnRyZXVzdHJh32UiLCJzdGF0ZWxlc3MiOiJzd206MDMxNTM6RzpSOjAxNSIsIm5hbWUiOiJCdXMifV0sImxlYWRUaW1lTWludXRlcyI6NX1dLCJsaW5lcyI6W10sIm1heFJlc3VsdHMiOjEwLCJmZXRjaEludGVydmFsSW5NaW51dGVzIjozLCJzaG93Tm90aWZpY2F0aW9uIjp0cnVlfQ=="></div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript" src="https://www.mvv-muenchen.de/typo3conf/ext/sn_mvv_efa/Resources/Public/mvv-monitor/mvv-monitor.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+
+            var target = "page0";
+
+            $.ajax({
+                url: '@Url.Action("ContentForPage")',
+                type: 'POST',
+                data: {
+                    id: '@Model.Id',
+                    page: 1,
+                },
+                success: function(result) {
+                    window.$(`#${target}`).html(result);
+
+                }
+            });
+
+            const myCarousel = document.getElementById('contentCarousel');
+
+            myCarousel.addEventListener('slide.bs.carousel',
+                event => {
+                    console.log(event.to);
+                    var target = "page" + event.to;
+                    window.$(`#${target}`).html("<h4><i>loading</i></h4>");
+                    $.ajax({
+                        url: '@Url.Action("ContentForPage")',
+                        type: 'POST',
+                        data: {
+                            id: '@Model.Id',
+                            page: (event.to + 1),
+                        },
+                        success: function(result) {
+                            window.$(`#${target}`).html(result);
+                        }
+                    });
+
+                });
+        });
+
+    </script>
+}

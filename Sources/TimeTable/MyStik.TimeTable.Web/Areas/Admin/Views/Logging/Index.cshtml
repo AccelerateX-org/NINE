@@ -48,7 +48,7 @@
                     <a href="@Url.Action("GetErrors")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Errors</a>
                     <a href="@Url.Action("GetMails")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> SendMail</a>
                     <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Alle</a>
-                    @if (ViewBag.IsBulkDelete)
+                    @if (ViewBag.IsBulkDelete != null && ViewBag.IsBulkDelete)
                     {
                         <a href="@Url.Action("StopClear")" class="btn btn-outline-primary"><i class="bi bi-stop-circle"></i> Löschprozess beenden</a>
                     }

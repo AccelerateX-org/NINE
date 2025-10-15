@@ -329,9 +329,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult MoveDate(Guid id)
         {
-            var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
-            var course = summary.Activity;
-            var date = summary.Date;
+            var date = Db.ActivityDates.Include(activityDate => activityDate.Occurrence).Include(activityDate1 =>
+                activityDate1.Activity.Organiser).SingleOrDefault(x => x.Id == id);
+            var course = date.Activity as Course;
 
             var model = new CourseMoveDateModel
             {
@@ -2348,7 +2348,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult DeleteDateConfirmed(Guid dateId)
         {
-            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+            var date = Db.ActivityDates.Include(activityDate => activityDate.Activity).SingleOrDefault(d => d.Id == dateId);
             var activity = date.Activity as Course;
 
             DeleteService.DeleteActivityDate(dateId);
@@ -2359,6 +2359,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("AdminNewDates", new { id = activity.Id });
         }
+
+        public ActionResult DeleteDateRepair(Guid dateId)
+        {
+            var date = Db.ActivityDates.Include(activityDate => activityDate.Activity).SingleOrDefault(d => d.Id == dateId);
+            var activity = date.Activity as Course;
+
+            DeleteService.DeleteActivityDate(dateId, false);
+
+            var userRights = GetUserRight(User.Identity.Name, activity);
+            ViewBag.UserRight = userRights;
+
+
+            return RedirectToAction("AdminNewDates", new { id = activity.Id });
+        }
+
 
         /// <summary>
         /// 
@@ -2991,7 +3006,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             var user = UserManager.FindById(subscription.UserId);
-            var student = studentService.GetCurrentStudent(subscription.UserId);
+            var student = studentService.GetCurrentStudent(subscription.UserId).FirstOrDefault();
 
 
             var model = new UserCoursePlanViewModel
@@ -3275,10 +3290,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 .SingleOrDefault(c => c.Occurrence.Id == subscription.Occurrence.Id);
             var host = GetCurrentUser();
 
-
-
-            if (subscription != null)
+            if (subscription != null && course != null)
             {
+                var member = course.Organiser != null ? GetMyMembership(course.Organiser.Id) : null;
+
                 var subService = new SubscriptionService(Db);
                 subService.DeleteSubscription(subscription);
 
@@ -3288,7 +3303,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (subscriber != null)
                 {
                     var mailService = new SubscriptionMailService();
-                    mailService.SendSubscriptionEMail(course, subscriber.Id, host);
+                    mailService.SendSubscriptionEMail(course, subscriber.Id, host, member);
 
                     logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
                         course.Name, course.ShortName, subscriber.UserName);
@@ -3829,7 +3844,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = course.Semester;
 
             var user = UserManager.FindById(subscription.UserId);
-            var student = studentService.GetCurrentStudent(subscription.UserId);
+            var student = studentService.GetCurrentStudent(subscription.UserId).FirstOrDefault();
 
             var model = new UserCoursePlanViewModel
             {
@@ -4402,6 +4417,32 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
+        public ActionResult PlanningYear(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+            var courseService = new CourseService(Db);
+
+            var nextSemester = SemesterService.GetNextSemester(course.Semester);
+            var yearSemester = SemesterService.GetNextSemester(nextSemester);
+
+            var model = new CourseDetailViewModel()
+            {
+                Course = course,
+                Summary = courseService.GetCourseSummary(course),
+                PlaningSemester = yearSemester,
+                CopyDates = true
+            };
+
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
+
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+
         public PartialViewResult PreviewDateList(Guid courseId, Guid segmentId)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
@@ -4414,6 +4455,20 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             return PartialView("_PreviewDateList", model);
+        }
+
+        public PartialViewResult PreviewDateListYear(Guid courseId, Guid segmentId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var segement = Db.SemesterDates.SingleOrDefault(x => x.Id == segmentId);
+
+            var model = new CourseDetailViewModel
+            {
+                Course = course,
+                PlaningSegment = segement
+            };
+
+            return PartialView("_PreviewDateListYear", model);
         }
 
 

@@ -11,8 +11,8 @@
                 <th>Studiengang</th>
                 <th>Kohorte(n)</th>
                 <th>Studienbeginn</th>
-                <th>@ViewBag.CurrentSemester.Name</th>
-                <th></th>
+                <th>Status</th>
+                <th>E-Mail</th>
             </tr>
         </thead>
         <tbody>
@@ -47,9 +47,18 @@
                             }
                         </td>
                         <td>@user.Student.FirstSemester.Name</td>
+                        if (user.Student.LastSemester != null)
+                        {
+                            <td>@user.Student.LastSemester.Name</td>
+                        }
+                        else
+                        {
+                            <td>aktiv</td>
+                        }
                     }
                     else
                     {
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -60,12 +69,9 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                 }
-                <td>@user.CurrentCourses.Count</td>
-                <td>
-                    <a href="mailto:@user.User.Email" class="btn btn-outline-primary btn-xs"><i class="bi bi-envelope"></i> E-Mail senden</a>
-                </td>
-
+                <td>@user.User.Email</td>
             </tr>
         }
         </tbody>

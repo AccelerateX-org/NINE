@@ -1,15 +1,24 @@
-﻿using System;
-using System.Linq;
-using System.Net.Mail;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using log4net;
+﻿using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using MyStik.TimeTable.Web.Models;
+using Newtonsoft.Json.Linq;
+using Postal;
+using System;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mail;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http.Results;
+using System.Web.Mvc;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -46,14 +55,8 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         public IdentifyConfig.ApplicationSignInManager SignInManager
         {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<IdentifyConfig.ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
+            get => _signInManager ?? HttpContext.GetOwinContext().Get<IdentifyConfig.ApplicationSignInManager>();
+            private set => _signInManager = value;
         }
 
 
@@ -629,6 +632,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 var mailModel = new DeleteUserMailModel { User = user };
                 new MailController().DeleteUserMail(mailModel).Deliver();
 
+                logger.InfoFormat("User Accout deleted: {0}", user.Email);
+
                 // Abmelden und byebye anzeigen
                 AuthenticationManager.SignOut();
 
@@ -661,6 +666,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
+            logger.InfoFormat("External Login for provider: {0}", provider);
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
@@ -714,28 +720,93 @@ namespace MyStik.TimeTable.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            logger.Info("ExternalLoginCallback");
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
+                logger.Error("ExternalLoginCallback: noe login Information from Auth-Manage");
                 return RedirectToAction("Login");
             }
+
+            var claims = loginInfo.ExternalIdentity.Claims.ToList();
+            var accessToken = claims.Find(c => c.Type == "access_token");
+
+            var client = new HttpClient()
+            {
+                BaseAddress = new Uri("https://sso.hm.edu/"),
+            };
+
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
+
+            var response = await client.GetAsync("idp/profile/oidc/userinfo");
+            dynamic userInfo = null;
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    userInfo = JObject.Parse(data);
+                }
+            }
+            
+            logger.InfoFormat("ExternalLoginCallback: Response from userinfo endpoint: {0}", response);
 
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    // TO-DO: hier Daten ggf. aktualisieren
+
+                    var claim = loginInfo.ExternalIdentity.Claims.SingleOrDefault(c => c.Type == "eduPersonPrincipalName");
+                    if (claim != null)
+                    {
+                        var user = await UserManager.FindByNameAsync(claim.Value);
+                        if (user != null)
+                        {
+                            // Update user info claims
+                            var userClaims = await UserManager.GetClaimsAsync(user.Id);
+                            var hasCHange = false;
+                            foreach (var property in userInfo.Properties())
+                            {
+                                var userClaim = userClaims.FirstOrDefault(c => c.Type == property.Name);
+                                if (userClaim != null)
+                                {
+                                    await UserManager.RemoveClaimAsync(user.Id, userClaim);
+                                }
+
+                                var infoClaim = new Claim(property.Name, property.Value.ToString());
+                                await UserManager.AddClaimAsync(user.Id, infoClaim);
+                            }
+
+                            await UserManager.StoreLogInAsync(user.Id);
+                        }
+                    }
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
-                default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+            }
+
+
+            if (userInfo != null)
+            {
+                var model = new ExternalLoginConfirmationViewModel
+                {
+                    Email = userInfo["eduPersonPrincipalName"]
+                };
+                logger.InfoFormat("ExternalLoginCallback: Unknown User: {0}", model.Email);
+                return View("ExternalLoginConfirmation", model);
+            }
+            else
+            {
+                var msg = await response.Content.ReadAsStringAsync();
+                ViewBag.UserData = msg;
+                logger.ErrorFormat("ExternalLoginCallback: Unknown User Error: {0}", msg);
+                return View("ExternalLoginFailure");
             }
         }
 
@@ -757,28 +828,101 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                ViewBag.Message = "Modelstate ok";
+
                 // Get the information about the user from the external login provider
                 var info = await AuthenticationManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
+                    ViewBag.Message = "keine Login Info";
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                var claims = info.ExternalIdentity.Claims.ToList();
+                var accessToken = claims.Find(c => c.Type == "access_token");
+
+                var client = new HttpClient()
+                {
+                    BaseAddress = new Uri("https://sso.hm.edu/"),
+                };
+
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
+
+                var response = await client.GetAsync("idp/profile/oidc/userinfo");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ViewBag.UserData = await response.Content.ReadAsStringAsync();
+                    return View("ExternalLoginFailure");
+                }
+                logger.InfoFormat("ExternalLoginConfirmation: Response from userinfo endpoint: {0}", response);
+
+                var data = await response.Content.ReadAsStringAsync();
+
+                if (String.IsNullOrWhiteSpace(data))
+                {
+                    ViewBag.UserData = await response.Content.ReadAsStringAsync();
+                    return View("ExternalLoginFailure");
+                }
+
+                dynamic userInfo = JObject.Parse(data);
+                var eduPersonPrincipalName = userInfo["eduPersonPrincipalName"];
+                var personFirstName = userInfo["given_name"];
+                var personLastName = userInfo["family_name"];
+                var personEmail = userInfo["email"];
+
+                // Neuen Benutzer anlegen
+                var user = new ApplicationUser
+                {
+                    UserName = eduPersonPrincipalName,
+                    Email = personEmail,
+                    FirstName = personFirstName,
+                    LastName = personLastName,
+                    MemberState = MemberState.Student,
+                    Registered = DateTime.Now,
+                    Remark = "Created from SSO",
+                    // user.ExpiryDate = DateTime.Today.AddDays(14),
+                    // user.Submitted = now
+                    Approved = DateTime.Now,
+                    IsApproved = true,
+                    EmailConfirmed = true
+                };
+
+
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
+
+                    if (!result.Succeeded)
+                    {
+                        ViewBag.Message = "Fehler beim Hinzufügen des Logins";
+                        return View("ExternalLoginFailure");
+                    }
+
+                    // jetzt die Claims anlegen aus den Daten die per userinfo abgefragt worden sind.
+                    foreach (var property in userInfo.Properties())
+                    {
+                        var claim = new Claim(property.Name, property.Value.ToString());
+                        result = await UserManager.AddClaimAsync(user.Id, claim);
+                    }
+
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await UserManager.StoreLogInAsync(user.Id);
                         return RedirectToLocal(returnUrl);
                     }
                 }
-                AddErrors(result);
+                ViewBag.Message = "Fehler beim Hinzufügen des Benutzerkontos";
+                return View("ExternalLoginFailureAccount");
+                //AddErrors(result);
             }
 
             ViewBag.ReturnUrl = returnUrl;
-            return View(model);
+            return View("ExternalLoginFailure");
+            //return View(model);
         }
 
         /// <summary>
@@ -832,13 +976,7 @@ namespace MyStik.TimeTable.Web.Controllers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         private void AddErrors(IdentityResult result)
         {

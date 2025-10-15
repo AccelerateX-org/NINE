@@ -194,7 +194,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
                 else
                 {
-                    alumni.Program = "anderer Studiengang";
+                    alumni.Program = "anderes Studienangebot";
                     alumni.Degree = "anderer Abschluss";
                 }
 

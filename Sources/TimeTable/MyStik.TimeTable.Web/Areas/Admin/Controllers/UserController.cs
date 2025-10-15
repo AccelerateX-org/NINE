@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Hangfire;
@@ -40,7 +41,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                     SubscriptionCount = string.IsNullOrEmpty(user.Id) ? -99 : Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
                     Members = MemberService.GetMemberships(user.Id),
                     SemesterGroup = null,
-                    Student = StudentService.GetCurrentStudent(user)
+                    Students = StudentService.GetCurrentStudent(user)
                 });
             }
 
@@ -120,7 +121,10 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         [HttpPost]
         public PartialViewResult LatestRegistrations()
         {
-            var userList = _db.Users.Where(u => u.Registered.HasValue).OrderByDescending(u => u.Registered.Value).Take(50).ToList();
+            var userList = _db.Users
+                .Where(u => u.Registered.HasValue)
+                .OrderByDescending(u => u.Registered.Value)
+                .Take(50).ToList();
 
             var model = CreateUserList(userList);
 
@@ -141,58 +145,26 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return PartialView("_UserList", model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult InactiveGuests()
-        {
-            var border = DateTime.Today.AddDays(-180);
-
-            var userList = _db.Users.Where(u => u.MemberState == MemberState.Guest && u.LastLogin.HasValue && u.LastLogin < border).OrderBy(u => u.LastLogin.Value).ToList();
-
-            var model = CreateUserList(userList);
-
-            return PartialView("_UserList", model);
-        }
-
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult InactiveStudents()
+        public PartialViewResult InactiveUser()
         {
-            var border = DateTime.Today.AddDays(-360);
+            var border = DateTime.Today.AddDays(-90);
 
             var userList = _db.Users
-                .Where(u => u.MemberState == MemberState.Student && u.LastLogin.HasValue && u.LastLogin < border)
+                .Where(u => u.LastLogin.HasValue && u.LastLogin < border)
                 .OrderBy(u => u.LastLogin.Value)
-                .Take(200).ToList();
+                .ToList();
 
             var model = CreateUserList(userList);
 
             return PartialView("_UserList", model);
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult InactiveStaff()
-        {
-            var border = DateTime.Today.AddDays(-180);
-
-            var userList = _db.Users.Where(u => u.MemberState == MemberState.Staff && u.LastLogin.HasValue && u.LastLogin < border).OrderBy(u => u.LastLogin.Value).ToList();
-
-            var model = CreateUserList(userList);
-
-            return PartialView("_UserList", model);
-        }
 
         /// <summary>
         /// 
@@ -208,37 +180,6 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return PartialView("_UserList", model);
         }
 
-        /// <summary>
-        /// Alle Doppelten
-        /// Es werden zu den Gästen Konten mit identischem Nachem gesucht
-        /// </summary>
-        /// <returns>Liste der doppelten</returns>
-        [HttpPost]
-        public PartialViewResult Doubles()
-        {
-            // alle Gäste
-            var guests = _db.Users.Where(u => u.MemberState == MemberState.Guest).OrderBy(u => u.LastLogin.Value).ToList();
-
-            var userList = new List<ApplicationUser>();
-
-            foreach (var guest in guests)
-            {
-                var candidates = _db.Users.Where(u => u.LastName.ToUpper().Equals(guest.LastName.ToUpper()) &&
-                                                      u.FirstName.ToUpper().Equals(guest.FirstName.ToUpper()) &&
-                                                      u.Id != guest.Id);
-
-                if (candidates.Any())
-                {
-                    userList.Add(guest);
-                    userList.AddRange(candidates.ToList());
-                }
-            }
-
-
-            var model = CreateUserList(userList);
-
-            return PartialView("_UserList", model);
-        }
 
 
 
@@ -283,6 +224,68 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             return PartialView("_UserList", model);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult ColdCases()
+        {
+            var userList = GetColdCases();
+
+            var model = CreateUserList(userList);
+
+            return PartialView("_UserList", model);
+        }
+
+        public ActionResult DeleteColdCases()
+        {
+            var userList = GetColdCases();
+
+            foreach (var user in userList)
+            {
+                var userToDelete = UserManager.FindById(user.Id);
+                // Devices löschen!
+                var devices = _db.Devices.Where(d => d.User.Id.Equals(user.Id)).ToList();
+                foreach (var userDevice in devices)
+                {
+                    _db.Devices.Remove(userDevice);
+                }
+                _db.SaveChanges();
+                UserManager.Delete(userToDelete);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        private List<ApplicationUser> GetColdCases()
+        {
+
+            // weder registriert noch eingeloggt
+            /*
+            var userList = _db.Users
+                .Where(u => 
+                    !u.Registered.HasValue &&
+                    !u.LastLogin.HasValue
+                )
+                .OrderBy(u => u.Registered.Value)
+                .ToList();
+            */
+
+            // länger als 900 Tage nicht eingeloggt
+            var loginBorder = DateTime.Today.AddDays(-540);
+            var userList = _db.Users
+                .Where(u =>
+                    u.Registered.HasValue && (
+                    u.LastLogin.HasValue && u.LastLogin < loginBorder)
+                )
+                .OrderByDescending(u => u.LastLogin.Value)
+                .ToList();
+
+            return userList;
+        }
+
 
 
         /// <summary>
@@ -462,7 +465,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 SubscriptionCount = Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
                 IsStudent = (StudentService.GetCurrentStudent(user.Id) != null),
                 Members = MemberService.GetMemberships(user.Id),
-                Student = studentService.GetCurrentStudent(user)
+                Students = studentService.GetCurrentStudent(user)
             };
 
             return model;
@@ -557,6 +560,24 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Claims()
+        {
+            var users = _db.Users
+                .Where(u => u.Claims.Any())
+                .Include(u => u.Claims)
+                .OrderBy(u => u.UserName)
+                .ToList();
+
+            return View(users);
+        }
+
+
+        public ActionResult AllStudents()
+        {
+            var model = Db.Students.ToList();
+            return View(model);
         }
 
 

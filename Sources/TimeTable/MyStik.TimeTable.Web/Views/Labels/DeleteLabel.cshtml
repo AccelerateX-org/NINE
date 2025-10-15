@@ -1,0 +1,252 @@
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.ItemLabel
+
+@{
+    ViewBag.Title = "Kohorte";
+
+
+    var db = new TimeTableDbContext();
+    var userInfoService = new UserInfoService();
+
+    var institutions = db.Institutions
+        .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == Model.Id))
+        .ToList();
+
+    var orgs = db.Organisers
+        .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == Model.Id)).Include(activityOrganiser => activityOrganiser.Institution)
+        .ToList();
+
+
+    var currs = db.Curricula
+        .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == Model.Id)).Include(curriculum => curriculum.Organiser)
+        .ToList();
+
+
+    var courses = db.Activities.OfType<Course>()
+        .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == Model.Id)).Include(activity => activity.Semester).Include(activity1 => activity1.Occurrence.SeatQuotas.Select(seatQuota => seatQuota.ItemLabelSet.ItemLabels)).Include(activity => activity.LabelSet.ItemLabels).Include(activity2 => activity2.Organiser)
+        .ToList();
+
+
+    var students = db.Students
+        .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == Model.Id)).Include(student => student.LastSemester).Include(student1 => student1.Curriculum).Include(student2 => student2.LabelSet.ItemLabels)
+        .ToList();
+
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var t = $('#tabCourses').DataTable({
+                "paging": false
+            });
+
+            t.on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    t.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+
+                    var id = $(this).attr('id');
+                    if (id != null) {
+                        window.location.href = "@Url.Action("Details", "Course")/" + id;
+                    }
+                }
+            } );
+
+
+            var t2 = $('#tabStudents').DataTable({
+                "paging": false
+            });
+
+            t2.on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    t.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+
+                    var id = $(this).attr('id');
+                    if (id != null) {
+                        window.location.href = "@Url.Action("Details", "Students")/" + id;
+                    }
+                }
+            } );
+
+
+
+        });
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Kohorte @Model.Name löschen</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Definition</h5>
+                <div class="row">
+                    <div class="col-6">
+                        Bezeichnung
+                    </div>
+                    <div class="col-6">
+                        <strong>@Model.Name</strong>
+                    </div>
+                </div>
+                @if (currs.Any())
+                {
+                    <div class="row">
+                        <div class="col-6">
+                            Institution:
+                        </div>
+                        <div class="col-6">
+                            @foreach (var curr in currs)
+                            {
+                                <div>@curr.Organiser.Institution.Name</div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            Einrichtung:
+                        </div>
+                        <div class="col-6">
+                            @foreach (var curr in currs)
+                            {
+                                <div>
+                                    <a href="@Url.Action("Index", new { id = curr.Organiser.Id })">@curr.Organiser.ShortName</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            Studienangebot:
+                        </div>
+                        <div class="col-6">
+                            @foreach (var curr in currs)
+                            {
+                                <div>@curr.ShortName</div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (orgs.Any())
+                {
+                    <div class="row">
+                        <div class="col-6">
+                            Institution:
+                        </div>
+                        <div class="col-6">
+                            @foreach (var org in orgs)
+                            {
+                                <div>@org.Institution.Name</div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            Einrichtung:
+                        </div>
+                        <div class="col-6">
+                            @foreach (var org in orgs)
+                            {
+                                <div>@org.ShortName</div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (institutions.Any())
+                {
+                    <div class="row">
+                        <div class="col-6">
+                            Institution:
+                        </div>
+                        <div class="col-6">
+                            @foreach (var inst in institutions)
+                            {
+                                <div>@inst.Name</div>
+                            }
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-6">
+                        Farbe
+                    </div>
+                    <div class="col-6">
+                        @if (string.IsNullOrEmpty(Model.HtmlColor))
+                        {
+                            <div><i>nicht definiert</i></div>
+                        }
+                        else
+                        {
+                            <div><span class="badge" style="background-color:@Model.HtmlColor">@Model.HtmlColor</span> (@Model.HtmlColor)</div>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        Beschreibung
+                    </div>
+                    <div class="col-6">
+                        @Model.Description
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        Anzahl Lehrveranstaltungen
+                    </div>
+                    <div class="col-6">
+                        @courses.Count()
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        Anzahl Studierende
+                    </div>
+                    <div class="col-6">
+                        @students.Count()
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        @using (Html.BeginForm("DeleteLabelConfirm", null, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.Id)
+                            <div class="row">
+                                <div class="alert alert-danger">
+                                    Die Kohorte wird aus allen Lehrveranstaltungen und Studierenden entfernt und kann nicht wiederhergestellt werden!<br />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Löschen</button>
+                                    <a href="@Url.Action("Details",  new{id=Model.Id})" class="btn btn-outline-secondary">Abbrechen</a>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

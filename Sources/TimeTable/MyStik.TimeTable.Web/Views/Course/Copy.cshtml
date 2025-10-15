@@ -8,6 +8,7 @@
 
     var todaySemester = semesterService.GetSemester(DateTime.Today);
     var planingSemester = semesterService.GetNextSemester(todaySemester);
+    var planingSemester2 = semesterService.GetNextSemester(planingSemester);
     var courseSemester = Model.Semester;
 }
 
@@ -16,9 +17,18 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Fortschreibung</h5>
+                <h5 class="card-title">Fortschreibung Folgesemester</h5>
                 <p class="card-text">Übertragung der Daten aus dem Semester <strong>@courseSemester.Name</strong> in das Planungssemester <strong>@planingSemester.Name</strong></p>
                 <a href="@Url.Action("Planning", new {id = Model.Id})" class="btn btn-outline-primary">weiter <i class="bi bi-chevron-double-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Fortschreibung Studienjahr</h5>
+                <p class="card-text">Übertragung der Daten aus dem Semester <strong>@courseSemester.Name</strong> in das Planungssemester <strong>@planingSemester2.Name</strong></p>
+                <a href="@Url.Action("PlanningYear", new {id = Model.Id})" class="btn btn-outline-primary">weiter <i class="bi bi-chevron-double-right"></i></a>
             </div>
         </div>
     </div>

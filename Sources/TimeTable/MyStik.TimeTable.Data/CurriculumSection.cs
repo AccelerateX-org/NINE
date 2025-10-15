@@ -71,6 +71,9 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Das Volumen ausgedrückt in ECTS
+        /// Das ist der Soll-Wert, der sich aus dem Curriculum ergibt
+        /// Der Ist-Wert ergibt sich aus der Summe der akkreditierten Fächer
+        /// Die Anzahl der zu belegenden Kurse ergibt sich aus der Summe der ECTS der akkreditierten Fächer
         /// </summary>
         public double ECTS { get; set; }
 

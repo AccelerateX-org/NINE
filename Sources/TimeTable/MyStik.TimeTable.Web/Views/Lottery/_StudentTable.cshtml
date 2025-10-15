@@ -1,0 +1,64 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
+
+
+        @foreach (var user in Model)
+        {
+            <tr id="@user.Student.Id">
+                <td>Neu</td>
+                @if (user.Student != null && user.Student.Curriculum != null)
+                {
+                    <td>@Html.FacultyLabel(user.Student.Curriculum.Organiser)</td>
+                }
+                else
+                {
+                    <td></td>
+
+                }
+                <td>
+                    @user.User.LastName
+                </td>
+                <td>@user.User.FirstName</td>
+                @if (user.Student != null)
+                {
+                    if (user.Student.Curriculum != null && user.Student.FirstSemester != null)
+                    {
+                        <td>@user.Student.Curriculum.ShortName</td>
+                        <td>
+                            @if (user.Student.LabelSet != null)
+                            {
+                                foreach (var label in user.Student.LabelSet.ItemLabels)
+                                {
+                                    <div>@label.Name</div>
+                                }
+                            }
+                        </td>
+                        <td>@user.Student.FirstSemester.Name</td>
+                        if (user.Student.LastSemester != null)
+                        {
+                            <td>@user.Student.LastSemester.Name</td>
+                        }
+                        else
+                        {
+                            <td>aktiv</td>
+                        }
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                }
+                <td>@user.User.Email</td>
+                <td><button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@user.Student.Id');"><i class="bi bi-trash"></i></button></td>
+            </tr>
+        }

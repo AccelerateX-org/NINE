@@ -134,6 +134,8 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<Lottery> Lotteries { get; set; }
 
+        public DbSet<LotteryEntitlement> LotteryEntitlements { get; set; }  
+
         public DbSet<LotteryBudget> LotteriyBudgets { get; set; }
 
         public DbSet<LotteryBet> LotteriyBets { get; set; }

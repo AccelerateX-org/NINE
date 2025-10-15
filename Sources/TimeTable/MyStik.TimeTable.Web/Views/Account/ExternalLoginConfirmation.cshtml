@@ -2,35 +2,161 @@
 @{
     ViewBag.Title = "Register";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>Associate your @ViewBag.LoginProvider account.</h3>
 
-@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
+<div id="dlgSelect" class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Ich habe einen HM User-Account <i class="bi bi-check text-success"></i></h4>
+                <p class="card-text">
+                    Dies ist der Fall, wenn ich mich z.B. bei
+                    <a href="https://hm.edu/studium_1/im_studium/mein_studium/online/index.de.html" target="_blank">primuss</a> oder
+                    <a href="https://moodle.hm.edu" target="_blank">moodle</a> anmelden kann.
+                </p>
+                <p class="card-text">Wenn ich mich bereits bei NINE registriert habe, dann kann ich über die Steuerung meines Benutzerprofils den HM User-Account verknüpfen. 
+                    Dazu melde ich mich wie bisher über den <a href="@Url.Action("Login", "Account")">Login Dialog</a> an und gehe dann zu meinem Benutzerprofil.</p>
+                <p class="card-text">Wenn ich mich bisher noch nicht bei NINE registriert habe, dann kann ich direkt mit dem HM User-Account ein Benutzerkonto bei NINE anlegen und verknüpfen.</p>
+                <a href="javascript:onUseHmAccount()" class="btn btn-outline-primary">Zum Anlegen des NINE Benutzerkontos mit HM User-Account <i class="bi bi-chevron-double-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Ich habe bisher keinen HM User-Account <i class="bi bi-x text-danger"></i></h4>
+                <p class="card-text">
+                    Dies ist der Fall, wenn ich (noch) nicht immatrikuliert bin. 
+                    Ich möchte / muss NINE nutzen, z.B. weil ich an einem Aufnahmeverfahren teilnehme. 
+                    Es möglich sich direkt bei NINE mit beliebiger E-Mail Adresse und selbstgewähltem Passwort zu registrieren.</p>
+                <a href="@Url.Action("Register", "Account")" class="btn btn-outline-primary">Zur Registrierung bei NINE <i class="bi bi-chevron-double-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Ich weiß nicht was ein HM User-Account ist <i class="bi bi-question text-warning"></i></h4>
+                <p class="card-text">In diesem Fall bitte an die zentrale IT wenden.</p>
+                <p class="card-text">
+                    <a href="https://hm.edu/studium_1/im_studium/mein_studium/online/index.de.html" class="btn btn-outline-primary">Zu den online Diensten der HM <i class="bi bi-chevron-double-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <h4>Association Form</h4>
+<div id="dlgHmAccount">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Registrierung</h5>
+                    <p>Hiermit bestätige ich:</p>
+                    <ol>
+                        <li>Ich habe mich bisher nicht bei NINE registriert.</li>
+                        <li>Ich habe bisher kein Benutzerkonto bei NINE.</li>
+                        <li>Ich möchte ein NINE-Benutzerkonto mit meinem HM-Account @Model.Email anlegen.</li>
+                    </ol>
+                    <a href="javascript:onConfirmRegister()" class="btn btn-outline-success"><i class="bi bi-check"></i> Das ist so korrekt</a>
+
+                    @using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @id = "dlgRegister", @class = "row g-3", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true, "name", new { @class = "text-danger" })
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(m => m.Email)
+
+                        <div class="col-auto mt-3">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-pen"></i> Ich möchte mich mit meinen HM-Account @Model.Email bei NINE registrieren.</button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*
+    <div id="dlgAccount" class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <h3>Associate your @ViewBag.LoginProvider account.</h3>
+
+                @using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <h4>Association Form</h4>
+                    <hr/>
+                    @Html.ValidationSummary(true, "name", new { @class = "text-danger" })
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <p class="text-info">
+                        You've successfully authenticated with <strong>@ViewBag.LoginProvider</strong>.
+                        Please enter a user name for this site below and click the Register button to finish
+                        logging in.
+                    </p>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" class="btn btn-outline-primary" value="Register"/>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+*@
+
+@*
+    <p>Login Infos</p>
+
+    <ul>
+        @foreach (var claim in ViewBag.Claims)
+        {
+            <li>@claim.ToString()</li>
+        }
+    </ul>
+
     <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <p class="text-info">
-        You've successfully authenticated with <strong>@ViewBag.LoginProvider</strong>.
-        Please enter a user name for this site below and click the Register button to finish
-        logging in.
-    </p>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
-        </div>
-    </div>
-}
+    <p>@ViewBag.UserData</p>
+    <hr />
+
+    <ul>
+        <li>@ViewBag.Name</li>
+        <li>@ViewBag.GivenName</li>
+        <li>@ViewBag.UserName</li>
+        <li>@ViewBag.EMail</li>
+        <li>@ViewBag.LoginInfo.Email</li>
+    </ul>
+*@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $("#dlgRegister").hide();
+            $("#dlgHmAccount").hide();
+        });
+
+
+        function onConfirmRegister() {
+            $("#dlgRegister").show();
+        }
+
+
+        function onUseHmAccount() {
+            $("#dlgSelect").hide();
+            $("#dlgHmAccount").show();
+        }
+    </script>
 }

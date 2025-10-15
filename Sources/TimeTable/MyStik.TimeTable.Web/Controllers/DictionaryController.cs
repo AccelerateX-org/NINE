@@ -952,7 +952,8 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
 
-            var student = StudentService.GetCurrentStudent(user.Id);
+            var students = StudentService.GetCurrentStudent(user.Id);
+            var student = students.FirstOrDefault();
 
             var courseService = new CourseService(Db);
 
@@ -1053,7 +1054,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var logger = LogManager.GetLogger("Booking");
 
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var students = StudentService.GetCurrentStudent(user);
+            var student = students.FirstOrDefault();
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
             OccurrenceSubscription succeedingSubscription = null;
 

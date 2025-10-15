@@ -31,11 +31,14 @@
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
                     <i class="bi bi-collection-play"></i> Vorlesungsverzeichnis
                 </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Lottery")">
+                    <i class="bi bi-card-checklist"></i> Wahlverfahren
+                </a>
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Events")">
                     <i class="bi bi-film"></i> Veranstaltungsverzeichnis
                 </a>
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")">
-                    <i class="bi bi-check-all"></i> Auswahlverfahren
+                    <i class="bi bi-folder-check"></i> Auswahlverfahren
                 </a>
             </div>
         </div>
@@ -52,14 +55,9 @@
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula")">
                     <i class="bi bi-award"></i> Studienangebote
                 </a>
-                @*
-                <div class="list-group-item disabled">
-                    Zertifikate
-                </div>
-                <div class="list-group-item disabled">
-                    Weiterbildung
-                </div>
-                    *@
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Modules")">
+                    <i class="bi bi-boxes"></i> Module
+                </a>
             </div>
         </div>
     </div>
@@ -79,10 +77,12 @@
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Services")">
                     <i class="bi bi-yin-yang"></i> Zentrale Services
                 </a>
-                @*
-        <div class="list-group-item disabled">Labore</div>
-        <div class="list-group-item disabled">Abteilungen</div>
-                *@
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Members")">
+                    <i class="bi bi-people"></i> Mitglieder
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Rooms")">
+                    <i class="bi bi-building"></i> Räume
+                </a>
             </div>
         </div>
     </div>

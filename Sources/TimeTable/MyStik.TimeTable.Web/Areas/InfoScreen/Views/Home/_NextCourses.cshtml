@@ -3,56 +3,51 @@
 
 <input id="tokenPanelRight" type="hidden" name="tokenPanelRight" value="@ViewBag.Token">
 
-<div class="portlet light">
-    <div class="portlet-title">
-        <div class="caption">
-            <h1>demnächst beginnt...</h1>
-        </div>
-    </div>
-    <div class="portlet-body infoscreen">
-        @if (Model.UpcomingDates.Any())
-        {
-            <div class="infoscreen">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Zeitraum</th>
-                        <th>Raum</th>
-                        <th>Name</th>
-                        <th>Dozent</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var date in Model.UpcomingDates)
+<div>
+    <h4>demnächst beginnt...</h4>
+    @if (Model.UpcomingDates.Any())
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Zeitraum</th>
+                    <th>Raum</th>
+                    <th>Veranstaltung</th>
+                    <th>Personen</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var date in Model.UpcomingDates)
+                {
+                    if (date.Occurrence.IsCanceled)
                     {
-                        if (date.Occurrence.IsCanceled)
-                        {
-                            <tr class="danger">
-                                <td>@Html.TimeSpan(date)</td>
-                                <td>abgesagt</td>
-                                <td>@date.Activity.Name</td>
-                                <td>@Html.LecturerList(date.Hosts, false)</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <td>@Html.TimeSpan(date)</td>
-                                <td>@Html.RoomList(date.Rooms, false, false)</td>
-                                <td>@date.Activity.Name</td>
-                                <td>@Html.LecturerList(date.Hosts, false)</td>
-                            </tr>
-                        }
+                        <tr class="danger">
+                            <td>@Html.TimeSpan(date)</td>
+                            <td>abgesagt</td>
+                            <td>@date.Activity.Name</td>
+                            <td>@Html.LecturerList(date.Hosts, false)</td>
+                        </tr>
                     }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <h1 class="text-success">...heute nix mehr</h1>
-        }
-    </div>
+                    else
+                    {
+                        <tr>
+                            <td>@Html.TimeSpan(date)</td>
+                            <td>@Html.RoomList(date.Rooms, false, false)</td>
+                            <td>@date.Activity.Name</td>
+                            <td>@Html.LecturerList(date.Hosts, false)</td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-success">...heute nix mehr</h1>
+    }
 </div>
+
 
 

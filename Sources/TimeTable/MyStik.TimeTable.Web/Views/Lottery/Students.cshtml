@@ -23,111 +23,176 @@
                 buttons: [
                     'copy', 'excel'
                 ],
-                "paging": false
+                "paging": false,
+                "order": [[1, 'asc']]
             });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
         });
     </script>
 }
 
 
-
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren @Model.Lottery.Name  - Studierende</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Lottery.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Organiser.ShortName</a></li>
+                }
+                @if (Model.Lottery.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { semId = Model.Lottery.Semester.Id, orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Lottery", new { id = Model.Lottery.Id })">@Model.Lottery.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Teilnehmende</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
 
 
-<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Liste der Studierenden</h4>
-                </div>
-
+            <div class="card">
 
                 <table id="tabStudents" class="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th><i class="fa fa-book"></i></th>
-                            <th><i class="fa fa-anchor"></i></th>
-                            <th><i class="bi bi-calendar"></i></th>
-                            <th><i class="fa fa-users"></i></th>
-                            <th><i class="fa fa-hourglass-half"></i></th>
+                            <th>#</th>
+                            <th>Nachname</th>
+                            <th>Vorname</th>
+                            <th>Studiengang</th>
+                            <th>Kohorte(n)</th>
+                            <th>Studienbeginn</th>
+                            <th>TZ/VZ</th>
+                            <th><i class="bi bi-people"></i></th>
+                            <th><i class="bi bi-hourglass-split"></i></th>
+                            <th>Kommentar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var student in Model.Games)
+                        @foreach (var game in Model.Games)
                         {
-                            var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
-                            var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
+                            var user = game.Student != null ? userService.GetUser(game.Student.UserId) : userService.GetUser(game.UserId);
 
-                            <tr>
-                                @if (student.Student == null)
-                                {
-                                    <td colspan="4">@user.FullName</td>
-                                }
-                                else
-                                {
-                                    <td>@user.FullName</td>
-                                    <td>@student.Student.Curriculum.ShortName</td>
-                                    if (student.Student.IsPartTime)
+                            foreach (var seat in game.Seats)
+                            {
+                                <tr>
+                                    <td></td>
+                                    @if (user != null)
                                     {
-                                        <td>TZ</td>
+                                        <td>@user.LastName</td>
+                                        <td>@user.FirstName</td>
                                     }
                                     else
                                     {
-                                        <td>VZ</td>
+                                        <td>unbekannt</td>
+                                        <td>kein Benutzerkonto vorhanden</td>
                                     }
-                                    <td>@student.Student.FirstSemester.Name</td>
+                                    @if (game.Student != null)
+                                    {
+                                        <td>@game.Student.Curriculum.ShortName</td>
+
+                                        <td>
+                                            @if (game.Student.LabelSet != null)
+                                            {
+                                                foreach (var label in game.Student.LabelSet.ItemLabels)
+                                                {
+                                                    <div>@label.Name</div>
+                                                }
+                                            }
+                                        </td>
+
+
+                                        <td>@game.Student.FirstSemester.Name</td>
+                                        if (game.Student.IsPartTime)
+                                        {
+                                            <td>TZ</td>
+                                        }
+                                        else
+                                        {
+                                            <td>VZ</td>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                    <td>
+                                        @seat.Course.ShortName (@seat.Subscription.Priority)
+                                    </td>
+                                    <td></td>
+                                    <td>@Html.Raw(seat.Subscription.HostRemark)</td>
+                                </tr>
+                            }
+
+                            foreach (var lot in game.Lots)
+                            {
+                    <tr>
+                        <td></td>
+                        @if (user != null)
+                        {
+                            <td>@user.LastName</td>
+                            <td>@user.FirstName</td>
+                        }
+                        else
+                        {
+                            <td>unbekannt</td>
+                            <td>kein Benutzerkonto vorhanden</td>
+                        }
+                        @if (game.Student != null)
+                        {
+                            <td>@game.Student.Curriculum.ShortName</td>
+                            <td>
+                                @if (game.Student.LabelSet != null)
+                                {
+                                    foreach (var label in game.Student.LabelSet.ItemLabels)
+                                    {
+                                        <div>@label.Name</div>
+                                    }
                                 }
+                            </td>
+                            <td>@game.Student.FirstSemester.Name</td>
+                            if (game.Student.IsPartTime)
+                            {
+                                <td>TZ</td>
+                            }
+                            else
+                            {
+                                <td>VZ</td>
+                            }
 
-                                <td>
-                                    @foreach (var seat in student.Seats)
-                                    {
-                                        <div>@seat.Course.ShortName</div>
-                                    }
-                                </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                        <td></td>
+                        <td>
+                            @lot.Course.ShortName  (@lot.Subscription.Priority)
+                        </td>
+                        <td>@Html.Raw(lot.Subscription.HostRemark)</td>
+                    </tr>
 
-                                <td>
-                                    @foreach (var seat in student.Lots)
-                                    {
-                                        <div>@seat.Course.ShortName</div>
-                                    }
-                                </td>
-
-                            </tr>
+                            }
                         }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-</div>
+

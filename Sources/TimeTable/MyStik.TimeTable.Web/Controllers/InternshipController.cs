@@ -12,7 +12,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var internship = Db.Internships.FirstOrDefault(x => x.Student.Id == student.Id);
 
             var model = new InternshipStateModel
@@ -29,7 +29,8 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Check()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var students = StudentService.GetCurrentStudent(user);
+            var student = students.FirstOrDefault();
             var thesis = Db.Internships.FirstOrDefault(x => x.Student.Id == student.Id);
 
             // Eine evtl. vorhandene alte Anfrage löschen
@@ -57,7 +58,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Check(ThesisDetailModel model)
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Internships.FirstOrDefault(x => x.Student.Id == student.Id);
 
 
@@ -85,7 +86,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Plan()
         {
             var user = GetCurrentUser();
-            var student = StudentService.GetCurrentStudent(user);
+            var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
             var thesis = Db.Internships.FirstOrDefault(x => x.Student.Id == student.Id);
 
             var model = new InternshipStateModel()
@@ -111,7 +112,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (beginn < DateTime.Today)
             {
                 var user = GetCurrentUser();
-                var student = StudentService.GetCurrentStudent(user);
+                var student = StudentService.GetCurrentStudent(user).FirstOrDefault();
                 var thesis2 = Db.Internships.FirstOrDefault(x => x.Student.Id == student.Id);
 
                 var model2 = new InternshipStateModel()
@@ -132,7 +133,8 @@ namespace MyStik.TimeTable.Web.Controllers
             if (end <= beginn)
             {
                 var user = GetCurrentUser();
-                var student = StudentService.GetCurrentStudent(user);
+                var students = StudentService.GetCurrentStudent(user);
+                var student = students.FirstOrDefault();
                 var thesis2 = Db.Internships.FirstOrDefault(x => x.Student.Id == student.Id);
 
                 var model2 = new InternshipStateModel()

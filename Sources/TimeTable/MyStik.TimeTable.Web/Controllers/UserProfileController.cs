@@ -27,7 +27,39 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult EditPersonalData()
         {
-            return View();
+            var model = new ProfileViewModel();
+
+            var user = GetCurrentUser();
+
+            if (user == null) return RedirectToAction("Index", "Manage");
+            
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.LikeEMails = user.LikeEMails;
+
+            ViewBag.HasImage = false;
+            if (user.BinaryData != null && user.BinaryData.Length > 0)
+                ViewBag.HasImage = true;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditPersonalData(ProfileViewModel model)
+        {
+            var _db = new ApplicationDbContext();
+            var user = _db.Users.SingleOrDefault(u => u.UserName.Equals(User.Identity.Name));
+
+            if (user == null) return RedirectToAction("Index", "Manage");
+            if (!string.IsNullOrEmpty(model.FirstName))
+                user.FirstName = model.FirstName;
+            if (!string.IsNullOrEmpty(model.LastName))
+                user.LastName = model.LastName;
+            
+            user.LikeEMails = model.LikeEMails;
+
+            _db.SaveChanges();
+            return RedirectToAction("Index", "Manage");
         }
 
         /// <summary>

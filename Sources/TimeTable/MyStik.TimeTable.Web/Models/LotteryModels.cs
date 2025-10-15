@@ -196,7 +196,10 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<LotteryLotPotCourseModel> PotElements { get; set; }
+
+        public ICollection<StudentViewModel> Entitlements { get; set; }
     }
+
 
     /// <summary>
     /// 
@@ -801,6 +804,8 @@ namespace MyStik.TimeTable.Web.Models
     public class LotterySemesterSummaryModel
     {
         public Semester Semester { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
 
         public List<Lottery> Lottery { get; set; }
     }

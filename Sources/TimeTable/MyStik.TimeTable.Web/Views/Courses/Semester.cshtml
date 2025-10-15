@@ -4,47 +4,48 @@
 @{
     ViewBag.Title = "Lehrangebot";
 
-    /*
-    var db = new TimeTableDbContext();
+    @*
+        var db = new TimeTableDbContext();
 
-    var match = false;
-    if (Model.Organiser.ShortName == "FK 11" &&
-        Model.Semester.Name == "SoSe 2025")
-    {
-        match = true;
+        var datesToDelete = new List<ActivityDate>();
 
-        foreach (var c in Model.Courses)
+        var match = false;
+        if (Model.Organiser.ShortName == "FK 11" &&
+            Model.Semester.Name == "WiSe 2025")
         {
-            // keine Kontingente aber Plätze
-            if (!c.Course.Occurrence.SeatQuotas.Any() && c.Course.Occurrence.Capacity > 0)
+            match = true;
+            var org = db.Organisers.SingleOrDefault(x => x.Id == Model.Organiser.Id);
+            var sem = db.Semesters.SingleOrDefault(x => x.Id == Model.Semester.Id);
+
+
+            foreach (var c in Model.Courses)
             {
-                foreach (var label in c.Course.LabelSet.ItemLabels)
+                var nDates = c.Course.Dates.Count();
+                var occs = c.Course.Dates.Select(x => x.Occurrence).Distinct();
+                var nOccs = occs.Count();
+                var nDiff = nDates - nOccs;
+
+                if (nDiff == 0)
                 {
-                    var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
-                    if (curr != null)
+                    continue;
+                }
+
+                foreach (var occ in occs)
+                {
+                    var dates = db.ActivityDates.Where(x => x.Occurrence.Id == occ.Id).ToList();
+
+                    if (dates.Count() == 1)
                     {
-                        var occ = db.Occurrences.SingleOrDefault(x => x.Id == c.Course.Occurrence.Id);
-
-                        var quota = new SeatQuota
-                        {
-                            Curriculum = curr,
-                            ItemLabelSet = new ItemLabelSet(),
-                            MaxCapacity = c.Course.Occurrence.Capacity,
-                            MinCapacity = 0,
-                            Description = string.Empty,
-                            Occurrence = occ
-                        };
-
-                        db.SeatQuotas.Add(quota);
-
+                        continue;
                     }
+
+                    datesToDelete.Add(dates.First());
                 }
             }
-        }
 
-        db.SaveChanges();
-    }
-    */
+            //db.SaveChanges();
+        }
+        *@
 }
 
 @section styles
@@ -60,7 +61,7 @@
     @if (ViewBag.UserRight.IsCourseAdmin)
     {
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#tabCourses').DataTable({
                     dom: 'Bfrtip',
                     buttons: [
@@ -69,18 +70,148 @@
                     "paging": false
                 });
             });
+
+            function onTogglePublished(id) {
+                var elem = $("#togglePublish");
+                if (elem.hasClass("text-success")) {
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("TogglePublished")',
+                            data: {
+                                id: id,
+                                isPublished: false
+                            },
+                            success: function(data, success, xhr) {
+                                elem.removeClass("text-success");
+                                elem.removeClass("bi-check-square");
+
+                                elem.addClass("text-danger");
+                                elem.addClass("bi-x-square");
+                            }
+                        });
+
+
+                } else {
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("TogglePublished")',
+                            data: {
+                                id: id,
+                                isPublished: true
+                            },
+                            success: function(data, success, xhr) {
+                                elem.removeClass("text-danger");
+                                elem.removeClass("bi-x-square");
+
+                                elem.addClass("text-success");
+                                elem.addClass("bi-check-square");
+                            }
+                        });
+
+
+                }
+            }
+
+            function onToggleLocked(id) {
+                var elem = $("#toggleLocked");
+                if (elem.hasClass("text-success")) {
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("ToggleLocked")',
+                            data: {
+                                id: id,
+                                isLocked: true
+                            },
+                            success: function(data, success, xhr) {
+                                elem.removeClass("text-success");
+                                elem.removeClass("bi-unlock");
+
+                                elem.addClass("text-danger");
+                                elem.addClass("bi-lock");
+                            }
+                        });
+
+
+                } else {
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("ToggleLocked")',
+                            data: {
+                                id: id,
+                                isLocked: false
+                            },
+                            success: function(data, success, xhr) {
+                                elem.removeClass("text-danger");
+                                elem.removeClass("bi-lock");
+
+                                elem.addClass("text-success");
+                                elem.addClass("bi-unlock");
+                            }
+                        });
+
+
+                }
+            }
+
+            function onToggleSubscribable(id) {
+                var elem = $("#toggleSubscribable");
+                if (elem.hasClass("text-success")) {
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("ToggleSubscribable")',
+                            data: {
+                                id: id,
+                                isAvailable: false
+                            },
+                            success: function(data, success, xhr) {
+                                elem.removeClass("text-success");
+
+                                elem.addClass("text-danger");
+                            }
+                        });
+
+
+                } else {
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("ToggleSubscribable")',
+                            data: {
+                                id: id,
+                                isAvailable: true
+                            },
+                            success: function(data, success, xhr) {
+                                elem.removeClass("text-danger");
+
+                                elem.addClass("text-success");
+                            }
+                        });
+
+
+                }
+            }
+
         </script>
     }
     else
     {
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#tabCourses').DataTable({
                     "paging": false
                 });
             });
         </script>
     }
+
 }
 
 <div class="row">
@@ -100,7 +231,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <ul>
-                                <li><i class="bi bi-check-square text-success"></i>:Lehrveranstaltung sichtbar</li>
+                                <li><i class="bi bi-check-square text-success"></i>: Lehrveranstaltung sichtbar</li>
                                 <li><i class="bi bi-x-square text-danger"></i>: Lehrveranstaltung im Planungsmodus</li>
                             </ul>
                         </div>
@@ -156,32 +287,66 @@
                                 linkName = c.Course.ShortName;
                             }
                             <tr>
-                                <td>
-                                    @if (c.Course.IsProjected)
-                                    {
-                                        <i class="bi bi-x-square text-danger"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-check-square text-success"></i>
-                                    }
-                                    @if (c.Course.IsInternal)
-                                    {
-                                        <i class="bi bi-lock text-danger"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-unlock text-success"></i>
-                                    }
-                                    @if (!c.Course.Occurrence.IsAvailable)
-                                    {
-                                        <i class="bi bi-pen-fill text-danger"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-pen-fill text-success"></i>
-                                    }
-                                </td>
+                                @if (ViewBag.UserRight.IsCourseAdmin)
+                                {
+                                    <td>
+                                        <div class="btn-group">
+                                            @if (c.Course.IsProjected)
+                                            {
+                                                <a href="javascript:onTogglePublished('@c.Course.Id.ToString()')" class="btn btn-sm btn-outline-dark"><i id="togglePublish" class="bi bi-x-square text-danger"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:onTogglePublished('@c.Course.Id.ToString()')" class="btn btn-sm btn-outline-dark"><i id="togglePublish" class="bi bi-check-square text-success"></i></a>
+                                            }
+                                            @if (c.Course.IsInternal)
+                                            {
+                                                <a href="javascript:onToggleLocked('@c.Course.Id.ToString()')" class="btn btn-sm btn-outline-dark"><i id="toggleLocked" class="bi bi-lock text-danger"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:onToggleLocked('@c.Course.Id.ToString()')" class="btn btn-sm btn-outline-dark"><i id="toggleLocked" class="bi bi-unlock text-success"></i></a>
+                                            }
+                                            @if (!c.Course.Occurrence.IsAvailable)
+                                            {
+                                                <a href="javascript:onToggleSubscribable('@c.Course.Occurrence.Id')" class="btn btn-sm btn-outline-dark"><i id="toggleSubscribable" class="bi bi-pen-fill text-danger"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:onToggleSubscribable('@c.Course.Occurrence.Id')" class="btn btn-sm btn-outline-dark"><i id="toggleSubscribable" class="bi bi-pen-fill text-success"></i></a>
+                                            }
+                                        </div>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @if (c.Course.IsProjected)
+                                        {
+                                            <i class="bi bi-x-square text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-check-square text-success"></i>
+                                        }
+                                        @if (c.Course.IsInternal)
+                                        {
+                                            <i class="bi bi-lock text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-unlock text-success"></i>
+                                        }
+                                        @if (!c.Course.Occurrence.IsAvailable)
+                                        {
+                                            <i class="bi bi-pen-fill text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-pen-fill text-success"></i>
+                                        }
+                                    </td>
+                                }
                                 <td>
                                     @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
                                 </td>
@@ -255,3 +420,19 @@
     </div>
 
 </div>
+@*
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            @foreach (var activityDate in datesToDelete)
+            {
+                <li>
+                    <a href="@Url.Action("AdminNewDates", "Course", new { id = activityDate.Activity.Id })" target="_blank">@activityDate.Activity.ShortName</a>: 
+                    @Html.TimeSpanWithDate(activityDate): 
+                    <a href="@Url.Action("DeleteDateRepair", "Course", new { dateId = activityDate.Id })" target="_blank">Löschen</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+    *@

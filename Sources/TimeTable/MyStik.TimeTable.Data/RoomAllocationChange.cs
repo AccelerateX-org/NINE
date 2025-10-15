@@ -14,12 +14,24 @@ namespace MyStik.TimeTable.Data
         public string UserId { get; set; }
 
         /// <summary>
+        /// Referenz der Belegung
+        /// Aktuell ist das die Id des zugehörigen ActivityDate
+        /// Hintergrund: Damit können Änderungen zugeordnet werden und wenn das Date gelöscht wird, dann sind die Änderungen immer noch da
+        /// </summary>
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// Raum-Nummer, damit die Änderung auch ohne Join sichtbar ist
+        /// </summary>
+        public string RoomNumber { get; set; }
+        /// <summary>
         /// Zeitstempel der Änderung
         /// </summary>
         public DateTime TimeStamp { get; set; }
 
         /// <summary>
         /// Raum, der von der Änderung betroffen ist
+        /// Deprecated: Raum-Nummer ist jetzt direkt in der Änderung
         /// </summary>
         public virtual Room Room { get; set; }
 

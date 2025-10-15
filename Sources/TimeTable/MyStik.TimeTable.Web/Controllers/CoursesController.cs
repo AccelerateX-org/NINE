@@ -463,7 +463,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var writer = new StreamWriter(ms, Encoding.Default);
 
 
-            writer.Write("Studiengang;Gruppe;Kürzel;Vorname;Nachname;E-Mail;Kurzname;Titel;Eintragungen");
+            writer.Write("Studienangebot;Gruppe;Kürzel;Vorname;Nachname;E-Mail;Kurzname;Titel;Eintragungen");
             writer.Write(Environment.NewLine);
 
 
@@ -520,7 +520,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var writer = new StreamWriter(ms, Encoding.Default);
 
 
-            writer.Write("Studiengang;Gruppe;Kürzel;Vorname;Nachname;Kurzname;Titel;Datum");
+            writer.Write("Studienangebot;Gruppe;Kürzel;Vorname;Nachname;Kurzname;Titel;Datum");
             writer.Write(Environment.NewLine);
 
 
@@ -1149,5 +1149,45 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public PartialViewResult TogglePublished(Guid id, bool isPublished)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+            if (course != null)
+            {
+                course.IsProjected = !isPublished;
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public PartialViewResult ToggleLocked(Guid id, bool isLocked)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+            if (course != null)
+            {
+                course.IsInternal = isLocked;
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public PartialViewResult ToggleSubscribable(Guid id, bool isAvailable)
+        {
+            var occ = Db.Occurrences.SingleOrDefault(x => x.Id == id);
+            if (occ != null)
+            {
+                occ.IsAvailable = isAvailable;
+                Db.SaveChanges();
+            }
+
+            return null;
+        }
+
     }
 }

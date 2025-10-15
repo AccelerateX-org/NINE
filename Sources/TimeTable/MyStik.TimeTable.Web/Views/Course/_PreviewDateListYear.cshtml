@@ -1,0 +1,98 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+@{
+    ViewBag.Title = "Kurs planen";
+
+    var db = new TimeTableDbContext();
+    var courseService = new CourseService(db);
+    var semService = new SemesterService(db);
+
+    var course = Model.Course;
+    var segment = Model.PlaningSegment;
+    var historicSegment = course.Segment;
+
+    var currentSemester = semService.GetSemester(DateTime.Today);
+    var historicSemester = course.Semester;
+    var planingSemester = semService.GetNextSemester(currentSemester);
+    planingSemester = semService.GetNextSemester(planingSemester);
+
+
+    var summary = courseService.GetCourseSummary(course);
+
+}
+
+
+<div class="list-group">
+    @if (course.Dates.Any())
+    {
+        var nDate = 1;
+        var orderedDates = course.Dates.OrderBy(x => x.Begin).ToList();
+        var refDate = orderedDates.First();
+        var refDateYear = refDate.Begin.Date;
+
+
+        foreach (var date in orderedDates)
+        {
+            if (nDate == 1)
+            {
+                var nDays = date.Begin.Date - historicSegment.From.Date;
+                var weekDay = date.Begin.DayOfWeek;
+
+                var nWeek = 0;
+                var segStart = historicSegment.From.Date;
+                var courseStart = date.Begin.Date;
+
+                while (courseStart >= segStart)
+                {
+                    nWeek++;
+                    courseStart = courseStart.AddDays(-7);
+                }
+
+                // offset > 0 => Vorlesungsbeginn später in der Woche
+                var offset = segment.From.DayOfWeek - refDate.Begin.DayOfWeek;
+
+                if (offset > 0)
+                {
+                    refDateYear = segment.From.Date.AddDays((7 - offset) + 7 * (nWeek - 1));
+                }
+                else
+                {
+                    refDateYear = segment.From.Date.AddDays(-offset + 7 * (nWeek - 1));
+                }
+
+
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-4">@Html.TimeSpanWithDate(date)</div>
+                        <div class="col-md-4">@nWeek-ter @weekDay nach Vorlesungsbeginn</div>
+                        <div class="col-md-4">@refDateYear.Date</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                var nDays = date.Begin.Date - refDate.Begin.Date;
+                refDateYear = refDateYear.AddDays(nDays.Days);
+
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-4">@Html.TimeSpanWithDate(date)</div>
+                        <div class="col-md-4">@nDays.Days Tage nach Vorgänger</div>
+                        <div class="col-md-4">@refDateYear.Date</div>
+                    </div>
+                </div>
+            }
+
+            nDate++;
+            refDate = date;
+        }
+    }
+</div>
+
+
+
+
+

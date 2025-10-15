@@ -1,0 +1,40 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.ApplicationUser>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Vorname</th>
+                        <th>Nachname</th>
+                        <th>Benutzername</th>
+                        <th>E-Maill</th>
+                        <th>Claims</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>
+                                @foreach (var c in user.Claims)
+                                {
+                                    <div>@c.ClaimType: @c.ClaimValue</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

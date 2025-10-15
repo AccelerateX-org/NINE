@@ -1,12 +1,45 @@
-﻿@model MyStik.TimeTable.Web.Models.ManageLoginsViewModel
+﻿@model MyStik.TimeTable.Web.Controllers.ExternalLoginStatus
 @using Microsoft.Owin.Security
 @{
     ViewBag.Title = "Manage your external logins";
 }
 
-<h2>@ViewBag.Title.</h2>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Nachricht vom externen Login Provider</h5>
+                @if (Model.Errors == null || !Model.Errors.Any())
+                {
+                    if (Model.IsConnect == true)
+                    {
+                        <p class="text-success">Verknüpfung erfolgreich hergestellt.</p>
+                    }
+                    else
+                    {
+                        <p class="text-success">Verknüpfung erfolgreich getrennt.</p>
+                    }
+                }
+                else
+                {
+                    <p class="text-danger">Bei der Verknüpfung sind folgende Fehler aufgetreten:</p>
+                    <ul>
+                        @foreach (var txt in Model.Errors)
+                        {
+                            <li>@txt</li>
+                        }
+                    </ul>
+                }
+                <a href="@Url.Action("Index")" class="btn btn-outline-primary">
+                    Weiter zum Benutzerprofil <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p class="text-success">@ViewBag.StatusMessage</p>
+
+@*
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0) {
@@ -68,3 +101,4 @@
         }
     }
 }
+*@

@@ -4,7 +4,6 @@
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() > 0)
     {
-        <h4>@Resources.LoginProviderHeading</h4>
         // string action = Model.Action;
         // string returnUrl = Model.ReturnUrl;
         using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
@@ -14,7 +13,7 @@
                 <p>
                 @foreach (var p in loginProviders)
                 {
-                    <button type="submit" class="btn btn-outline-primary" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                    <button type="submit" class="btn btn-outline-primary" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Login with @p.Caption">Login with @p.Caption</button>
                 }
                 </p>
             </div>

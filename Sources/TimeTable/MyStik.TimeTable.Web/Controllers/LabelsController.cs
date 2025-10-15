@@ -2,6 +2,7 @@
 using MyStik.TimeTable.Web.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,12 +12,16 @@ namespace MyStik.TimeTable.Web.Controllers
     public class LabelsController : BaseController
     {
         // GET: Labels
-        public ActionResult Index(Guid id)
+        public ActionResult Index(Guid? id)
         {
-            var org = GetOrganiser(id);
-
+            if (id == null)
+            {
+                var model = Db.ItemLabels.ToList();
+                return View("AllLabels", model);
+            }
+            
+            var org = GetOrganiser(id.Value);
             ViewBag.UserRight = GetUserRight(org);
-
             return View(org);
         }
 
@@ -69,28 +74,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult EditLabel(Guid currId, Guid labelId)
+        public ActionResult EditLabel(Guid labelId)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
-
-            if (curr.LabelSet == null)
-            {
-                var labelSet = new ItemLabelSet();
-                curr.LabelSet = labelSet;
-                Db.ItemLabelSets.Add(labelSet);
-                Db.SaveChanges();
-            }
 
 
             var model = new ItemLabelEditModel()
             {
                 ItemLabel = label,
-                Curriculum = curr,
                 Name = label.Name,
                 Description = label.Description,
                 HtmlColor = label.HtmlColor
-
             };
 
             return View(model);
@@ -99,7 +93,6 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult EditLabel(ItemLabelEditModel model)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == model.ItemLabel.Id);
 
             label.Name = model.Name;
@@ -108,17 +101,44 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index", new { id = curr.Organiser.Id });
+            return RedirectToAction("Details", new { id = label.Id });
         }
 
-        public ActionResult DeleteLabel(Guid orgId, Guid labelId)
+        public ActionResult DeleteLabel(Guid labelId)
         {
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            return View(label);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteLabelConfirm(Guid id)
+        {
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == id);
+
+            var institutions = Db.Institutions
+                .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == label.Id))
+                .ToList();
+
+            var orgs = Db.Organisers
+                .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == label.Id)).Include(activityOrganiser => activityOrganiser.Institution)
+                .ToList();
+
+
+            var currs = Db.Curricula
+                .Where(x => x.LabelSet != null && x.LabelSet.ItemLabels.Any(y => y.Id == label.Id)).Include(curriculum => curriculum.Organiser)
+                .ToList();
 
             Db.ItemLabels.Remove(label);
             Db.SaveChanges();
 
-            return RedirectToAction("Index", new { id = orgId });
+            if (currs.Any())
+            {
+                var org = currs.First().Organiser;
+                return RedirectToAction("Index", new { id = org.Id });
+            }
+
+            return RedirectToAction("Index");
         }
 
 
@@ -152,7 +172,8 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult MergeLabel(ItemLabelEditModel model)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var curr = Db.Curricula.Include(curriculum => curriculum.Organiser).Include(curriculum1 =>
+                curriculum1.LabelSet.ItemLabels).SingleOrDefault(x => x.Id == model.Curriculum.Id);
 
             var sourceLabel = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Id == model.ItemLabel.Id);
             var targetLabel = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(model.Name));
@@ -172,5 +193,17 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new { id = curr.Organiser.Id });
         }
 
+        public ActionResult Details(Guid id)
+        {
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == id);
+            if (label == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(label);
+        }
     }
 }

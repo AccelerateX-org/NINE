@@ -160,5 +160,56 @@ namespace MyStik.TimeTable.Data
         /// Die Liste der Teilnehmer
         /// </summary>
         public virtual ICollection<LotteryGame> Games { get; set; }
+
+        /// <summary>
+        /// Liste der Berechtigungen
+        /// </summary>
+        public virtual ICollection<LotteryEntitlement> Entitlements { get; set; }
+    }
+
+    public class LotteryEntitlement
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Der Student, der einen Anspruch auf Plätze in der Lotterie hat
+        /// </summary>
+        public virtual Student Student { get; set; }
+
+        /// <summary>
+        /// Maximale Anzahl der Eintragungen: 0 ist unbeschränkt
+        /// </summary>
+        public int? MaxSubscription { get; set; }
+
+        /// <summary>
+        /// Minimale Anzahl an Eintragungen
+        /// </summary>
+        public int? MinSubscription { get; set; }
+
+        /// <summary>
+        /// Anzahl der Plätze, die ein Teilnehmer maximal annehmen darf
+        /// Standardwert für CoursesWanted im LotteryGame des Teilnehmers
+        /// </summary>
+        public int? MaxConfirm { get; set; }
+
+        /// <summary>
+        /// Im Ausnahmefall
+        /// >0 gilt als gesetzt
+        /// Auswahl wird als CoursesWanted im LotteryGame des Teilnehmers gesetzt
+        /// </summary>
+        public int? MaxExceptionConfirm { get; set; }
+
+        /// <summary>
+        /// Ab dem Eintragung erlaubt ist
+        /// </summary>
+        public DateTime? ValidFrom { get; set; }
+
+        /// <summary>
+        /// Bis zu dem Eintragung erlaubt ist
+        /// </summary>
+        public DateTime? ValidUntil { get; set; }
+
+        public virtual Lottery Lottery { get; set; }
     }
 }

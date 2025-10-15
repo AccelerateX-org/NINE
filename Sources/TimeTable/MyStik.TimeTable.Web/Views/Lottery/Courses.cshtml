@@ -1,0 +1,279 @@
+﻿@model MyStik.TimeTable.DataServices.Lottery.DrawingService
+@{
+    ViewBag.Title = "Status " + Model.Lottery.Name;
+    var colhead = Model.Lottery.MaxSubscription + 1;
+
+    var IsAdmin = ViewBag.UserRight.IsCourseAdmin ||
+                  (Model.Lottery.Owner != null && Model.Lottery.Owner.UserId.Equals(ViewBag.UserRight.User.Id));
+
+    var minPrio = 1;
+    var maxPrio = Model.Lottery.MaxSubscription;
+    if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
+    {
+        maxPrio = 1;
+    }
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Lottery.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Organiser.ShortName</a></li>
+                }
+                @if (Model.Lottery.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { semId = Model.Lottery.Semester.Id, orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Lottery", new { id = Model.Lottery.Id})">@Model.Lottery.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Status Lehrveranstaltungen</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-group">
+                            <a class="btn btn-outline-primary" data-bs-toggle="collapse" href="#legend" role="button" aria-expanded="false" aria-controls="Legende">
+                                <i class="bi bi-file-arrow-down"></i> Legende
+                            </a>
+                            <a href="" id="btnRefresh" class="btn btn-outline-primary disabled"><i class="bi bi-recycle"></i> Statistiken aktualisieren</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse" id="legend">
+                    <h5 class="card-title">Legende / Symbole</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul>
+                                <li><i class="bi bi-ticket"></i> Anzahl der Plätze (Kapazität)</li>
+                                <li><i class="bi bi-people"></i> Anzahl Einträge aös Teilnehmer</li>
+                                <li><i class="bi bi-hourglass"></i> Anzahl Einträge auf Warteliste</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul>
+                                <li><i class="bi bi-percent text-warning"></i> "Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
+                                <li><i class="bi bi-percent text-danger"></i> "Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
+                                <li><i class="bi bi-exclamation-diamond"></i> Anzahl Eintragungen ohne Angabe einer Priorität</li>
+
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul>
+                                <li><i class="bi bi-1-circle text-primary"></i> Eintragungen mit Status "Teilnehmer"</li>
+                                <li><i class="bi bi-1-circle text-secondary"></i> Eintragungen mit Status "Warteliste"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <table id="tabPots" class="table table-striped">
+                <thead>
+                    @*
+                    <tr>
+                        <th colspan="6">Platzkapazität</th>
+                        @if (Model.Lottery.IsFixed)
+                        {
+                            <th colspan="@(colhead + 2)">Aufschlüsselung Teilnehmerliste</th>
+                            <th colspan="@colhead">Aufschlüsselung Warteliste</th>
+                        }
+                    </tr>
+                        *@
+                    <tr>
+                        <th>Kurzname</th>
+                        <th>Lehrveranstaltung</th>
+                        <th><i class="bi bi-ticket"></i></th>
+                        <th><i class="bi bi-people"></i></th>
+                        <th><i class="bi bi-hourglass"></i></th>
+                        <th><i class="bi bi-percent text-warning"></i></th>
+                        @*
+                        @if (Model.Lottery.IsFixed)
+                        {
+                            <th><i class="bi bi-percent text-danger"></i></th>
+                            <th><i class="bi bi-exclamation-diamond text-primary"></i></th>
+                            for (var i = minPrio; i <= maxPrio; i++)
+                            {
+                                <th><i class="bi bi-@i-circle text-primary"></i></th>
+                            }
+                            <th><i class="bi bi-exclamation-diamond text-secondary"></i></th>
+                            for (var i = minPrio; i <= maxPrio; i++)
+                            {
+                                <th><i class="bi bi-@i-circle text-secondary"></i></th>
+                            }
+                        }
+                            *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.Courses)
+                    {
+                        var capacity = int.MaxValue;
+                        var participiants = course.Occurrence.Subscriptions.Count(x => x.OnWaitingList == false);
+                        var waiting = course.Occurrence.Subscriptions.Count(x => x.OnWaitingList == true);
+
+                        var bookingList = Model.LotPots.Where(x => x.Course.Id == course.Id).ToList();
+                        foreach (var pot in bookingList)
+                        {
+                            if (pot.Capacity == int.MaxValue)
+                            {
+                                capacity = int.MaxValue;
+                            }
+                            else
+                            {
+                                if (capacity == int.MaxValue)
+                                {
+                                    capacity = pot.Capacity;
+                                }
+                                else
+                                {
+                                    capacity += pot.Capacity;
+                                }
+                            }
+                        }
+
+                        var occupancyRate = 0.0;
+                        if (capacity != int.MaxValue)
+                        {
+                            occupancyRate = (waiting + participiants) / (double)capacity;
+                        }
+
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.ShortName</a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.Name</a>
+                            </td>
+                            @if (capacity == int.MaxValue)
+                            {
+                                <td><i class="bi bi-infinity"></i></td>
+                            }
+                            else
+                            {
+                                <td>@capacity</td>
+                            }
+
+                            <td>@participiants</td>
+                            <td>@waiting</td>
+
+                            @if (capacity == int.MaxValue)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@occupancyRate.ToString("0%")</td>
+                            }
+
+                            @*
+                            @if (Model.Lottery.IsFixed)
+                            {
+
+                                if (lotPot.Capacity == int.MaxValue)
+                                {
+                                    <td><i class="bi bi-infinity"></i></td>
+                                }
+                                else
+                                {
+                                    <td>@lotPot.BookingRank.ToString("0%")</td>
+                                }
+
+
+                                <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == 0)</td>
+                                for (var i = minPrio; i <= maxPrio; i++)
+                                {
+                                    <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == i)</td>
+                                }
+
+
+                                <td>@lotPot.Lots.Count(x => x.Priority == 0)</td>
+                                for (var i = minPrio; i <= maxPrio; i++)
+                                {
+                                    <td>@lotPot.Lots.Count(x => x.Priority == i)</td>
+                                }
+                            }
+                                *@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabPots').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel'
+                ],
+                "paging": false,
+            });
+
+        });
+
+        function onIncrementCapacity(id) {
+            var cap = parseInt($('#' + id).html());
+            cap += 1;
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("SetCapacity")',
+                    data: {
+                        id: id,
+                        cap: cap
+                    },
+                    success: function (data, success, xhr) {
+                        $('#' + id).html(cap);
+                        $('#btnRefresh').removeClass("disabled");
+                    }
+                });
+
+
+
+        }
+
+
+        function onDecrementCapacity(id) {
+            var cap = parseInt($('#' + id).html());
+            cap -= 1;
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("SetCapacity")',
+                    data: {
+                        id: id,
+                        cap: cap
+                    },
+                    success: function (data, success, xhr) {
+                        $('#' + id).html(cap);
+                        $('#btnRefresh').removeClass("disabled");
+                    }
+                });
+        }
+
+    </script>
+}

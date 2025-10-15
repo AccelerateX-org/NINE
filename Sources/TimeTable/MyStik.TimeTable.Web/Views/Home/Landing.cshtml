@@ -1,8 +1,22 @@
-﻿
+﻿@using MyStik.TimeTable.DataServices
+@using MyStik.TimeTable.Web.Models
+
 @{
 
     ViewBag.Title = "Startseite";
     Layout = "~/Views/Shared/_LayoutCAP.cshtml";
+
+    var userDb = new ApplicationDbContext();
+    var semesterService = new SemesterService();
+    var semester = semesterService.GetSemester(DateTime.Today);
+
+    var activeUserToday = userDb.Users.Count(x => x.LastLogin >= DateTime.Today);
+    var activeUserSemester = userDb.Users.Count(x => x.LastLogin >= semester.StartCourses);
+    var activeUserTotal = userDb.Users.Count(x => x.LastLogin != null);
+
+    var activeUserTodaySSO = userDb.Users.Count(x => x.LastLogin >= DateTime.Today && x.Logins.Any());
+    var activeUserSemesterSSO = userDb.Users.Count(x => x.LastLogin >= semester.StartCourses && x.Logins.Any());
+    var activeUserTotalSSO = userDb.Users.Count(x => x.LastLogin != null && x.Logins.Any());
 
 }
 
@@ -12,10 +26,20 @@
             <div class="card-body bg-dark text-white">
                 <div class="row">
                     <div class="col-md-2">
-                        <img src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top" />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img alt="Logo HM" src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top" />
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img alt="HaMster" src="~/Assets/img/cap/CAP_Hamster_bw_3.png" class="card-img-bottom" />
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-8">
-                        <h5 class="card-title">Willkommen auf dem Campus Adventure Playground</h5>
+                        <h1 class="card-title">Willkommen auf dem Campus Adventure Playground H<span class="text-secondary"><small>a</small></span>Mster</h1>
                         <p class="card-text mt-3">
                             Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre.<br />
                             <small>
@@ -47,7 +71,8 @@
                                             <h5 class="mb-1"><i class="bi bi-calendar-date"></i> NINE</h5>
                                             <p><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-half text-warning"></i><i class="bi bi-star text-warning"></i></p>
                                         </div>
-                                        <p class="mb-1">Alle wichtigen Information rund um Studium und Lehre:
+                                        <p class="mb-1">
+                                            Alle wichtigen Information rund um Studium und Lehre:
                                             <ul>
                                                 <li>Studienpläne</li>
                                                 <li>Vorlesungsverzeichnisse</li>
@@ -57,6 +82,26 @@
                                                 <li>Sprechstunden</li>
                                                 <li>Abschlussarbeiten</li>
                                             </ul>
+                                        </p>
+                                        <small>weiter >></small>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <a href="@Url.Action("Index", "Swagger")" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1"><i class="bi bi-braces"></i> NINE-API</h5>
+                                            <p>
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                            </p>
+                                        </div>
+                                        <p class="mb-1">
+                                            For developers - create your own apps using the NINE API
                                         </p>
                                         <small>weiter >></small>
                                     </a>
@@ -109,7 +154,7 @@
                                                 <i class="bi bi-star text-warning"></i>
                                             </p>
                                         </div>
-                                        <p class="mb-1">Den Studienfortschritt planen und sich vom Chatbot <strong><i class="bi bi-robot"></i> Buddy</strong> beraten lassen.</p>
+                                        <p class="mb-1">Den <strong>Studienfortschritt</strong> planen und sich vom Chatbot <strong><i class="bi bi-robot"></i> Buddy</strong> beraten lassen.</p>
                                         <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
                                     </a>
                                 </div>
@@ -123,6 +168,38 @@
                                         <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
                                     </a>
                                 </div>
+                                <div class="col-sm-6 col-lg-6">
+                                    <a href="https://hm-cap.pages.gitlab.lrz.de/products/gallery/gallery.frontend/browser/" target="_blank" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1" style="color: #add8e6"><i class="bi bi-images"></i> Gallery</h5>
+                                            <p>
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                                <i class="bi bi-star-half text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                            </p>
+                                        </div>
+                                        <p class="mb-1">Die eigenen Werke präsentieren. <strong>Portfolios hochladen und verwalten</strong>.</p>
+                                        <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
+                                    </a>
+                                </div>
+                                <div class="col-sm-6 col-lg-6">
+                                    <a href="#" class="list-group-item list-group-item-action bg-white disabled" aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1" style="color: #004f4f"><i class="bi bi-person-rolodex"></i> Jorol</h5>
+                                            <p>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                            </p>
+                                        </div>
+                                        <p class="mb-1"><i>In Vorbereitung:</i> Praktikumsplätze, Firmenkontakte und mehr.</p>
+                                        <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,9 +208,15 @@
                             <div class="alert alert-danger">
                                 <h5><i class="bi bi-wrench-adjustable-circle"></i> Hinweis</h5>
                                 <p>
-                                    Die hier verfügbaren Anwendungen sind Bestandteile studentischer Projekte.
-                                    Aktuell stellen folgende Fakultäten Daten zur Verfügung und haben Ansprechpartner:innen vor Ort: FK01, FK05, FK09, FK10, FK11, FK12, MUC.DAI. 
+                                    Die hier verfügbaren Anwendungen sind Bestandteile studentischer Projekte und stehen grundsätzlich allen Einrichtungen der HM zur Verfügung.
+                                    Aktuell stellen folgende Fakultäten Daten bereit und haben Ansprechpartner:innen vor Ort: FK01, FK05, FK09, FK10, FK11, FK12, MUC.DAI, MUC.HEALTH. 
+                                    Anzahl aktiver User (in Klammern Anzahl an User über HM Account):
                                 </p>
+                                <ul>
+                                    <li>heute: @activeUserToday (@activeUserTodaySSO)</li>
+                                    <lI>im @semester.Name: @activeUserSemester (@activeUserSemesterSSO)</lI>
+                                    <li>insgesamt: @activeUserTotal (@activeUserTotalSSO)</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -141,16 +224,24 @@
                 <div class="list-group-item  bg-dark-subtle">
                     <div class="row">
                         <div class="col">
-                            <h5>Offizielle Systeme der Hochschule München</h5>
+                            <h5>Weitere Systeme der Hochschule München</h5>
                         </div>
                     </div>
                     <div class="row gx-1">
+                        <div class="col">
+                            <a href="https://hm.edu/studium_1/im_studium/studienstart/account/index.de.html" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="bi bi-box-arrow-up-right"></i> Systeme der Abteilung Studium</h6>
+                                </div>
+                                <p class="mb-1">primuss und mehr</p>
+                            </a>
+                        </div>
                         <div class="col">
                             <a href="https://conwiki.cc.hm.edu/confluence/pages/viewpage.action?pageId=250552983" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1"><i class="bi bi-box-arrow-up-right"></i> Systeme der zentralen IT</h6>
                                 </div>
-                                <p class="mb-1">primuss und mehr</p>
+                                <p class="mb-1">WLAN, HM App, Microsoft 365 und mehr</p>
                             </a>
                         </div>
                         <div class="col">

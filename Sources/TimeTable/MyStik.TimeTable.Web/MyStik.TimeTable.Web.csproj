@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,10 +69,10 @@
       <HintPath>..\..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Hangfire.Core, Version=1.8.15.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Hangfire.Core.1.8.15\lib\net46\Hangfire.Core.dll</HintPath>
@@ -481,6 +481,7 @@
     <Compile Include="Areas\Admin\Models\DataAdminModel.cs" />
     <Compile Include="Areas\Admin\Models\LogModels.cs" />
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
+    <Compile Include="Controllers\InfoscreensController.cs" />
     <Compile Include="Helpers\OAuthHelpers.cs" />
     <Compile Include="Jobs\AccountJob.cs" />
     <Compile Include="Jobs\LoggingJob.cs" />
@@ -838,6 +839,8 @@
     <Content Include="Assets\fillter\scripts\planer.js" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
     <Content Include="Assets\fillter\scripts\datepicker.js" />
+    <Content Include="Assets\img\cap\CAP_Hamster_bw.ico" />
+    <Content Include="Assets\img\cap\CAP_Hamster_bw_3.png" />
     <Content Include="Assets\img\cap\HM_Logo_RGB.png" />
     <Content Include="Assets\img\cap\noun-nine-oclock-218335.png" />
     <Content Include="Assets\img\cap\noun-playground-3357920.png" />
@@ -3630,6 +3633,14 @@
     <Content Include="Areas\Admin\Views\Repair\MigrateCurricula.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\Index.cshtml" />
     <Content Include="Areas\Admin\Views\User\Index.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\Main.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_Dummy.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Claims.cshtml" />
+    <Content Include="Areas\Admin\Views\User\AllStudents.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_RoomSchedule.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_PublicTransport.cshtml" />
+    <Content Include="Areas\InfoScreen\Views\Home\_Ads.cshtml" />
+    <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
     <None Include="Properties\PublishProfiles\SystemTest.pubxml" />
@@ -4810,6 +4821,34 @@
     <Content Include="Views\Lecturer\NoMember.cshtml" />
     <Content Include="Views\Room\_RoomSearchList.cshtml" />
     <Content Include="Views\Rooms\Offices.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailureAccount.cshtml" />
+    <Content Include="Views\Course\PlanningYear.cshtml" />
+    <Content Include="Views\Course\_PreviewDateListYear.cshtml" />
+    <Content Include="Views\Students\UploadLabels.cshtml" />
+    <Content Include="Views\Students\UploadList.cshtml" />
+    <Content Include="Views\Students\ChangeLabel.cshtml" />
+    <Content Include="Views\Students\EditLabel.cshtml" />
+    <Content Include="Views\Students\ChangeLabels.cshtml" />
+    <Content Include="Views\Subscription\Invalid.cshtml" />
+    <Content Include="Views\Students\Labels.cshtml" />
+    <Content Include="Views\Account\Dummy.cshtml" />
+    <Content Include="Views\University\Members.cshtml" />
+    <Content Include="Views\Labels\Details.cshtml" />
+    <Content Include="Views\Labels\DeleteLabel.cshtml" />
+    <Content Include="Views\Students\_StudentsList.cshtml" />
+    <Content Include="Views\Lottery\CheckSelection.cshtml" />
+    <Content Include="Views\Lottery\Organiser.cshtml" />
+    <Content Include="Views\Lottery\Details.cshtml" />
+    <Content Include="Views\Lottery\EditProperties.cshtml" />
+    <Content Include="Views\Lottery\Courses.cshtml" />
+    <Content Include="Views\Error\ServerError.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Lottery\EditMethod.cshtml" />
+    <Content Include="Views\Lottery\Entitlements.cshtml" />
+    <Content Include="Views\Lottery\_StudentTable.cshtml" />
+    <Content Include="Views\Lottery\SelectStudents.cshtml" />
+    <Content Include="Views\Infoscreens\Index.cshtml" />
+    <Content Include="Views\Infoscreens\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4969,8 +5008,8 @@
     <Error Condition="!Exists('..\..\packages\OctoPack.3.6.5\build\OctoPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OctoPack.3.6.5\build\OctoPack.targets'))" />
     <Error Condition="!Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets'))" />
-    <Error Condition="!Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
   </Target>
   <Import Project="..\..\packages\OctoPack.3.6.5\build\OctoPack.targets" Condition="Exists('..\..\packages\OctoPack.3.6.5\build\OctoPack.targets')" />
   <Import Project="..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
@@ -4979,7 +5018,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

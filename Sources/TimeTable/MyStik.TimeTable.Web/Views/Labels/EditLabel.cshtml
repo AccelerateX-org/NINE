@@ -1,21 +1,21 @@
 ﻿@model MyStik.TimeTable.Web.Models.ItemLabelEditModel
 @{
-    ViewBag.Title = "Ettiket";
+    ViewBag.Title = "Kohorte ändern";
 }
 
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4>Ettikett ändern</h4>
+                <h5>Kohorte ändern</h5>
             </div>
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
+                    @Html.AntiForgeryToken()
                     @Html.HiddenFor(m => m.ItemLabel.Id)
-                    @Html.HiddenFor(m => m.Curriculum.Id)
                     <div class="row">
-                        <label for="Name" class="col-sm-2 col-form-label">Tag (muss innerhalb des Studiengangs eindeutig sein)</label>
+                        <label for="Name" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
                             @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
                         </div>
@@ -29,13 +29,13 @@
                     <div class="row">
                         <label for="HtmlColor" class="col-sm-2 col-form-label">Farbe</label>
                         <div class="col-sm-10">
-                            @Html.TextBoxFor(m => m.HtmlColor, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.HtmlColor, new { @class = "form-control", type="color" })
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-10">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Speichern</button>
-                            <a href="@Url.Action("Index",  new{id=Model.Curriculum.Organiser.Id})" class="btn btn-outline-secondary">Abbrechen</a>
+                            <a href="@Url.Action("Details",  new{id=Model.ItemLabel.Id})" class="btn btn-outline-secondary">Abbrechen</a>
                         </div>
                     </div>
                 }

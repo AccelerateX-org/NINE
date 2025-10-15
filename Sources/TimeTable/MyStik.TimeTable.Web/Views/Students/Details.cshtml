@@ -27,7 +27,7 @@
                         <a class="list-group-item" href="mailto:@Model.User.Email">
                             <i class="bi bi-envelope"></i> E-Mail senden
                         </a>
-                        @if (ViewBag.UserRight.IsCourseAdmin)
+                        @if (ViewBag.IsStudAdmin)
                         {
                             <a class="list-group-item" href="@Url.Action("Logs", new { id = Model.Student.Id })">
                                 <i class="bi bi-list"></i> Logdaten ansehen
@@ -133,19 +133,31 @@
                                         @if (theses.Any())
                                         {
                                             <div class="col-6">
-                                                <ul>
-                                                    @foreach (var t in theses)
+                                                @foreach (var t in theses)
+                                                {
+                                                    if (ViewBag.UserRight.IsStudentAdmin)
                                                     {
                                                         if (t.GradeDate == null)
                                                         {
-                                                            <li>in Bearbeitung</li>
+                                                            <div><a href="@Url.Action("Details", "ThesisAdmin", new {id=t.Id})">in Bearbeitung</a></div>
                                                         }
                                                         else
                                                         {
-                                                            <li>abgeschlossen (@t.GradeDate.Value.ToShortDateString())</li>
+                                                            <div><a href="@Url.Action("Details", "ThesisAdmin", new {id=t.Id})">abgeschlossen (@t.GradeDate.Value.ToShortDateString())</a></div>
                                                         }
                                                     }
-                                                </ul>
+                                                    else
+                                                    {
+                                                        if (t.GradeDate == null)
+                                                        {
+                                                            <div>in Bearbeitung</div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div>abgeschlossen</div>
+                                                        }
+                                                    }
+                                                }
                                             </div>
                                         }
                                         else
@@ -177,7 +189,7 @@
                                         if (isActive)
                                         {
                                             <a href="@Url.Action("ChangeNumber", new { id = student.Id })" class="btn btn-outline-primary">Matrikelnummer ändern</a>
-                                            <a href="@Url.Action("ChangeLabel", new { id = student.Id })" class="btn btn-outline-primary disabled">Kohorten ändern</a>
+                                            <a href="@Url.Action("ChangeLabel", new { id = student.Id })" class="btn btn-outline-primary">Kohorten ändern</a>
                                             <a href="@Url.Action("SwitchCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang beenden / wechseln</a>
                                         }
                                         else
@@ -186,7 +198,16 @@
                                         }
 
                                         <a href="@Url.Action("ChangeCurriculum", new { id = student.Id })" class="btn btn-outline-primary">Studiengang korrigieren</a>
-                                        <a href="@Url.Action("DeleteStudent", new { id = student.Id })" class="btn btn-outline-danger">Studiengang löschen</a>
+                                        if (theses.Any())
+                                        {
+                                            <div class="alert alert-danger">
+                                                Für diesen Studiengang existiert eine Abschlussarbeit. Daher kann dieser Eintrag nicht gelöscht werden. Es muss zuerst die Abschlussarbeit gelöscht werden.
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("DeleteStudent", new { id = student.Id })" class="btn btn-outline-danger">Studiengang löschen</a>
+                                        }
                                     }
                                 </div>
                             </div>

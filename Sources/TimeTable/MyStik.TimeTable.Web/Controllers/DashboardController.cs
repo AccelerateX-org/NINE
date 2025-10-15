@@ -28,7 +28,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new TeachingOverviewModel();
             var members = MemberService.GetMemberships(user.Id).ToList();
-            var student = GetCurrentStudent(user.Id);
+            var student = GetCurrentStudent(user.Id).FirstOrDefault();
 
             model.Members = members;
             model.Organisers = members.Select(x => x.Organiser).Distinct().ToList();
@@ -124,13 +124,13 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new TeachingOverviewModel();
 
             var members = MemberService.GetFacultyMemberships(user.Id);
-            var student = GetCurrentStudent(user.Id);
+            var students = GetCurrentStudent(user.Id);
 
             model.CurrentSemester = teachingService.GetActivities(currentSemester, user, members);
             model.PrevSemester = SemesterService.GetPreviousSemester(currentSemester);
             model.NextSemester = SemesterService.GetNextSemester(currentSemester);
             model.Members = members.ToList();
-            model.Student = student;
+            model.Student = students.FirstOrDefault();
 
             return model;
         }
@@ -576,40 +576,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return model;
         }
 
-
-        private DashboardStudentViewModel CreateDashboardModelStudentNew(UserRight userRight)
-        {
-            var student = StudentService.GetCurrentStudent(userRight.User.Id);
-
-            var currentSemester = student != null ? SemesterService.GetNewestSemester(student.Curriculum.Organiser) : SemesterService.GetSemester(DateTime.Today);
-            var prevSemester = SemesterService.GetPreviousSemester(currentSemester);
-
-
-
-            var model = new DashboardStudentViewModel
-            {
-                User = userRight.User,
-                Semester = prevSemester,
-                NextSemester = currentSemester,
-                Student = student,
-                Organiser = student?.Curriculum.Organiser
-            };
-
-            if (student != null)
-            {
-                var limit = DateTime.Today.AddDays(-7);
-                model.Advertisements = Db.Advertisements.Where(x => x.Owner.Organiser.Id == student.Curriculum.Organiser.Id &&
-                                                       x.Created >= limit).ToList();
-            }
-            else
-            {
-                model.Advertisements = new List<Advertisement>();
-            }
-
-
-
-            return model;
-        }
 
 
         private DashboardStudentViewModel CreateDashboardModelOrgMemberNew(UserRight userRight)

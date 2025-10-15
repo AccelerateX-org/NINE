@@ -11,9 +11,10 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h4>@Resources.LoginHeading</h4>
+                    <h5>@Resources.LoginHeading</h5>
                 </div>
                 <div class="card-body">
+
                     @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form", role = "form" }))
                     {
                         @Html.AntiForgeryToken()
@@ -36,18 +37,36 @@
                             </button>
                         </div>
                     }
-                    <hr/>
+                    <div class="alert alert-info mt-3">
+                        <p>
+                            Ich habe ein NINE Benutzerkonto und möchte mich lieber mit dem HM User-Account anmelden?
+                        </p>
+                        <ol>
+                            <li>Mit NINE Benutzerkonto anmelden.</li>
+                            <li>Unter "Mein Benutzerkonto" den HM User-Account aktivieren.</li>
+                            <li>In Zukunft kann ich mich dann auch über den HM User-Account anmelden.</li>
+                        </ol>
+                    </div>
+                    <hr />
                     <ul class="fa-ul mt-2">
                         <li><i class="fas fa-question fa-li text-primary"></i>@Html.ActionLink(Resources.ForgotPasswordLink, "ForgotPassword")</li>
                         <li><i class="fas fa-pen fa-li text-primary"></i>@Html.ActionLink(Resources.RegisterLink, "Register")</li>
                     </ul>
-                    <hr/>
-                    @if (Request.IsLocal)
-                    {
-                        <div class="form-group">
-                            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-                        </div>
-                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Anmelden mit HM User-Account</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                    </div>
+                    <div class="alert alert-info">
+                        <p>Den HM User-Account habe ich bei der Immatrikulation und/oder bei meiner Einstellung / Beauftragung von der zentralen IT erhalten.</p>
+                    </div>
                 </div>
             </div>
         </div>

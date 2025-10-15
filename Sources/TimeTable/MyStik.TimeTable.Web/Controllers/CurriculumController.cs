@@ -32,7 +32,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     Autonomy = curr
                         .Autonomy, // somit haben automatisch alle Gremien des Studiengangs auf den Schaukasten Zugang
                     Name = curr.Name,
-                    Description = "Aushänge relevant für alle Studierende des Studiengangs"
+                    Description = "Aushänge relevant für alle Studierende des Studienangebots"
                 };
 
                 curr.BulletinBoard = board;

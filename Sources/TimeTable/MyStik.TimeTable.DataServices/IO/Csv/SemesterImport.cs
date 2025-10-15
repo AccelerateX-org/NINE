@@ -7,7 +7,6 @@ using System.Text;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices.IO.Csv.Data;
-using static System.String;
 
 namespace MyStik.TimeTable.DataServices.IO.Csv
 {
@@ -237,7 +236,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             var referenceCourse = simpleCourseList.FirstOrDefault();
             if (referenceCourse == null)
             {
-                msg = $"Lehreranstaltung ohne Inhalt";
+                msg = $"Lehrveranstaltung ohne Inhalt";
                 return msg;
             }
 
@@ -305,7 +304,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                     Segment = segment,
                     ShortName = shortName,
                     Name = referenceCourse.Title,
-                    Description = Empty,
+                    Description = String.Empty,
                     Occurrence = CreateDefaultOccurrence(),
                     IsInternal = true,
                     IsProjected = true,
@@ -376,7 +375,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 // Annahme 1: es ist die Institution
                 ItemLabelSet labelSet = null;
                 var levelId = simpleCourse.LabelLevel;
-                if (!IsNullOrEmpty(levelId))
+                if (!string.IsNullOrEmpty(levelId))
                 {
                     if (organiser.Institution != null && levelId.ToUpper().Equals(organiser.Institution.Tag.ToUpper()))
                     {
@@ -406,7 +405,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                         label = new ItemLabel
                         {
                             Name = simpleCourse.Label,
-                            Description = Empty
+                            Description = string.Empty
                         };
 
                         labelSet.ItemLabels.Add(label);
@@ -495,7 +494,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
         private OrganiserMember GetLecturer(TimeTableDbContext db, string lecturerId)
         {
             OrganiserMember lecturer = null;
-            if (IsNullOrEmpty(lecturerId)) return null;
+            if (string.IsNullOrEmpty(lecturerId)) return null;
 
             lecturer = _organiser.Members.SingleOrDefault(l => l.ShortName.Equals(lecturerId));
             if (lecturer != null) return lecturer;
@@ -503,9 +502,9 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             lecturer = new OrganiserMember
             {
                 ShortName = lecturerId,
-                Name = Empty,
-                Role = Empty,
-                Description = Empty
+                Name = string.Empty,
+                Role = string.Empty,
+                Description = string.Empty
             };
             _organiser.Members.Add(lecturer);
             db.Members.Add(lecturer);
@@ -517,7 +516,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
         private Room GetRoom(TimeTableDbContext db, string roomId)
         {
             Room room = null;
-            if (IsNullOrEmpty(roomId)) return null;
+            if (string.IsNullOrEmpty(roomId)) return null;
 
             room = db.Rooms.SingleOrDefault(r => r.Number.Equals(roomId));
             if (room == null)
@@ -526,8 +525,8 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 {
                     Number = roomId,
                     Capacity = 0,
-                    Description = Empty,
-                    Owner = Empty,
+                    Description = string.Empty,
+                    Owner = string.Empty,
                 };
                 db.Rooms.Add(room);
                 db.SaveChanges();

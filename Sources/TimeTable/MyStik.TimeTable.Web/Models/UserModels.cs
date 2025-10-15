@@ -80,7 +80,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public SemesterGroup SemesterGroup { get; set; }
 
-        public Student Student { get; set; }
+        public ICollection<Student> Students { get; set; }
     }
 
     /// <summary>
@@ -310,5 +310,17 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string EMail { get; set; }
 
+    }
+
+    public class UserMemberModel
+    {
+        public UserMemberModel()
+        {
+            Members = new List<OrganiserMember>();
+        }
+
+        public ApplicationUser User { get; set; }
+
+        public ICollection<OrganiserMember> Members { get; set; }
     }
 }

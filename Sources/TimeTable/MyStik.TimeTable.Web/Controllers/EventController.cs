@@ -1383,7 +1383,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             Number = iNumber,
                             Subscription = subscription,
                             User = subscriber,
-                            Student = studentService.GetCurrentStudent(subscriber)
+                            Student = studentService.GetCurrentStudent(subscriber).FirstOrDefault()
                         }
                         );
                 }
