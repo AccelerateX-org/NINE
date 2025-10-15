@@ -1068,6 +1068,20 @@
             
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetFreeRooms(MyStik.TimeTable.Web.Models.RoomSearchModelApi)">
+            <summary>
+            Suche nach freien Räumen
+            </summary>
+            <param name="number">Nummer des Raumes</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.PostFreeRooms(MyStik.TimeTable.Web.Models.RoomSearchModelApi)">
+            <summary>
+            Suche nach freien Räumen
+            </summary>
+            <param name="number">Nummer des Raumes</param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetRoomAllocation(System.String,System.String,System.String)">
             <summary>
             Abfrage der Belegungen eines Raums
@@ -4296,6 +4310,379 @@
             <summary>
             
             </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.AjaxHelperExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.AjaxHelperExtensions.ActionButton(System.Web.Mvc.AjaxHelper,System.String,System.String,System.String,System.String,System.Object,System.Web.Mvc.Ajax.AjaxOptions,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="ajaxHelper"></param>
+            <param name="linkIcon"></param>
+            <param name="linkText"></param>
+            <param name="actionName"></param>
+            <param name="controllerName"></param>
+            <param name="routeValues"></param>
+            <param name="ajaxOptions"></param>
+            <param name="htmlAttributes"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.ImplicitlyAllowCookies">
+            <summary>
+            Some government relax their interpretation of the law somewhat:
+            After the first page with the message, clicking anything other than the cookie refusal link may be interpreted as implicitly allowing cookies. 
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.CONSENT_COOKIE_NAME">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.OnActionExecuting(System.Web.Mvc.ActionExecutingContext)">
+            <summary>
+            
+            </summary>
+            <param name="filterContext"></param>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.CookieConsent">
+            <summary>
+            Helper class for easy/typesafe getting the cookie consent status
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsent.SetCookieConsent(System.Web.HttpResponseBase,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="response"></param>
+            <param name="consent"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsent.AskCookieConsent(System.Web.Mvc.ViewContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsent.HasCookieConsent(System.Web.Mvc.ViewContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.CultureHelper">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.IsRighToLeft">
+            <summary>
+            Returns true if the language is a right-to-left language. Otherwise, false.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetImplementedCulture(System.String)">
+            <summary>
+            Returns a valid culture name based on "name" parameter. If "name" is not valid, it returns the default culture "en-US"
+            </summary>
+            <param name="name">Culture's name (e.g. en-US)</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetDefaultCulture">
+            <summary>
+            Returns default culture name which is the first name decalared (e.g. en-US)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetCurrentCulture">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetCurrentNeutralCulture">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetNeutralCulture(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.EventHelpers">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:MyStik.TimeTable.Web.Helpers.EventHelpers.dates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.#ctor(MyStik.TimeTable.Data.Event,MyStik.TimeTable.Web.Models.EventCreateSeriesModel)">
+            <summary>
+            
+            </summary>
+            <param name="event"></param>
+            <param name="model"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.CreateDates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createDailyDates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createWorkdayDates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createWeeklyDates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createMonthlyDates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createAnnualDates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.FakeViewExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderPartialToString(System.Web.Mvc.HtmlHelper,System.String,System.Object)">
+            <summary>Renders a view to string.</summary> 
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderViewToString(System.Web.Mvc.Controller,System.String,System.Object)">
+            <summary>Renders a view to string.</summary> 
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderViewToString(System.Web.Mvc.ControllerContext,System.String,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="controllerContext"></param>
+            <param name="viewName"></param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.ActionButton(System.Web.Mvc.HtmlHelper,System.String,System.String,System.String,System.String,System.Object,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="linkIcon"></param>
+            <param name="linkText"></param>
+            <param name="actionName"></param>
+            <param name="controllerName"></param>
+            <param name="routeValues"></param>
+            <param name="htmlAttributes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.LecturerList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.OrganiserMember},System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="hosts"></param>
+            <param name="showLinks"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.Room},System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="rooms"></param>
+            <param name="showLinks"></param>
+            <param name="showCapacity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.VirtualRoom},System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="rooms"></param>
+            <param name="showLinks"></param>
+            <param name="showCapacity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.VirtualRoomAccess},System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="rooms"></param>
+            <param name="showLinks"></param>
+            <param name="showCapacity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.SemesterGroup},System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="groups"></param>
+            <param name="showAvailability"></param>
+            <param name="showLink"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupListExtended(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.SemesterGroup})">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="groups"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.CurriculumGroup})">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="groups"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.Occurrence,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="groups"></param>
+            <param name="showAvailability"></param>
+            <param name="showLink"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityDate)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="date"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivitySlot)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="date"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.SemesterDate)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="date"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,System.DateTime,System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="from"></param>
+            <param name="until"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpanWithDate(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityDate)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="date"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpanWithDate(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivitySlot)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="date"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpanWithDate(System.Web.Mvc.HtmlHelper,System.DateTime,System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="from"></param>
+            <param name="until"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.Date(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Web.Models.CourseDateModel,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="dates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Web.Models.CourseDateModel})">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="dates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.ActivityDate})">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="dates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateListWithRooms(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.ActivityDate})">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="dates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.FacultyLabel(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityOrganiser,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="org"></param>
+            <param name="icon"></param>
+            <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Jobs.LotteryJob.RunLottery(System.Guid)">
             <summary>
@@ -8492,7 +8879,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateOpenSystem(System.Guid,System.Guid)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateOpenSystem(System.Guid,System.Guid,System.Boolean)">
             <summary>
             
             </summary>
@@ -9381,11 +9768,13 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.SearchController.Index(System.String,System.Nullable{System.Boolean})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.SearchController.Index(System.String,System.Nullable{System.Guid},System.Nullable{System.Boolean})">
             <summary>
             
             </summary>
             <param name="searchText"></param>
+            <param name="semId"></param>
+            <param name="isGlobal"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.SemesterController">
@@ -9870,379 +10259,6 @@
             <summary>
             
             </summary>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.AjaxHelperExtensions">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.AjaxHelperExtensions.ActionButton(System.Web.Mvc.AjaxHelper,System.String,System.String,System.String,System.String,System.Object,System.Web.Mvc.Ajax.AjaxOptions,System.Object)">
-            <summary>
-            
-            </summary>
-            <param name="ajaxHelper"></param>
-            <param name="linkIcon"></param>
-            <param name="linkText"></param>
-            <param name="actionName"></param>
-            <param name="controllerName"></param>
-            <param name="routeValues"></param>
-            <param name="ajaxOptions"></param>
-            <param name="htmlAttributes"></param>
-            <returns></returns>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.ImplicitlyAllowCookies">
-            <summary>
-            Some government relax their interpretation of the law somewhat:
-            After the first page with the message, clicking anything other than the cookie refusal link may be interpreted as implicitly allowing cookies. 
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.#ctor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.CONSENT_COOKIE_NAME">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsentAttribute.OnActionExecuting(System.Web.Mvc.ActionExecutingContext)">
-            <summary>
-            
-            </summary>
-            <param name="filterContext"></param>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.CookieConsent">
-            <summary>
-            Helper class for easy/typesafe getting the cookie consent status
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsent.SetCookieConsent(System.Web.HttpResponseBase,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="response"></param>
-            <param name="consent"></param>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsent.AskCookieConsent(System.Web.Mvc.ViewContext)">
-            <summary>
-            
-            </summary>
-            <param name="context"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CookieConsent.HasCookieConsent(System.Web.Mvc.ViewContext)">
-            <summary>
-            
-            </summary>
-            <param name="context"></param>
-            <returns></returns>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.CultureHelper">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.IsRighToLeft">
-            <summary>
-            Returns true if the language is a right-to-left language. Otherwise, false.
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetImplementedCulture(System.String)">
-            <summary>
-            Returns a valid culture name based on "name" parameter. If "name" is not valid, it returns the default culture "en-US"
-            </summary>
-            <param name="name">Culture's name (e.g. en-US)</param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetDefaultCulture">
-            <summary>
-            Returns default culture name which is the first name decalared (e.g. en-US)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetCurrentCulture">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetCurrentNeutralCulture">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.CultureHelper.GetNeutralCulture(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.EventHelpers">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:MyStik.TimeTable.Web.Helpers.EventHelpers.dates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.#ctor(MyStik.TimeTable.Data.Event,MyStik.TimeTable.Web.Models.EventCreateSeriesModel)">
-            <summary>
-            
-            </summary>
-            <param name="event"></param>
-            <param name="model"></param>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.CreateDates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createDailyDates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createWorkdayDates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createWeeklyDates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createMonthlyDates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.EventHelpers.createAnnualDates">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.FakeViewExtensions">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderPartialToString(System.Web.Mvc.HtmlHelper,System.String,System.Object)">
-            <summary>Renders a view to string.</summary> 
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderViewToString(System.Web.Mvc.Controller,System.String,System.Object)">
-            <summary>Renders a view to string.</summary> 
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderViewToString(System.Web.Mvc.ControllerContext,System.String,System.Object)">
-            <summary>
-            
-            </summary>
-            <param name="controllerContext"></param>
-            <param name="viewName"></param>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.ActionButton(System.Web.Mvc.HtmlHelper,System.String,System.String,System.String,System.String,System.Object,System.Object)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="linkIcon"></param>
-            <param name="linkText"></param>
-            <param name="actionName"></param>
-            <param name="controllerName"></param>
-            <param name="routeValues"></param>
-            <param name="htmlAttributes"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.LecturerList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.OrganiserMember},System.Boolean,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="hosts"></param>
-            <param name="showLinks"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.Room},System.Boolean,System.Boolean,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="rooms"></param>
-            <param name="showLinks"></param>
-            <param name="showCapacity"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.VirtualRoom},System.Boolean,System.Boolean,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="rooms"></param>
-            <param name="showLinks"></param>
-            <param name="showCapacity"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.VirtualRoomAccess},System.Boolean,System.Boolean,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="rooms"></param>
-            <param name="showLinks"></param>
-            <param name="showCapacity"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.SemesterGroup},System.Boolean,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="groups"></param>
-            <param name="showAvailability"></param>
-            <param name="showLink"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupListExtended(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.SemesterGroup})">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="groups"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.CurriculumGroup})">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="groups"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.Occurrence,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="groups"></param>
-            <param name="showAvailability"></param>
-            <param name="showLink"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityDate)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="date"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivitySlot)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="date"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.SemesterDate)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="date"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,System.DateTime,System.DateTime)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="from"></param>
-            <param name="until"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpanWithDate(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityDate)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="date"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpanWithDate(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivitySlot)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="date"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpanWithDate(System.Web.Mvc.HtmlHelper,System.DateTime,System.DateTime)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="from"></param>
-            <param name="until"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.Date(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Web.Models.CourseDateModel,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="dates"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Web.Models.CourseDateModel})">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="dates"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.ActivityDate})">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="dates"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateListWithRooms(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.ActivityDate})">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="dates"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.FacultyLabel(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityOrganiser,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="htmlHelper"></param>
-            <param name="org"></param>
-            <param name="icon"></param>
-            <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Hubs.FamosHub">
             <summary>
