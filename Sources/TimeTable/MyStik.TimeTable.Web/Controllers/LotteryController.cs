@@ -696,6 +696,24 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult StudentsPrio(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            var org = GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(org);
+
+            if (model.Lottery.MaxConfirm == 0 && model.Lottery.MaxExceptionConfirm == 0)
+            {
+                return View("StudentsSamePrio", model);
+            }
+
+            return View("StudentsPrio", model);
+        }
+
+
 
         public FileResult RawData(Guid id)
         {

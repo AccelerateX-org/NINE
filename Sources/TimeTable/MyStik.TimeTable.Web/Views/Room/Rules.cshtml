@@ -36,6 +36,44 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Einrichtung</th>
+                                    <th>Status</th>
+                                    <th>Wer darf buchen</th>
+                                </tr>
+                                </thead>
+                            <tbody>
+                                @foreach (var asgn in Model.Assignments)
+                                {
+                                    <tr>
+                                        <td>@Html.FacultyLabel(asgn.Organiser)</td>
+                                        @if (asgn.IsOwner)
+                                        {
+                                            <td><i class="bi bi-building-exclamation text-primary-emphasis"</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        @if (asgn.InternalNeedConfirmation)
+                                        {
+                                            <td><i class="bi bi-lock-fill text-success"></i> Nur Admins</td>
+                                        }
+                                        else
+                                        {
+                                            <td><i class="bi bi-unlock-fill text-danger"></i> alle</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                            </table>
+                            
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body">

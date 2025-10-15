@@ -52,7 +52,8 @@
                 {
                     var hasCourses = db.Lotteries.Count(x =>
                         x.Organiser != null && x.Organiser.Id == org.Id &&
-                        x.Semester != null && x.Semester.Id == Model.CurrentSemester.Id);
+                        x.Semester != null && x.Semester.Id == Model.CurrentSemester.Id &&
+                        x.IsActive);
 
                     if (hasCourses > 0)
                     {

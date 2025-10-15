@@ -14,7 +14,7 @@
                     foreach (var student in Model.Students)
                     {
                         <p>@student.Curriculum.ShortName - @student.FirstSemester.Name</p>
-                        <a href="@Url.Action("DeleteStudent", new {id=student.Id})">Löschen</a>
+                        <a href="@Url.Action("DeleteStudent", new {id=student.Id})" class="btn btn-danger"><i class="bi bi-trash"></i> Studenteneintrag Löschen</a>
                     }
                 }
             </div>
@@ -22,6 +22,9 @@
     </div>
     <div class="col-md-6">
         <div class="card">
+            <div class="card-body">
+                <a href="@Url.Action("DeleteClaims", new { id = Model.User.Id })" class="btn btn-danger">Claims löschen</a>
+            </div>
             <table class="table">
                 <thead>
                 <tr>

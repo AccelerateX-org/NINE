@@ -81,18 +81,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
 
-            var orgs = model.Assignments.Select(x => x.Organiser).Distinct().ToList();
-            var org = orgs.Where(x =>
-                    x.Members.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id) && m.IsRoomAdmin))
-                .FirstOrDefault();
+            // die Einrichtung, der der Raum gehört
+            var owners = model.Assignments.Where(x => x.IsOwner).Select(x => x.Organiser).Distinct().ToList();
 
-            if (org == null)
-                org = orgs.FirstOrDefault();
+            var members = GetMyMemberships();
 
-            if (org == null)
-                org = GetMyOrganisation();
-
-            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Members = members;
+            ViewBag.Owners = owners;
             ViewBag.Day = day;
 
             return View(model);

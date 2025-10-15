@@ -843,16 +843,25 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult RoomListByOrg(Guid orgId, string number)
         {
+            var members = GetMyMemberships();
+
             var org = GetOrganiser(orgId);
-            var roomList = new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, true);
+
+            var member = members.SingleOrDefault(m => m.Organiser.Id == org.Id);
+
+
+            var roomList = member != null ? new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, member.IsRoomAdmin) : new List<Room>();
 
             // Nur noch Raumiste mit Owner
-            roomList = roomList.Where(x => x.Assignments.Any(r => r.IsOwner)).ToList();
+            // unklar, ob das so bleiben soll
+            // roomList = roomList.Where(x => x.Assignments.Any(r => r.IsOwner)).ToList();
 
             // jetzt den Namensfilter ansetzen
             roomList = roomList.Where(l => l.Number.ToUpper().Contains(number.ToUpper())).ToList();
 
-
+            /*
+             * braucht es nicht mehr, da der Raumzugriff bereits über die RoomAssignment gesteuert wird
+             * und das mit den "Raumanfragen" ist nicht implementiert worden
             foreach (var room in roomList)
             {
                 var owner = room.Assignments.FirstOrDefault(x => x.IsOwner);
@@ -874,6 +883,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
             }
+            */
 
 
             var list = roomList

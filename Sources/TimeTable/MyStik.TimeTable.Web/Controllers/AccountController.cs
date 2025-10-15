@@ -740,6 +740,7 @@ namespace MyStik.TimeTable.Web.Controllers
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
 
             var response = await client.GetAsync("idp/profile/oidc/userinfo");
+            // userInfo enthält die Felder aus dem IDM, die in den Claims des Benutzers gespeichert werden sollen
             dynamic userInfo = null;
             if (response.IsSuccessStatusCode)
             {
@@ -758,7 +759,32 @@ namespace MyStik.TimeTable.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    // TO-DO: hier Daten ggf. aktualisieren
+                    /*
+                    var userId = User.Identity.GetUserId();
+                    var userClaims = await UserManager.GetClaimsAsync(userId);
+                    foreach (var property in userInfo.Properties())
+                    {
+                        var userClaim = userClaims.FirstOrDefault(c => c.Type == property.Name);
+                        if (userClaim != null)
+                        {
+                            await UserManager.RemoveClaimAsync(userId, userClaim);
+                        }
+
+                        var infoClaim = new Claim(property.Name, property.Value.ToString());
+                        await UserManager.AddClaimAsync(userId, infoClaim);
+                    }
+
+                    // Zeitstempel der letzten Änderung
+                    var userUpdateClaim = userClaims.FirstOrDefault(c => c.Type == "LocalLastUpdated");
+                    if (userUpdateClaim != null)
+                    {
+                        await UserManager.RemoveClaimAsync(userId, userUpdateClaim);
+                    }
+                    userUpdateClaim = new Claim("LocalLastUpdated", DateTime.Now.ToString());
+                    await UserManager.AddClaimAsync(userId, userUpdateClaim);
+
+                    await UserManager.StoreLogInAsync(userId);
+                    */
 
                     var claim = loginInfo.ExternalIdentity.Claims.SingleOrDefault(c => c.Type == "eduPersonPrincipalName");
                     if (claim != null)
@@ -768,7 +794,6 @@ namespace MyStik.TimeTable.Web.Controllers
                         {
                             // Update user info claims
                             var userClaims = await UserManager.GetClaimsAsync(user.Id);
-                            var hasCHange = false;
                             foreach (var property in userInfo.Properties())
                             {
                                 var userClaim = userClaims.FirstOrDefault(c => c.Type == property.Name);
@@ -780,6 +805,16 @@ namespace MyStik.TimeTable.Web.Controllers
                                 var infoClaim = new Claim(property.Name, property.Value.ToString());
                                 await UserManager.AddClaimAsync(user.Id, infoClaim);
                             }
+
+                            // Zeitstempel der letzten Änderung
+                            var userUpdateClaim = userClaims.FirstOrDefault(c => c.Type == "ClaimsLastUpdated");
+                            if (userUpdateClaim != null)
+                            {
+                                await UserManager.RemoveClaimAsync(user.Id, userUpdateClaim);
+                            }
+                            userUpdateClaim = new Claim("ClaimsLastUpdated", DateTime.Now.ToString());
+                            await UserManager.AddClaimAsync(user.Id, userUpdateClaim);
+
 
                             await UserManager.StoreLogInAsync(user.Id);
                         }

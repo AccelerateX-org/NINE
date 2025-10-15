@@ -20,40 +20,47 @@
 
 }
 
+@section styles {
+    <style>
+        .text-hamster {
+            color: #fc5555;
+        }
+    </style>
+}
+
 <div class="row justify-content-center">
     <div class="col col-12">
         <div class="card mt-4">
             <div class="card-body bg-dark text-white">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-10">
+                        @*
                         <div class="row">
                             <div class="col-md-12">
                                 <img alt="Logo HM" src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top" />
 
                             </div>
                         </div>
+                        *@
                         <div class="row">
-                            <div class="col-md-4">
-                                <img alt="HaMster" src="~/Assets/img/cap/CAP_Hamster_bw_3.png" class="card-img-bottom" />
+                            <div class="col-md-1 col-sm-4 col-xs-6">
+                                <img alt="HaMster" src="~/Assets/img/cap/CAP_Hamster_bw_3.png" class="card-img-bottom bg-light-subtle" />
+                            </div>
+                            <div class="col-md-11 col-sm-8 col-xs-6">
+                                <h1 class="card-title">Willkommen bei <span class="text-hamster">HM</span><i>ster</i><span class="text-secondary fs-4"> (sprich [ˈhamstɐ])</span></h1>
+                                <p class="card-text mt-3">
+                                    Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre.<br />
+                                    Ein <span class="fw-bolder">Campus Adventure Playground </span>powered by
+                                    <a class="text-light" href="https://lucx.wi.hm.edu" target="_blank">
+                                        LUCX
+                                    </a>
+                                    , enabled by
+                                    <a class="text-light" href="https://acceleratex.org" target="_blank">
+                                        AX
+                                    </a>
+                                </p>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-8">
-                        <h1 class="card-title">Willkommen auf dem Campus Adventure Playground H<span class="text-secondary"><small>a</small></span>Mster</h1>
-                        <p class="card-text mt-3">
-                            Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre.<br />
-                            <small>
-                                powered by
-                                <a class="text-light" href="https://lucx.wi.hm.edu" target="_blank">
-                                    LUCX
-                                </a>
-                            </small>
-                            <small>enabled by
-                                <a class="text-light" href="https://acceleratex.org" target="_blank">
-                                    AX
-                                </a>
-                            </small>
-                        </p>
                     </div>
                     <div class="col-md-2">
                         <a href="@Url.Action("Login","Account")" class="btn btn-outline-light float-end"><i class="bi bi-door-open"></i> Anmelden</a>
@@ -68,7 +75,7 @@
                                 <div class="col">
                                     <a href="@Url.Action("Campus", "University")" class="list-group-item list-group-item-action bg-white" aria-current="true">
                                         <div class="d-flex w-100 justify-content-between">
-                                            <h5 class="mb-1"><i class="bi bi-calendar-date"></i> NINE</h5>
+                                            <h5 class="mb-1"><i class="bi bi-broadcast"></i> Grapevine (aka NINE)</h5>
                                             <p><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-half text-warning"></i><i class="bi bi-star text-warning"></i></p>
                                         </div>
                                         <p class="mb-1">
@@ -91,7 +98,7 @@
                                 <div class="col">
                                     <a href="@Url.Action("Index", "Swagger")" class="list-group-item list-group-item-action bg-white" aria-current="true">
                                         <div class="d-flex w-100 justify-content-between">
-                                            <h5 class="mb-1"><i class="bi bi-braces"></i> NINE-API</h5>
+                                            <h5 class="mb-1"><i class="bi bi-braces"></i> Morgue</h5>
                                             <p>
                                                 <i class="bi bi-star-fill text-warning"></i>
                                                 <i class="bi bi-star-fill text-warning"></i>
@@ -101,7 +108,7 @@
                                             </p>
                                         </div>
                                         <p class="mb-1">
-                                            For developers - create your own apps using the NINE API
+                                            For developers - create your own apps using the HMster API
                                         </p>
                                         <small>weiter >></small>
                                     </a>
@@ -209,7 +216,7 @@
                                 <h5><i class="bi bi-wrench-adjustable-circle"></i> Hinweis</h5>
                                 <p>
                                     Die hier verfügbaren Anwendungen sind Bestandteile studentischer Projekte und stehen grundsätzlich allen Einrichtungen der HM zur Verfügung.
-                                    Aktuell stellen folgende Fakultäten Daten bereit und haben Ansprechpartner:innen vor Ort: FK01, FK05, FK09, FK10, FK11, FK12, MUC.DAI, MUC.HEALTH. 
+                                    Aktuell stellen folgende Fakultäten Daten bereit und haben Ansprechpartner:innen vor Ort: FK01, FK05, FK09, FK10, FK11, FK12, MUC.DAI, MUC.HEALTH.
                                     Anzahl aktiver User (in Klammern Anzahl an User über HM Account):
                                 </p>
                                 <ul>

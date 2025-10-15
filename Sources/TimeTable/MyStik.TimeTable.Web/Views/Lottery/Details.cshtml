@@ -56,7 +56,8 @@
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="@Url.Action("Courses", new {id = Model.Lottery.Id})">Nach Lehrveranstaltungen</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("DrawingPots", new {id = Model.Lottery.Id})">Nach Buchungslisten (Platzkontingente)</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Students", new {id = Model.Lottery.Id})">Nach Eintragungen (Studierende)</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Students", new {id = Model.Lottery.Id})">Nach Studierenden (Einzelne Eintragungen)</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("StudentsPrio", new {id = Model.Lottery.Id})">Nach Studierenden (Zusammenfassung Auswahl)</a></li>
                                     </ul>
                                 </div>
                             </div>

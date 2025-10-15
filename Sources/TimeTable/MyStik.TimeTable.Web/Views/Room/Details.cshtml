@@ -12,6 +12,18 @@
         initialDay = ViewBag.Day;
     }
 
+    var members = ViewBag.Members as List<MyStik.TimeTable.Data.OrganiserMember>;
+    var owners = ViewBag.Owners as List<MyStik.TimeTable.Data.ActivityOrganiser>;
+
+    var isOwner = false;
+    foreach (var m in members)
+    {
+        if (owners.Any(x => x.Id == m.Organiser.Id))
+        {
+            isOwner = true;
+            break;
+        }
+    }
 }
 
 <div class="row">
@@ -35,7 +47,7 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+                        @if (members.Any())
                         {
                             <div class="form-group">
                                 <a href="@Url.Action("DateList", new { id = Model.Id })" class="btn btn-default">
@@ -53,7 +65,7 @@
                                 </a>
                             </div>
                         }
-                        @if (ViewBag.UserRight.IsRoomAdmin)
+                        @if (isOwner)
                         {
                             <div class="form-group">
                                 <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-default">
@@ -114,7 +126,7 @@
                                                 @if (assign.Id == ownerAssign.Id)
                                                 {
                                                     <div class="col-md-2">
-                                                            <i class="bi bi-building-exclamation text-secondary"></i>
+                                                        <i class="bi bi-building-exclamation text-secondary"></i>
                                                     </div>
                                                     <div class="col-md-2">
                                                         @if (ownerAssign.InternalNeedConfirmation)

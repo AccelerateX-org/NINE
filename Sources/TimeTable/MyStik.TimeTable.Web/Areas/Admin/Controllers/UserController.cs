@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Linq;
-using System.Web.Mvc;
-using Hangfire;
+﻿using Hangfire;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 {
@@ -57,7 +59,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         {
             var time = DateTime.Now.AddMinutes(-30);
 
-            var users = _db.Users.Where(x => x.LastLogin >= time).OrderByDescending(x => x.LastLogin).ToList();
+            var users = _db.Users.Where(x => x.LastLogin >= time).OrderByDescending(x => x.LastLogin).Take(20).ToList();
 
             var model = CreateUserList(users);
 
@@ -522,6 +524,23 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public async Task<ActionResult> DeleteClaims(string id)
+        {
+            var user = UserManager.FindById(id);
+
+            if (user != null)
+            {
+                var userClaims = await UserManager.GetClaimsAsync(user.Id);
+                foreach (var userClaim in userClaims)
+                {
+                    await UserManager.RemoveClaimAsync(user.Id, userClaim);
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
 
         /// <summary>
         /// 
