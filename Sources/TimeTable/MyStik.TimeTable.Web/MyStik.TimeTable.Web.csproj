@@ -98,11 +98,13 @@
     <Reference Include="log4net, Version=3.0.2.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.3.0.2\lib\net462\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Magick.NET-Q16-AnyCPU, Version=13.9.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\lib\netstandard20\Magick.NET-Q16-AnyCPU.dll</HintPath>
+    <Reference Include="Magick.NET-Q16-AnyCPU, Version=14.9.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec">
+      <HintPath>..\..\packages\Magick.NET-Q16-AnyCPU.14.9.0\lib\netstandard20\Magick.NET-Q16-AnyCPU.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Magick.NET.Core, Version=13.9.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Magick.NET.Core.13.9.0\lib\netstandard20\Magick.NET.Core.dll</HintPath>
+    <Reference Include="Magick.NET.Core, Version=14.9.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec">
+      <HintPath>..\..\packages\Magick.NET.Core.14.9.0\lib\netstandard20\Magick.NET.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Markdig, Version=0.38.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Markdig.0.38.0\lib\net462\Markdig.dll</HintPath>
@@ -5007,18 +5009,18 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\OctoPack.3.6.5\build\OctoPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OctoPack.3.6.5\build\OctoPack.targets'))" />
     <Error Condition="!Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets'))" />
     <Error Condition="!Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Magick.NET-Q16-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Magick.NET-Q16-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets'))" />
   </Target>
   <Import Project="..\..\packages\OctoPack.3.6.5\build\OctoPack.targets" Condition="Exists('..\..\packages\OctoPack.3.6.5\build\OctoPack.targets')" />
   <Import Project="..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
-  <Import Project="..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets" Condition="Exists('..\..\packages\Magick.NET-Q16-AnyCPU.13.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets')" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+  <Import Project="..\..\packages\Magick.NET-Q16-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets" Condition="Exists('..\..\packages\Magick.NET-Q16-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q16-AnyCPU.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
