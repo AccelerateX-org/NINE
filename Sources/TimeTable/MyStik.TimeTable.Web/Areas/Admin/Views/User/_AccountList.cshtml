@@ -1,0 +1,27 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.UserAdminViewModel>
+
+<table id="tabAccounts" class="table table-sm">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Vorname</th>
+            <th>E-Mail</th>
+            <th>User Name</th>
+            <th>Claim</th>
+            <th>Password</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @{ var i = 0;}
+    @foreach (var user in Model)
+    {
+        i++;
+        <tr id="@user.User.Id">
+            <td>@i</td>
+            @Html.Partial("_AccountListEntry", user)
+        </tr>
+    }
+    </tbody>
+</table>

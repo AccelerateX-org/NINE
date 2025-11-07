@@ -1,7 +1,6 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.LecturerOfficeHourModel
 @{
-    // Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Sprechstunden";
 
     var semester = Model.OfficeHours.GroupBy(x => x.Semester);

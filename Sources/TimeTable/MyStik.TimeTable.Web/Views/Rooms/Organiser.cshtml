@@ -45,8 +45,9 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
+            <li class="breadcrumb-item"><a aria-label="Dashboard" href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a aria-label="Campus" href="@Url.Action("Campus", "University")">HM</a></li>
+            <li class="breadcrumb-item"><a aria-label="Raumverzeichnis" href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Organiser.ShortName</li>
         </ol>
     </nav>
@@ -87,7 +88,7 @@
                                                 <th>Nummer</th>
                                                 <th>Bezeichnung</th>
                                                 <th>Plätze</th>
-                                                <th>Status</th>
+                                                <th>Buchbar von</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -103,26 +104,12 @@
                                                     </td>
                                                     <td>@room.Name</td>
                                                     <td>@room.Capacity</td>
-                                                    @if (room.IsBookable == true)
-                                                    {
-                                                        if (dates.Any())
+                                                    <td>
+                                                        @foreach (var assign in room.Assignments.Where(x => x.Organiser.Id != Model.Organiser.Id).OrderBy(x => x.Organiser.ShortName))
                                                         {
-                                                            <td>
-                                                                @foreach (var date in dates)
-                                                                {
-                                                                    <div>@date.Activity.ShortName</div>
-                                                                }
-                                                            </td>
+                                                            <div>@assign.Organiser.ShortName</div>
                                                         }
-                                                        else
-                                                        {
-                                                            <td>aktuell frei</td>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>nicht buchbar</td>
-                                                    }
+                                                    </td>
                                                 </tr>
                                             }
 
@@ -145,8 +132,8 @@
                                                 <th>Nummer</th>
                                                 <th>Bezeichnung</th>
                                                 <th>Plätze</th>
-                                                <th>Buchbar</th>
-                                                <th>Beschreibung</th>
+                                                <th>Besitzer</th>
+                                                <th>Buchbar von</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -162,32 +149,22 @@
                                                     </td>
                                                     <td>@room.Name</td>
                                                     <td>@room.Capacity</td>
+                                                    @if (ownerAssign != null)
+                                                    {
+                                                        <td>@ownerAssign.Organiser.ShortName</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
                                                     <td>
                                                         @foreach (var assign in room.Assignments.OrderBy(x => x.Organiser.ShortName))
                                                         {
                                                             if (ownerAssign != null)
                                                             {
-                                                                if (assign.Id == ownerAssign.Id)
+                                                                if (assign.Organiser.Id != Model.Organiser.Id && assign.Organiser.Id != ownerAssign.Organiser.Id)
                                                                 {
-                                                                    if (ownerAssign.InternalNeedConfirmation)
-                                                                    {
-                                                                        <div>@assign.Organiser.ShortName: interne Buchungsanfrage</div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div>@assign.Organiser.ShortName: Allgemein verfügbar</div>
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    if (ownerAssign.ExternalNeedConfirmation)
-                                                                    {
-                                                                        <div>@assign.Organiser.ShortName: Buchungsanfrage bei @ownerAssign.Organiser.ShortName</div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div>@assign.Organiser.ShortName: Allgemein verfügbar</div>
-                                                                    }
+                                                                    <div>@assign.Organiser.ShortName</div>
                                                                 }
                                                             }
                                                             else
@@ -196,10 +173,8 @@
                                                             }
                                                         }
                                                     </td>
-                                                    <td>@room.Description</td>
                                                 </tr>
                                             }
-
                                         </tbody>
                                     </table>
                                 </div>

@@ -2,13 +2,13 @@
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Services
 <!DOCTYPE html>
-<html lang="de-DE">
+<html lang="de-DE" data-bs-theme="light">
 <head>
     <meta content="de" http-equiv="Content-Language">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nine | @ViewBag.Title</title>
+    <title>grapevine | @ViewBag.Title</title>
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/jquery/jquery-ui.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/font/bootstrap-icons.css")" />
@@ -18,123 +18,140 @@
     *@
     @RenderSection("styles", required: false)
     <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/fillter/img/favicon.ico")" />
-    
-@*
-    @if (!Request.IsLocal)
-    {
-        <!-- Matomo -->
-        <script type="text/javascript">
-            var _paq = window._paq = window._paq || [];
-            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function () {
-                var u = "//shortcut.wi.hm.edu/analytics/";
-                _paq.push(['setTrackerUrl', u + 'matomo.php']);
-                _paq.push(['setSiteId', '1']);
-                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-                g.type = 'text/javascript'; g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
-            })();
-        </script>
-        <!-- End Matomo Code -->
-    }
+
+    @*
+        @if (!Request.IsLocal)
+        {
+            <!-- Matomo -->
+            <script type="text/javascript">
+                var _paq = window._paq = window._paq || [];
+                /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+                _paq.push(['trackPageView']);
+                _paq.push(['enableLinkTracking']);
+                (function () {
+                    var u = "//shortcut.wi.hm.edu/analytics/";
+                    _paq.push(['setTrackerUrl', u + 'matomo.php']);
+                    _paq.push(['setSiteId', '1']);
+                    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                    g.type = 'text/javascript'; g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+                })();
+            </script>
+            <!-- End Matomo Code -->
+        }
     *@
 </head>
-<body style="background-color: #e1e1e1">
+<body class="bg-body">
     @{
         var userService = new UserInfoService();
         var user = userService.GetUser(User.Identity.GetUserId());
     }
 
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
-    <div class="container-fluid">
-        <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
-            <i class="fas fa-home fa-2x"></i>
-        </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-haspopup="true" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <header class="navbar navbar-expand-lg sticky-top bg-dark text-white">
+        <nav class="container-fluid bd-gutter flex-wrap flex-lg-nowrap">
+            <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample" aria-label="Main menu"><i class="bi bi-list"></i></a>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
-                {
-
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />@Resources.NavMainBlackBoard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br />@Resources.NavMainMyStudies</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />@Resources.NavMainMyTeaching</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />@Resources.NavMainMyResearch</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Campus", "University")"><i class="fas fa-university fa-fw"></i><br />@Resources.NavMainMyUniversity</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />@Resources.NavMainMyAdministration</a>
-                    </li>
-                }
-            </ul>
             @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
             {
                 <form class="d-flex" action="@Url.Action("Index", "Search")">
                     <input class="form-control me-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                    <a href="https://acceleratex-org.github.io/NINE/" target="_blank" class="btn btn-outline-light"><i class="bi bi-question-circle"></i></a>
+                    @*
+                        <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                    *@
                 </form>
             }
             <ul class="navbar-nav">
                 @if (Request.IsAuthenticated)
                 {
-                    <li class="nav-item active dropdown">
-                        <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-fw"></i><br/>@user.FullName
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="@Url.Action("SendMeANotofication", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
-                            <li>
-                                <div class="dropdown-divider"></div></li>
-                            <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
-                        </ul>
+                    @*
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-circle fa-fw"></i> @user.FullName
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="@Url.Action("PersonalMessage", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                </li>
+                                <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
+                            </ul>
+                        </li>
+                    *@
+                    <li class="nav-item">
+                        <a aria-label="Logout" href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
                     </li>
                 }
                 else
                 {
                     <li class="nav-item">
-                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light">@Resources.LoginButton</a>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light"><i class="bi bi-door-open"></i> @Resources.LoginButton</a>
                     </li>
                 }
             </ul>
-        </div>
-    </div>
-</nav>
+        </nav>
+    </header>
 
-
-    <div class="container-fluid" style="margin-top:100px">
+    <div class="container-fluid" style="margin-top:60px">
         @RenderBody()
     </div>
 
-    <div class="container-fluid">
-        <hr />
-        <div class="d-flex flex-row bd-highlight mb-3">
-            <a class="p-2" href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a>
-            <a class="p-2" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
-            <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
 
-            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
-                <img src="~/Assets/img/flags/de.png" />
+
+    <footer class="row mt-3" style="background-color: #ffffff">
+        <div class="col">
+            <div class="d-flex flex-row mb-3">
+                <a class="p-2" href="https://github.com/AccelerateX-org">nine @Html.AssemblyVersion()</a>
+                <a class="p-2" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
+                <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
+
+                <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
+                    <img alt="Language de" aria-label="Switch to language de" src="~/Assets/img/flags/de.png" />
+                </a>
+                <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
+                    <img alt="Language en" aria-label="Switch to language en" src="~/Assets/img/flags/gb.png" />
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">CAP</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="list-group">
+            @if (Request.IsAuthenticated)
+            {
+                <div class="list-group-item list-group-item-secondary">@user.FullName</div>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dashboard")">
+                    <i class="bi bi-grid"></i> Mein Dashboard
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
+                    <i class="´bi bi-book"></i> Mein Studienbuch
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Manage")">
+                    <i class="´bi bi-person-check"></i> @Resources.MyUserProfile
+                </a>
+            }
+            <div class="list-group-item list-group-item-secondary">Applications</div>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
+                <i class="bi bi-house"></i> Startseite
             </a>
-            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
-                <img src="~/Assets/img/flags/gb.png" />
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
+                <i class="bi bi-building"></i> Campus
             </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new { @area = "Gym" })">
+                <i class="bi bi-controller"></i> Gym
+            </a>
+            @*
+                <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalMessage", "Notification")"><i class="bi bi-send"></i> Send me a notification</a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "UserProfile")"><i class="bi bi-gear"></i> @Resources.MySettings</a>
+            *@
+
+
         </div>
     </div>
 

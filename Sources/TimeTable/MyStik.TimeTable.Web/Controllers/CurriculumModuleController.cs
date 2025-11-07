@@ -51,10 +51,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Create(Guid catalogId)
         {
-            var org = GetMyOrganisation();
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catalogId);
 
+            var org = catalog.Organiser;
 
             var model = new CurriculumModuleCreateModel();
+            model.Tag = $"{catalog.Tag}-{catalog.Modules.Count + 1:000}";
             model.catalogId = catalogId;
             model.SWS = 4;
 
@@ -84,7 +86,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var member = GetMyMembership(catalog.Organiser.Id);
 
-            var isDuplicate = catalog.Modules.Any(x => x.Tag.Equals(model.Tag.Trim()));
+            var isDuplicate = catalog.Modules.Any(x => !string.IsNullOrEmpty(x.Tag) && x.Tag.Equals(model.Tag.Trim()));
 
             if (!isDuplicate)
             {
@@ -175,7 +177,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
 
             var catalog = module.Catalog;
-            var isDuplicate = catalog.Modules.Any(x => x.Tag.Equals(model.Tag) && x.Id != model.moduleId);
+            var isDuplicate = catalog.Modules.Any(x => !string.IsNullOrEmpty(x.Tag) && x.Tag.Equals(model.Tag) && x.Id != model.moduleId);
 
             if (!isDuplicate)
             {

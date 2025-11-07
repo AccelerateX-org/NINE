@@ -29,8 +29,9 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
+            <li class="breadcrumb-item"><a aria-label="Dashboard" href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a aria-label="Campus" href="@Url.Action("Campus", "University")">HM</a></li>
+            <li class="breadcrumb-item"><a aria-label="Raumverzeichnis" href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Number</li>
         </ol>
     </nav>
@@ -49,44 +50,40 @@
                     <div class="btn-group">
                         @if (members.Any())
                         {
-                            <div class="form-group">
-                                <a href="@Url.Action("DateList", new { id = Model.Id })" class="btn btn-default">
+                                <a href="@Url.Action("DateList", new { id = Model.Id })" class="btn btn-outline-primary">
                                     <i class="fa fa-list"></i> Terminliste (aktuelles Semester)
                                 </a>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("DateListAll", new { id = Model.Id })" class="btn btn-default">
+                                <a href="@Url.Action("DateListAll", new { id = Model.Id })" class="btn btn-outline-primary">
                                     <i class="fa fa-list"></i> Terminliste (alle)
                                 </a>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("Labels", "Room")" class="btn btn-default">
-                                    <i class="fa fa-print"></i> Türschilder
-                                </a>
-                            </div>
                         }
                         @if (isOwner)
                         {
-                            <div class="form-group">
-                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-default">
+                            @*
+                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-danger">
                                     <i class="fa fa-gear"></i> Löschen
                                 </a>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-default">
+                                *@
+                                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-outline-primary">
                                     <i class="fa fa-gear"></i> Einstellungen
                                 </a>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("Rules", new { id = Model.Id })" class="btn btn-default">
+                                <a href="@Url.Action("Rules", new { id = Model.Id })" class="btn btn-outline-primary">
                                     <i class="fa fa-legal"></i> Belegungsregeln
                                 </a>
-                            </div>
                         }
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
+                        <div class="col-md-2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <img src="@Url.Action("GetQrCode", "Print", new {id = Model.Id})" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
@@ -109,7 +106,7 @@
                                     <hr />
                                     <div class="row">
                                         <div class="col-md-12">
-                                            Belegbar durch
+                                            Buchbar durch
                                         </div>
                                     </div>
                                     @foreach (var assign in Model.Assignments)
@@ -128,30 +125,16 @@
                                                     <div class="col-md-2">
                                                         <i class="bi bi-building-exclamation text-secondary"></i>
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        @if (ownerAssign.InternalNeedConfirmation)
-                                                        {
-                                                            <i class="bi bi-ticket text-danger"></i>
-                                                        }
-                                                        else
-                                                        {
-                                                            <i class="bi bi-check text-success"></i>
-                                                        }
+                                                    <div class="col-md-6">
+                                                        <i class="bi bi-check text-success"></i> verfübar für alle
                                                     </div>
                                                 }
                                                 else
                                                 {
                                                     <div class="col-md-2">
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        @if (ownerAssign.ExternalNeedConfirmation)
-                                                        {
-                                                            <i class="bi bi-ticket text-danger"></i>
-                                                        }
-                                                        else
-                                                        {
-                                                            <i class="bi bi-check text-success"></i>
-                                                        }
+                                                    <div class="col-md-6">
+                                                        <i class="bi bi-check text-success"></i>  über Raum Administratoren
                                                     </div>
                                                 }
                                             </div>
@@ -171,7 +154,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <div id="calendar"></div>
                         </div>
                     </div>

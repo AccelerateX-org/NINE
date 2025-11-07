@@ -3640,6 +3640,9 @@
     <Content Include="Areas\InfoScreen\Views\Home\_RoomSchedule.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\_PublicTransport.cshtml" />
     <Content Include="Areas\InfoScreen\Views\Home\_Ads.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Accounts.cshtml" />
+    <Content Include="Areas\Admin\Views\User\_AccountList.cshtml" />
+    <Content Include="Areas\Admin\Views\User\_AccountListEntry.cshtml" />
     <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -4439,7 +4442,6 @@
     <Content Include="Views\ThesisSupervision\Cleared.cshtml" />
     <Content Include="Views\ThesisAdmin\Statistics.cshtml" />
     <Content Include="Views\Dashboard\_ViewStart.cshtml" />
-    <Content Include="Views\Teaching\_ViewStart.cshtml" />
     <Content Include="Views\ThesisSupervision\AddSupervisors.cshtml" />
     <Content Include="Views\Shared\_ThesisPrintOut.cshtml" />
     <Content Include="Views\ThesisAdmin\Extend.cshtml" />
@@ -4462,9 +4464,7 @@
     <Content Include="Views\InternshipAdmin\Approval.cshtml" />
     <Content Include="Views\InternshipAdmin\Plannend.cshtml" />
     <Content Include="Views\InternshipAdmin\Details.cshtml" />
-    <Content Include="Views\NoticeBoard\_ViewStart.cshtml" />
     <Content Include="Views\NoticeBoard\Index.cshtml" />
-    <Content Include="Views\BulletinBoard\_ViewStart.cshtml" />
     <Content Include="Views\BulletinBoard\Index.cshtml" />
     <Content Include="Views\Mailing\Curriculum.cshtml" />
     <Content Include="Views\ThesisAdmin\RepairExpiry.cshtml" />
@@ -4476,7 +4476,6 @@
     <Content Include="Views\Dashboard\FirstVisit.cshtml" />
     <Content Include="Views\Shared\_LayoutFirstVisit.cshtml" />
     <Content Include="Views\Assessment\Index.cshtml" />
-    <Content Include="Views\Assessment\_ViewStart.cshtml" />
     <Content Include="Views\Assessment\Details.cshtml" />
     <Content Include="Views\ActivityDate\Details.cshtml" />
     <Content Include="Views\ActivityDate\_CourseSummaryHeader.cshtml" />
@@ -4484,7 +4483,6 @@
     <Content Include="Views\VirtualRoom\Create.cshtml" />
     <Content Include="Views\VirtualRoom\Edit.cshtml" />
     <Content Include="Views\VirtualRoom\Details.cshtml" />
-    <Content Include="Views\Calendar\_ViewStart.cshtml" />
     <Content Include="Views\Mailing\CurriculumModule.cshtml" />
     <Content Include="Views\Assessment\Admin.cshtml" />
     <Content Include="Views\Assessment\Create.cshtml" />
@@ -4492,7 +4490,6 @@
     <Content Include="Views\Assessment\_Disclaimer.cshtml" />
     <Content Include="Views\Assessment\Start.cshtml" />
     <Content Include="Views\Candidature\MyRoom.cshtml" />
-    <Content Include="Views\Candidature\_ViewStart.cshtml" />
     <Content Include="Views\Assessment\Candidates.cshtml" />
     <Content Include="Views\Candidature\Index.cshtml" />
     <Content Include="Views\Candidature\TextInput.cshtml" />
@@ -4519,12 +4516,9 @@
     <Content Include="Views\Assessment\Export.cshtml" />
     <Content Include="Views\Lottery\Capacities.cshtml" />
     <Content Include="Views\Curriculum\Students.cshtml" />
-    <Content Include="Views\Rooms\_ViewStart.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
-    <Content Include="Views\Research\_ViewStart.cshtml" />
     <Content Include="Views\Research\Index.cshtml" />
     <Content Include="Views\University\Index.cshtml" />
-    <Content Include="Views\Administration\_ViewStart.cshtml" />
     <Content Include="Views\Administration\Index.cshtml" />
     <Content Include="Views\Teaching\Apply.cshtml" />
     <Content Include="Views\Administration\Apply.cshtml" />
@@ -4536,20 +4530,16 @@
     <Content Include="Views\Mailing\Curricula.cshtml" />
     <Content Include="Views\Course\Participients.cshtml" />
     <Content Include="Views\Autonomy\Index.cshtml" />
-    <Content Include="Views\Autonomy\_ViewStart.cshtml" />
     <Content Include="Views\Thesis\Prolong.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisionProlongRequestEMail.html.cshtml" />
     <Content Include="Views\ScriptPublishing\Index.cshtml" />
     <Content Include="Views\ScriptPublishing\Create.cshtml" />
     <Content Include="Views\Mail\ThesisProlongAcceptedEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisProlongRejectedEMail.html.cshtml" />
-    <Content Include="Views\ScriptDocuments\_ViewStart.cshtml" />
     <Content Include="Views\ScriptDocuments\Index.cshtml" />
     <Content Include="Views\ScriptOrders\Index.cshtml" />
-    <Content Include="Views\ScriptOrders\_ViewStart.cshtml" />
     <Content Include="Views\ScriptOrders\Create.cshtml" />
     <Content Include="Views\ScriptShop\History.cshtml" />
-    <Content Include="Views\ScriptShop\_ViewStart.cshtml" />
     <Content Include="Views\ScriptShop\_FutureOrderPeriod.cshtml" />
     <Content Include="Views\ScriptShop\_NoOrderPeriod.cshtml" />
     <Content Include="Views\ScriptShop\Basket.cshtml" />
@@ -4561,7 +4551,6 @@
     <Content Include="Views\Mail\ScriptOrderNotificationEMail.html.cshtml" />
     <Content Include="Views\ScriptShop\Index.cshtml" />
     <Content Include="Views\ScriptPublishing\Edit.cshtml" />
-    <Content Include="Views\StudyRoom\_ViewStart.cshtml" />
     <Content Include="Views\StudyRoom\Index.cshtml" />
     <Content Include="Views\StudyRoom\_RoomList.cshtml" />
     <Content Include="Views\Courses\Reports.cshtml" />
@@ -4667,7 +4656,6 @@
     <Content Include="Views\University\Degree.cshtml" />
     <Content Include="Views\Curriculum\CreateSlot.cshtml" />
     <Content Include="Views\Shared\_LayoutDashboardSidebar.cshtml" />
-    <Content Include="Views\University\_ViewStart.cshtml" />
     <Content Include="Views\University\Persons.cshtml" />
     <Content Include="Views\Lottery\IndexOld.cshtml" />
     <Content Include="Views\Dictionary\Slot.cshtml" />
@@ -4764,7 +4752,6 @@
     <Content Include="Views\CurriculumModule\Copy.cshtml" />
     <Content Include="Views\Courses\Future.cshtml" />
     <Content Include="Views\Courses\History.cshtml" />
-    <Content Include="Views\CurriculumModule\_ViewStart.cshtml" />
     <Content Include="Views\CurriculumModule\_CourseCopied.cshtml" />
     <Content Include="Views\CurriculumModule\CreateCourse.cshtml" />
     <Content Include="Views\Lecturer\_DateList.cshtml" />

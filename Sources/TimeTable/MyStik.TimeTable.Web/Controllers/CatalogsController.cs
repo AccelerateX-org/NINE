@@ -506,7 +506,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == model.catalogId);
 
             var org = catalog.Organiser;
-            var isDuplicate = org.ModuleCatalogs.Any(x => x.Tag.Equals(model.Tag) && x.Id != model.catalogId);
+            var isDuplicate = org.ModuleCatalogs.Any(x => !string.IsNullOrEmpty(x.Tag) && x.Tag.Equals(model.Tag) && x.Id != model.catalogId);
 
             if (!isDuplicate)
             {

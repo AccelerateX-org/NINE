@@ -2,16 +2,20 @@
 @model MyStik.TimeTable.Web.Models.LoginViewModel
 
 @{
-    // Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
     ViewBag.Title = Resources.LoginTab;
 }
 
 <div class="container" style="margin-top: 80px">
+    <div class="row justify-content-center"">
+        <div class="col-md-8">
+            <h1>Anmelden</h1>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>@Resources.LoginHeading</h5>
+                    <h2 class="card-title">HMster User Account</h2>
                 </div>
                 <div class="card-body">
 
@@ -39,10 +43,10 @@
                     }
                     <div class="alert alert-info mt-3">
                         <p>
-                            Ich habe ein NINE Benutzerkonto und möchte mich lieber mit dem HM User-Account anmelden?
+                            Ich habe ein HMster (früher NINE) Benutzerkonto und möchte mich lieber mit dem HM User-Account anmelden?
                         </p>
                         <ol>
-                            <li>Mit NINE Benutzerkonto anmelden.</li>
+                            <li>Mit HMster User Account anmelden.</li>
                             <li>Unter "Mein Benutzerkonto" den HM User-Account aktivieren.</li>
                             <li>In Zukunft kann ich mich dann auch über den HM User-Account anmelden.</li>
                         </ol>
@@ -58,7 +62,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Anmelden mit HM User-Account</h5>
+                    <h2 class="card-title">HM User-Account</h2>
                 </div>
                 <div class="card-body">
                     <div class="form-group">

@@ -37,7 +37,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         }
 
         [HttpPost]
-        [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 10)]
+        //[OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 10)]
         public PartialViewResult ContentForPage(Guid id, int page)
         {
             return RoomSchedule(id, page);

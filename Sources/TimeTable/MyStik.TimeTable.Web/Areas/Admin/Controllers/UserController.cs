@@ -599,6 +599,15 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        public ActionResult Accounts()
+        {
+            var users = _db.Users.Where(x => x.Claims.Any()).OrderByDescending(x => x.LastLogin).ToList();
+
+            var model = CreateUserList(users);
+
+            return View(model);
+        }
+
 
     }
 }

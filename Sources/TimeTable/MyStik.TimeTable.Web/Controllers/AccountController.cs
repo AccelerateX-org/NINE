@@ -729,6 +729,11 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             var claims = loginInfo.ExternalIdentity.Claims.ToList();
+            foreach (var c in claims)
+            {
+                logger.InfoFormat("ExternalLoginCallback: claim: {0} = {1}", c.Type, c.Value);
+            }
+
             var accessToken = claims.Find(c => c.Type == "access_token");
 
             var client = new HttpClient()
@@ -740,6 +745,8 @@ namespace MyStik.TimeTable.Web.Controllers
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Value);
 
             var response = await client.GetAsync("idp/profile/oidc/userinfo");
+            logger.InfoFormat("ExternalLoginCallback: Response from userinfo endpoint: {0}", response);
+
             // userInfo enthält die Felder aus dem IDM, die in den Claims des Benutzers gespeichert werden sollen
             dynamic userInfo = null;
             if (response.IsSuccessStatusCode)
@@ -748,49 +755,29 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (!string.IsNullOrWhiteSpace(data))
                 {
+                    logger.InfoFormat("ExternalLoginCallback: data from userinfo endpoint: {0}", data);
                     userInfo = JObject.Parse(data);
+                }
+                else
+                {
+                    logger.InfoFormat("ExternalLoginCallback: NO DATA from userinfo endpoint");
                 }
             }
             
-            logger.InfoFormat("ExternalLoginCallback: Response from userinfo endpoint: {0}", response);
 
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+
             switch (result)
             {
                 case SignInStatus.Success:
-                    /*
-                    var userId = User.Identity.GetUserId();
-                    var userClaims = await UserManager.GetClaimsAsync(userId);
-                    foreach (var property in userInfo.Properties())
-                    {
-                        var userClaim = userClaims.FirstOrDefault(c => c.Type == property.Name);
-                        if (userClaim != null)
-                        {
-                            await UserManager.RemoveClaimAsync(userId, userClaim);
-                        }
-
-                        var infoClaim = new Claim(property.Name, property.Value.ToString());
-                        await UserManager.AddClaimAsync(userId, infoClaim);
-                    }
-
-                    // Zeitstempel der letzten Änderung
-                    var userUpdateClaim = userClaims.FirstOrDefault(c => c.Type == "LocalLastUpdated");
-                    if (userUpdateClaim != null)
-                    {
-                        await UserManager.RemoveClaimAsync(userId, userUpdateClaim);
-                    }
-                    userUpdateClaim = new Claim("LocalLastUpdated", DateTime.Now.ToString());
-                    await UserManager.AddClaimAsync(userId, userUpdateClaim);
-
-                    await UserManager.StoreLogInAsync(userId);
-                    */
-
                     var claim = loginInfo.ExternalIdentity.Claims.SingleOrDefault(c => c.Type == "eduPersonPrincipalName");
                     if (claim != null)
                     {
+                        // das geht nur, wenn der Benutzer über SSO angelegt wurde
+                        // wenn es zuerst ein lokales Konto war, dann kann der userName anders sein und dann wird hier nichts gefunden
                         var user = await UserManager.FindByNameAsync(claim.Value);
-                        if (user != null)
+                        if (user != null && userInfo != null)
                         {
                             // Update user info claims
                             var userClaims = await UserManager.GetClaimsAsync(user.Id);
@@ -819,6 +806,43 @@ namespace MyStik.TimeTable.Web.Controllers
                             await UserManager.StoreLogInAsync(user.Id);
                         }
                     }
+                    else
+                    {
+                        // Sonderlocke für Luca Illgen (temporär)
+                        if (userInfo != null)
+                        {
+                            var lucaClaim = userInfo["email"];
+                            if (lucaClaim != null && lucaClaim.Value == "P.illgen@hm.edu")
+                            {
+                                var user = await UserManager.FindByNameAsync("P.illgen@hm.edu");
+                                if (user != null)
+                                {
+                                    var lucaPerson = userInfo["eduPersonPrincipalName"];
+                                    user.UserName = lucaPerson;
+                                    await UserManager.UpdateAsync(user);
+
+                                    foreach (var property in userInfo.Properties())
+                                    {
+                                        var infoClaim = new Claim(property.Name, property.Value.ToString());
+                                        await UserManager.AddClaimAsync(user.Id, infoClaim);
+                                    }
+
+                                    // Zeitstempel der letzten Änderung
+                                    var userClaims = await UserManager.GetClaimsAsync(user.Id);
+                                    var userUpdateClaim = userClaims.FirstOrDefault(c => c.Type == "ClaimsLastUpdated");
+                                    if (userUpdateClaim != null)
+                                    {
+                                        await UserManager.RemoveClaimAsync(user.Id, userUpdateClaim);
+                                    }
+                                    userUpdateClaim = new Claim("ClaimsLastUpdated", DateTime.Now.ToString());
+                                    await UserManager.AddClaimAsync(user.Id, userUpdateClaim);
+
+                                    await UserManager.StoreLogInAsync(user.Id);
+                                }
+                            }
+                        }
+                    }
+                    
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

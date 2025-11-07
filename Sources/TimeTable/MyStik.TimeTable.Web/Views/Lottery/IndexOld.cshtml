@@ -225,7 +225,14 @@
                                 <td>@lottery.Lottery.LastDrawing.ToShortDateString()</td>
                                 <td>Platzverlosung</td>
                             }
-                            <td>@lottery.Lottery.Owner.FullName</td>
+                            @if (lottery.Lottery.Owner == null)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@lottery.Lottery.Owner.FullName</td>
+                            }
                         </tr>
                     }
                 </tbody>

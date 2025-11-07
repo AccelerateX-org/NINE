@@ -1,0 +1,50 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.UserAdminViewModel
+
+@{
+    //var claim = Model.User.Claims.Where(x => x.ClaimType.Equals("eduPersonPrincipalName")).FirstOrDefault();
+    var claim = Model.User.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
+}
+
+
+
+<td><a href="@Url.Action("Student", new {id=Model.User.Id})">@Model.User.LastName</a></td>
+<td>@Model.User.FirstName</td>
+@if (!string.IsNullOrEmpty(Model.User.Email))
+{
+    <td>
+        <a href="mailto:@Model.User.Email"> @Model.User.Email</a>
+    </td>
+}
+else
+{
+    <td><i class="bi bi-envelope-exclamation text-danger"></i></td>
+}
+<td>
+    @Model.User.UserName
+</td>
+@if (claim != null)
+{
+    <td>
+        @claim.ClaimValue
+    </td>
+}
+else
+{
+    <td></td>
+}
+@if (string.IsNullOrEmpty(Model.User.PasswordHash))
+{
+    <td></td>
+}
+else
+{ 
+    <td><i class="bi bi-check-lg text-success"></i></td>
+}
+
+<td>
+</td>
+
+
+

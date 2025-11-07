@@ -581,6 +581,15 @@ namespace MyStik.TimeTable.Web.Controllers
                         await UserManager.AddClaimAsync(userId, infoClaim);
                     }
 
+                    // jetzt noch den user name auf den eduPersonPrincipalName setzen, damit das update der Attribute klappt
+                    // aber nur wenn der user name eine E-mail Adresse ist (Standard bei Registrierung)
+                    var user = await UserManager.FindByIdAsync(userId);
+
+                    if (user != null && user.UserName.Contains("@"))
+                    {
+                        user.UserName = userInfo["eduPersonPrincipalName"];
+                        await UserManager.UpdateAsync(user);
+                    }
                 }
             }
 

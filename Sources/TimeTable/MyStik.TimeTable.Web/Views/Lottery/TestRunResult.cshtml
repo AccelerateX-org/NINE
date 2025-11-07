@@ -32,7 +32,7 @@
                         foreach (var subscription in course.Occurrence.Subscriptions)
                         {
                             var user = userService.GetUser(subscription.UserId);
-                            var student = studentService.GetCurrentStudent(subscription.UserId);
+                            var student = studentService.GetCurrentStudent(subscription.UserId).FirstOrDefault();
 
 
                             <tr>

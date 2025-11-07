@@ -2,6 +2,11 @@
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.UserAdminViewModel
 
+@{
+    var claim = Model.User.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
+}
+
+
 
 <td><a href="@Url.Action("Student", new {id=Model.User.Id})">@Model.User.LastName</a></td>
 <td>@Model.User.FirstName</td>
@@ -83,6 +88,12 @@ else
         @foreach (var login in Model.User.Logins.ToList())
         {
             <div>@login.LoginProvider</div>
+        }
+        @if (claim != null)
+        {
+            <div>
+                @claim.ClaimValue
+            </div>
         }
     </td>
 }
