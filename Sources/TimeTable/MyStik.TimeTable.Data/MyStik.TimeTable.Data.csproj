@@ -637,6 +637,10 @@
     <Compile Include="Migrations\202509231407232_r_0_19_2.Designer.cs">
       <DependentUpon>202509231407232_r_0_19_2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202511131257041_ApiKeyV1.cs" />
+    <Compile Include="Migrations\202511131257041_ApiKeyV1.Designer.cs">
+      <DependentUpon>202511131257041_ApiKeyV1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -1024,6 +1028,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509231407232_r_0_19_2.resx">
       <DependentUpon>202509231407232_r_0_19_2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511131257041_ApiKeyV1.resx">
+      <DependentUpon>202511131257041_ApiKeyV1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

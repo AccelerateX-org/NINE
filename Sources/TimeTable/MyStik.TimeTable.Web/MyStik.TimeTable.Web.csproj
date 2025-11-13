@@ -398,6 +398,7 @@
     <Compile Include="Api\Contracts\NotificationContracts.cs" />
     <Compile Include="Api\Contracts\QuestionContracts.cs" />
     <Compile Include="Api\Contracts\RoomContracts.cs" />
+    <Compile Include="Api\Contracts\CoursesContracts.cs" />
     <Compile Include="Api\Contracts\ScimContracts.cs" />
     <Compile Include="Api\Controller\AgendaController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
@@ -447,6 +448,7 @@
     <Compile Include="Api\Responses\NotificationResponses.cs" />
     <Compile Include="Api\Responses\RoomResponses.cs" />
     <Compile Include="Api\Services\ActivityInfoService.cs" />
+    <Compile Include="Api\Services\ApiKeyService.cs" />
     <Compile Include="Api\Services\CourseConverter.cs" />
     <Compile Include="Api\Services\CurriculumInfoService.cs" />
     <Compile Include="Api\Services\EventInfoService.cs" />
@@ -839,6 +841,8 @@
     <Content Include="Assets\fillter\scripts\planer.js" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
     <Content Include="Assets\fillter\scripts\datepicker.js" />
+    <Content Include="Assets\img\cap\broadcast.ico" />
+    <Content Include="Assets\img\cap\broadcast.svg" />
     <Content Include="Assets\img\cap\CAP_Hamster_bw.ico" />
     <Content Include="Assets\img\cap\CAP_Hamster_bw_3.png" />
     <Content Include="Assets\img\cap\HM_Logo_RGB.png" />

@@ -36,6 +36,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Name { get; set; }
 
+        public string NameEn { get; set; }
+
         /// <summary>
         /// Typ der Lehrveranstaltung
         /// deprecrated

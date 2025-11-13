@@ -1,5 +1,6 @@
 ﻿@using MyStik.TimeTable.DataServices
 @using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Helpers
 
 @{
 
@@ -35,12 +36,12 @@
                 <div class="row">
                     <div class="col-md-10">
                         @*
-                        <div class="row">
-                            <div class="col-md-12">
-                                <img alt="Logo HM" src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <img alt="Logo HM" src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top" />
 
+                                </div>
                             </div>
-                        </div>
                         *@
                         <div class="row">
                             <div class="col-md-1 col-sm-4 col-xs-6">
@@ -217,54 +218,36 @@
                                 <p>
                                     Die hier verfügbaren Anwendungen sind Bestandteile studentischer Projekte und stehen grundsätzlich allen Einrichtungen der HM zur Verfügung.
                                     Aktuell stellen folgende Fakultäten Daten bereit und haben Ansprechpartner:innen vor Ort: FK01, FK05, FK09, FK10, FK11, FK12, MUC.DAI, MUC.HEALTH.
-                                    Anzahl aktiver User (in Klammern Anzahl an User über HM Account):
                                 </p>
+                                <p>Eine kleine Statistik zur Reichweite. Angabe der Personen, die sich im jeweiligen Zeitraum angemeldet haben. In Klammern dabei die Anzahl der Personen, die dafür den HM User Account nutzen:</p>
                                 <ul>
-                                    <li>heute: @activeUserToday (@activeUserTodaySSO)</li>
-                                    <lI>im @semester.Name: @activeUserSemester (@activeUserSemesterSSO)</lI>
+                                    <li>heute @DateTime.Today.ToShortDateString(): @activeUserToday (@activeUserTodaySSO)</li>
+                                    <lI>bisher im @semester.Name: @activeUserSemester (@activeUserSemesterSSO)</lI>
                                     <li>insgesamt: @activeUserTotal (@activeUserTotalSSO)</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="list-group-item  bg-dark-subtle">
-                    <div class="row">
-                        <div class="col">
-                            <h2>Weitere Systeme der Hochschule München</h2>
-                        </div>
-                    </div>
-                    <div class="row gx-1">
-                        <div class="col">
-                            <a href="https://hm.edu/studium_1/im_studium/studienstart/account/index.de.html" aria-label="Weiter zu den Applikationen der Abteilung Studium" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1"><i class="bi bi-box-arrow-up-right"></i> Systeme der Abteilung Studium</h6>
-                                </div>
-                                <p class="mb-1">primuss und mehr</p>
+
+
+
+                <div class="list-group-item list-group-item-action bg-dark">
+                    <div class="col">
+                        <div class="d-flex flex-row mb-3">
+                            <a class="p-2 text-white" href="https://github.com/AccelerateX-org">HMster @Html.AssemblyVersion()</a>
+                            <a class="p-2 text-white" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
+                            <a class="p-2 text-white" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
+
+                            <a class="p-2 text-white" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
+                                <img alt="Language de" aria-label="Switch to language de" src="~/Assets/img/flags/de.png" />
                             </a>
-                        </div>
-                        <div class="col">
-                            <a href="https://conwiki.cc.hm.edu/confluence/pages/viewpage.action?pageId=250552983" aria-label="Weiter zu den Systemen der zentralen IT" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1"><i class="bi bi-box-arrow-up-right"></i> Systeme der zentralen IT</h6>
-                                </div>
-                                <p class="mb-1">WLAN, HM App, Microsoft 365 und mehr</p>
-                            </a>
-                        </div>
-                        <div class="col">
-                            <a href="https://www.hm.edu/elc/" aria-label="Weiter zun Systemen des E-Learning Centers" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1"><i class="bi bi-box-arrow-up-right"></i> Systeme des E-Learning Centers</h6>
-                                </div>
-                                <p class="mb-1">moodle, mahara und mehr</p>
+                            <a class="p-2 text-white" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
+                                <img alt="Language en" aria-label="Switch to language en" src="~/Assets/img/flags/gb.png" />
                             </a>
                         </div>
                     </div>
                 </div>
-
-                <a class="list-group-item list-group-item-action bg-dark text-white" href="@Url.Action("Imprint", "Home")">
-                    Impressum
-                </a>
 
             </div>
         </div>

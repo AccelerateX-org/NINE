@@ -125,6 +125,16 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string UrlProfile { get; set; }
 
+        /// <summary>
+        /// Aktueller API-Schlüssel für den Zugriff auf die API
+        /// </summary>
+        public string ApiKey { get; set; }
+
+        /// <summary>
+        /// Ablaufdatum des API-Schlüssels
+        /// </summary>
+        public DateTime? ApiKeyValidUntil { get; set; }
+
 
         public virtual ActivityOrganiser Organiser { get; set; }
 

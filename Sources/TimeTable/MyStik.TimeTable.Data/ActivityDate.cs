@@ -54,6 +54,17 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool? IsRealWorld { get; set; }
 
+        /// <summary>
+        /// Signalisiert, dass der Termin online stattfindet
+        /// </summary>
+        public bool? IsOnline { get; set; }
+
+        /// <summary>
+        /// Signalisiert, dass der Termin außer Haus stattfindet
+        /// </summary>
+        public bool? IsAway { get; set; }
+
+
         public virtual Activity Activity { get; set; }
 
         public virtual Occurrence Occurrence { get; set; }

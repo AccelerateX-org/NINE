@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Data.Migrations;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -295,6 +297,43 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return list.AsQueryable();
         }
 
+        [HttpPost]
+        [Route("")]
+        [ResponseType(typeof(CourseCreateResponse))]
+        public async Task<IHttpActionResult> CreateCourse([FromBody] CourseCreateRequest request)
+        {
+            // Verhindert Redirects bei Unauthorized (401) Antworten => funktioniert so nicht
+            // dann erst mal raus
+            // HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
 
+            Request.Headers.TryGetValues("Authorization", out var headers);
+            if (headers == null)
+            {
+                return Unauthorized();
+            }
+
+            var authHeader = headers.FirstOrDefault();
+            if (authHeader == null)
+            {
+                return Unauthorized();
+            }
+
+            var apiKeyService = new ApiKeyService(Db);
+            var member = apiKeyService.IsValidApiKey(authHeader);
+            if (member == null)
+            {
+                return Unauthorized();
+            }
+
+
+
+            var response = new CourseCreateResponse();
+
+
+
+            await Db.SaveChangesAsync();
+
+            return Ok(response);
+        }
     }
 }
