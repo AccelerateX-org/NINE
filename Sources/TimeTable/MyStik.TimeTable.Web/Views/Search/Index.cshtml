@@ -88,7 +88,7 @@
                 <div class="list-group">
                     @foreach (var doz in Model.Lecturers)
                     {
-                        <a class="list-group-item list-group-item-action" href="@Url.Action("Private", "Person", new { memberId = doz.Lecturer.Id })">@doz.Lecturer.FullName</a>
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("Card", "Person", new { memberId = doz.Lecturer.Id })">@doz.Lecturer.FullName</a>
                     }
                 </div>
             </div>

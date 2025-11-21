@@ -1300,7 +1300,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ImportAreas(CurriculumImportModel model)
+        public ActionResult ImportAreasJSON(CurriculumImportModel model)
         {
             string tempFile = Path.GetTempFileName();
 
@@ -1394,6 +1394,77 @@ namespace MyStik.TimeTable.Web.Controllers
                             Db.CurriculumSlots.Add(currSlot);
                         }
                     }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
+        }
+
+        [HttpPost]
+        public ActionResult ImportAreasCSV(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+            var lines = System.IO.File.ReadAllLines(tempFile);
+
+            // Im Augenblick ist es ein Import für einen existierenden Studiengang
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            lines = lines.Skip(1).ToArray(); // Header entfernen
+
+            foreach (var line in lines)
+            {
+                var words = line.Split(';');
+
+                var slotTag = words[0].Trim();
+                var areaTag = words[1].Trim();
+                var optionTag = words[2].Trim();
+                var slotSemester = int.Parse(words[3]);
+                var slotCredits = int.Parse(words[4]);
+                var slotName = words[5].Trim();
+
+                var currArea = curr.Areas.FirstOrDefault(x => x.Tag.ToUpper().Equals(areaTag));
+
+                if (currArea == null)
+                {
+                    currArea = new CurriculumArea()
+                    {
+                        Name = areaTag,
+                        Tag = areaTag,
+                        Curriculum = curr
+                    };
+                    Db.CurriculumAreas.Add(currArea);
+                }
+
+                var currOption = currArea.Options.FirstOrDefault(x => x.Tag.ToUpper().Equals(optionTag.ToUpper()));
+
+                if (currOption == null)
+                {
+                    currOption = new AreaOption()
+                    {
+                        Tag = optionTag.ToUpper(),
+                        Area = currArea
+                    };
+                    Db.AreaOptions.Add(currOption);
+                }
+
+                var currSlot = currOption.Slots.FirstOrDefault(x => x.Tag.ToUpper().Equals(slotTag.ToUpper()));
+
+                if (currSlot == null)
+                {
+                    currSlot = new CurriculumSlot
+                    {
+                        ECTS = slotCredits,
+                        Semester = slotSemester,
+                        Tag = slotTag.ToUpper(),
+                        Name = slotName,
+                        AreaOption = currOption
+                    };
+                    Db.CurriculumSlots.Add(currSlot);
                 }
             }
 

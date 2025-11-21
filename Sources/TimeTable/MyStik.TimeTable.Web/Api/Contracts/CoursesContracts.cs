@@ -1,4 +1,5 @@
-﻿using PagedList;
+﻿using MyStik.TimeTable.Web.Controllers;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,53 @@ using System.Web;
 
 namespace MyStik.TimeTable.Web.Api.Contracts
 {
-    public class CourseSignature
+    public class CourseCohorte
     {
-        /// <summary>
-        /// HM
-        /// </summary>
         public string institution { get; set; }
+        public string organiser { get; set; }
+        public string curriculum { get; set; }
+        public string label { get; set; }
+    }
+
+    public class CourseQuota
+    {
+        public int amount { get; set; }
+
+        public List<CourseCohorte> fractions { get; set; }
+    }
+
+    public class CourseDateApiModel
+    {
+        public Guid id { get; set; }
+
+        public DateTime begin { get; set; }
+
+        public DateTime end { get; set; }
+
+        public string title { get; set; }
+
+        public string description { get; set; }
+
+        public bool isCanceled { get; set; }
+
+        public List<string> rooms { get; set; }
+        
+        public List<string> hosts { get; set; }
+    }
+
+    public class CourseSubscriberApiModel
+    {
+        public string id { get; set; }
+
+        public DateTime subscribed { get; set; }
+    }
+
+
+    public class CourseApiModel
+    {
+        public Guid id { get; set; }
+
+        public string externalId { get; set; }
 
         /// <summary>
         /// FK 09
@@ -28,34 +70,24 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// no identifier, allows duplicates
         /// </summary>
         public string code { get; set; }
-    }
-
-    public class CourseCohorte
-    {
-        public string institution { get; set; }
-        public string organiser { get; set; }
-        public string curriculum { get; set; }
-        public string label { get; set; }
-    }
-
-
-    public class CourseCreateRequest
-    {
-        public Guid id { get; set; }
 
         public string title { get; set; }
 
-        public string externalId { get; set; }
-
         public string description { get; set; }
 
-        public CourseSignature signature { get; set; }
-
         public List<CourseCohorte> cohortes { get; set; }
+
+        public List<CourseQuota> quotas { get; set; }
+
+        public List<CourseDateApiModel> dates { get; set; }
+
+        public List<CourseSubscriberApiModel> subscribers { get; set; }
     }
 
-    public class CourseCreateResponse
+    public class CourseApiResponseModel
     {
+        public Guid id { get; set; }
+        public string externalId { get; set; }
+        public string message { get; set; }
     }
-
 }

@@ -533,5 +533,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult GenerateApiKey(Guid memberId)
+        {
+            var member = Db.Members.SingleOrDefault(x => x.Id == memberId);
+            var user = GetCurrentUser();
+
+            if (user.Id.Equals(member.UserId))
+            {
+                member.ApiKey = Guid.NewGuid().ToString().Replace("-", "");
+                member.ApiKeyValidUntil = DateTime.Today.AddYears(1);
+                Db.SaveChanges();
+
+                return RedirectToAction("Card", "Person");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

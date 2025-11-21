@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Api.Contracts;
+using MyStik.TimeTable.Web.Api.DTOs;
+using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Api.DTOs;
-using MyStik.TimeTable.Web.Services;
+using static MyStik.TimeTable.Web.IdentifyConfig;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
@@ -13,13 +17,17 @@ namespace MyStik.TimeTable.Web.Api.Services
     public class CourseConverter
     {
         private TimeTableDbContext _db;
+        private ApplicationUserManager _userDb;
+        private bool _isAuth;
 
         /// <summary>
         /// 
         /// </summary>
-        public CourseConverter(TimeTableDbContext db)
+        public CourseConverter(TimeTableDbContext db, ApplicationUserManager userDb = null, bool isAuth = false)
         {
             _db = db;
+            _userDb = userDb;
+            _isAuth = isAuth;
         }
 
         /// <summary>
@@ -75,6 +83,127 @@ namespace MyStik.TimeTable.Web.Api.Services
             return dto;
 
         }
+
+        public CourseApiModel Convert_new(Course course, bool useDetails = false)
+        {
+            var dto = new CourseApiModel();
+
+            dto.id = course.Id;
+            dto.externalId = course.ExternalId;
+            dto.semester = course.Semester.Name;
+            dto.organiser = course.Organiser.ShortName;
+            dto.title = course.Name;
+            dto.code = course.ShortName;
+            dto.description = course.Description;
+
+            if (!useDetails)
+            {
+                return dto;
+            }
+
+            dto.cohortes = new List<CourseCohorte>();
+            if (course.LabelSet != null)
+            {
+                foreach (var label in course.LabelSet.ItemLabels)
+                {
+                    var cohorte = new CourseCohorte();
+
+                    var curr = _db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+                    if (curr != null)
+                    {
+                        cohorte.curriculum = curr.ShortName;
+                    }
+
+                    var org = _db.Organisers.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+                    if (org != null)
+                    {
+                        cohorte.organiser = org.ShortName;
+                    }
+
+                    var inst = _db.Institutions.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+
+                    if (inst != null)
+                    {
+                        cohorte.institution = inst.Tag;
+                    }
+
+                    cohorte.label = label.Name;
+                    dto.cohortes.Add(cohorte);
+                }
+            }
+
+            dto.dates = new List<CourseDateApiModel>();
+            var dates = course.Dates.OrderBy(d => d.Begin).ToList();
+
+            foreach (var activityDate in dates)
+            {
+                var courseDate = new CourseDateApiModel();
+                courseDate.id = activityDate.Id;
+                courseDate.begin = activityDate.Begin;
+                courseDate.end = activityDate.End;
+                courseDate.title = activityDate.Title;
+                courseDate.description = activityDate.Description;
+                courseDate.isCanceled = activityDate.Occurrence.IsCanceled;
+                courseDate.rooms = new List<string>();
+                foreach (var room in activityDate.Rooms)
+                {
+                    courseDate.rooms.Add(room.Number);
+                }
+                courseDate.hosts = new List<string>();
+                foreach (var host in activityDate.Hosts)
+                {
+                    courseDate.hosts.Add(host.ShortName);
+                    if (_isAuth)
+                    {
+                        var user = _userDb.FindById(host.UserId);
+                        if (user != null)
+                        {
+                            var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
+                            if (claim != null)
+                            {
+                                courseDate.hosts.Add(claim.ClaimValue);
+                            }
+                        }
+                    }
+                }
+                dto.dates.Add(courseDate);
+            }
+
+            dto.subscribers = new List<CourseSubscriberApiModel>();
+            var studService = new StudentService(_db);
+
+            foreach (var sub in course.Occurrence.Subscriptions)
+            {
+                var subscriber = new CourseSubscriberApiModel();
+                subscriber.id = "#NA";
+
+                var student = studService.GetCurrentStudent(sub.UserId);
+                if (student != null && student.Any())
+                {
+                    subscriber.id = student.First().Curriculum.ShortName;
+
+                    if (_isAuth)
+                    {
+                        var user = _userDb.FindById(sub.UserId);
+                        if (user != null)
+                        {
+                            var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
+                            if (claim != null)
+                            {
+                                subscriber.id = claim.ClaimValue;
+                            }
+                        }
+                    }
+                }
+                subscriber.subscribed = sub.TimeStamp;
+                dto.subscribers.Add(subscriber);
+            }   
+
+            return dto;
+        }
+
 
         internal CourseDateDto ConvertDate(ActivityDate activityDate)
         {

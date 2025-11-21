@@ -148,12 +148,23 @@ namespace MyStik.TimeTable.DataServices
                     _db.RoomBookings.Remove(roomBooking);
                 }
 
+                date.Hosts.Clear();
+                date.Rooms.Clear();
+
+                foreach (var vRoom in date.VirtualRooms.ToList())
+                {
+                    _db.VirtualRoomAccesses.Remove(vRoom);
+                }
+
+
                 activity.Dates.Remove(date);
                 _db.ActivityDates.Remove(date);
             }
 
-
-            DeleteOccurrence(activity.Occurrence);
+            if (activity.Occurrence != null)
+            {
+                DeleteOccurrence(activity.Occurrence);
+            }
 
             foreach (var activityOwner in activity.Owners.ToList())
             {
@@ -173,10 +184,6 @@ namespace MyStik.TimeTable.DataServices
             {
                 _db.SubjectTeachings.Remove(teaching);
             }
-
-
-
-
 
             _db.Activities.Remove(activity);
 

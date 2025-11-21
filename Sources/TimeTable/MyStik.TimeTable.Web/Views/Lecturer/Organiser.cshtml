@@ -71,7 +71,6 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Lehrende</li>
@@ -86,7 +85,10 @@
                 @if (ViewBag.UserRight.IsMemberAdmin)
                 {
                     <a href="@Url.Action("CreateMember", "Organiser", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
-                        <i class="fa fa-plus-circle"></i> Lehrenden anlegen
+                        <i class="bi bi-person-add"></i> Lehrenden anlegen
+                    </a>
+                    <a href="@Url.Action("ImportMember", "Lecturer", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
+                        <i class="bi bi-upload"></i> Import
                     </a>
                 }
                 <table id="tabMembers" class="table">
@@ -108,7 +110,7 @@
                         {
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("Private", "Person", new { memberId = member.Id })">
+                                    <a href="@Url.Action("Card", "Person", new { memberId = member.Id })">
                                         @member.Name
                                     </a>
                                 </td>

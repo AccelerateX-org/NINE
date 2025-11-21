@@ -9,7 +9,7 @@
             <div class="list-group-item">
                 <h5>
                     @Html.FacultyLabel(lec.Lecturer.Organiser)
-                    <a href="@Url.Action("Private", "Person", new {memberId = lec.Lecturer.Id})">@lec.Lecturer.Name</a>
+                    <a href="@Url.Action("Card", "Person", new {memberId = lec.Lecturer.Id})">@lec.Lecturer.Name</a>
                 </h5>
             </div>
         }

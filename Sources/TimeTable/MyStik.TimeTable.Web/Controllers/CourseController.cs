@@ -939,7 +939,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.Course.Id);
 
-            if (course.Occurrence.Subscriptions.Any())
+            if (course.Occurrence != null && course.Occurrence.Subscriptions.Any())
             {
                 var model2 = new CourseDeleteModel { Course = course };
 

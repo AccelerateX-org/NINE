@@ -9,11 +9,14 @@
     var db = new TimeTableDbContext();
     var courseService = new CourseService(db);
 
+    /*
     var courses = db.Activities.OfType<Course>().Where(x =>
         x.Semester.Id == Model.Semester.Id &&
         x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id))
         ).ToList();
+    */
 
+    var courses = new List<Course>();
 
     foreach (var label in Model.Curriculum.LabelSet.ItemLabels.ToList())
     {

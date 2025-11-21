@@ -16,8 +16,6 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         public OrganiserMember IsValidApiKey(string apiKey)
         {
-            return null;
-            /*
             var member = _db.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.ApiKey) && x.ApiKey.Equals(apiKey));
 
             if (member == null)
@@ -31,7 +29,6 @@ namespace MyStik.TimeTable.Web.Api.Services
             }
 
             return member;
-            */
         }
     }
 }

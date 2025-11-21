@@ -307,48 +307,58 @@
                                             {
                                                 <a href="javascript:onToggleLocked('@c.Course.Id.ToString()')" class="btn btn-sm btn-outline-dark"><i id="toggleLocked" class="bi bi-unlock text-success"></i></a>
                                             }
-                                            @if (!c.Course.Occurrence.IsAvailable)
+                                            @if (c.Course.Occurrence != null)
                                             {
-                                                <a href="javascript:onToggleSubscribable('@c.Course.Occurrence.Id')" class="btn btn-sm btn-outline-dark"><i id="toggleSubscribable" class="bi bi-pen-fill text-danger"></i></a>
-                                            }
-                                            else
-                                            {
-                                                <a href="javascript:onToggleSubscribable('@c.Course.Occurrence.Id')" class="btn btn-sm btn-outline-dark"><i id="toggleSubscribable" class="bi bi-pen-fill text-success"></i></a>
+                                                if (!c.Course.Occurrence.IsAvailable)
+                                                {
+                                                    <a href="javascript:onToggleSubscribable('@c.Course.Occurrence.Id')" class="btn btn-sm btn-outline-dark"><i id="toggleSubscribable" class="bi bi-pen-fill text-danger"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="javascript:onToggleSubscribable('@c.Course.Occurrence.Id')" class="btn btn-sm btn-outline-dark"><i id="toggleSubscribable" class="bi bi-pen-fill text-success"></i></a>
+                                                }
                                             }
                                         </div>
                                     </td>
                                 }
                                 else
                                 {
-                                    <td>
-                                        @if (c.Course.IsProjected)
-                                        {
-                                            <i class="bi bi-x-square text-danger"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-check-square text-success"></i>
-                                        }
-                                        @if (c.Course.IsInternal)
-                                        {
-                                            <i class="bi bi-lock text-danger"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-unlock text-success"></i>
-                                        }
-                                        @if (!c.Course.Occurrence.IsAvailable)
-                                        {
-                                            <i class="bi bi-pen-fill text-danger"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-pen-fill text-success"></i>
-                                        }
-                                    </td>
+                            <td>
+                                @if (c.Course.IsProjected)
+                                {
+                                    <i class="bi bi-x-square text-danger"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-check-square text-success"></i>
+                                }
+                                @if (c.Course.IsInternal)
+                                {
+                                    <i class="bi bi-lock text-danger"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-unlock text-success"></i>
+                                }
+                                @if (c.Course.Occurrence != null)
+                                {
+                                    if (!c.Course.Occurrence.IsAvailable)
+                                    {
+                                        <i class="bi bi-pen-fill text-danger"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-pen-fill text-success"></i>
+                                    }
+                                }
+                            </td>
                                 }
                                 <td>
                                     @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
+                                    @if (c.Course.Occurrence == null)
+                                    {
+                                        <a href="@Url.Action("DeleteCourse", "Course", new {id = c.Course.Id})">Löschen</a>
+                                    }
                                 </td>
                                 <td>
                                     @c.Course.Name
@@ -375,37 +385,40 @@
                                     @Html.LecturerList(c.Lecturers)
                                 </td>
                                 <td>
-                                    @if (c.Course.Occurrence.SeatQuotas.Any())
+                                    @if (c.Course.Occurrence != null)
                                     {
-                                        foreach (var quota in c.Course.Occurrence.SeatQuotas)
+                                        if (c.Course.Occurrence.SeatQuotas.Any())
                                         {
-                                            <div>@quota.Summary</div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (c.Course.Occurrence.Capacity < 1)
-                                        {
-                                            <div>Offene Liste</div>
+                                            foreach (var quota in c.Course.Occurrence.SeatQuotas)
+                                            {
+                                                <div>@quota.Summary</div>
+                                            }
                                         }
                                         else
                                         {
-                                            <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
-                                            /*
-                                            foreach (var label in c.Course.LabelSet.ItemLabels)
+                                            if (c.Course.Occurrence.Capacity < 1)
                                             {
-                                                var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
-                                                if (curr != null)
-                                                {
-                                                    <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
-                                                    <div>Kontingent für SG @curr.ShortName kann erstellt werden</div>
-                                                }
-                                                else
-                                                {
-                                                    <div>FEHLER: Kein Label für Studiengang - Kein Kontingent möglich</div>
-                                                }
+                                                <div>Offene Liste</div>
                                             }
-                                            */
+                                            else
+                                            {
+                                                <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
+                                                /*
+                                                foreach (var label in c.Course.LabelSet.ItemLabels)
+                                                {
+                                                    var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                                                    if (curr != null)
+                                                    {
+                                                        <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
+                                                        <div>Kontingent für SG @curr.ShortName kann erstellt werden</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>FEHLER: Kein Label für Studiengang - Kein Kontingent möglich</div>
+                                                    }
+                                                }
+                                                */
+                                            }
                                         }
                                     }
                                 </td>

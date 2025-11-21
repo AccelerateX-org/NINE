@@ -547,9 +547,11 @@ namespace MyStik.TimeTable.Web.Services
                 Db.VirtualRooms.Where(l => l.Accesses.Any(a => a.Date.Activity.Id == course.Id)).ToList();
             summary.VirtualRooms.AddRange(vRooms);
 
-
-            summary.Lottery =
-                Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+            if (course.Occurrence != null)
+            {
+                summary.Lottery =
+                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+            }
 
 
             return summary;

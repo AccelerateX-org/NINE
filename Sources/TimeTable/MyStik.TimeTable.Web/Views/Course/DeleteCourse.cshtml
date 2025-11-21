@@ -10,7 +10,7 @@
                 <h4>Lehrveranstaltung @Model.Course.Name löschen</h4>
             </div>
             <div class="panel-body">
-                @if (Model.Course.Occurrence.Subscriptions.Any())
+                @if (Model.Course.Occurrence != null && Model.Course.Occurrence.Subscriptions.Any())
                 {
                     <div class="alert alert-danger">
                         <strong>Hinweise:</strong>

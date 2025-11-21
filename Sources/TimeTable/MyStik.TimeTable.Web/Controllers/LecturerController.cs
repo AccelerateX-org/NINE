@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure.Interception;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.UI;
-using Microsoft.Ajax.Utilities;
+﻿using Microsoft.Ajax.Utilities;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using Org.BouncyCastle.Asn1.X509.SigI;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure.Interception;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.UI;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -663,5 +664,63 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_DateList", model);
         }
+
+
+
+        public ActionResult ImportLecturer(Guid id)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Organiser = org
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ImportAreasCSV(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+            var lines = System.IO.File.ReadAllLines(tempFile);
+
+            // Im Augenblick ist es ein Import für einen existierenden Studiengang
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            lines = lines.Skip(1).ToArray(); // Header entfernen
+
+            foreach (var line in lines)
+            {
+                var words = line.Split(';');
+
+                var dozId = words[0].Trim();
+                var dozFirstName = words[1].Trim();
+                var dozLastName = words[2].Trim();
+
+                var member = org.Members.FirstOrDefault(x => x.ShortName.ToUpper().Equals(dozId));
+
+                if (member == null)
+                {
+                    member = new OrganiserMember()
+                    {
+                        ShortName = dozId.ToUpper(),
+                        FirstName = dozFirstName,
+                        Name = dozLastName,
+                        Organiser = org
+                    };
+                    Db.Members.Add(member);
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Organiser", new { id = model.Organiser.Id });
+        }
+
+
     }
 }
