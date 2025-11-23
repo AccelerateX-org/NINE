@@ -108,6 +108,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual BulletinBoard BulletinBoard { get; set; }
 
+        public virtual Availability Availability { get; set; }
+
         /// <summary>
         /// Studiengangleiter
         /// </summary>

@@ -68,6 +68,11 @@ namespace MyStik.TimeTable.Data
 
         public string Description { get; set; }
 
+        /// <summary>
+        /// Gewichtung für Durchschnittswert, i.d.R. 100%, aber auch 25%, 50%
+        /// Ein Wert von 0 bedeutet "nur TN"
+        /// </summary>
+        public double Weight { get; set; }
 
         /// <summary>
         /// Das Volumen ausgedrückt in ECTS
@@ -95,9 +100,12 @@ namespace MyStik.TimeTable.Data
         //public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }
 
 
+        /// <summary>
+        /// deprecated: wird in die Chips verschoben
+        /// </summary>
         public virtual ICollection<SubjectAccreditation> SubjectAccreditations { get; set; }
 
-        //public virtual ICollection<SlotExecution> SlotExecutions { get; set; }
+        public virtual ICollection<SlotLoading> Loadings { get; set; }
 
 
 
@@ -128,4 +136,37 @@ namespace MyStik.TimeTable.Data
             }
         }
     }
+
+    /// <summary>
+    /// Bestückung eines Slots mit Chips
+    /// Ein Chip ist dabei wieder ein Platzhalter für Fächer
+    /// Damit ergibt sich dann letztlich die Auswahl als Grundlage für Wahlverfahren
+    /// </summary>
+    public class SlotLoading
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+        
+        public virtual CurriculumSlot Slot { get; set; }
+    }
+
+    public class SlotLoadingChip
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Teilmenge, die Summe aller Chips muss die Slotgröße ergeben
+        /// </summary>
+        public int ECTS { get; set; }
+
+        public virtual SlotLoading Loading { get; set; }
+
+        public virtual ICollection<SubjectAccreditation> SubjectAccreditations { get; set; }
+    }
+
 }

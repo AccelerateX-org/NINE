@@ -253,6 +253,8 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<CurriculumSection> CurriculumSections { get; set; }
         public DbSet<CurriculumSlot> CurriculumSlots { get; set; }
+        public DbSet<SlotLoading> SlotLoadings { get; set; }
+        public DbSet<SlotLoadingChip> SlotLoadingChips { get; set; }
 
         public DbSet<ModuleResponsibility> ModuleResponsibilities { get; set; }
 
@@ -278,6 +280,12 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<SubjectAccreditation> SubjectAccreditations { get; set; }
 
+
+        public DbSet<Availability> Availabilities { get; set; }
+
+        public DbSet<PlanningGrid> PlanningGrids { get; set; }
+
+        public DbSet<PlanningSlot> PlanningSlots { get; set; }
 
 
         public TimeTableDbContext() : base()

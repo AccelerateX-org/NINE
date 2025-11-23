@@ -15,12 +15,23 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Der Anteil an ECTS-Punkten, der durch das Fach abgedeckt wird
+        /// deprecated: wird in Chip verschoben
         /// </summary>
         public double ECTS { get; set; }
 
+        /// <summary>
+        /// Wird die Modulprüfung übernommen
+        /// </summary>
+        public bool IncludeExamination { get; set; }
+
+        /// <summary>
+        /// deprecated
+        /// </summary>
         public virtual CurriculumSlot Slot { get; set; }
 
         public virtual ModuleSubject Subject { get; set; }
+
+        public virtual SlotLoadingChip Chip { get; set; }
 
     }
 

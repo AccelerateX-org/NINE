@@ -61,6 +61,9 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool? IsBookable { get; set; }
 
+        public virtual Availability Availability { get; set; }
+
+
         /// <summary>
         /// Die echten Belegungstermine mit Datum und Uhrzeit
         /// many-to-many

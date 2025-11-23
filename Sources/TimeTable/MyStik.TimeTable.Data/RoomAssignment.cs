@@ -40,7 +40,18 @@ namespace MyStik.TimeTable.Data
 
         public virtual Room Room { get; set; }
 
+        /// <summary>
+        /// Einrichtung
+        /// </summary>
         public virtual ActivityOrganiser Organiser { get; set; }
+
+        /*
+         * Liste mit Einschränkungen
+         * von bis darf die Belegung ausgeführt werden
+         * Unterliste
+         * Wochentag von bis
+         * 
+         */
     }
 
     public class RoomAllocationGroup

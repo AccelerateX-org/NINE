@@ -27,6 +27,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual Curriculum Curriculum { get; set; }
 
+        public virtual Availability Availability { get; set; }
+
 
         public virtual ItemLabelSet LabelSet { get; set; }
 
