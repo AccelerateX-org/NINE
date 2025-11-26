@@ -598,7 +598,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                         foreach (var favRoom in favRooms)
                                         {
                                             occ.Rooms.Add(favRoom);
-
+                                            /*
                                             var booking = new RoomBooking
                                             {
                                                 Date = occ,
@@ -608,7 +608,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                             };
 
                                             Db.RoomBookings.Add(booking);
-
+                                            */
                                         }
 
                                         foreach (var favHost in favHosts)
@@ -723,7 +723,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                         foreach (var favRoom in favRooms)
                                         {
                                             occ.Rooms.Add(favRoom);
-
+                                            /*
                                             var booking = new RoomBooking
                                             {
                                                 Date = occ,
@@ -733,7 +733,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                             };
 
                                             Db.RoomBookings.Add(booking);
-
+                                            */
                                         }
 
                                         foreach (var favHost in favHosts)

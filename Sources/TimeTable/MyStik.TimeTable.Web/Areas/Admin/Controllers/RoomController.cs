@@ -191,7 +191,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             model.IsOwner = true;
             Db.SaveChanges();
 
-            return RedirectToAction("Links", new {id = model.Room.Id});
+            return RedirectToAction("Links", new { id = model.Room.Id });
         }
 
 
@@ -234,7 +234,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             }
 
-            return RedirectToAction("Links", new {id = roomId});
+            return RedirectToAction("Links", new { id = roomId });
         }
 
         /// <summary>
@@ -306,6 +306,85 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Availability(Guid id)
+        {
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
+            if (room == null)
+                return RedirectToAction("Index");
 
+            var owner = room?.Assignments.FirstOrDefault(a => a.IsOwner);
+            if (owner == null)
+                return RedirectToAction("Index");
+
+            var availability = room.Availability;
+            if (availability == null)
+            {
+                availability = new Availability
+                {
+                    PlanningGrids = new System.Collections.Generic.List<PlanningGrid>()
+                };
+                room.Availability = availability;
+                Db.Availabilities.Add(availability);
+                Db.SaveChanges();
+            }
+
+            // Annahme: Dauerhafte Verfügbarkeit für den Besitzer
+            var grid = availability.PlanningGrids.FirstOrDefault(g => g.Organiser.Id == owner.Organiser.Id && g.Segment == null && g.Semester == null);
+
+            if (grid == null)
+            {
+                grid = new PlanningGrid
+                {
+                    Availability = availability,
+                    Organiser = owner.Organiser,
+                    ValidFrom = null,
+                    ValidTo = null,
+                    PlanningSlots = new System.Collections.Generic.List<PlanningSlot>()
+                };
+
+                foreach (var day in Enumerable.Range(0, 7))
+                {
+                    var planningSlot = new PlanningSlot
+                    {
+                        DayOfWeek = (DayOfWeek)day,
+                        From = new TimeSpan(6, 0, 0),
+                        To = new TimeSpan(22, 0, 0),
+                        PlanningGrid = grid
+                    };
+                    grid.PlanningSlots.Add(planningSlot);
+                    Db.PlanningSlots.Add(planningSlot);
+                }
+
+                Db.PlanningGrids.Add(grid);
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult MakeBookable(Guid id)
+        {
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
+            if (room == null)
+                return RedirectToAction("Index");
+
+            room.IsBookable = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult MakeUnbookable(Guid id)
+        {
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
+            if (room == null)
+                return RedirectToAction("Index");
+
+            room.IsBookable = null;
+            Db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }

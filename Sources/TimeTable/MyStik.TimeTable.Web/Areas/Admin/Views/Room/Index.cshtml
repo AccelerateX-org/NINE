@@ -33,6 +33,7 @@
                         <th>Beschreibung</th>
                         <th>Kapazität</th>
                         <th>Raumzuordnungen</th>
+                        <th>Buchbar</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -47,21 +48,61 @@
                             <td>
                                 @foreach (var org in room.Assignments)
                                 {
-                                    if (org.IsOwner)
+                                    var nGrids = 0;
+                                    if (room.Availability != null)
                                     {
-                                        <div class="text-primary">@org.Organiser.ShortName <i class="bi bi-building-exclamation"></i></div>
+                                        nGrids = room.Availability.PlanningGrids.Count(g => g.Organiser.Id == org.Organiser.Id);
+                                    }
+
+                                    if (nGrids == 0)
+                                    {
+                                        if (org.IsOwner)
+                                        {
+                                            <div class="text-primary">@org.Organiser.ShortName <i class="bi bi-building-exclamation"></i></div>
+                                        }
+                                        else
+                                        {
+                                            <div>@org.Organiser.ShortName</div>
+
+                                        }
                                     }
                                     else
                                     {
-                                        <div>@org.Organiser.ShortName</div>
-                                       
+                                        if (org.IsOwner)
+                                        {
+                                            <div class="text-primary">@org.Organiser.ShortName <i class="bi bi-building-exclamation"></i> (@nGrids)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@org.Organiser.ShortName (@nGrids)</div>
+
+                                        }
+
                                     }
                                 }
                             </td>
+                            @if (room.IsBookable != null && room.IsBookable.Value == true)
+                            {
+                                <td><i class="bi bi-check-lg text-success"></i></td>
+                            }
+                            else
+                            {
+                                <td><i class="bi bi-x-lg text-danger"></i></td>
+                            }
+                            <td></td>
                             <td>
                                 <div class="btn-group">
                                     <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-pen"></i></a>
                                     <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-link"></i></a>
+                                    <a href="@Url.Action("Availability", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-unlock"></i></a>
+                                    @if (room.IsBookable != null && room.IsBookable.Value == true)
+                                    {
+                                        <a href="@Url.Action("MakeUnbookable", new {id = room.Id})" class="btn btn-sm btn-outline-danger"><i class="bi bi-calendar-x"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("MakeBookable", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-calendar-check"></i></a>
+                                    }
                                     @if (!room.Assignments.Any())
                                     {
                                         <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>

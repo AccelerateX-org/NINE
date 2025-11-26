@@ -445,6 +445,17 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(string.Format("{0:t} - {1:t}", @from, until));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
+        public static MvcHtmlString TimeSpan(this HtmlHelper htmlHelper, TimeSpan from, TimeSpan until)
+        {
+            return new MvcHtmlString(string.Format("{0:t} - {1:t}", @from, until));
+        }
 
         /// <summary>
         /// 

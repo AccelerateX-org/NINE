@@ -34,7 +34,6 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 var linkBuilder = new TagBuilder("i");
                 linkBuilder.AddCssClass(linkIcon);
-                linkBuilder.AddCssClass("fa");
                 sb.Append(linkBuilder.ToString());
             }
 

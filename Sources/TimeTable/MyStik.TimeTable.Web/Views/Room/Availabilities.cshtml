@@ -1,0 +1,244 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Verfügbarkeiten";
+}
+
+@section styles
+{
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
+}
+
+
+@{
+    var user = ViewBag.User;
+    var assignment = Model.Assignments.FirstOrDefault(x => x.IsOwner);
+    var owner = assignment.Organiser.Members.Where(m => !string.IsNullOrEmpty(m.UserId) && m.UserId == user.Id && m.IsRoomAdmin).FirstOrDefault();
+    var isOwner = false;
+    if (owner != null && owner.IsRoomAdmin)
+    {
+        isOwner = true;
+    }
+
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    Verfügbarkeiten für Raum @Model.Number
+                </h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id=Model.Id})" class="btn btn-outline-primary">
+                            <i class="bi bi-chevron-left"></i> zurück zur Detailseite
+                        </a>
+                        @if (isOwner)
+                        {
+                            <a href="@Url.Action("AddAvailability", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Verfügbarkeiten hinzufügen
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Einrichtung</th>
+                                    <th>Wochentag</th>
+                                    <th>Von</th>
+                                    <th>Bis</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var grid in Model.Availability.PlanningGrids)
+                                {
+                                    foreach (var slot in grid.PlanningSlots)
+                                    {
+                                        <tr>
+                                            <td>@Html.FacultyLabel(grid.Organiser)</td>
+                                            <td>@slot.DayOfWeek</td>
+                                            <td>@slot.From</td>
+                                            <td>@slot.To</td>
+                                            @if (isOwner)
+                                            {
+                                                <td><a href="@Url.Action("DeleteAvailability", new {id = slot.Id})" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a> Löschen</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        </tr>
+
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="list-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                        <div class="btn-group me-2" role="group" aria-label="First group">
+                                            <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                                            <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                                        </div>
+                                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                                            <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script>
+        var myCalendar = null;
+        var mySelection = "";
+        var showWeekend = true;
+        var showPersonal = false;
+        var showWeekDay = true;
+        var roomId = "@Model.Id.ToString()";
+
+
+        $(document).ready(function() {
+            showWeekDayCalendar();
+            showWeekendDays();
+        });
+
+
+        function showWeekDayCalendar() {
+            try {
+
+                $('#loading').show();
+
+                $('#calendar').html('');
+                myCalendar = initWeekCalendar("calendar");
+                myCalendar.setOption("headerToolbar", false);
+
+                $("#btnPrev").addClass("disabled");
+                $("#btnNext").addClass("disabled");
+
+                showLabelDates();
+
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
+        }
+
+
+
+
+        function onShowEventInfo(id) {
+            if (mySelection !== "") {
+                $("#" + mySelection).removeClass("active");
+            }
+            $("#" + id).addClass("active");
+            mySelection = id;
+
+        }
+
+        function onPrev() {
+            myCalendar.prev();
+        }
+
+        function onNext() {
+            myCalendar.next();
+        }
+
+        function toggleWeekend() {
+            showWeekend = !showWeekend;
+            showWeekendDays();
+        }
+
+
+
+        function toggleWeekDay() {
+            showWeekDay = !showWeekDay;
+
+            if (showWeekDay) {
+                showWeekDayCalendar();
+                showWeekendDays();
+                $("#btnWeekDay").addClass("active");
+            } else {
+                showWeekCalendar();
+                showWeekendDays();
+                $("#btnWeekDay").removeClass("active");
+            }
+        }
+
+        function showWeekendDays() {
+            myCalendar.setOption("weekends", showWeekend);
+            if (showWeekend) {
+                $("#btnWeekend").addClass("active");
+            } else {
+                $("#btnWeekend").removeClass("active");
+            }
+        }
+
+        function showLabelDates() {
+            if (showWeekDay) {
+                myCalendar.addEventSource(
+                    {
+                        id: "courses",
+                        url: '@Url.Action("GetAvailabilities", "Room")',
+                        method: 'POST',
+                        extraParams: {
+                            roomId: roomId,
+
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            var strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
+
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
+                    }
+                );
+            } else {
+            }
+        }
+
+
+    </script>
+}

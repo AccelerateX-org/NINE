@@ -32,134 +32,147 @@
             <li class="breadcrumb-item"><a aria-label="Dashboard" href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a aria-label="Campus" href="@Url.Action("Campus", "University")">HM</a></li>
             <li class="breadcrumb-item"><a aria-label="Raumverzeichnis" href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@Model.Number</li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.FullName</li>
         </ol>
     </nav>
 </div>
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">
-                    @Model.FullName <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                </h5>
+    <div class="col-md-2">
+        @if (members.Any())
+        {
+            <div class="card mb-3">
+                <div class="list-group">
+                    @if (members.Any())
+                    {
+                        @*
+                        <a href="@Url.Action("DateList", new { id = Model.Id })" class="list-group-item list-group-item-action">
+                            <i class="bi bi-list"></i> Terminliste (aktuelles Semester)
+                        </a>
+                        <a href="@Url.Action("DateListAll", new { id = Model.Id })" class="list-group-item list-group-item-action">
+                            <i class="bi bi-list-columns"></i> Terminliste (alle)
+                        </a>
+                           *@
+                        <a href="@Url.Action("Availabilities", new { id = Model.Id })" class="list-group-item list-group-item-action">
+                            <i class="bi bi-unlock"></i> Verfügbarkeiten
+                        </a>
+                        <a href="@Url.Action("Rules", new { id = Model.Id })" class="list-group-item list-group-item-action">
+                            <i class="bi bi-check-circle"></i> Belegungsregeln
+                        </a>
+                    }
+                    @if (isOwner)
+                    {
+
+                        <a href="@Url.Action("Edit", new { id = Model.Id })" class="list-group-item list-group-item-action">
+                            <i class="bi bi-gear"></i> Einstellungen
+                        </a>
+                    }
+                </div>
             </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        @if (members.Any())
-                        {
-                                <a href="@Url.Action("DateList", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="fa fa-list"></i> Terminliste (aktuelles Semester)
-                                </a>
-                                <a href="@Url.Action("DateListAll", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="fa fa-list"></i> Terminliste (alle)
-                                </a>
-                        }
-                        @if (isOwner)
-                        {
-                            @*
-                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-danger">
-                                    <i class="fa fa-gear"></i> Löschen
-                                </a>
-                                *@
-                                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="fa fa-gear"></i> Einstellungen
-                                </a>
-                                <a href="@Url.Action("Rules", new { id = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="fa fa-legal"></i> Belegungsregeln
-                                </a>
-                        }
+        }
+    <div class="card mb-3">
+        <img src="@Url.Action("GetQrCode", "Print", new {id = Model.Id})" class="card-img-top" alt="QR-Code für aktuelle Belegung"/>
+    </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Beschreibung</h5>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <img src="@Url.Action("GetQrCode", "Print", new {id = Model.Id})" />
+                <div class="row">
+                    <div class="col-md-12">
+                        @Model.Description
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        Anzahl Plätze
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Capacity
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        Buchbar durch
+                    </div>
+                    <div class="col-md-6">
+                        @foreach (var assign in Model.Assignments)
+                        {
+                            if (assign.IsOwner)
+                            {
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @assign.Organiser.ShortName <i class="bi bi-building-exclamation text-primary"></i>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            Beschreibung
-                                        </div>
-                                        <div class="col-md-8">
-                                            @Model.Description
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            Anzahl Plätze
-                                        </div>
-                                        <div class="col-md-8">
-                                            @Model.Capacity
-                                        </div>
-                                    </div>
-                                    <hr />
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            Buchbar durch
-                                        </div>
-                                    </div>
-                                    @foreach (var assign in Model.Assignments)
-                                    {
-                                        var ownerAssign = Model.Assignments.FirstOrDefault(x => x.IsOwner);
-
-                                        if (ownerAssign != null)
+                                    <div class="col-md-8">
+                                        @if (Model.Availability != null)
                                         {
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    @assign.Organiser.ShortName
-                                                </div>
+                                            var grids = Model.Availability.PlanningGrids.Where(g => g.Organiser.Id == assign.Organiser.Id).ToList();
+                                            if (grids.Any())
+                                            {
+                                                foreach (var grid in grids)
+                                                {
+                                                    <div>@grid.State</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-exclamation-triangle text-danger" title="Keine Verfügbarkeiten für diese Einrichtung hinterlegt"></i>
+                                            }
 
-                                                @if (assign.Id == ownerAssign.Id)
-                                                {
-                                                    <div class="col-md-2">
-                                                        <i class="bi bi-building-exclamation text-secondary"></i>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <i class="bi bi-check text-success"></i> verfübar für alle
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="col-md-2">
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <i class="bi bi-check text-success"></i>  über Raum Administratoren
-                                                    </div>
-                                                }
-                                            </div>
                                         }
                                         else
                                         {
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    @assign.Organiser.ShortName
-                                                </div>
-                                                <div class="col-md-8">
-                                                    Nicht buchbar
-                                                </div>
-                                            </div>
+                                            <i class="bi bi-exclamation-triangle text-danger" title="Keine Verfügbarkeiten für diese Einrichtung hinterlegt"></i>
                                         }
-                                    }
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="calendar"></div>
-                        </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @assign.Organiser.ShortName
+                                    </div>
+                                    <div class="col-md-8">
+                                        @if (Model.Availability != null)
+                                        {
+                                            var grids = Model.Availability.PlanningGrids.Where(g => g.Organiser.Id == assign.Organiser.Id).ToList();
+                                            if (grids.Any())
+                                            {
+                                                foreach (var grid in grids)
+                                                {
+                                                    <div>@grid.State</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-exclamation-triangle text-danger" title="Keine Verfügbarkeiten für diese Einrichtung hinterlegt"></i>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-exclamation-triangle text-danger" title="Keine Verfügbarkeiten für diese Einrichtung hinterlegt"></i>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div id="calendar"></div>
         </div>
     </div>
 </div>

@@ -18,7 +18,7 @@ using MyStik.TimeTable.Web.Services;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 
 namespace MyStik.TimeTable.Web.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
@@ -105,36 +105,16 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
 
             var owner = model.Assignments.FirstOrDefault(x => x.IsOwner);
-            
-            if (owner == null)
-                return RedirectToAction("Details", new {id = id});
 
+            if (owner == null)
+                return RedirectToAction("Details", new { id = id });
+
+            ViewBag.User = user;
             ViewBag.UserRight = GetUserRight(owner.Organiser);
             ViewBag.Organiser = owner.Organiser;
             ViewBag.Admins = owner.Organiser.Members.Where(x => x.IsRoomAdmin);
 
             return View(model);
-        }
-
-
-        public ActionResult LockRoomExternal(Guid id)
-        {
-            var model = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
-
-            model.ExternalNeedConfirmation = true;
-            Db.SaveChanges();
-
-            return RedirectToAction("Rules", new { id = model.Room.Id });
-        }
-
-        public ActionResult UnLockRoomExternal(Guid id)
-        {
-            var model = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
-
-            model.ExternalNeedConfirmation = false;
-            Db.SaveChanges();
-
-            return RedirectToAction("Rules", new { id = model.Room.Id });
         }
 
 
@@ -183,13 +163,13 @@ namespace MyStik.TimeTable.Web.Controllers
             model.AllRooms = new List<RoomMobileStateViewModel3>();
             var from = DateTime.Now;
             var until = DateTime.Now.AddMinutes(90);
-             
+
             //var rooms = Db.Rooms.Where(r => r.Number.StartsWith("R ")).OrderBy(r => r.Number).ToList();
-            var rooms = Db.Rooms.Where(room => !room.Dates.Any(d =>(d.End>@from&&d.End<=until))); //Die freien Seminarräume werden angezeigt
+            var rooms = Db.Rooms.Where(room => !room.Dates.Any(d => (d.End > @from && d.End <= until))); //Die freien Seminarräume werden angezeigt
             var rooms1 = Db.Rooms.Where(r => r.Number.StartsWith("R BG")).OrderBy(r => r.Number).ToList(); //Die EDV-Räume im Keller werden angezeigt (jedoch nicht dynamsich)
             var rooms2 = Db.Rooms.Where(r => r.Number.StartsWith("R")).OrderBy(r => r.Number).ToList(); // Alle Räume mit "R" werden angezeigt
-            
-            
+
+
             //var rooms = new List<Room>();
 
             //var r1 = new Room
@@ -212,7 +192,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.SeminarRooms.Add(rvm);
 
             }
-            
+
 
             foreach (var room in rooms1)
             {
@@ -239,7 +219,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.AllRooms.Add(abc);
             }
 
-            
+
 
 
             return View(model);
@@ -686,7 +666,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Rooms.Remove(room);
                 Db.SaveChanges();
             }
-            
+
             return RedirectToAction("Index");
         }
 
@@ -704,7 +684,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     roomAssignment.InternalNeedConfirmation = false;
                 }
-                
+
             }
 
             Db.SaveChanges();
@@ -853,7 +833,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             }
             */
-        
+
             var stream = new MemoryStream();
 
             //doc.Save(stream, false);
@@ -979,7 +959,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(User.Identity.Name, "FK 09");
 
             return PartialView("_RoomInfoList", model);
-            
+
         }
 
         /// <summary>
@@ -1033,7 +1013,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 model.State = "mehrfach belegt";
             }
-            
+
             return Json(model);
         }
 
@@ -1513,13 +1493,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult UnLockRoom(Guid id)
+        public ActionResult UnLockRoom(Guid id)
         {
             var assignment = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
 
@@ -1532,17 +1506,11 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return PartialView("_EmptyRow");
+            return RedirectToAction("Rules", new { id = assignment.Room.Id });
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult LockRoom(Guid id)
+        public ActionResult LockRoom(Guid id)
         {
             var assignment = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
 
@@ -1552,7 +1520,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return PartialView("_EmptyRow");
+            return RedirectToAction("Rules", new { id = assignment.Room.Id });
         }
 
         [HttpPost]
@@ -1610,7 +1578,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Labels(Guid? semId, Guid? orgId)
         {
             var semester = SemesterService.GetSemester(semId);
-            var nextSemester =  SemesterService.GetNextSemester(semester);
+            var nextSemester = SemesterService.GetNextSemester(semester);
             var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
@@ -1664,6 +1632,243 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Rooms", "Organiser");
         }
 
-    }
+        public ActionResult Availabilities(Guid id)
+        {
+            var user = GetCurrentUser();
 
+            var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
+
+            if (model == null)
+                return RedirectToAction("Index", "Rooms");
+
+            var owner = model.Assignments.FirstOrDefault(x => x.IsOwner);
+
+            if (owner == null)
+                return RedirectToAction("Details", new { id = id });
+
+            if (model.Availability == null)
+            {
+                model.Availability = new Availability();
+                Db.Availabilities.Add(model.Availability);
+                Db.SaveChanges();
+            }
+
+            var adminMember = owner.Organiser.Members.SingleOrDefault(m => m.UserId == user.Id && m.IsRoomAdmin);
+
+            ViewBag.User = user;
+            ViewBag.UserRight = GetUserRight(owner.Organiser);
+            ViewBag.Organiser = owner.Organiser;
+
+
+            // user gehört zur owner org und ist dort admin => darf verfügbarkeiten bearbeiten
+            // user gehört zur owner org und ist dort kein admin oder user gehört nicht zur owner org => nur lesender zugriff
+            // user ist kein member => nur lesender zugriff
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public JsonResult GetAvailabilities(string start, string end, Guid roomId, string color, bool isDraggable = false)
+        {
+            var _calDateFormatCalendar = "yyyy-MM-ddTHH:mm:ss";
+
+            var startDate = DateTime.Parse(start);
+            var endDate = DateTime.Parse(end);
+
+            var bgColor = string.IsNullOrEmpty(color) ? "#47aba1" : color;
+
+            var room = Db.Rooms.SingleOrDefault(x => x.Id == roomId);
+
+            var cal = new List<CalendarEventModel>();
+
+
+            foreach (var grid in room.Availability.PlanningGrids)
+            {
+
+                foreach (var slot in grid.PlanningSlots)
+                {
+                    var deltaDays = ((int)slot.DayOfWeek - (int)startDate.DayOfWeek + 7) % 7;
+                    var calDay = startDate.AddDays(deltaDays);
+                    var calBegin = calDay.Add(slot.From.Value);
+                    var calEnd = calDay.Add(slot.To.Value);
+
+                    var sbr = new StringBuilder();
+                    sbr.Append(grid.Organiser.ShortName);
+
+                    var calEvent = new CalendarEventModel
+                    {
+                        id = slot.Id.ToString(),
+                        title = sbr.ToString(),
+                        allDay = false,
+                        start = calBegin.ToString(_calDateFormatCalendar),
+                        end = calEnd.ToString(_calDateFormatCalendar),
+                        textColor = "#000",
+                        backgroundColor = slot.PlanningGrid.Organiser.HtmlColor,
+                        borderColor = "#000",
+                        courseId = slot.Id.ToString(),
+                        htmlContent = string.Empty,   //  this.RenderViewToString("_CalendarCourseEventContent", eventViewModel)
+                        editable = isDraggable
+                    };
+
+                    cal.Add(calEvent);
+                }
+
+            }
+
+            return Json(cal);
+        }
+
+
+        public ActionResult AddAvailability(Guid id)
+        {
+            var room = Db.Rooms.SingleOrDefault(x => x.Id == id);
+
+            return View(room);
+        }
+
+        [HttpPost]
+        public ActionResult AddAvailability(Guid id, RoomAvailabilityModel model)
+        {
+            var room = Db.Rooms.SingleOrDefault(x => x.Id == id);
+
+            var org = Db.Organisers.SingleOrDefault(o => o.ShortName == model.Org);
+            if (org == null)
+            {
+                return RedirectToAction("Availabilities", new { id = id });
+            }
+
+            var assignment = room.Assignments.FirstOrDefault(a => a.Organiser.Id == org.Id);
+            if (assignment == null)
+            {
+                // keine Berechtigung
+                return RedirectToAction("Availabilities", new { id = id });
+            }
+
+            if (room.Availability == null)
+            {
+                room.Availability = new Availability();
+                Db.Availabilities.Add(room.Availability);
+                room.Availability.PlanningGrids = new List<PlanningGrid>();
+            }
+
+            var grid = room.Availability.PlanningGrids.FirstOrDefault(g => g.Organiser.Id == org.Id);
+
+            if (grid == null)
+            {
+                grid = new PlanningGrid
+                {
+                    Organiser = org,
+                    Availability = room.Availability,
+                    PlanningSlots = new List<PlanningSlot>()
+                };
+                Db.PlanningGrids.Add(grid);
+            }
+
+            if (model.IsMonday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Monday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            if (model.IsTuesday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Tuesday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            if (model.IsWednesday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Wednesday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            if (model.IsThursday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Thursday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            if (model.IsFriday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Friday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            if (model.IsSaturday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Saturday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            if (model.IsSunday)
+            {
+                var slot = new PlanningSlot
+                {
+                    DayOfWeek = DayOfWeek.Sunday,
+                    From = model.Begin,
+                    To = model.End,
+                    PlanningGrid = grid
+                };
+                Db.PlanningSlots.Add(slot);
+            }
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Availabilities", new { id = id });
+        }
+
+        public ActionResult DeleteAvailability(Guid id)
+        {
+            var slot = Db.PlanningSlots.SingleOrDefault(s => s.Id == id);
+            if (slot != null)
+            {
+                var room = Db.Rooms.FirstOrDefault(x => x.Availability != null && x.Availability.Id == slot.PlanningGrid.Availability.Id);
+                if (room != null)
+                {
+                    Db.PlanningSlots.Remove(slot);
+                    Db.SaveChanges();
+                    return RedirectToAction("Availabilities", new { id = room.Id });
+                }
+            }
+            return RedirectToAction("Index", "Home");
+        }
+    }
 }

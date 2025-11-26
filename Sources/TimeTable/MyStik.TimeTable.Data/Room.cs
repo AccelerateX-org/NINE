@@ -57,7 +57,8 @@ namespace MyStik.TimeTable.Data
         public bool HasAccessControl { get; set; }
 
         /// <summary>
-        /// Ist buchbar
+        /// Ist buchbar: stehen für Kurse und Raumreservierungen zur Verfügung
+        /// Bei Sprechstunden stehen alle Räume zur Verfügung
         /// </summary>
         public bool? IsBookable { get; set; }
 

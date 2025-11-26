@@ -1,0 +1,74 @@
+﻿@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Verfügbarkeit";
+}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title"></h5>
+                Verfügbarkeit für Raum @Model.Number hinzufügen
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Availabilities", new { id = Model.Id })" class="btn btn-outline-primary">
+                            <i class="bi bi-chevron-left"></i> zurück zur Verfügbarkeitsübersicht
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("AddAvailability", "Room", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+                    <div class="mb-3">
+                        @Html.Label("Einrichtung", htmlAttributes: new { @class = "form-label" })
+                        @Html.CheckBox("Org", new { @class = "form-control", type = "text" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsMonday", new { @class = "form-check-input" })
+                        @Html.Label("Montag", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsTuesday", new { @class = "form-check-input" })
+                        @Html.Label("Dienstag", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsWednesday", new { @class = "form-check-input" })
+                        @Html.Label("Mittwoch", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsThursday", new { @class = "form-check-input" })
+                        @Html.Label("Donnerstag", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsFriday", new { @class = "form-check-input" })
+                        @Html.Label("Freitag", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsSaturday", new { @class = "form-check-input" })
+                        @Html.Label("Samstag", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.CheckBox("IsSunday", new { @class = "form-check-input" })
+                        @Html.Label("Sonntag", htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.Label("Von", htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBox("Begin", null, new { @class = "form-control", type = "time" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.Label("Bis", htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBox("End", null, new { @class = "form-control", type = "time" })
+                    </div>
+                    <button type="submit" class="btn btn-primary">Verfügbarkeit speichern</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

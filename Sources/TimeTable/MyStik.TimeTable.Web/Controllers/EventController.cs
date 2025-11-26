@@ -285,7 +285,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
-
+                            /*
                             var booking = new RoomBooking
                             {
                                 Date = activityDate,
@@ -295,6 +295,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             };
 
                             Db.RoomBookings.Add(booking);
+                            */
                         }
 
                         foreach (var doz in dozList)
@@ -856,6 +857,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
                         activityDate.Rooms.Add(room);
 
+                        /*
                         var booking = new RoomBooking
                         {
                             Date = activityDate,
@@ -865,7 +867,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         };
 
                         Db.RoomBookings.Add(booking);
-
+                        */
                     }
                 }
             }
@@ -904,7 +906,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.Rooms.SingleOrDefault(r => r.Number.Equals(room));
 
             activityDate.Rooms.Add(model);
-
+            /*
             var booking = new RoomBooking
             {
                 Date = activityDate,
@@ -914,7 +916,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             Db.RoomBookings.Add(booking);
-
+            */
             Db.SaveChanges();
 
             return CheckRoomList(id, date, from, to);
@@ -1962,7 +1964,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
                         date.Rooms.Add(room);
-
+                        /*
                         var booking = new RoomBooking
                         {
                             Date = date,
@@ -1972,7 +1974,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         };
 
                         Db.RoomBookings.Add(booking);
-
+                        */
                     }
 
                     if (course == null)
@@ -2115,7 +2117,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         foreach (var room in roomList)
                         {
                             activityDate.Rooms.Add(room);
-
+                            /*
                             var booking = new RoomBooking
                             {
                                 Date = activityDate,
@@ -2125,7 +2127,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             };
 
                             Db.RoomBookings.Add(booking);
-
+                            */
                         }
 
                         foreach (var doz in dozList)

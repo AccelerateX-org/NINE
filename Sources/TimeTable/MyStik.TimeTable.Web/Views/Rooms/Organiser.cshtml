@@ -5,7 +5,8 @@
 @{
     ViewBag.Title = "Raumverzeichnis";
 
-    var ownRooms = Model.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == Model.Organiser.Id && a.IsOwner)).ToList();
+    //var ownRooms = Model.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == Model.Organiser.Id && a.IsOwner)).ToList();
+    var ownRooms = Model.Rooms.ToList();
     var otherRooms = Model.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == Model.Organiser.Id && !a.IsOwner)).ToList();
     var now = DateTime.Now;
 
@@ -75,7 +76,7 @@
             }
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
@@ -88,13 +89,15 @@
                                                 <th>Nummer</th>
                                                 <th>Bezeichnung</th>
                                                 <th>Plätze</th>
-                                                <th>Buchbar von</th>
+                                                <th>Buchbar</th>
+                                                <th>Besitzer</th>
+                                                <th>Verfügbarkeiten</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach (var room in ownRooms.OrderBy(x => x.Number))
                                             {
-                                                var dates = room.Dates.Where(x => x.Begin <= now && now <= x.End).ToList();
+                                                var ownerAssign = room.Assignments.FirstOrDefault(x => x.IsOwner);
 
                                                 <tr>
                                                     <td>
@@ -104,12 +107,49 @@
                                                     </td>
                                                     <td>@room.Name</td>
                                                     <td>@room.Capacity</td>
-                                                    <td>
-                                                        @foreach (var assign in room.Assignments.Where(x => x.Organiser.Id != Model.Organiser.Id).OrderBy(x => x.Organiser.ShortName))
+                                                    @if (room.IsBookable != null && room.IsBookable.Value == true)
+                                                    {
+                                                        <td><i class="bi bi-check-lg text-success"></i></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><i class="bi bi-x-lg text-danger"></i></td>
+                                                    }
+                                                    @if (ownerAssign != null)
+                                                    {
+                                                        <td>@ownerAssign.Organiser.ShortName</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                <td>
+                                                    @foreach (var assign in room.Assignments.Where(x => x.Organiser.Id != Model.Organiser.Id).OrderBy(x => x.Organiser.ShortName))
+                                                    {
+                                                        if (room.Availability != null)
                                                         {
-                                                            <div>@assign.Organiser.ShortName</div>
+                                                            var grids = room.Availability.PlanningGrids.Where(g => g.Organiser.Id == assign.Organiser.Id).ToList();
+                                                            if (grids.Count > 0)
+                                                            {
+                                                                <div>
+                                                                    @assign.Organiser.ShortName:
+                                                                    @foreach (var grid in grids)
+                                                                    {
+                                                                        <span class="badge bg-secondary">@grid.State</span>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div>@assign.Organiser.ShortName (keine Verfügbarkeiten)</div>
+                                                            }
                                                         }
-                                                    </td>
+                                                        else
+                                                        {
+                                                            <div>@assign.Organiser.ShortName (keine Verfügbarkeiten)</div>
+                                                        }
+                                                    }
+                                                </td>
                                                 </tr>
                                             }
 
@@ -119,6 +159,7 @@
                             </div>
                         </div>
                     </div>
+                    @*
                     <div class="col-md-6">
                         <div class="row">
                             <div class="col-md-12">
@@ -181,6 +222,7 @@
                             </div>
                         </div>
                     </div>
+                    *@
                 </div>
             </div>
         </div>

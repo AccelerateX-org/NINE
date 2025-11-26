@@ -41,6 +41,33 @@ namespace MyStik.TimeTable.Data
         public virtual Availability Availability { get; set; }
 
         public virtual ICollection<PlanningSlot> PlanningSlots { get; set; }
+
+        public string State { 
+            get
+            {
+                var sb = new StringBuilder();
+
+                if (Semester == null && Segment == null)
+                {
+                    sb.Append("Dauerhaft ");
+                }
+                else
+                {
+                    if (Semester != null && Segment != null)
+                    {
+                        sb.Append($"Semesterbezogen ({Semester.Name} | {Segment.Description}) ");
+                    }
+                    else
+                    {
+                        sb.Append("ungültige Konfiguration ");
+                    }
+                }
+
+                sb.Append($"für {Organiser.ShortName}");
+
+                return sb.ToString();
+            } 
+        }
     }
 
     public class PlanningSlot

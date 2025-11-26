@@ -4840,6 +4840,9 @@
     <Content Include="Views\Lottery\SelectStudents.cshtml" />
     <Content Include="Views\Infoscreens\Index.cshtml" />
     <Content Include="Views\Infoscreens\Details.cshtml" />
+    <Content Include="Views\Room\Availabilities.cshtml" />
+    <Content Include="Views\Room\AddAvailability.cshtml" />
+    <Content Include="Views\Semester\RoomsByWeek.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

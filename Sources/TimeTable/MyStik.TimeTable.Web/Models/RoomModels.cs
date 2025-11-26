@@ -52,7 +52,7 @@ namespace MyStik.TimeTable.Web.Models
                     return int.MaxValue;
 
                 var dur = NextDate.Begin - To;
-                return (int) dur.TotalMinutes;
+                return (int)dur.TotalMinutes;
             }
         }
 
@@ -130,7 +130,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public bool HasConflicts { get { return Conflicts.Any(); }}
+        public bool HasConflicts { get { return Conflicts.Any(); } }
 
         /// <summary>
         /// 
@@ -372,8 +372,8 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public Guid RoomId { get; set;  }
-        
+        public Guid RoomId { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -388,7 +388,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public string Faculty { get; set;  }
+        public string Faculty { get; set; }
 
         /// <summary>
         /// 
@@ -405,7 +405,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ICollection<RoomMobileStateViewModel3> AllRooms { get; set; }
 
-        
+
     }
 
     /// <summary>
@@ -427,7 +427,7 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public string Status { get; set; }
-        
+
     }
 
     /// <summary>
@@ -471,7 +471,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string Beschreibung { get; set; }
 
-        
+
     }
 
     /// <summary>
@@ -585,7 +585,7 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<ActivityDate> Dates { get; }
-        
+
     }
 
     /// <summary>
@@ -642,4 +642,20 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+    public class RoomAvailabilityModel
+    {
+        public string Org { get; set; }
+
+        public bool IsMonday { get; set; }
+        public bool IsTuesday { get; set; }
+        public bool IsWednesday { get; set; }
+        public bool IsThursday { get; set; }
+        public bool IsFriday { get; set; }
+        public bool IsSaturday { get; set; }
+        public bool IsSunday { get; set; }
+
+        public TimeSpan Begin { get; set; }
+        public TimeSpan End { get; set; }
+
+    }
 }

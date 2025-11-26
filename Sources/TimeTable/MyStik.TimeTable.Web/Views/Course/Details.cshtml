@@ -49,128 +49,131 @@
 {
     var attrDisabled = "";
     <div class="col-md-2">
-        <div class="card mb-3">
-            <div class="list-group">
-                @if (Model.Summary.Course.IsInternal)
-                {
-                    attrDisabled = "disabled";
-                    if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+        @if (Model.Summary.Course.IsInternal || Model.Summary.Course.IsProjected)
+        {
+            <div class="card mb-3">
+                <div class="list-group">
+                    @if (Model.Summary.Course.IsInternal)
                     {
-                        attrDisabled = "";
-                    }
-                    <div class="list-group-item list-group-item-warning">
-                        <i class="bi bi-lock"></i> Gesperrt - Aktuell können nur Administratoren und Besitzer Änderungen vornehmen.
-                    </div>
-                }
-                @if (Model.Summary.Course.IsProjected)
-                {
-                    <div class="list-group-item list-group-item-info">
-                        <i class="bi bi-layer-backward"></i> Lehrveranstaltung im Planungsmodus. Studierende können den Kurs nicht sehen.
-                    </div>
-                }
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="list-group">
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})">
-                    <i class="bi bi-envelope"></i> Nachricht senden
-                </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-calendar"></i> Terminverwaltung
-                </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-people"></i> Teilnehmende
-                </a>
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="list-group">
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-gear"></i> Allgemeine Angaben
-                </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-tags"></i> Kohorten
-                </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-book"></i> Modul / Fach
-                </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-pencil-square"></i> Platzkontingente
-                </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-ui-radios"></i> Freigaben / Status
-                </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Copy", new {id = Model.Summary.Course.Id})">
-                    <i class="bi bi-copy"></i> Kopieren
-                </a>
-                @if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
-                {
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
-                        <i class="bi bi-collection-play"></i> Semester
-                    </a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
-                        <i class="bi bi-person"></i> Besitzer
-                    </a>
-                    <a class="list-group-item list-group-item-action list-group-item-danger" href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})">
-                        <i class="bi bi-trash"></i> Löschen
-                    </a>
-                }
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="list-group">
-                @if (string.IsNullOrEmpty(Model.Summary.Course.ExternalSource))
-                {
-                    if (Model.Summary.Course.Owners.Any())
-                    {
-                        <div class="list-group-item">
-                            Angelegt von:
-                            @foreach (var own in Model.Summary.Course.Owners)
-                            {
-                                <div>@own.Member.FullName</div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="list-group-item list-group-item-danger">
-                            Keine Information zu Besitzer vorhanden
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="list-group-item">
-                        importiert aus @Model.Summary.Course.ExternalSource (@Model.Summary.Course.ExternalId)
-                    </div>
-                }
-                <div class="list-group-item">
-                    @if (Model.Summary.Course.Semester != null && Model.Summary.Course.Organiser != null)
-                    {
-                        <div>
-                            Zuordnung Vorlesungsverzeichnis:
-                            @Model.Summary.Course.Semester.Name | @Model.Summary.Course.Organiser.ShortName
-                        </div>
-                        if (Model.Summary.Course.Segment != null)
+                        attrDisabled = "disabled";
+                        if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
                         {
-                            if (Model.Summary.Course.Segment.Semester.Id == Model.Summary.Course.Semester.Id)
-                            {
-                                <div>Abschnitt: @Model.Summary.Course.Segment.Description (@Model.Summary.Course.Segment.From.ToShortDateString(), @Model.Summary.Course.Segment.To.ToShortDateString())</div>
-                            }
-                            else
-                            {
-                                <div>Abschnitt aus Semester @Model.Summary.Course.Segment.Semester.Name (@Model.Summary.Course.Segment.Description)</div>
-                            }
+                            attrDisabled = "";
+                        }
+                        <div class="list-group-item list-group-item-warning">
+                            <i class="bi bi-lock"></i> Gesperrt - Aktuell können nur Administratoren und Besitzer Änderungen vornehmen.
+                        </div>
+                    }
+                    @if (Model.Summary.Course.IsProjected)
+                    {
+                        <div class="list-group-item list-group-item-info">
+                            <i class="bi bi-layer-backward"></i> Lehrveranstaltung im Planungsmodus. Studierende können den Kurs nicht sehen.
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+            <div class="card mb-3">
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})">
+                        <i class="bi bi-envelope"></i> Nachricht senden
+                    </a>
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-calendar"></i> Terminverwaltung
+                    </a>
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-people"></i> Teilnehmende
+                    </a>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-gear"></i> Allgemeine Angaben
+                    </a>
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-tags"></i> Kohorten
+                    </a>
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewSubjects", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-book"></i> Modul / Fach
+                    </a>
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-pencil-square"></i> Platzkontingente
+                    </a>
+                    <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("AdminNewState", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-ui-radios"></i> Freigaben / Status
+                    </a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Copy", new {id = Model.Summary.Course.Id})">
+                        <i class="bi bi-copy"></i> Kopieren
+                    </a>
+                    @if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
+                    {
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
+                            <i class="bi bi-collection-play"></i> Semester
+                        </a>
+                        <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
+                            <i class="bi bi-person"></i> Besitzer
+                        </a>
+                        <a class="list-group-item list-group-item-action list-group-item-danger" href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})">
+                            <i class="bi bi-trash"></i> Löschen
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="list-group">
+                    @if (string.IsNullOrEmpty(Model.Summary.Course.ExternalSource))
+                    {
+                        if (Model.Summary.Course.Owners.Any())
+                        {
+                            <div class="list-group-item">
+                                Angelegt von:
+                                @foreach (var own in Model.Summary.Course.Owners)
+                                {
+                                    <div>@own.Member.FullName</div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="list-group-item list-group-item-danger">
+                                Keine Information zu Besitzer vorhanden
+                            </div>
                         }
                     }
                     else
                     {
-                        <div>Keine Zuordnung zum Vorlesungsverzeichnis</div>
+                        <div class="list-group-item">
+                            importiert aus @Model.Summary.Course.ExternalSource (@Model.Summary.Course.ExternalId)
+                        </div>
                     }
+                    <div class="list-group-item">
+                        @if (Model.Summary.Course.Semester != null && Model.Summary.Course.Organiser != null)
+                        {
+                            <div>
+                                Zuordnung Vorlesungsverzeichnis:
+                                @Model.Summary.Course.Semester.Name | @Model.Summary.Course.Organiser.ShortName
+                            </div>
+                            if (Model.Summary.Course.Segment != null)
+                            {
+                                if (Model.Summary.Course.Segment.Semester.Id == Model.Summary.Course.Semester.Id)
+                                {
+                                    <div>Abschnitt: @Model.Summary.Course.Segment.Description (@Model.Summary.Course.Segment.From.ToShortDateString(), @Model.Summary.Course.Segment.To.ToShortDateString())</div>
+                                }
+                                else
+                                {
+                                    <div>Abschnitt aus Semester @Model.Summary.Course.Segment.Semester.Name (@Model.Summary.Course.Segment.Description)</div>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div>Keine Zuordnung zum Vorlesungsverzeichnis</div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 }
 <div class="@colDetails">
     <div class="row">

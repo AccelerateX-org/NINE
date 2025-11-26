@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization.Configuration;
 using System.Threading;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
@@ -261,6 +262,51 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
                 Semester = sem
             };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult RoomsByWeek(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem,
+                Weekdays = new System.Collections.Generic.List<WeekdayViewModel>()
+            };
+
+            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+                    continue;
+
+                var begin = new TimeSpan(8, 15, 0);
+
+                while (begin <= new TimeSpan(19, 15, 0))
+                {
+                    var end = begin.Add(new TimeSpan(0, 90, 0));
+                    model.Weekdays.Add(new WeekdayViewModel
+                    {
+                        DayOfWeek = day,
+                        Begin = begin,
+                        End = end
+                    });
+                    if (end == new TimeSpan(13, 15, 0))
+                    {
+                        begin = end.Add(new TimeSpan(0, 45, 0));
+                    }
+                    else
+                    {
+                        begin = end.Add(new TimeSpan(0, 15, 0));
+                    }
+                }
+            }
+
 
             ViewBag.UserRight = GetUserRight(org);
 

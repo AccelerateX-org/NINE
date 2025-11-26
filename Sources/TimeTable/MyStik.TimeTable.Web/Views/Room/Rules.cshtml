@@ -11,7 +11,15 @@
 
 
 @{
+    var user = ViewBag.User;
     var assignment = Model.Assignments.FirstOrDefault(x => x.IsOwner);
+    var owner = assignment.Organiser.Members.Where(m => !string.IsNullOrEmpty(m.UserId) && m.UserId == user.Id).FirstOrDefault();
+    var isOwner = false;
+    if (owner != null && owner.IsRoomAdmin)
+    {
+        isOwner = true;
+    }
+
 }
 
 
@@ -36,18 +44,31 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <table class="table table-sm table-striped">
                             <thead>
                                 <tr>
                                     <th>Einrichtung</th>
                                     <th>Status</th>
-                                    <th>Wer darf buchen</th>
+                                    <th>Wer darf Raum belegen</th>
                                 </tr>
-                                </thead>
+                            </thead>
                             <tbody>
                                 @foreach (var asgn in Model.Assignments)
                                 {
+                                    var member = asgn.Organiser.Members.Where(m => !string.IsNullOrEmpty(m.UserId) && m.UserId == user.Id).FirstOrDefault();
+                                    var isAdmin = false;
+                                    if (member != null && member.IsRoomAdmin)
+                                    {
+                                        isAdmin = true;
+                                    }
+                                    var btnAllActive = "btn-outline-primary";
+                                    var btnAdminActive = "btn-outline-secondary";
+                                    if (asgn.InternalNeedConfirmation)
+                                    {
+                                        btnAllActive = "btn-outline-secondary";
+                                        btnAdminActive = "btn-outline-primary";
+                                    }
                                     <tr>
                                         <td>@Html.FacultyLabel(asgn.Organiser)</td>
                                         @if (asgn.IsOwner)
@@ -58,116 +79,49 @@
                                         {
                                             <td></td>
                                         }
-                                        @if (asgn.InternalNeedConfirmation)
+
+                                        @if (isAdmin)
                                         {
-                                            <td><i class="bi bi-lock-fill text-success"></i> Nur Admins</td>
+                                            <td>
+                                                <a href="@Url.Action("UnLockRoom", new { id = asgn.Id })" class="btn @btnAllActive">alle</a>
+                                                <a href="@Url.Action("LockRoom", new { id = asgn.Id })" class="btn @btnAdminActive">nur Admins</a>
+                                            </td>
                                         }
                                         else
                                         {
-                                            <td><i class="bi bi-unlock-fill text-danger"></i> alle</td>
+                                            <td>
+                                                <div class="btn @btnAllActive disabled">alle</div>
+                                                <div class="btn @btnAdminActive disabled">nur Admins</div>
+                                            </td>
+
                                         }
                                     </tr>
                                 }
                             </tbody>
-                            </table>
-                            
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    Interne Regelung @ViewBag.Organiser.ShortName
-                                </h5>
-                                @if (assignment != null)
-                                {
-                                    if (assignment.InternalNeedConfirmation)
-                                    {
-                                        <form class="form">
-                                            <fieldset>
-                                                <div class="radio-list">
-                                                    <label>
-                                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked onchange="lockRoom('@assignment.Id')">
-                                                        Raum kann nur von den  @ViewBag.Organiser.ShortName-Raum-Admins belegt werden:
-                                                        <ul>
-                                                            @foreach (var admin in ViewBag.Admins)
-                                                            {
-                                                                <li>@admin.Name</li>
-                                                            }
-                                                        </ul>
-                                                    </label>
-                                                    <label>
-                                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onchange="unLockRoom('@assignment.Id')">
-                                                        Raum kann von allen  @ViewBag.Organiser.ShortName-Lehrenden belegt werden
-                                                    </label>
-                                                </div>
-                                            </fieldset>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <form class="form">
-                                            <fieldset>
-                                                <div class="radio-list">
-                                                    <label>
-                                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" onchange="lockRoom('@assignment.Id')">
-                                                        Raum kann nur von den  @ViewBag.Organiser.ShortName-Raum-Admins belegt werden:
-                                                        <ul>
-                                                            @foreach (var admin in ViewBag.Admins)
-                                                            {
-                                                                <li>@admin.Name</li>
-                                                            }
-                                                        </ul>
-                                                    </label>
-                                                    <label>
-                                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked onchange="unLockRoom('@assignment.Id')">
-                                                        Raum kann von allen  @ViewBag.Organiser.ShortName-Lehrenden belegt werden
-                                                    </label>
-                                                </div>
-                                            </fieldset>
-                                        </form>
+                        </table>
 
-                                    }
-                                }
-                            </div>
-                        </div>
                     </div>
-
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">
                                     Freigaben für andere Einrichtungen
                                 </h5>
-                                @if (assignment.ExternalNeedConfirmation)
+                                @if (isOwner)
                                 {
-                                    <div>
-                                        Aktuell kann der Raum nur über eine Buchungsanfrage an @ViewBag.Organiser.ShortName gebucht werden
-                                    </div>
-                                    <a class="btn btn-outline-primary" href="@Url.Action("UnLockRoomExternal", new {id = assignment.Id})">Buchungsanfragen entfernen</a>
-                                }
-                                else
-                                {
-                                    <div>
-                                        Aktuell kann der Raum ohne Buchungsanfrage gebucht werden
-                                    </div>
-                                    <a class="btn btn-outline-primary" href="@Url.Action("LockRoomExternal", new {id = assignment.Id})">Buchungsanfragen aktivieren</a>
-                                }
-                                <form class="mt-3">
-                                    <fieldset>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label for="FacId" class="form-label">Veranstalter hinzufügen</label>
+                                    <form class="mt-3">
+                                        <fieldset>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="FacId" class="form-label">Veranstalter hinzufügen</label>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="FacId" placeholder="Kurzname Einrichtung">
+                                                </div>
                                             </div>
-                                            <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="FacId" placeholder="Kurzname Einrichtung">
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </form>
-
-
+                                        </fieldset>
+                                    </form>
+                                }
                                 <table class="table mt-3">
                                     <thead>
                                         <tr>
@@ -176,30 +130,28 @@
                                         </tr>
                                     </thead>
                                     <tbody id="linkList">
-                                        @if (assignment != null)
-                                        {
-                                            foreach (var link in Model.Assignments.Where(x => x.Id != assignment.Id))
+                                            @foreach (var link in Model.Assignments.Where(x => x.Id != assignment.Id))
                                             {
                                                 <tr id="@link.Id">
                                                     <td>@link.Organiser.ShortName</td>
-                                                    <td>
-                                                        @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteLink", "Room",
-                                                            new { id = link.Id },
-                                                            new AjaxOptions
-                                                            {
-                                                                HttpMethod = "Post",
-                                                                InsertionMode = InsertionMode.Replace,
-                                                                UpdateTargetId = link.Id.ToString()
-                                                            },
-                                                            null)
-                                                    </td>
+                                                    @if (isOwner)
+                                                    {
+                                                        <td>
+                                                            @Ajax.ActionButton("bi bi-trash", "Löschen", "DeleteLink", "Room",
+                                                                new { id = link.Id },
+                                                                new AjaxOptions
+                                                                {
+                                                                    HttpMethod = "Post",
+                                                                    InsertionMode = InsertionMode.Replace,
+                                                                    UpdateTargetId = link.Id.ToString()
+                                                                },
+                                                                new { @class="btn btn-outline-primary"})
+                                                        </td>
+                                                    }
                                                 </tr>
                                             }
-                                        }
                                     </tbody>
                                 </table>
-
-
                             </div>
                         </div>
                     </div>

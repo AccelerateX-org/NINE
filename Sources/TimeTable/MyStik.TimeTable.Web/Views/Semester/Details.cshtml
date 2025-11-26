@@ -158,7 +158,14 @@
                                     <div class="col-3">
                                         <div class="row">
                                             <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("Rooms", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
-                                                Alle Räume
+                                                Datum
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="row">
+                                            <a class="btn btn-outline-secondary" target="_blank" href="@Url.Action("RoomsByWeek", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">
+                                                Mo - Fr
                                             </a>
                                         </div>
                                     </div>

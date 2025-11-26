@@ -88,7 +88,16 @@ namespace MyStik.TimeTable.Web.Models
 
         public Curriculum Curriculum { get; set; }
 
+        public List<WeekdayViewModel> Weekdays { get; set; }
     }
+
+    public class WeekdayViewModel
+    {
+        public DayOfWeek DayOfWeek { get; set; }
+        public TimeSpan Begin { get; set; }
+        public TimeSpan End { get; set; }
+    }
+
 
     /// <summary>
     /// 
