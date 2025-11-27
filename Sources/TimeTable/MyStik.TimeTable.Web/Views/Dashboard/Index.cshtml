@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.TeachingOverviewModel
 @{
     if (Request.IsLocal)
@@ -12,6 +13,7 @@
     var now = DateTime.Now;
     var day = DateTime.Today.AddDays(-7);
     var nAds = db.Advertisements.Count(x => x.Created >= day);
+
 }
 
 
@@ -38,15 +40,17 @@
         </ol>
     </nav>
 </div>
-    @if (Request.IsLocal)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <a href="https://localhost:44300/Course/Details/7dfad981-d23d-ee11-855b-7486e20bbe7b">Testkurs</a>
-                <a href="https://localhost:44300/ModuleDescription/Semester?moduleId=9a068d88-77cc-ed11-8520-7486e20bbe7b&semId=17f321e3-76cc-ed11-8520-7486e20bbe7b">Testmodul</a>
-            </div>
+@if (Request.IsLocal)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <a href="https://localhost:44300/Course/Details/7dfad981-d23d-ee11-855b-7486e20bbe7b">Testkurs</a>
+            <a href="https://localhost:44300/ModuleDescription/Semester?moduleId=9a068d88-77cc-ed11-8520-7486e20bbe7b&semId=17f321e3-76cc-ed11-8520-7486e20bbe7b">Testmodul</a>
         </div>
-    }
+    </div>
+}
+
+<h2>Bisheriges Layout</h2>
 <div class="row">
     <div class="col-md-4">
         @if (Model.Candidatures.Any())
@@ -236,79 +240,79 @@
             </div>
         </div>
 
-
-        @if (Model.Student != null && Model.Student.LastSemester == null)
-        {
-            var org = Model.Student.Curriculum.Organiser;
-            var rooms = db.Rooms.Where(x => x.IsForLearning && x.Assignments.Any(a => a.Organiser.Id == org.Id && a.IsOwner)).ToList();
-
-            if (rooms.Any())
+        @*
+            @if (Model.Student != null && Model.Student.LastSemester == null)
             {
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card mb-3">
-                            <div class="card-header bg-white">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h5 class="card-title">Aktuell freie Lernräume</h5>
-                                </div>
-                            </div>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Nummer</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var room in rooms)
-                                    {
-                                        var dates = room.Dates.Where(x => x.Begin <= now && now <= x.End).ToList();
+                var org = Model.Student.Curriculum.Organiser;
+                var rooms = db.Rooms.Where(x => x.IsForLearning && x.Assignments.Any(a => a.Organiser.Id == org.Id && a.IsOwner)).ToList();
 
-                                        <tr>
-                                            <td>@room.Number</td>
-                                            @if (dates.Any())
-                                            {
-                                                <td>
-                                                    @foreach (var date in dates)
-                                                    {
-                                                        <div>@date.Activity.ShortName</div>
-                                                    }
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>aktuell frei</td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                            <!--
-                            <div id="placeholderRooms">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title placeholder-glow">
-                                            <span class="placeholder col-6"></span>
-                                        </h5>
-                                        <p class="card-text placeholder-glow">
-                                            <span class="placeholder col-7"></span>
-                                            <span class="placeholder col-4"></span>
-                                            <span class="placeholder col-4"></span>
-                                            <span class="placeholder col-6"></span>
-                                            <span class="placeholder col-8"></span>
-                                        </p>
-                                        <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                if (rooms.Any())
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-3">
+                                <div class="card-header bg-white">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">Aktuell freie Lernräume</h5>
                                     </div>
                                 </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nummer</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var room in rooms)
+                                        {
+                                            var dates = room.Dates.Where(x => x.Begin <= now && now <= x.End).ToList();
+
+                                            <tr>
+                                                <td>@room.Number</td>
+                                                @if (dates.Any())
+                                                {
+                                                    <td>
+                                                        @foreach (var date in dates)
+                                                        {
+                                                            <div>@date.Activity.ShortName</div>
+                                                        }
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>aktuell frei</td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <!--
+                                <div id="placeholderRooms">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title placeholder-glow">
+                                                <span class="placeholder col-6"></span>
+                                            </h5>
+                                            <p class="card-text placeholder-glow">
+                                                <span class="placeholder col-7"></span>
+                                                <span class="placeholder col-4"></span>
+                                                <span class="placeholder col-4"></span>
+                                                <span class="placeholder col-6"></span>
+                                                <span class="placeholder col-8"></span>
+                                            </p>
+                                            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                -->
+                                <div id="listRooms"></div>
                             </div>
-                            -->
-                            <div id="listRooms"></div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
-
+        *@
     </div>
     <div class="col-md-6">
         <div class="row">
@@ -450,6 +454,335 @@
     </div>
 </div>
 
+<hr />
+<h2>Neues Layout (Vorschau)</h2>
+<p>Besser / schlechter / fehlt was? Kommentare gerne unter "Problem melden"</p>
+<div class="row">
+    <div class="col-md-2">
+        <div class="card mb-3">
+            <div class="list-group">
+                <div class="list-group-item list-group-item-primary"><i class="bi bi-person-workspace"></i> Mein..</div>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-day"></i> Kalender</a>
+                <a href="@Url.Action("PersonalPlanWeekly", "Activity")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-week"></i> Stundenplan</a>
+                @if (Model.Student != null && Model.Student.LastSemester == null)
+                {
+                    <a href="@Url.Action("Subscription", "OfficeHour")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-check"></i> Sprechstundentermine</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
+                        <i class="bi bi-mortarboard"></i> Studiengang @Model.Student.Curriculum.ShortName
+                    </a>
+                    if (Model.Thesis != null)
+                    {
+                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action">
+                            <i class="bi bi-file-text"></i> Abschlussarbeit
+                        </a>
+                    }
+                    else
+                    {
+                        if (Model.Student.Curriculum.ThesisDuration > 0)
+                        {
+                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action">
+                                <i class="bi bi-file-text"></i> Abschlussarbeit
+                            </a>
+                        }
+                    }
+                }
+                @if (Model.Candidatures.Any())
+                {
+                    <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action"><i class="bi bi-journals"></i> Aufnahmeverfahren</a>
+                }
+                @if (Model.Members.Any())
+                {
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("OfficeHours", "Lecturer")"><i class="bi bi-people"></i> Sprechstunden</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "ThesisSupervision")"><i class="bi bi-book"></i> Abschlussarbeiten</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalDates", "Lecturer")"><i class="bi bi-calendar-check"></i> Verfügbarkeiten</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "CurriculumModule")"><i class="bi bi-person-badge"></i> Module</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Responsibility", "Courses")"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Card", "Person")"><i class="bi bi-person-vcard"></i> Visitenkarte</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "VirtualRoom")"><i class="bi bi-person-video"></i> Virtuelle Räume</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")"><i class="bi bi-display"></i> Aushänge</a>
+                }
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="list-group">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
+                    <i class="bi bi-collection-play"></i> Vorlesungsverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")">
+                    <i class="bi bi-people"></i> Sprechstundenverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")">
+                    <i class="bi bi-building"></i> Raumverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")">
+                    <i class="bi bi-journals"></i> Aufnahmeverfahren
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="card">
+            <div class="list-group">
+                @foreach (var summary in Model.CurrentSemester.OfferedCourses)
+                {
+                    var tn = summary.Course.Occurrence.Subscriptions.Count();
+
+                    if (summary.CurrentDate != null)
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    @Html.TimeSpanWithDate(summary.CurrentDate)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.RoomList(summary.CurrentDate.Rooms)
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.LecturerList(summary.CurrentDate.Hosts)
+                                </div>
+                                <div class="col-md-1">
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-person-check"></i>
+                                        @tn
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    beendet
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.RoomList(summary.Rooms)
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.LecturerList(summary.Lecturers)
+                                </div>
+                                <div class="col-md-1">
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-person-check"></i>
+                                        @tn
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                @foreach (var oh in Model.CurrentSemester.OfferedOfficeHours)
+                {
+                    if (oh.HasSubscription)
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    @if (oh.Date != null)
+                                    {
+
+                                        @Html.TimeSpanWithDate(oh.Date)
+                                    }
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new { id = oh.Date.Id })">@oh.OfficeHour.Name</a>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-1">
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    @if (oh.Date != null)
+                                    {
+
+                                        @Html.TimeSpanWithDate(oh.Date)
+                                    }
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("OfficeHour", "Lecturer", new { id = oh.OfficeHour.Id })">@oh.OfficeHour.Name</a>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-1">
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @foreach (var summary in Model.CurrentSemester.SubscribedCourses)
+                {
+                    if (summary.CurrentDate != null)
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    @Html.TimeSpanWithDate(summary.CurrentDate)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.RoomList(summary.CurrentDate.Rooms)
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.LecturerList(summary.CurrentDate.Hosts)
+                                </div>
+                                <div class="col-md-1">
+                                    @if (summary.Subscription != null)
+                                    {
+                                        if (summary.Subscription.OnWaitingList)
+                                        {
+                                            <span><i class="bi bi-hourglass"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span><i class="bi bi-person-check text-success"></i></span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    beendet
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.RoomList(summary.Rooms)
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.LecturerList(summary.Lecturers)
+                                </div>
+                                <div class="col-md-1">
+                                    @if (summary.Subscription != null)
+                                    {
+                                        if (summary.Subscription.OnWaitingList)
+                                        {
+                                            <span><i class="bi bi-hourglass"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span><i class="bi bi-person-check text-success"></i></span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+            <div class="list-group">
+                @foreach (var thesis in Model.ActiveTheses)
+                {
+                    if (thesis.User != null)
+                    {
+
+                        if (thesis.Thesis.DeliveryDate != null)
+                        {
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
+                                <i class="bi bi-trophy"></i> @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
+                            </a>
+                        }
+                        else
+                        {
+                            if (thesis.Thesis.Supervisors.Any(x => x.AcceptanceDate == null))
+                            {
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
+                                    <i class="fas fa-question-circle"></i>
+                                    @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
+                                    <span class="badge bg-danger">Betreuungsanfrage</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
+                                    <i class="bi bi-gear"></i>
+                                    @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
+                                    @if (thesis.DaysToExpire == Int32.MaxValue)
+                                    {
+                                        <span class="badge bg-danger">Noch nicht angemeldet</span>
+                                    }
+                                    else
+                                    {
+                                        if (thesis.Thesis.RenewalDate != null)
+                                        {
+                                            <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe (verlängert)</span>
+                                        }
+                                        else
+                                        {
+                                            if (thesis.Thesis.ProlongRequestDate == null)
+                                            {
+                                                <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
+                                            }
+                                            else
+                                            {
+                                                if (thesis.Thesis.ProlongSupervisorAccepted == null)
+                                                {
+                                                    <span class="badge bg-danger">Antrag auf Verlängerung - unbearbeitet</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Antrag auf Verlängerung akzeptiert - Bestätigung PKV steht noch aus</span>
+                                                }
+
+                                            }
+                                        }
+
+                                    }
+                                </a>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (thesis.Thesis.DeliveryDate != null)
+                        {
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
+                                <i class="bi bi-trophy"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
+                                <i class="bi bi-gear"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
+                                <span class="badge bg-secondary">@thesis.DaysToExpire</span>
+                            </a>
+                        }
+
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -459,10 +792,10 @@
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
-    
+
     @*
-    <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
-        *@
+        <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
+    *@
 
     <script>
 

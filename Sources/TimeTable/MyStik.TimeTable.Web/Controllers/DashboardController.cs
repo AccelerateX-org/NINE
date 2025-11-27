@@ -26,13 +26,43 @@ namespace MyStik.TimeTable.Web.Controllers
             var userService = new UserInfoService();
             var teachingService = new TeachingService(Db);
 
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var model = GetSemesterModel(semester, user);
+            model.Organisers = model.Members.Select(x => x.Organiser).Distinct().ToList();
+
+            model.ActiveTheses = new List<ThesisStateModel>();
+
+            var theses = teachingService.GetActiveTheses(user);
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.ActiveTheses.Add(tm);
+            }
+
+            if (model.Student != null)
+            {
+                model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == model.Student.Id);
+            }
+
+            model.Candidatures = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
+
+            /*
             var model = new TeachingOverviewModel();
-            var members = MemberService.GetMemberships(user.Id).ToList();
-            var student = GetCurrentStudent(user.Id).FirstOrDefault();
+            //var members = MemberService.GetMemberships(user.Id).ToList();
+            //var student = GetCurrentStudent(user.Id).FirstOrDefault();
 
             model.Members = members;
             model.Organisers = members.Select(x => x.Organiser).Distinct().ToList();
 
+            // Zugriff auf Fakultät über Breadcrumps => nicht mehr erforderlich
             if (student != null)
             {
                 if (model.Organisers.All(x => x.Id != student.Curriculum.Organiser.Id))
@@ -69,8 +99,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == model.Student.Id);
             }
-
+            
             model.Candidatures = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
+            */
 
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;

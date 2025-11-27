@@ -5,16 +5,16 @@
 
 @if (Model.Any())
 {
-    <div class="infoscreen">
-        <table id="tabDates" class="table table-striped">
+    <div>
+        <table id="tabDates" class="table table-sm">
             <thead>
                 <tr>
                     <th>Beginn</th>
                     <th>Ende</th>
-                    <th>Raum</th>
-                    <th>Dozent</th>
-                    <th>Kurs</th>
+                    <th>Ort(e)</th>
                     <th>Bezeichnung</th>
+                    <th>Lehrende</th>
+                    <th>Kohorten</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,8 +35,6 @@
                                     <td>@date.Begin.ToString("HH:mm")</td>
                                     <td>@date.End.ToString("HH:mm")</td>
                                     <td>abgesagt</td>
-                                    <td>@Html.LecturerList(date.Hosts, true)</td>
-                                    <td>@date.Activity.ShortName</td>
                                     @if (date.Activity is Course)
                                     {
                                         <td><a href="@Url.Action("Details", "Course", new { id = date.Activity.Id })">@date.Activity.Name (@date.Activity.ShortName)</a></td>
@@ -45,6 +43,8 @@
                                     {
                                         <td>@date.Activity.Name</td>
                                     }
+                                    <td>@Html.LecturerList(date.Hosts, true)</td>
+                                    <td></td>
                                 </tr>
                             }
                             else
@@ -63,8 +63,6 @@
                                     {
                                         <td>@Html.RoomList(date.Rooms, true, false)</td>
                                     }
-                                    <td>@Html.LecturerList(date.Hosts, true)</td>
-                                    <td>@date.Activity.ShortName</td>
                                     @if (date.Activity is Course)
                                     {
                                         <td><a href="@Url.Action("Details", "Course", new { id = date.Activity.Id })">@date.Activity.Name (@date.Activity.ShortName)</a></td>
@@ -73,7 +71,8 @@
                                     {
                                         <td>@date.Activity.Name</td>
                                     }
-
+                                    <td>@Html.LecturerList(date.Hosts, true)</td>
+                                    <td></td>
                                 </tr>
                             }
                         }
@@ -84,9 +83,9 @@
                 <td>@date.Begin.ToString("HH:mm")</td>
                 <td>@date.End.ToString("HH:mm")</td>
                 <td>@Html.RoomList(date.Rooms, true, false)</td>
-                <td>@Html.LecturerList(date.Hosts, true)</td>
-                <td>@date.Activity.ShortName</td>
                 <td>@date.Activity.Name</td>
+                <td>@Html.LecturerList(date.Hosts, true)</td>
+                <td></td>
             </tr>
                     }
                 }

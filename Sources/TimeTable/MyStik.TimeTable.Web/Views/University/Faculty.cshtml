@@ -164,5 +164,69 @@
     </div>
 </div>
 
+<hr />
 
+<div class="row">
+    <div class="col-md-2">
+        <div class="card mb-3">
+            <div class="list-group">
+                <a href="@Url.Action("Organiser", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-building-fill-gear"></i> Raumverzeichnis</a>
+                <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-building-check"></i> Raumreservierungen</a>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="list-group">
+                <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-mortarboard"></i> Studienangebote</a>
+                <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
+                <a href="@Url.Action("Organiser", "Lottery", new {orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action"><i class="bi bi-shuffle"></i> Wahlverfahren</a>
+                <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-lines-fill"></i> Aufnahmeverfahren</a>
+                <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-book"></i> Abschlussarbeiten</a>
+                <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-boxes"></i> Modulkataloge</a>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="list-group">
+                <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-people"></i> Kohorten</a>
+                <a href="@Url.Action("Organiser", "Lecturer", new {id=Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-vcard"></i> Lehrende</a>
+                <a href="@Url.Action("Index", "Students", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-badge"></i> Studierende</a>
+                <a href="@Url.Action("List", "Alumni", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-hearts"></i> Alumni</a>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="list-group">
+                <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
+                <a href="@Url.Action("Index", "Infoscreens", new {id = Model.Id})" class="list-group-item list-group-item-action">Infoscreens</a>
+                <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action">Newsletter</a>
+                <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action">Rechte & Rollen</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="card">
+            <div class="list-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="input-group">
+                                <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                                <input type="text" class="form-control form-control-sm" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon">
+                                <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="First group">
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Second group">
+                                <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
+                                <a id="btnSearch" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-search"></i></a>
+                                <a id="btnDownload" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i></a>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Second group">
+                                <a id="btnDownload" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
