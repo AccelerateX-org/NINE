@@ -1,4 +1,4 @@
-﻿@model MyStik.TimeTable.Web.Models.OrganiserImportModel
+﻿@model MyStik.TimeTable.Web.Models.CurriculumImportModel
 @{
     ViewBag.Title = "Upload";
 }
@@ -12,14 +12,12 @@
         <div class="card">
             <div class="card-header">
                 <h4>
-                    <i class="bi bi-trophy"></i> @Model.Organiser.Name
+                    <i class="bi bi-trophy"></i> Lehrende für @Model.Organiser.ShortName importieren
                 </h4>
             </div>
             <div class="card-body">
-                @using (Html.BeginForm("ImportCSV", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                @using (Html.BeginForm("ImportMemberCSV", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
-                    @Html.AntiForgeryToken()
-
                     <fieldset>
                         @Html.HiddenFor(m => m.Organiser.Id)
                         <div class="mb-3 row">

@@ -4843,6 +4843,7 @@
     <Content Include="Views\Room\Availabilities.cshtml" />
     <Content Include="Views\Room\AddAvailability.cshtml" />
     <Content Include="Views\Semester\RoomsByWeek.cshtml" />
+    <Content Include="Views\Lecturer\ImportMember.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

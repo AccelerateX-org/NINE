@@ -92,7 +92,170 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Import(OrganiserImportModel model)
+        public ActionResult ImportCSV(OrganiserImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+            var lines = System.IO.File.ReadAllLines(tempFile);
+
+            CurriculumModuleCatalogImportModel catalog = null;
+
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.Organiser.Id);
+
+            if (org == null)
+                return View();
+
+            lines = lines.Skip(1).ToArray(); // Header entfernen
+
+            foreach (var line in lines)
+            {
+                var words = line.Split(';');
+
+                var catId = words[0].Trim();
+                var moduleId = words[1].Trim();
+                var dozId = words[2].Trim();
+                var title_de = words[3].Trim();
+                var title_en = words[4].Trim();
+                var examTypes = words[5].Trim();
+                var subjectId = words[6].Trim();
+                var subjectTitle_de = words[7].Trim();
+                var subjectTitle_en = words[8].Trim();
+                var sws = int.Parse(words[9].Trim());
+                var teachingType = words[10].Trim();
+
+                var cat = org.ModuleCatalogs.FirstOrDefault(x => x.Tag.Equals(catId));
+                if (cat == null)
+                {
+                    cat = new CurriculumModuleCatalog
+                    {
+                        Name = catId,
+                        Tag = catId,
+                        Organiser = org
+                    };
+
+                    Db.CurriculumModuleCatalogs.Add(cat);
+                }
+
+                // Modul anlegen
+                var module = cat.Modules.FirstOrDefault(x => x.Tag.Equals(moduleId));
+                if (module == null)
+                {
+                    if (string.IsNullOrEmpty(title_de))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        module = new CurriculumModule
+                        {
+                            Name = title_de,
+                            NameEn = title_en,
+                            Tag = moduleId,
+                            Catalog = cat,
+                        };
+                        Db.CurriculumModules.Add(module);
+                    }
+                }
+
+                // Modulverantwortlichen ergänzen
+                var member = org.Members.FirstOrDefault(x => x.ShortName.Equals(dozId));
+                if (member != null)
+                {
+                    var responsible = module.ModuleResponsibilities.FirstOrDefault(x => x.Member.Id == member.Id);
+                    if (responsible == null)
+                    {
+                        responsible = new ModuleResponsibility
+                        {
+                            Member = member,
+                            Module = module
+                        };
+                        module.ModuleResponsibilities.Add(responsible);
+                        Db.ModuleResponsibilities.Add(responsible);
+                    }
+                }
+
+                // Prüfungsformen ergänzen
+                // nur wenn es keine gibt
+                if (!(module.ExaminationOptions != null && module.ExaminationOptions.Any()))
+                {
+                    var examOptions = examTypes.Split(',');
+                    foreach (var examOption in examOptions)
+                    {
+                        var option = new ExaminationOption
+                        {
+                            Name = examOption.Trim(),
+                            Module = module,
+                            Fractions = new List<ExaminationFraction>()
+                        };
+                        Db.ExaminationOptions.Add(option);
+
+                        var examOptionClean = examOption.Trim();
+                        var examParts = examOptionClean.Split(':');
+
+                        foreach (var examPart in examParts)
+                        {
+                            var examPartClean = examPart.Trim();
+
+                            var weight = 1.0;
+                            var weightBegin = examPartClean.IndexOf('(');
+                            var weightEnd = examPartClean.IndexOf(')');
+                            if (weightBegin > 0 && weightEnd > weightBegin)
+                            {
+                                var weightString = examOptionClean.Substring(weightBegin + 1, weightEnd - weightBegin - 1);
+                                weight = double.Parse(weightString) / 100.0;
+                            }
+                            var examPartType = weightBegin > 0 ? examPartClean.Substring(0, weightBegin).Trim() : examPartClean;
+                            var examForm = Db.ExaminationForms.FirstOrDefault(x => x.ShortName.Equals(examPartType));
+
+                            if (examForm != null)
+                            {
+                                var fraction = new ExaminationFraction
+                                {
+                                    Form = examForm,
+                                    Weight = weight,
+                                    ExaminationOption = option,
+                                };
+
+                                Db.ExaminationFractions.Add(fraction);
+                            }
+                        }
+                    }
+                }
+
+                // Fächer ergänzen
+                var subject = module.ModuleSubjects.FirstOrDefault(x => x.Tag.Equals(subjectId));
+                if (subject == null)
+                {
+                    var teachingForm = Db.TeachingFormats.FirstOrDefault(x => x.Tag.Equals(teachingType));
+
+                    if (teachingForm != null)
+                    {
+                        subject = new ModuleSubject
+                        {
+                            Name = subjectTitle_de,
+                            NameEn = subjectTitle_en,
+                            Tag = subjectId,
+                            SWS = sws,
+                            TeachingFormat = teachingForm,
+                            Module = module
+                        };
+
+                        Db.ModuleCourses.Add(subject);
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", new { id = org.Id });
+        }
+
+
+
+        [HttpPost]
+        public ActionResult ImportJSON(OrganiserImportModel model)
         {
             string tempFile = Path.GetTempFileName();
 

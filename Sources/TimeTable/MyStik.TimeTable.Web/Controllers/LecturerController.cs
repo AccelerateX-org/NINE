@@ -667,7 +667,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult ImportLecturer(Guid id)
+        public ActionResult ImportMember(Guid id)
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
 
@@ -680,7 +680,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ImportAreasCSV(CurriculumImportModel model)
+        public ActionResult ImportMemberCSV(CurriculumImportModel model)
         {
             string tempFile = Path.GetTempFileName();
 
@@ -689,7 +689,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var lines = System.IO.File.ReadAllLines(tempFile);
 
             // Im Augenblick ist es ein Import für einen existierenden Studiengang
-            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.Organiser.Id);
 
             lines = lines.Skip(1).ToArray(); // Header entfernen
 
