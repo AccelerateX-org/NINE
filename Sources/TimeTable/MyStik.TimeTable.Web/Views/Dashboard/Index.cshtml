@@ -50,6 +50,26 @@
     </div>
 }
 
+<div class="row">
+    <div class="btn-toolbar">
+        <div class="btn-group me-2">
+            <a id="btnBackward" href="javascript:onBack()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+            <a id="btnForward" href="javascript:onForward()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+            <a id="btnDelta1" href="javascript:toggleDelta1()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>1</a>
+            <a id="btnDelta7" href="javascript:toggleDelta7()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>7</a>
+        </div>
+        <div class="btn-group me-2">
+            <a id="btnDate" href="javascript:toggleDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-date"></i></a>
+            <a id="btnDay" href="javascript:toggleDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
+        </div>
+        <div class="btn-group">
+            <a id="btnNextDate" href="javascript:toggleNextDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-fast-forward"></i></a>
+        </div>
+    </div>
+    <div id="dateCurrent"></div>
+</div>
+
+
 <h2>Bisheriges Layout</h2>
 <div class="row">
     <div class="col-md-4">
@@ -797,11 +817,45 @@
         <script type="module" src="@Url.Content("~/Assets/libs/md-block/md-block.js")"></script>
     *@
 
-    <script>
+<script>
+
+    var currentDate = new Date();
+    var delta = 1;
+    var useDayOfWeek = -1;
+    var useNextDate = true;
 
         document.addEventListener('DOMContentLoaded', function () {
             initDatePickerTopLeft("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
             onDateChanged("@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)");
+
+            //localStorage.removeItem("grapevine.dashboard.delta");
+
+            str = localStorage.getItem("grapevine.dashboard.delta");
+            console.log(str);
+            delta = Number(str);
+            console.log(delta);
+            if (delta != 1 && delta != 7) {
+                delta = 1;
+            }
+
+            str = localStorage.getItem("grapevine.dashboard.dayOfWeek");
+            console.log(str);
+            useDayOfWeek = Number(str);
+            console.log(useDayOfWeek);
+            if (useDayOfWeek <= 0 || useDayOfWeek > 7) {
+                useDayOfWeek = -1;
+            }
+
+            str = localStorage.getItem("grapevine.dashboard.nextDate");
+            console.log(str);
+            useNextDate = Boolean(str?.toLowerCase()?.trim());
+            console.log(useNextDate);
+
+            updateToggleDelta();
+            updateToggleDay();
+            updateToggleNextDate();
+
+            updateCurrentDate();
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -859,8 +913,103 @@
                 });
         }
 
+        function onBack() {
+            currentDate.setDate(currentDate.getDate() - delta);
+            updateCurrentDate();
+        }
 
-    </script>
+        function onForward() {
+            currentDate.setDate(currentDate.getDate() + delta);
+            updateCurrentDate();
+    }
+
+        function toggleDelta1() {
+            delta = 1;
+            localStorage.setItem("grapevine.dashboard.delta", delta.toString());
+            updateToggleDelta();
+        }
+
+        function toggleDelta7() {
+            delta = 7;
+            localStorage.setItem("grapevine.dashboard.delta", delta.toString());
+            updateToggleDelta();
+        }
+
+        function toggleDate() {
+            useDayOfWeek = -1;
+            setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
+            updateToggleDay();
+
+            currentDate = new Date();
+            updateCurrentDate();
+        }
+
+        function toggleDay() {
+            useDayOfWeek = 1;
+            setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
+            updateToggleDay();
+
+            currentDate = getNextDayOfWeek(currentDate, 1);
+            updateCurrentDate();
+        }
+
+        function toggleNextDate() {
+            useNextDate = !useNextDate;
+            setItem("grapevine.dashboard.nextDate", useNextDate.toString());
+            updateToggleNextDate();
+        }
+
+    function updateCurrentDate() {
+        $("#dateCurrent").html(currentDate.toLocaleDateString('de-DE'));
+    }
+
+    function updateToggleDelta() {
+        if (delta == 1) {
+            $("#btnDelta1").addClass("active");
+            $("#btnDelta7").removeClass("active");
+        } else {
+            $("#btnDelta7").addClass("active");
+            $("#btnDelta1").removeClass("active");
+        }
+    }
+
+        function updateToggleDay() {
+            if (useDayOfWeek < 0) {
+                $("#btnDate").addClass("active");
+                $("#btnDay").removeClass("active");
+            } else {
+                $("#btnDay").addClass("active");
+                $("#btnDate").removeClass("active");
+            }
+    }
+
+    function updateToggleNextDate() {
+        if (useNextDate) {
+            $("#btnNextDate").addClass("active");
+        } else {
+            $("#btnNextDate").removeClass("active");
+        }
+    }
+
+         function getNextDayOfWeek(startDate, dayOfWeek) {
+          // Clone the date so we don't mutate the original
+          const date = new Date(startDate.getTime());
+
+          const currentDay = date.getDay();
+          let daysToAdd = dayOfWeek - currentDay;
+
+          // If the day is today or has already passed this week, add 7 days
+          if (daysToAdd <= 0) {
+            daysToAdd += 7;
+          }
+
+          date.setDate(date.getDate() + daysToAdd);
+
+          return date;
+        }
+
+
+</script>
 
 
 }
