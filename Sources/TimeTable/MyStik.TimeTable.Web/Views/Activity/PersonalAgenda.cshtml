@@ -1,0 +1,124 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.AgendaViewModel
+
+<div class="list-group-item list-group-item-primary"><strong>@Model.Title</strong></div>
+
+@if (Model.Activities.Any())
+{
+    foreach (var activity in Model.ActivitiesWithDates)
+    {
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.TimeSpanWithDate(activity.Date)
+                </div>
+                <div class="col-md-2">
+                    @Html.RoomList(activity.Date.Rooms)
+                </div>
+                <div class="col-md-4">
+                    @if (activity.Activity is Course)
+                    {
+                        <a href="@Url.Action("Details", "Course", new { id = activity.Activity.Id })">@activity.Activity.Name (@activity.Activity.ShortName)</a>
+                    }
+                    @if (activity.Activity is OfficeHour)
+                    {
+                        if (activity.Subscription != null)
+                        {
+                            <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new { id = activity.Date.Id })">@activity.Activity.Name</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("OfficeHour", "Lecturer", new { id = activity.Activity.Id })">@activity.Activity.Name</a>
+                        }
+                    }
+                </div>
+                <div class="col-md-2">
+                    @Html.LecturerList(activity.Date.Hosts)
+                </div>
+                <div class="col-md-1">
+                    @if (activity.Activity is Course)
+                    {
+                        if (activity.Subscription != null)
+                        {
+                            if (activity.Subscription.OnWaitingList)
+                            {
+                                <span><i class="bi bi-hourglass"></i></span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-person-check text-success"></i></span>
+                            }
+                        }
+                        else
+                        {
+                            var tn = activity.Activity.Occurrence.Subscriptions.Count();
+
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-person-check"></i> @tn
+                            </span>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    foreach (var activity in Model.ActivitiesNoDates)
+    {
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-4">
+                    @if (activity.Activity is Course)
+                    {
+                        <a href="@Url.Action("Details", "Course", new { id = activity.Activity.Id })">@activity.Activity.Name (@activity.Activity.ShortName)</a>
+                    }
+                    @if (activity.Activity is OfficeHour)
+                    {
+                        if (activity.Subscription != null)
+                        {
+                            <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new { id = activity.Date.Id })">@activity.Activity.Name</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("OfficeHour", "Lecturer", new { id = activity.Activity.Id })">@activity.Activity.Name</a>
+                        }
+                    }
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-1">
+                    @if (activity.Activity is Course)
+                    {
+                        if (activity.Subscription != null)
+                        {
+                            if (activity.Subscription.OnWaitingList)
+                            {
+                                <span><i class="bi bi-hourglass"></i></span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-person-check text-success"></i></span>
+                            }
+                        }
+                        else
+                        {
+                            var tn = activity.Activity.Occurrence.Subscriptions.Count();
+
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-person-check"></i> @tn
+                            </span>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="list-group-item list-group-item-warning"><i>Keine Aktivitäten</i></div>
+}

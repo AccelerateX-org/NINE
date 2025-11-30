@@ -50,26 +50,6 @@
     </div>
 }
 
-<div class="row">
-    <div class="btn-toolbar">
-        <div class="btn-group me-2">
-            <a id="btnBackward" href="javascript:onBack()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
-            <a id="btnForward" href="javascript:onForward()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
-            <a id="btnDelta1" href="javascript:toggleDelta1()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>1</a>
-            <a id="btnDelta7" href="javascript:toggleDelta7()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>7</a>
-        </div>
-        <div class="btn-group me-2">
-            <a id="btnDate" href="javascript:toggleDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-date"></i></a>
-            <a id="btnDay" href="javascript:toggleDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
-        </div>
-        <div class="btn-group">
-            <a id="btnNextDate" href="javascript:toggleNextDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-fast-forward"></i></a>
-        </div>
-    </div>
-    <div id="dateCurrent"></div>
-</div>
-
-
 <h2>Bisheriges Layout</h2>
 <div class="row">
     <div class="col-md-4">
@@ -486,7 +466,7 @@
                 <a href="@Url.Action("PersonalPlanWeekly", "Activity")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-week"></i> Stundenplan</a>
                 @if (Model.Student != null && Model.Student.LastSemester == null)
                 {
-                    <a href="@Url.Action("Subscription", "OfficeHour")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-check"></i> Sprechstundentermine</a>
+                    <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-check"></i> Sprechstundentermine</a>
                     <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
                         <i class="bi bi-mortarboard"></i> Studiengang @Model.Student.Curriculum.ShortName
                     </a>
@@ -542,6 +522,43 @@
     </div>
     <div class="col-md-10">
         <div class="card">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-toolbar">
+                        <div class="btn-group me-2">
+                            <a id="btnBackward" href="javascript:onBack()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                            <a id="btnForward" href="javascript:onForward()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                            <a id="btnDelta1" href="javascript:toggleDelta1()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>1</a>
+                            <a id="btnDelta7" href="javascript:toggleDelta7()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>7</a>
+                        </div>
+                        <div class="btn-group me-2">
+                            <a id="btnDate" href="javascript:toggleDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-date"></i></a>
+                            <a id="btnDay" href="javascript:toggleDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
+                        </div>
+                        <div class="btn-group">
+                            <a id="btnNextDate" href="javascript:toggleNextDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-fast-forward"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="viewAgendaPlaceholder">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <p class="placeholder-glow">
+                            <span class="placeholder col-7"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-8"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div id="viewAgenda"></div>
+            </div>
+
+            @*
             <div class="list-group">
                 @foreach (var summary in Model.CurrentSemester.OfferedCourses)
                 {
@@ -798,7 +815,7 @@
                     }
                 }
             </div>
-
+                *@
         </div>
     </div>
 </div>
@@ -822,14 +839,14 @@
     var currentDate = new Date();
     var delta = 1;
     var useDayOfWeek = -1;
-    var useNextDate = true;
+    var useNextDate = false;
 
         document.addEventListener('DOMContentLoaded', function () {
             initDatePickerTopLeft("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
             onDateChanged("@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)");
 
             //localStorage.removeItem("grapevine.dashboard.delta");
-
+            /*
             str = localStorage.getItem("grapevine.dashboard.delta");
             console.log(str);
             delta = Number(str);
@@ -850,6 +867,8 @@
             console.log(str);
             useNextDate = Boolean(str?.toLowerCase()?.trim());
             console.log(useNextDate);
+            */
+
 
             updateToggleDelta();
             updateToggleDay();
@@ -925,19 +944,21 @@
 
         function toggleDelta1() {
             delta = 1;
-            localStorage.setItem("grapevine.dashboard.delta", delta.toString());
+            //localStorage.setItem("grapevine.dashboard.delta", delta.toString());
             updateToggleDelta();
+            updateCurrentDate();
         }
 
         function toggleDelta7() {
             delta = 7;
-            localStorage.setItem("grapevine.dashboard.delta", delta.toString());
+            //localStorage.setItem("grapevine.dashboard.delta", delta.toString());
             updateToggleDelta();
+            updateCurrentDate();
         }
 
         function toggleDate() {
             useDayOfWeek = -1;
-            setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
+            //setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
             updateToggleDay();
 
             currentDate = new Date();
@@ -946,7 +967,7 @@
 
         function toggleDay() {
             useDayOfWeek = 1;
-            setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
+            //setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
             updateToggleDay();
 
             currentDate = getNextDayOfWeek(currentDate, 1);
@@ -955,12 +976,35 @@
 
         function toggleNextDate() {
             useNextDate = !useNextDate;
-            setItem("grapevine.dashboard.nextDate", useNextDate.toString());
+            //setItem("grapevine.dashboard.nextDate", useNextDate.toString());
             updateToggleNextDate();
+
+            updateCurrentDate();
         }
 
     function updateCurrentDate() {
-        $("#dateCurrent").html(currentDate.toLocaleDateString('de-DE'));
+        //$("#dateCurrent").html(currentDate.toLocaleDateString('de-DE'));
+
+            $("#viewAgenda").hide();
+            $("#viewAgendaPlaceholder").show();
+
+
+        $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("PersonalAgenda", "Activity")',
+                data: {
+                    day: currentDate.toISOString(),
+                    delta: delta,
+                    dayOfWeek: useDayOfWeek,
+                    nextDate: useNextDate
+                },
+                success: function(data, success, xhr) {
+                    $('#viewAgenda').html(data);
+                    $("#viewAgenda").show();
+                    $("#viewAgendaPlaceholder").hide();
+                }
+            });
     }
 
     function updateToggleDelta() {

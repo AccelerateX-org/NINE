@@ -1103,7 +1103,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Responsibility(Guid id, Guid? memberId)
+        public ActionResult Responsibility(Guid? id, Guid? memberId)
         {
             var user = GetCurrentUser();
             var semester = SemesterService.GetSemester(id);

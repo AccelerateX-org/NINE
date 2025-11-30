@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,11 @@ using System.Web.Mvc;
 using log4net;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.SignalR.Messaging;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using static System.Data.Entity.Infrastructure.Design.Executor;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -777,6 +780,210 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView(model);
         }
+
+        [HttpPost]
+        public PartialViewResult PersonalAgenda(string day, int delta, int dayOfWeek, bool nextDate)
+        {
+            var model = new AgendaViewModel();
+
+            var user = UserManager.FindByName(User.Identity.Name);
+
+            var dateDay = DateTime.Parse(day);
+
+            var sb = new StringBuilder();
+            sb.AppendFormat("{0}: ", dateDay.ToShortDateString());
+            if (delta == 1)
+            {
+                sb.Append("Tagesprogram");
+            }
+            else if (delta == 7)
+            {
+                sb.Append("7-Tage Vorschau");
+            }
+            else
+            {
+                sb.Append("Fehler");
+            }
+
+            if (dayOfWeek <= 0)
+            {
+                sb.AppendFormat(" | ab aktuellem Tag");
+            }
+            else if (dayOfWeek == 1)
+            {
+                sb.AppendFormat(" | ab Wochenbeginn");
+            }
+            else
+            {
+                sb.Append("Fehler");
+            }
+
+            if (nextDate) {
+                sb.AppendFormat(" | nächste Termine");
+            }
+
+
+            var begin = dateDay.Date;
+            var end = dateDay.AddDays(delta).Date;
+            var sem = SemesterService.GetSemester(dateDay);
+
+            sb.AppendFormat(" | {0} - {1} | {2}", begin, end, sem.Name);
+
+            model.Title = sb.ToString();
+
+
+            // nur der aktuelle Tag => mit und ohne next Dates
+
+            // Wochenvorschau => mit und ohne next Dates
+
+            // Datum | Begin => Sortierung
+            // Activity
+            // Rooms => aus Date
+            // Hosts => aus Date
+
+
+            // Alle Aktivitäten, in denen ich als Dozent eingetragen bin
+            // oder in denen ich eingetragen bin
+            // mit Terminen in der Zukunft
+            // Aktivitäten, die zum Semester des gewählten Tages gehören
+            // bei denen ich als Dozent eingetragen bin und die keine Termine mehr haben
+
+            // Aktivitäten, die zum Semester des gewählten Tages gehören
+            // in denen ich eingetragen bin und die keine Termine mehr haben
+            /*
+             * var coursesWithDates =
+                           Db.Activities.Where(d =>
+                               (
+                                   (d.Occurrence != null && d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                                   d.Dates.Any(x => x.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id))))
+                                   &&
+                                   d.Dates.Any(x => x.End >= begin)
+                               )
+                               ||
+                               (
+                                   (d.Occurrence != null && d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                                   d.Dates.Any(x => x.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))) 
+                                   &&
+                                   d.Semester != null && d.Semester.Id == sem.Id && !d.Dates.Any(x => x.End >= begin)
+                               )
+                               ).ToList();
+           */
+            var activities = new List<AgendaActivityViewModel>();
+
+            var coursesWithDates =
+                Db.Activities.Where(d =>
+                    (
+                        (d.Occurrence != null && d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                        d.Dates.Any(x => x.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id))))
+                        &&
+                        d.Dates.Any(x => x.End >= begin)
+                    )
+                    ).Distinct().ToList();
+
+            // Termine nehmen
+            // von bis
+            foreach (var c in coursesWithDates) 
+            {
+                var subscription = c.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+                var dates = c.Dates.Where(d => d.End >= begin && d.End <= end).ToList();
+
+                if (dates.Any())
+                {
+                    foreach (var d in dates) {
+                        var agenda = new AgendaActivityViewModel
+                        {
+                            Activity = c,
+                            Date = d,
+                            Subscription = subscription,
+                        };
+                        activities.Add(agenda);
+                    }
+                }
+                else
+                {
+                    if (nextDate)
+                    {
+                        var nextCourseDate = c.Dates.Where(x => x.End > begin).OrderBy(x => x.Begin).FirstOrDefault();
+                        var agenda = new AgendaActivityViewModel
+                        {
+                            Activity = c,
+                            Subscription = subscription,
+                            Date = nextCourseDate
+                        };
+                        activities.Add(agenda);
+                    }
+                    else
+                    {
+                        // die nächsten Termine werden nicht angezeigt.
+                    }
+                }
+
+            }
+
+            var allMySemesterWithOfficeHours =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                    x.Semester.Id == sem.Id &&
+                    x.Dates.Any(d => d.End >= begin)).ToList();
+
+            foreach (var officeHour in allMySemesterWithOfficeHours)
+            {
+
+                var dates = officeHour.Dates.Where(d => d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                    .ToList();
+
+                foreach (var d in dates)
+                {
+                    var subscription = d.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+                    var agenda = new AgendaActivityViewModel
+                    {
+                        Activity = officeHour,
+                        Date = d,
+                        Subscription = subscription,
+                    };
+                    activities.Add(agenda);
+                }
+
+
+                // alle slots
+                dates = officeHour.Dates.Where(d => d.Slots.Any(s => s.Occurrence.Subscriptions.Any(g => g.UserId.Equals(user.Id))))
+                    .ToList();
+
+                foreach (var date in dates)
+                {
+                    var slots = date.Slots.Where(d => d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                        .ToList();
+
+                    foreach(var slot in slots)
+                    {
+                        var subscription = slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+                        var agenda = new AgendaActivityViewModel
+                        {
+                            Activity = officeHour,
+                            Date = date,
+                            Subscription = subscription,
+                        };
+                        activities.Add(agenda);
+                    }
+
+                }
+            }
+
+            model.Activities = activities;
+            model.ActivitiesWithDates = activities.Where(x => x.Date != null).OrderBy(x => x.Date.Begin).ToList();
+            model.ActivitiesNoDates = activities.Where(x => x.Date == null).ToList();
+
+            // alle eigenen Reservierungen
+            var reservations =
+                Db.Activities.OfType<Reservation>()
+                    .Where(r => r.UserId.Equals(user.Id) && r.Dates.Any(d => d.End >= begin))
+                    .ToList();
+
+
+
+            return PartialView(model);
+        }
+
+
 
         /// <summary>
         /// 

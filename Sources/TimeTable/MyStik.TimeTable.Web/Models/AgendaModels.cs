@@ -14,13 +14,22 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public AgendaViewModel()
         {
+            Activities = new List<AgendaActivityViewModel>();
             Days = new List<AgendaDayViewModel>();
         }
+
+        public string Title { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public List<AgendaDayViewModel> Days { get; private set; }
+
+        public List<AgendaActivityViewModel> Activities { get; set; }
+
+        public List<AgendaActivityViewModel> ActivitiesWithDates { get; set; }
+        public List<AgendaActivityViewModel> ActivitiesNoDates { get; set; }
+
 
     }
 
@@ -46,6 +55,7 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<AgendaActivityViewModel> Activities { get; private set; }
+
 
         /// <summary>
         /// 
@@ -75,6 +85,7 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class AgendaActivityViewModel
     {
+        public Activity Activity { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -84,6 +95,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ActivitySlot Slot { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
 
         /// <summary>
         /// 

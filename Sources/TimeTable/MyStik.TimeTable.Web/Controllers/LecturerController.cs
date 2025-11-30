@@ -57,7 +57,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult PersonalDates(Guid id)
+        public ActionResult PersonalDates(Guid? id)
         {
             var semester = SemesterService.GetSemester(id);
 
@@ -585,7 +585,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult OfficeHours(Guid id)
+        public ActionResult OfficeHours(Guid? id)
         {
             var user = GetCurrentUser();
             var infoService = new OfficeHourInfoService(UserManager);
