@@ -228,7 +228,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public ActionResult PersonalPlanWeekly(Guid id)
+        public ActionResult PersonalPlanWeekly(Guid? id)
         {
             var courseService = new CourseService(Db);
 

@@ -2,7 +2,7 @@
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Services
 <!DOCTYPE html>
-<html lang="de-DE">
+<html lang="de-DE" data-bs-theme="dark" id="mainElement">
 <head>
     <meta content="de" http-equiv="Content-Language">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -18,29 +18,30 @@
     *@
     @RenderSection("styles", required: false)
     <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/img/cap/broadcast.ico")" />
-    
-@*
-    @if (!Request.IsLocal)
-    {
-        <!-- Matomo -->
-        <script type="text/javascript">
-            var _paq = window._paq = window._paq || [];
-            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function () {
-                var u = "//shortcut.wi.hm.edu/analytics/";
-                _paq.push(['setTrackerUrl', u + 'matomo.php']);
-                _paq.push(['setSiteId', '1']);
-                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-                g.type = 'text/javascript'; g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
-            })();
-        </script>
-        <!-- End Matomo Code -->
-    }
+
+    @*
+        @if (!Request.IsLocal)
+        {
+            <!-- Matomo -->
+            <script type="text/javascript">
+                var _paq = window._paq = window._paq || [];
+                /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+                _paq.push(['trackPageView']);
+                _paq.push(['enableLinkTracking']);
+                (function () {
+                    var u = "//shortcut.wi.hm.edu/analytics/";
+                    _paq.push(['setTrackerUrl', u + 'matomo.php']);
+                    _paq.push(['setSiteId', '1']);
+                    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                    g.type = 'text/javascript'; g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+                })();
+            </script>
+            <!-- End Matomo Code -->
+        }
+        style="background-color: #ffffff"
     *@
 </head>
-<body style="background-color: #ffffff">
+<body>
     @{
         var userService = new UserInfoService();
         var user = userService.GetUser(User.Identity.GetUserId());
@@ -55,7 +56,6 @@
         {
             <form class="d-flex" action="@Url.Action("Index", "Search")">
                 <input class="form-control me-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
-                <a href="https://acceleratex-org.github.io/NINE/" target="_blank" class="btn btn-outline-light"><i class="bi bi-question-circle"></i></a>
                 @*
         <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
                 *@
@@ -81,7 +81,16 @@
                 </li>
                 *@
                 <li class="nav-item">
-                    <a aria-label="Logout" href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
+                    <div class="btn-group">
+                        <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-sun"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="javascript:onSetTheme('light')"><i class="bi bi-sun"></i></a></li>
+                            <li><a class="dropdown-item" href="javascript:onSetTheme('dark')"><i class="bi bi-moon-stars-fill"></i></a></li>
+                        </ul>
+                        <a aria-label="Logout" href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
+                    </div>
                 </li>
             }
             else
@@ -99,23 +108,24 @@
 </div>
 
 
+<div class="container-fluid">
+    <footer class="row mt-3">
+        <div class="col">
+            <div class="d-flex flex-row mb-3">
+                <a class="p-2" href="https://github.com/AccelerateX-org">HMster @Html.AssemblyVersion()</a>
+                <a class="p-2" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
+                <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
 
-<footer class="row mt-3"  style="background-color: #ffffff">
-    <div class="col">
-        <div class="d-flex flex-row mb-3">
-            <a class="p-2" href="https://github.com/AccelerateX-org">HMster @Html.AssemblyVersion()</a>
-            <a class="p-2" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
-            <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
-
-            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
-                <img alt="Language de" aria-label="Switch to language de" src="~/Assets/img/flags/de.png" />
-            </a>
-            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
-                <img alt="Language en" aria-label="Switch to language en" src="~/Assets/img/flags/gb.png" />
-            </a>
+                <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
+                    <img alt="Language de" aria-label="Switch to language de" src="~/Assets/img/flags/de.png" />
+                </a>
+                <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
+                    <img alt="Language en" aria-label="Switch to language en" src="~/Assets/img/flags/gb.png" />
+                </a>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
+</div>
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
@@ -123,6 +133,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="list-group">
+        <a class="list-group-item list-group-item-action" href="https://acceleratex-org.github.io/NINE/" target="_blank"><i class="bi bi-question-circle"></i> Dokumenation</a>
         @if (Request.IsAuthenticated)
         {
             <div class="list-group-item list-group-item-secondary">@user.FullName</div>
@@ -171,7 +182,20 @@
     @RenderSection("scripts", required: false)
 
     <script type="text/javascript">
+        var themeName = "light";
+
     $(function() {
+
+
+        if (localStorage.getItem("grapevine.theme") === null) {
+            themeName = "light";
+            localStorage.setItem("grapevine.theme", themeName.toString());
+        } else {
+            themeName = localStorage.getItem("grapevine.theme");
+        }
+
+        updateTheme();
+
         if (document.cookie.indexOf("cookieNotification") < 0) {
             $('#cookie-consent').slideDown('slow');
         }
@@ -185,6 +209,19 @@
                 location.href = '@Url.Action("TermsOfUse", "Home")';
             });
     });
+
+        function onSetTheme(theme) {
+            themeName = theme;
+            localStorage.setItem("grapevine.theme", themeName.toString());
+            updateTheme();
+        }
+
+        function updateTheme() {
+            const element = document.getElementById("mainElement");
+            element.setAttribute("data-bs-theme", themeName);
+
+        }
+
     </script>
     @if (!Request.IsLocal)
     {

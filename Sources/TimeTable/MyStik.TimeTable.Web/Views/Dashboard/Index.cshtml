@@ -2,10 +2,11 @@
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.TeachingOverviewModel
 @{
-    if (Request.IsLocal)
+    /*if (Request.IsLocal)
     {
         Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     }
+    */
     ViewBag.Title = "Dashboard";
 
     var db = new TimeTableDbContext();
@@ -37,6 +38,14 @@
                     }
                 </li>
             }
+        <li class="breadcrumb-item">
+            <div class="btn-group">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="switchLayout" onchange="onSwitchLayout()" aria-label="Schalter Layout">
+                    <label class="form-check-label" for="switchLayout" id="switchLayoutLabel">Neues Layout</label>
+                </div>
+            </div>
+        </li>
         </ol>
     </nav>
 </div>
@@ -50,8 +59,7 @@
     </div>
 }
 
-<h2>Bisheriges Layout</h2>
-<div class="row">
+<div id="oldLayout" class="row">
     <div class="col-md-4">
         @if (Model.Candidatures.Any())
         {
@@ -239,80 +247,6 @@
                 </div>
             </div>
         </div>
-
-        @*
-            @if (Model.Student != null && Model.Student.LastSemester == null)
-            {
-                var org = Model.Student.Curriculum.Organiser;
-                var rooms = db.Rooms.Where(x => x.IsForLearning && x.Assignments.Any(a => a.Organiser.Id == org.Id && a.IsOwner)).ToList();
-
-                if (rooms.Any())
-                {
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card mb-3">
-                                <div class="card-header bg-white">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <h5 class="card-title">Aktuell freie Lernräume</h5>
-                                    </div>
-                                </div>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nummer</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var room in rooms)
-                                        {
-                                            var dates = room.Dates.Where(x => x.Begin <= now && now <= x.End).ToList();
-
-                                            <tr>
-                                                <td>@room.Number</td>
-                                                @if (dates.Any())
-                                                {
-                                                    <td>
-                                                        @foreach (var date in dates)
-                                                        {
-                                                            <div>@date.Activity.ShortName</div>
-                                                        }
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>aktuell frei</td>
-                                                }
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                                <!--
-                                <div id="placeholderRooms">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title placeholder-glow">
-                                                <span class="placeholder col-6"></span>
-                                            </h5>
-                                            <p class="card-text placeholder-glow">
-                                                <span class="placeholder col-7"></span>
-                                                <span class="placeholder col-4"></span>
-                                                <span class="placeholder col-4"></span>
-                                                <span class="placeholder col-6"></span>
-                                                <span class="placeholder col-8"></span>
-                                            </p>
-                                            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                -->
-                                <div id="listRooms"></div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-        *@
     </div>
     <div class="col-md-6">
         <div class="row">
@@ -455,24 +389,22 @@
 </div>
 
 <hr />
-<h2>Neues Layout (Vorschau)</h2>
-<p>Besser / schlechter / fehlt was? Kommentare gerne unter "Problem melden"</p>
-<div class="row">
+<div id="newLayout" class="row">
     <div class="col-md-2">
         <div class="card mb-3">
             <div class="list-group">
                 <div class="list-group-item list-group-item-primary"><i class="bi bi-person-workspace"></i> Mein..</div>
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-day"></i> Kalender</a>
-                <a href="@Url.Action("PersonalPlanWeekly", "Activity")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-week"></i> Stundenplan</a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item list-group-item-action" aria-label="Kalender"><i class="bi bi-calendar-day"></i> Kalender</a>
+                <a href="@Url.Action("PersonalPlanWeekly", "Activity")" class="list-group-item list-group-item-action" aria-label="Stundenplan"><i class="bi bi-calendar-week"></i> Stundenplan</a>
                 @if (Model.Student != null && Model.Student.LastSemester == null)
                 {
-                    <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action"><i class="bi bi-calendar-check"></i> Sprechstundentermine</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")">
+                    <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action" aria-label="Sprechstundentermine"><i class="bi bi-calendar-check"></i> Sprechstundentermine</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")" aria-label="Studienbuch">
                         <i class="bi bi-mortarboard"></i> Studiengang @Model.Student.Curriculum.ShortName
                     </a>
                     if (Model.Thesis != null)
                     {
-                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action">
+                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action" aria-label="Abschlussarbeit">
                             <i class="bi bi-file-text"></i> Abschlussarbeit
                         </a>
                     }
@@ -480,7 +412,7 @@
                     {
                         if (Model.Student.Curriculum.ThesisDuration > 0)
                         {
-                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action">
+                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action" aria-label="Abschlussarbeit">
                                 <i class="bi bi-file-text"></i> Abschlussarbeit
                             </a>
                         }
@@ -488,33 +420,33 @@
                 }
                 @if (Model.Candidatures.Any())
                 {
-                    <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action"><i class="bi bi-journals"></i> Aufnahmeverfahren</a>
+                    <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action" aria-label="Aufnahmeverfahren"><i class="bi bi-journals"></i> Aufnahmeverfahren</a>
                 }
                 @if (Model.Members.Any())
                 {
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("OfficeHours", "Lecturer")"><i class="bi bi-people"></i> Sprechstunden</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "ThesisSupervision")"><i class="bi bi-book"></i> Abschlussarbeiten</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalDates", "Lecturer")"><i class="bi bi-calendar-check"></i> Verfügbarkeiten</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "CurriculumModule")"><i class="bi bi-person-badge"></i> Module</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Responsibility", "Courses")"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Card", "Person")"><i class="bi bi-person-vcard"></i> Visitenkarte</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "VirtualRoom")"><i class="bi bi-person-video"></i> Virtuelle Räume</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")"><i class="bi bi-display"></i> Aushänge</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("OfficeHours", "Lecturer")" aria-label="Sprechstunden"><i class="bi bi-people"></i> Sprechstunden</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "ThesisSupervision")" aria-label="Abschlussarbeiten"><i class="bi bi-book"></i> Abschlussarbeiten</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalDates", "Lecturer")" aria-label="Verfügbarkeiten"><i class="bi bi-calendar-check"></i> Verfügbarkeiten</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "CurriculumModule")" aria-label="Module"><i class="bi bi-boxes"></i> Module</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Responsibility", "Courses")" aria-label="Lehrveranstaltungen"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Card", "Person")" aria-label="Visitenkarte"><i class="bi bi-person-vcard"></i> Visitenkarte</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "VirtualRoom")" aria-label="Virtuele Räume"><i class="bi bi-person-video"></i> Virtuelle Räume</a>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")" aria-activedescendant="Aushänge"><i class="bi bi-display"></i> Aushänge</a>
                 }
             </div>
         </div>
         <div class="card mb-3">
             <div class="list-group">
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")" aria-label="Vorlesungsverzeichnis">
                     <i class="bi bi-collection-play"></i> Vorlesungsverzeichnis
                 </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")" aria-label="Sprechstundenverzeichnis">
                     <i class="bi bi-people"></i> Sprechstundenverzeichnis
                 </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")" aria-label="Raumverzeichnis">
                     <i class="bi bi-building"></i> Raumverzeichnis
                 </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")" aria-label="Aufnahmeverfahren">
                     <i class="bi bi-journals"></i> Aufnahmeverfahren
                 </a>
             </div>
@@ -526,17 +458,20 @@
                 <div class="list-group-item">
                     <div class="btn-toolbar">
                         <div class="btn-group me-2">
-                            <a id="btnBackward" href="javascript:onBack()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
-                            <a id="btnForward" href="javascript:onForward()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
-                            <a id="btnDelta1" href="javascript:toggleDelta1()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>1</a>
-                            <a id="btnDelta7" href="javascript:toggleDelta7()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-slash-minus"></i>7</a>
+                            <a id="btnBackward" href="javascript:onBack()" class="btn btn-outline-secondary btn-sm" aria-label="Tag zurück"><i class="bi bi-chevron-left"></i></a>
+                            <a id="btnForward" href="javascript:onForward()" class="btn btn-outline-secondary btn-sm" aria-label="Tag weiter"><i class="bi bi-chevron-right"></i></a>
+                            <a id="btnDelta1" href="javascript:toggleDelta1()" class="btn btn-outline-secondary btn-sm" aria-label="Tagesansicht"><i class="bi bi-plus-slash-minus"></i>1</a>
+                            <a id="btnDelta7" href="javascript:toggleDelta7()" class="btn btn-outline-secondary btn-sm" aria-label="7 Tagevorherschau"><i class="bi bi-plus-slash-minus"></i>7</a>
                         </div>
                         <div class="btn-group me-2">
-                            <a id="btnDate" href="javascript:toggleDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-date"></i></a>
-                            <a id="btnDay" href="javascript:toggleDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-day"></i></a>
+                            <a id="btnDate" href="javascript:toggleDate()" class="btn btn-outline-secondary btn-sm" aria-label="ab aktuellem Tag"><i class="bi bi-calendar-date"></i></a>
+                            <a id="btnDay" href="javascript:toggleDay()" class="btn btn-outline-secondary btn-sm" aria-label="ab Wochenbeginn"><i class="bi bi-calendar-day"></i></a>
+                        </div>
+                        <div class="btn-group me-2">
+                            <a id="btnNextDate" href="javascript:toggleNextDate()" class="btn btn-outline-secondary btn-sm" aria-label="Nächste Termine anzeigen"><i class="bi bi-fast-forward"></i></a>
                         </div>
                         <div class="btn-group">
-                            <a id="btnNextDate" href="javascript:toggleNextDate()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-fast-forward"></i></a>
+                            <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Free", "Room")" aria-label="Raumsuche (freie Räume)"><i class="bi bi-building-check"></i></a>
                         </div>
                     </div>
                 </div>
@@ -557,265 +492,6 @@
             <div class="list-group">
                 <div id="viewAgenda"></div>
             </div>
-
-            @*
-            <div class="list-group">
-                @foreach (var summary in Model.CurrentSemester.OfferedCourses)
-                {
-                    var tn = summary.Course.Occurrence.Subscriptions.Count();
-
-                    if (summary.CurrentDate != null)
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @Html.TimeSpanWithDate(summary.CurrentDate)
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.RoomList(summary.CurrentDate.Rooms)
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.LecturerList(summary.CurrentDate.Hosts)
-                                </div>
-                                <div class="col-md-1">
-                                    <span class="badge bg-secondary">
-                                        <i class="bi bi-person-check"></i>
-                                        @tn
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    beendet
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.RoomList(summary.Rooms)
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.LecturerList(summary.Lecturers)
-                                </div>
-                                <div class="col-md-1">
-                                    <span class="badge bg-secondary">
-                                        <i class="bi bi-person-check"></i>
-                                        @tn
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-                @foreach (var oh in Model.CurrentSemester.OfferedOfficeHours)
-                {
-                    if (oh.HasSubscription)
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @if (oh.Date != null)
-                                    {
-
-                                        @Html.TimeSpanWithDate(oh.Date)
-                                    }
-                                </div>
-                                <div class="col-md-2">
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new { id = oh.Date.Id })">@oh.OfficeHour.Name</a>
-                                </div>
-                                <div class="col-md-2">
-                                </div>
-                                <div class="col-md-1">
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @if (oh.Date != null)
-                                    {
-
-                                        @Html.TimeSpanWithDate(oh.Date)
-                                    }
-                                </div>
-                                <div class="col-md-2">
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="@Url.Action("OfficeHour", "Lecturer", new { id = oh.OfficeHour.Id })">@oh.OfficeHour.Name</a>
-                                </div>
-                                <div class="col-md-2">
-                                </div>
-                                <div class="col-md-1">
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-
-                @foreach (var summary in Model.CurrentSemester.SubscribedCourses)
-                {
-                    if (summary.CurrentDate != null)
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @Html.TimeSpanWithDate(summary.CurrentDate)
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.RoomList(summary.CurrentDate.Rooms)
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.LecturerList(summary.CurrentDate.Hosts)
-                                </div>
-                                <div class="col-md-1">
-                                    @if (summary.Subscription != null)
-                                    {
-                                        if (summary.Subscription.OnWaitingList)
-                                        {
-                                            <span><i class="bi bi-hourglass"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span><i class="bi bi-person-check text-success"></i></span>
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    beendet
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.RoomList(summary.Rooms)
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="@Url.Action("Details", "Course", new {id=summary.Course.Id})">@summary.Course.Name (@summary.Course.ShortName)</a>
-                                </div>
-                                <div class="col-md-2">
-                                    @Html.LecturerList(summary.Lecturers)
-                                </div>
-                                <div class="col-md-1">
-                                    @if (summary.Subscription != null)
-                                    {
-                                        if (summary.Subscription.OnWaitingList)
-                                        {
-                                            <span><i class="bi bi-hourglass"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span><i class="bi bi-person-check text-success"></i></span>
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-
-            </div>
-            <div class="list-group">
-                @foreach (var thesis in Model.ActiveTheses)
-                {
-                    if (thesis.User != null)
-                    {
-
-                        if (thesis.Thesis.DeliveryDate != null)
-                        {
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                <i class="bi bi-trophy"></i> @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
-                            </a>
-                        }
-                        else
-                        {
-                            if (thesis.Thesis.Supervisors.Any(x => x.AcceptanceDate == null))
-                            {
-                                <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                    <i class="fas fa-question-circle"></i>
-                                    @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
-                                    <span class="badge bg-danger">Betreuungsanfrage</span>
-                                </a>
-                            }
-                            else
-                            {
-                                <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                    <i class="bi bi-gear"></i>
-                                    @thesis.User.FullName (@thesis.Student.Curriculum.ShortName)
-                                    @if (thesis.DaysToExpire == Int32.MaxValue)
-                                    {
-                                        <span class="badge bg-danger">Noch nicht angemeldet</span>
-                                    }
-                                    else
-                                    {
-                                        if (thesis.Thesis.RenewalDate != null)
-                                        {
-                                            <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe (verlängert)</span>
-                                        }
-                                        else
-                                        {
-                                            if (thesis.Thesis.ProlongRequestDate == null)
-                                            {
-                                                <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
-                                            }
-                                            else
-                                            {
-                                                if (thesis.Thesis.ProlongSupervisorAccepted == null)
-                                                {
-                                                    <span class="badge bg-danger">Antrag auf Verlängerung - unbearbeitet</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">Antrag auf Verlängerung akzeptiert - Bestätigung PKV steht noch aus</span>
-                                                }
-
-                                            }
-                                        }
-
-                                    }
-                                </a>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (thesis.Thesis.DeliveryDate != null)
-                        {
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                <i class="bi bi-trophy"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "ThesisSupervision", new { id = thesis.Thesis.Id })">
-                                <i class="bi bi-gear"></i> Unbekannt (@thesis.Student.Curriculum.ShortName)
-                                <span class="badge bg-secondary">@thesis.DaysToExpire</span>
-                            </a>
-                        }
-
-                    }
-                }
-            </div>
-                *@
         </div>
     </div>
 </div>
@@ -840,13 +516,28 @@
     var delta = 1;
     var useDayOfWeek = -1;
     var useNextDate = false;
+    var useNewLayout = false;
 
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+
+        if (localStorage.getItem("grapevine.dashboard.layout.useNewLayout" === null)) {
+            useNewLayout = false;
+            localStorage.setItem("grapevine.dashboard.layout.useNewLayout", useNewLayout.toString());
+            $("#switchLayoutLabel").html("Altes Layout")
+        }
+        else {
+            var str = localStorage.getItem("grapevine.dashboard.layout.useNewLayout");
+            console.log(str);
+            useNewLayout = Boolean(str?.toLowerCase()?.trim());
+            console.log(useNextDate);
+        }
+            
+            updateLayout();
+
             initDatePickerTopLeft("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
             onDateChanged("@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)");
 
             //localStorage.removeItem("grapevine.dashboard.delta");
-            /*
             str = localStorage.getItem("grapevine.dashboard.delta");
             console.log(str);
             delta = Number(str);
@@ -867,8 +558,6 @@
             console.log(str);
             useNextDate = Boolean(str?.toLowerCase()?.trim());
             console.log(useNextDate);
-            */
-
 
             updateToggleDelta();
             updateToggleDay();
@@ -876,6 +565,33 @@
 
             updateCurrentDate();
         });
+
+        function onSwitchLayout() {
+            console.log("Switch Layout");
+            const element = document.getElementById("switchLayout");
+            useNewLayout = element.checked;
+            console.log(useNewLayout);
+
+            localStorage.setItem("grapevine.dashboard.layout.useNewLayout", useNewLayout.toString());
+
+            updateLayout();
+    }
+
+    function updateLayout() {
+        if (useNewLayout) {
+            $("#switchLayoutLabel").html("Neues Layout")
+        } else {
+            $("#switchLayoutLabel").html("Altes Layout")
+        }
+        if (useNewLayout) {
+            $("#newLayout").show();
+            $("#oldLayout").hide();
+        }
+        else {
+            $("#newLayout").hide();
+            $("#oldLayout").show();
+        }
+    }
 
         document.addEventListener('DOMContentLoaded', function () {
             //$("#cardSemester").hide();
@@ -944,21 +660,21 @@
 
         function toggleDelta1() {
             delta = 1;
-            //localStorage.setItem("grapevine.dashboard.delta", delta.toString());
+            localStorage.setItem("grapevine.dashboard.delta", delta.toString());
             updateToggleDelta();
             updateCurrentDate();
         }
 
         function toggleDelta7() {
             delta = 7;
-            //localStorage.setItem("grapevine.dashboard.delta", delta.toString());
+            localStorage.setItem("grapevine.dashboard.delta", delta.toString());
             updateToggleDelta();
             updateCurrentDate();
         }
 
         function toggleDate() {
             useDayOfWeek = -1;
-            //setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
+            localStorage.setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
             updateToggleDay();
 
             currentDate = new Date();
@@ -967,7 +683,7 @@
 
         function toggleDay() {
             useDayOfWeek = 1;
-            //setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
+            localStorage.setItem("grapevine.dashboard.dayOfWeek", useDayOfWeek.toString());
             updateToggleDay();
 
             currentDate = getNextDayOfWeek(currentDate, 1);

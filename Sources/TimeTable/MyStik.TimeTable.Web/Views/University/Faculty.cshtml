@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Startseite";
 
-    var isStudent = ViewBag.UserRight == null ||  ViewBag.UserRight.IsStudent;
+    var isStudent = ViewBag.UserRight == null || ViewBag.UserRight.IsStudent;
 
     var db = new TimeTableDbContext();
     var org = db.Organisers.SingleOrDefault(x => x.Id == Model.Id);
@@ -86,7 +86,7 @@
         <div class="card border-secondary">
             <div class="card-body">
                 <h5 class="card-title text-center">
-                    <i class="bi bi-building"></i><br/>
+                    <i class="bi bi-building"></i><br />
                     Räume
                 </h5>
             </div>
@@ -115,7 +115,7 @@
         <div class="card border-secondary">
             <div class="card-body">
                 <h5 class="card-title text-center">
-                    <i class="bi bi-people"></i><br/>
+                    <i class="bi bi-people"></i><br />
                     Personen
                 </h5>
             </div>
@@ -135,7 +135,7 @@
         <div class="card border-secondary">
             <div class="card-body">
                 <h5 class="card-title text-center">
-                    <i class="bi bi-gear"></i><br/>
+                    <i class="bi bi-gear"></i><br />
                     Workflows
                 </h5>
             </div>
@@ -149,9 +149,9 @@
                     <a href="@Url.Action("Index", "InternshipAdmin", new { id = Model.Id })" class="list-group-item list-group-item-action disabled">Praxissemester</a>
                     <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>
                     <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
-                                                                                                                                  @*
-                    <a href="@Url.Action("Index", "ScriptOrders", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>
-                                                                                                                                      *@
+                    @*
+                        <a href="@Url.Action("Index", "ScriptOrders", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>
+                    *@
                     <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action">Mailverteiler</a>
                     <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action">Rechte & Rollen</a>
                 }
@@ -170,6 +170,7 @@
     <div class="col-md-2">
         <div class="card mb-3">
             <div class="list-group">
+                <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action"><i class="bi bi-envelope"></i> Mailverteiler</a>
                 <a href="@Url.Action("Organiser", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-building-fill-gear"></i> Raumverzeichnis</a>
                 <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-building-check"></i> Raumreservierungen</a>
             </div>
@@ -194,10 +195,10 @@
         </div>
         <div class="card mb-3">
             <div class="list-group">
-                <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
-                <a href="@Url.Action("Index", "Infoscreens", new {id = Model.Id})" class="list-group-item list-group-item-action">Infoscreens</a>
-                <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action">Newsletter</a>
-                <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action">Rechte & Rollen</a>
+                <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-signpost-split"></i> Semesterplanung</a>
+                <a href="@Url.Action("Index", "Infoscreens", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-video3"></i> Infoscreens</a>
+                <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action"><i class="bi bi-send"></i> Newsletter</a>
+                <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-gear"></i> Rechte & Rollen</a>
             </div>
         </div>
     </div>
@@ -207,20 +208,21 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                            <div class="input-group">
-                                <a id="btnPrev" href="javascript:onPrev()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
-                                <input type="text" class="form-control form-control-sm" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon">
-                                <a id="btnNext" href="javascript:onNext()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                            <div class="btn-group me-2" role="group" aria-label="Auswahl Datum">
+                                <div class="input-group">
+                                    <a id="btnPrev" href="javascript:onBack()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-left"></i></a>
+                                    <input id="inputDate" type="date" class="form-control form-control-sm" placeholder="Datum" aria-label="Tagesdatum" aria-describedby="btnGroupAddon">
+                                    <a id="btnNext" href="javascript:onForward()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-chevron-right"></i></a>
+                                </div>
                             </div>
-                            <div class="btn-group me-2" role="group" aria-label="First group">
+                            <div class="btn-group me-2" role="group" aria-label="Auswahl Zeitraum">
+                                <a id="btnDownload" href="javascript:toggNow()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-clock"></i></a>
+                                <a id="btnWeekend" href="javascript:toggleDay()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-date"></i></a>
                             </div>
-                            <div class="btn-group me-2" role="group" aria-label="Second group">
-                                <a id="btnWeekend" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-week"></i></a>
-                                <a id="btnSearch" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-search"></i></a>
-                                <a id="btnDownload" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i></a>
-                            </div>
-                            <div class="btn-group me-2" role="group" aria-label="Second group">
-                                <a id="btnDownload" href="javascript:toggleWeekend()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-envelope"></i></a>
+                            <div class="btn-group me-2" role="group" aria-label="Auswahl Inhalt">
+                                <a id="btnDownload" href="javascript:toggCourses()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-collection-play"></i></a>
+                                <a id="btnWeekend" href="javascript:toggleOfficeHours()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-people"></i></a>
+                                <a id="btnSearch" href="javascript:toggleRooms()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-building-check"></i></a>
                             </div>
                         </div>
                     </div>
@@ -229,4 +231,37 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+
+
+<script>
+
+    var currentDate = new Date();
+    var delta = 1;
+    var useDayOfWeek = -1;
+    var useNextDate = false;
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            updateCurrentDate();
+        });
+
+    function updateCurrentDate() {
+        $("#inputDate").val(currentDate.toLocaleDateString('en-CA'));
+    }
+
+    function onBack() {
+        currentDate.setDate(currentDate.getDate() - delta);
+        updateCurrentDate();
+    }
+
+    function onForward() {
+        currentDate.setDate(currentDate.getDate() + delta);
+        updateCurrentDate();
+    }
+
+</script>
+}
 
