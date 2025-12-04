@@ -388,7 +388,6 @@
     </div>
 </div>
 
-<hr />
 <div id="newLayout" class="row">
     <div class="col-md-2">
         <div class="card mb-3">
@@ -437,17 +436,21 @@
         </div>
         <div class="card mb-3">
             <div class="list-group">
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")" aria-label="Vorlesungsverzeichnis">
-                    <i class="bi bi-collection-play"></i> Vorlesungsverzeichnis
+                <div class="list-group-item list-group-item-primary"><i class="bi bi-list"></i> Verzeichnisse</div>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")" aria-label="Vorlesungen">
+                    <i class="bi bi-collection-play"></i> Vorlesungen
                 </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")" aria-label="Sprechstundenverzeichnis">
-                    <i class="bi bi-people"></i> Sprechstundenverzeichnis
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")" aria-label="Sprechstunden">
+                    <i class="bi bi-people"></i> Sprechstunden
                 </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")" aria-label="Raumverzeichnis">
-                    <i class="bi bi-building"></i> Raumverzeichnis
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")" aria-label="Räume">
+                    <i class="bi bi-building"></i> Räume
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "University")" aria-label="Studienangebote">
+                    <i class="bi bi-award"></i> Studienangebote
                 </a>
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")" aria-label="Aufnahmeverfahren">
-                    <i class="bi bi-journals"></i> Aufnahmeverfahren
+                    <i class="bi bi-folder-check"></i> Aufnahmeverfahren
                 </a>
             </div>
         </div>
