@@ -37,6 +37,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<Candidature> Candidatures { get; set; }
 
+        public List<Student> Students { get; set; }
+
         public Student Student { get; set; }
 
         public Thesis Thesis { get; set; }

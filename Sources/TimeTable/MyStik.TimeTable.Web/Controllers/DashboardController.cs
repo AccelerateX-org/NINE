@@ -55,6 +55,13 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Candidatures = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
 
             /*
+            if (model.Student == null && !model.Organisers.Any() && !model.Candidatures.Any())
+            {
+                return RedirectToAction("FirstVisit", "Home");
+            }
+            */
+
+            /*
             var model = new TeachingOverviewModel();
             //var members = MemberService.GetMemberships(user.Id).ToList();
             //var student = GetCurrentStudent(user.Id).FirstOrDefault();
@@ -162,6 +169,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.NextSemester = SemesterService.GetNextSemester(currentSemester);
             model.Members = members.ToList();
             model.Student = students.FirstOrDefault();
+            model.Students = students.ToList();
 
             return model;
         }

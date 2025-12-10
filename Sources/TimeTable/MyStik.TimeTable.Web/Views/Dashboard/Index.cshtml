@@ -38,12 +38,25 @@
                     }
                 </li>
             }
+
+            @if (Model.Students.Any())
+            {
+                <li class="breadcrumb-item">
+                    @foreach (var student in Model.Students.OrderBy(x => x.Created))
+                    {
+                        <a aria-label="@student.Curriculum.ShortName" href="@Url.Action("Curricula", "Subscription")">@student.Curriculum.ShortName</a>
+                    }
+                </li>
+            }
         <li class="breadcrumb-item">
             <div class="btn-group">
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="switchLayout" onchange="onSwitchLayout()" aria-label="Schalter Layout">
                     <label class="form-check-label" for="switchLayout" id="switchLayoutLabel">Neues Layout</label>
                 </div>
+                @*
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Settings")"><i class="bi bi-gear"></i></a>
+                *@
             </div>
         </li>
         </ol>
@@ -389,73 +402,84 @@
 </div>
 
 <div id="newLayout" class="row">
-    <div class="col-md-2">
-        <div class="card mb-3">
-            <div class="list-group">
-                <div class="list-group-item list-group-item-primary"><i class="bi bi-person-workspace"></i> Mein..</div>
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item list-group-item-action" aria-label="Kalender"><i class="bi bi-calendar-day"></i> Kalender</a>
-                <a href="@Url.Action("PersonalPlanWeekly", "Activity")" class="list-group-item list-group-item-action" aria-label="Stundenplan"><i class="bi bi-calendar-week"></i> Stundenplan</a>
-                @if (Model.Student != null && Model.Student.LastSemester == null)
-                {
-                    <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action" aria-label="Sprechstundentermine"><i class="bi bi-calendar-check"></i> Sprechstundentermine</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")" aria-label="Studienbuch">
-                        <i class="bi bi-mortarboard"></i> Studiengang @Model.Student.Curriculum.ShortName
-                    </a>
-                    if (Model.Thesis != null)
-                    {
-                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action" aria-label="Abschlussarbeit">
-                            <i class="bi bi-file-text"></i> Abschlussarbeit
-                        </a>
-                    }
-                    else
-                    {
-                        if (Model.Student.Curriculum.ThesisDuration > 0)
-                        {
-                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action" aria-label="Abschlussarbeit">
-                                <i class="bi bi-file-text"></i> Abschlussarbeit
-                            </a>
-                        }
-                    }
-                }
-                @if (Model.Candidatures.Any())
-                {
-                    <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action" aria-label="Aufnahmeverfahren"><i class="bi bi-journals"></i> Aufnahmeverfahren</a>
-                }
-                @if (Model.Members.Any())
-                {
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("OfficeHours", "Lecturer")" aria-label="Sprechstunden"><i class="bi bi-people"></i> Sprechstunden</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "ThesisSupervision")" aria-label="Abschlussarbeiten"><i class="bi bi-book"></i> Abschlussarbeiten</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalDates", "Lecturer")" aria-label="Verfügbarkeiten"><i class="bi bi-calendar-check"></i> Verfügbarkeiten</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "CurriculumModule")" aria-label="Module"><i class="bi bi-boxes"></i> Module</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Responsibility", "Courses")" aria-label="Lehrveranstaltungen"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Card", "Person")" aria-label="Visitenkarte"><i class="bi bi-person-vcard"></i> Visitenkarte</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "VirtualRoom")" aria-label="Virtuele Räume"><i class="bi bi-person-video"></i> Virtuelle Räume</a>
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")" aria-activedescendant="Aushänge"><i class="bi bi-display"></i> Aushänge</a>
-                }
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="list-group">
-                <div class="list-group-item list-group-item-primary"><i class="bi bi-list"></i> Verzeichnisse</div>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")" aria-label="Vorlesungen">
-                    <i class="bi bi-collection-play"></i> Vorlesungen
-                </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")" aria-label="Sprechstunden">
-                    <i class="bi bi-people"></i> Sprechstunden
-                </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")" aria-label="Räume">
-                    <i class="bi bi-building"></i> Räume
-                </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "University")" aria-label="Studienangebote">
-                    <i class="bi bi-award"></i> Studienangebote
-                </a>
-                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")" aria-label="Aufnahmeverfahren">
-                    <i class="bi bi-folder-check"></i> Aufnahmeverfahren
-                </a>
-            </div>
-        </div>
+    <div class="col-md-2 col-2">
+        <nav aria-label="Seitenmenü">
+            <div class="card mb-3">
+                            <div class="list-group">
+                                <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item list-group-item-action" aria-label="Kalender"><i class="bi bi-calendar-day"></i><span class="d-none d-sm-inline"> Kalender</span></a>
+                                <a href="@Url.Action("PersonalPlanWeekly", "Activity")" class="list-group-item list-group-item-action" aria-label="Stundenplan"><i class="bi bi-calendar-week"></i><span class="d-none d-sm-inline"> Stundenplan</span></a>
+                                @if (Model.Student != null && Model.Student.LastSemester == null)
+                                {
+                                    <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action" aria-label="Sprechstundentermine"><i class="bi bi-person-check"></i><span class="d-none d-sm-inline"> Sprechstundentermine</span></a>
+                                    @*
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "Subscription")" aria-label="Studienbuch">
+                                        <i class="bi bi-mortarboard"></i><span class="d-none d-sm-inline"> @Model.Student.Curriculum.ShortName</span>
+                                    </a>
+                                    *@
+                                    if (Model.Thesis != null)
+                                    {
+                                        <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action" aria-label="Abschlussarbeit">
+                                            <i class="bi bi-file-text"></i><span class="d-none d-sm-inline"> Abschlussarbeit</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        if (Model.Student.Curriculum.ThesisDuration > 0)
+                                        {
+                                            <a href="@Url.Action("Index", "Thesis")" class="list-group-item list-group-item-action" aria-label="Abschlussarbeit">
+                                                <i class="bi bi-file-text"></i><span class="d-none d-sm-inline"> Abschlussarbeit</span>
+                                            </a>
+                                        }
+                                    }
+                                }
+                                @if (Model.Candidatures.Any())
+                                {
+                                    <a href="@Url.Action("Index", "Candidature")" class="list-group-item list-group-item-action" aria-label="Aufnahmeverfahren"><i class="bi bi-journals"></i><span class="d-none d-sm-inline"> Aufnahmeverfahren</span></a>
+                                }
+                                @if (Model.Members.Any())
+                                {
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("OfficeHours", "Lecturer")" aria-label="Sprechstunden"><i class="bi bi-people"></i><span class="d-none d-sm-inline"> Sprechstunden</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "ThesisSupervision")" aria-label="Abschlussarbeiten"><i class="bi bi-book"></i><span class="d-none d-sm-inline"> Abschlussarbeiten</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalDates", "Lecturer")" aria-label="Verfügbarkeiten"><i class="bi bi-calendar-check"></i><span class="d-none d-sm-inline"> Verfügbarkeiten</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "CurriculumModule")" aria-label="Module"><i class="bi bi-boxes"></i><span class="d-none d-sm-inline"> Module</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Responsibility", "Courses")" aria-label="Lehrveranstaltungen"><i class="bi bi-play-btn"></i><span class="d-none d-sm-inline"> Lehveranstaltungen</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Card", "Person")" aria-label="Visitenkarte"><i class="bi bi-person-vcard"></i><span class="d-none d-sm-inline"> Vistenkarte</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "VirtualRoom")" aria-label="Virtuele Räume"><i class="bi bi-person-video"></i><span class="d-none d-sm-inline"> Virtuelle Räume</span></a>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Advertisements")" aria-activedescendant="Aushänge"><i class="bi bi-display"></i><span class="d-none d-sm-inline"> Aushänge</span></a>
+                                }
+                            </div>
+                    @*
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                <i class="bi bi-list"></i><span class="d-none d-sm-inline"> Verzeichnisse</span>
+                            </button>
+                        </h2>
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="list-group">
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")" aria-label="Vorlesungen">
+                                    <i class="bi bi-collection-play"></i><span class="d-none d-sm-inline"> Vorlesungen</span>
+                                </a>
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")" aria-label="Sprechstunden">
+                                    <i class="bi bi-person-lines-fill"></i><span class="d-none d-sm-inline"> Sprechstunden</span>
+                                </a>
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")" aria-label="Räume">
+                                    <i class="bi bi-building"></i><span class="d-none d-sm-inline"> Räume</span>
+                                </a>
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "University")" aria-label="Studienangebote">
+                                    <i class="bi bi-award"></i><span class="d-none d-sm-inline"> Studienangebote</span>
+                                </a>
+                                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")" aria-label="Aufnahmeverfahren">
+                                    <i class="bi bi-folder-check"></i><span class="d-none d-sm-inline"> Aufnahmeverfahren</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                *@
+                </div>
+        </nav>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-10 col-10">
         <div class="card">
             <div class="list-group">
                 <div class="list-group-item">
@@ -530,9 +554,11 @@
         }
         else {
             var str = localStorage.getItem("grapevine.dashboard.layout.useNewLayout");
-            console.log(str);
-            useNewLayout = Boolean(str?.toLowerCase()?.trim());
-            console.log(useNextDate);
+            console.log("useNewLayout (string): " + str);
+            useNewLayout = (str === 'true');
+            console.log("useNewLayout (boolean): " + useNewLayout);
+            const element = document.getElementById("switchLayout");
+            element.checked = useNewLayout;
         }
             
             updateLayout();

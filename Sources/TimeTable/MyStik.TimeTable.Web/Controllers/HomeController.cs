@@ -59,7 +59,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Verteiler nach Rolle
             var user = GetCurrentUser();
-            var student = GetCurrentStudent(user.Id);
+            var students = GetCurrentStudent(user.Id);
             var members = MemberService.GetFacultyMemberships(user.Id);
 
             // Prio 1; Member
@@ -69,7 +69,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // Prio 2; Student
-            if (student != null)
+            if (students.Any())
             {
                 return RedirectToAction("Index", "Dashboard");
             }
@@ -83,6 +83,11 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // Prio 4: noch nichts
+            return View("FirstVisit");
+        }
+
+        public ActionResult FirstVisit()
+        {
             return View("FirstVisit");
         }
 

@@ -4845,6 +4845,7 @@
     <Content Include="Views\Semester\RoomsByWeek.cshtml" />
     <Content Include="Views\Lecturer\ImportMember.cshtml" />
     <Content Include="Views\Activity\PersonalAgenda.cshtml" />
+    <Content Include="Views\Shared\_LayoutPublicSidebar.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
