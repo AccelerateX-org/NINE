@@ -2037,7 +2037,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 evt.Location = sb.ToString();
                 evt.Categories.Add(date.Controller);
-                evt.IsAllDay = false;
+                //evt.IsAllDay = false;
             }
 
 

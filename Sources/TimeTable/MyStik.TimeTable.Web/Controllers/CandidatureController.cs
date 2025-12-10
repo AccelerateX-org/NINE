@@ -289,7 +289,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     if (image.Width > maxSize || image.Height > maxSize)
                     {
-                        image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+                        image.Resize(new MagickGeometry(widthAndHeight: (uint)maxSize));
                     }
                 }
 
@@ -390,7 +390,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     if (image.Width > maxSize || image.Height > maxSize)
                     {
-                        image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+                        image.Resize(new MagickGeometry(widthAndHeight: (uint)maxSize));
                     }
                 }
 
