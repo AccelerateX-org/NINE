@@ -16,9 +16,20 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid orgId, Guid semId)
         {
-            return View();
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
         }
 
         public ActionResult Details(Guid currId, Guid semId)
@@ -152,5 +163,56 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View();
         }
+
+
+        public ActionResult Dates(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+
+        public ActionResult Observer(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult Students(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
     }
 }

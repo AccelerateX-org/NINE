@@ -13,6 +13,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /*
     [System.Web.Http.RoutePrefix("api/v2/users")]
     public class ScimUsersController : ApiController
     {
@@ -32,16 +33,16 @@ namespace MyStik.TimeTable.Web.Api.Controller
             }
 
             // wenn fillter, dann filltern und Liste
-            /*
-            if (resourceRequest != null)
-            {
-                var list = new ScimListResourceResponse<ScimUser>();
+            //
+            //if (resourceRequest != null)
+            //{
+                //var list = new ScimListResourceResponse<ScimUser>();
 
-                var resp = Request.CreateResponse(HttpStatusCode.OK, list);
+                //var resp = Request.CreateResponse(HttpStatusCode.OK, list);
 
-                return ResponseMessage(resp);
-            }
-            */
+              //  return ResponseMessage(resp);
+            //}
+            //
 
             // sonst nach user suchen
             if (string.IsNullOrEmpty(id))
@@ -59,14 +60,15 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             var response = Request.CreateResponse(HttpStatusCode.OK, user);
 
-            /*
-            response.Content.Headers.Expires = DateTimeOffset.Now.AddMinutes(10.0);
-            var tag = Guid.NewGuid();
-            response.Headers.ETag = new EntityTagHeaderValue(tag.ToString()); //
-            */
+            //
+            //response.Content.Headers.Expires = DateTimeOffset.Now.AddMinutes(10.0);
+            //var tag = Guid.NewGuid();
+            //response.Headers.ETag = new EntityTagHeaderValue(tag.ToString()); //
+            
 
             return ResponseMessage(response);
         }
 
     }
+    */
 }

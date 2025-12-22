@@ -6,7 +6,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     /// <summary>
     /// 
     /// </summary>
-    public class RoomSummaryDto : BaseDto
+    public class RoomSummaryDto
     {
         /// <summary>
         /// 
@@ -21,7 +21,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
         public int Capactiy { get; set; }
 
-        public List<OrganiserDto> Assignees { get; set; }
+        public List<string> Assignees { get; set; }
     }
 
 

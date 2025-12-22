@@ -18,7 +18,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = new HomeViewModel();
 
-            var sem = id.HasValue ? SemesterService.GetSemester(id) : SemesterService.GetSemester(DateTime.Today);
+            var sem = SemesterService.GetSemester(id);
 
             var currentSemester = sem;
             var nextSemester = SemesterService.GetNextSemester(sem);
@@ -614,28 +614,27 @@ namespace MyStik.TimeTable.Web.Controllers
             var prevSemester = SemesterService.GetPreviousSemester(semester);
 
             var courses = new List<Course>();
-            ActivityOrganiser org = null;
-            Curriculum curr = null;
 
+            var org = orgId != null ? GetOrganiser(orgId.Value) : null;
+            var curr = currId != null ? Db.Curricula.SingleOrDefault(x => x.Id == currId.Value) : null;
+
+            // über das Label ist der Studiengang gegeben.
+            // Organiser spiel keine Rolle
+            courses.AddRange(Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semester.Id &&
+                    x.LabelSet != null &&
+                    x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                .ToList());
+
+            /*
             if (orgId == null && currId == null)
             {
-                courses.AddRange(Db.Activities.OfType<Course>()
-                    .Where(x =>
-                        x.Semester.Id == semester.Id &&
-                        x.LabelSet != null &&
-                        x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                    .ToList());
             }
             else
             {
                 if (orgId != null)
                 {
-                    org = GetOrganiser(orgId.Value);
-                    if (currId != null)
-                    {
-                        curr = Db.Curricula.SingleOrDefault(x => x.Id == currId.Value);
-                    }
-
                     courses.AddRange(Db.Activities.OfType<Course>()
                         .Where(x =>
                             x.Semester.Id == semester.Id &&
@@ -645,6 +644,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         .ToList());
                 }
             }
+            */
 
             var cs = new CourseService();
             var courseSummaries = new List<CourseSummaryModel>();

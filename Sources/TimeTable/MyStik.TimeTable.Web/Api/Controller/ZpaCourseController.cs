@@ -8,6 +8,7 @@ using MyStik.TimeTable.Web.Api.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /*
     /// <summary>
     /// 
     /// </summary>
@@ -68,5 +69,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return list.AsQueryable();
         }
     }
+    */
 }
 

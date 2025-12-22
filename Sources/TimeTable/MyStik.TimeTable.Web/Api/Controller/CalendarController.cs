@@ -11,6 +11,7 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /*
     /// <summary>
     /// 
     /// </summary>
@@ -179,4 +180,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
 
     }
+    */
 }

@@ -6,16 +6,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     /// <summary>
     /// 
     /// </summary>
-    public class CurriculumDto : NamedDto
+    public class CurriculumDto
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public OrganiserDto Organiser { get; set; }
+        public string Curriculum_id { get; set; }
 
-        public string Semester { get; set; }
-
-        public string Tag { get; set; }
+        public string Name { get; set; }    
     }
 
     #region structure

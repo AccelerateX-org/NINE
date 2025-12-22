@@ -47,17 +47,22 @@
             <div class="list-group">
                 @foreach (var org in Model.Organisers.OrderBy(x => x.ShortName))
                 {
-                    var hasCourses = db.Activities.OfType<Course>().Count(x => 
-                        x.Organiser != null && x.Organiser.Id == org.Id && 
+                    var hasCourses = db.Activities.OfType<Course>().Count(x =>
+                        x.Organiser != null && x.Organiser.Id == org.Id &&
                         x.Semester != null && x.Semester.Id == Model.CurrentSemester.Id);
 
-                    if (hasCourses > 0)
+                    var hasPrograms = org.Curricula.Any(x => !x.IsDeprecated);
+
+                    if (hasCourses > 0 || hasPrograms)
                     {
                         <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="@Url.Action("Organiser", "Dictionary", new { semId = ViewBag.CurrentSemester.Id, orgId = org.Id })">
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold">@org.ShortName | @org.Name</div>
                             </div>
-                            <span class="badge text-bg-primary rounded-pill">@hasCourses</span>
+                            @if (hasCourses > 0)
+                            {
+                                <span class="badge text-bg-primary rounded-pill">@hasCourses</span>
+                            }
                         </a>
                     }
                     else

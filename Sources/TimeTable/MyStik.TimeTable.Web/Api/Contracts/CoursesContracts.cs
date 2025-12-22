@@ -42,12 +42,40 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         public List<string> hosts { get; set; }
     }
 
+    public class CourseDateCreateApiModel
+    {
+        public DateTime begin { get; set; }
+
+        public DateTime end { get; set; }
+
+        public string title { get; set; }
+
+        public string description { get; set; }
+
+        public bool isCanceled { get; set; }
+
+        public List<string> rooms { get; set; }
+
+        public List<string> hosts { get; set; }
+    }
+
+
     public class CourseSubscriberApiModel
     {
         public string id { get; set; }
 
         public DateTime subscribed { get; set; }
     }
+
+    public class CourseSubscriptionApiModel
+    {
+        public Guid course_id { get; set; }
+
+        public DateTime subscribed { get; set; }
+
+        public bool onWaitingList { get; set; }
+    }
+
 
 
     public class CourseApiModel
@@ -82,12 +110,52 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         public List<CourseDateApiModel> dates { get; set; }
 
         public List<CourseSubscriberApiModel> subscribers { get; set; }
+
+    }
+
+
+    public class CourseCreateApiModel
+    {
+        public string external_id { get; set; }
+
+        /// <summary>
+        /// FK 09
+        /// </summary>
+        public string organiser { get; set; }
+
+        /// <summary>
+        /// SoSe 2026
+        /// </summary>
+        public string semester { get; set; }
+
+        /// <summary>
+        /// no identifier, allows duplicates
+        /// </summary>
+        public string code { get; set; }
+
+        public string title { get; set; }
+
+        public string description { get; set; }
+
+        public List<CourseCohorte> cohortes { get; set; }
+
+        public List<CourseQuota> quotas { get; set; }
+
+        public List<CourseDateApiModel> dates { get; set; }
     }
 
     public class CourseApiResponseModel
     {
-        public Guid id { get; set; }
-        public string externalId { get; set; }
+        public Guid course_id { get; set; }
+        public string external_id { get; set; }
+        public string message { get; set; }
+    }
+
+    public class CourseDateApiResponseModel
+    {
+        public Guid course_id { get; set; }
+        public Guid date_id { get; set; }
+
         public string message { get; set; }
     }
 }

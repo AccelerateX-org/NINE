@@ -1,30 +1,32 @@
-﻿namespace MyStik.TimeTable.Web.Api.DTOs
+﻿using System;
+
+namespace MyStik.TimeTable.Web.Api.DTOs
 {
     /// <summary>
     /// 
     /// </summary>
-    public class SemesterDto : BaseDto
+    public class SemesterDto
     {
         /// <summary>
         /// 
         /// </summary>
-        public string Name { get; set; }
+        public string Semester_Id { get; set; }
+
+        public DateTime Begin { get; set; }
+
+        public DateTime End { get; set; }
     }
 
 
     /// <summary>
     /// 
     /// </summary>
-    public class SemesterStatisticsDto : BaseDto
+    public class SemesterStatisticsDto
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Curriculum { get; set; }
+        public string Name { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public int Subscriptions { get; set; }
+        public DateTime Begin { get; set; }
+
+        public DateTime End { get; set; }
     }
 }

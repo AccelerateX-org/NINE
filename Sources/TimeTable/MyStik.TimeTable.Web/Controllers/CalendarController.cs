@@ -439,15 +439,18 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var bgColor = string.IsNullOrEmpty(color) ? "#47aba1" : color;
 
-
+            // mandatory parameters
             var semester = SemesterService.GetSemester(semId);
             var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
 
+            // optional parameters
             var segment = segId != null ? semester.Dates.SingleOrDefault(x => x.Id == segId.Value) : null;
+            var org = orgId != null ? GetOrganiser(orgId.Value) : null;
+            var curr = currId != null ? Db.Curricula.SingleOrDefault(x => x.Id == currId.Value) : null;
 
             var courses = new List<Course>();
 
-            if (orgId == null && currId == null)
+            if (org == null && curr == null)
             {
                 if (segment != null)
                 {
@@ -471,29 +474,51 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             else
             {
-                var org = GetOrganiser(orgId.Value);
-                var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-
                 if (segment != null)
                 {
-                    courses.AddRange(Db.Activities.OfType<Course>()
-                        .Where(x =>
-                            x.Semester.Id == semester.Id &&
-                            x.Segment != null && x.Segment.Id == segment.Id &&
-                            x.Organiser.Id == org.Id &&
-                            x.LabelSet != null &&
-                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                        .ToList());
+                    if (org != null)
+                    {
+                        courses.AddRange(Db.Activities.OfType<Course>()
+                            .Where(x =>
+                                x.Semester.Id == semester.Id &&
+                                x.Segment != null && x.Segment.Id == segment.Id &&
+                                x.Organiser.Id == org.Id &&
+                                x.LabelSet != null &&
+                                x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                            .ToList());
+                    }
+                    else
+                    {
+                        courses.AddRange(Db.Activities.OfType<Course>()
+                            .Where(x =>
+                                x.Semester.Id == semester.Id &&
+                                x.Segment != null && x.Segment.Id == segment.Id &&
+                                x.LabelSet != null &&
+                                x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                            .ToList());
+                    }
                 }
                 else
                 {
-                    courses.AddRange(Db.Activities.OfType<Course>()
-                        .Where(x =>
-                            x.Semester.Id == semester.Id &&
-                            x.Organiser.Id == org.Id &&
-                            x.LabelSet != null &&
-                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                        .ToList());
+                    if (org != null)
+                    {
+                        courses.AddRange(Db.Activities.OfType<Course>()
+                            .Where(x =>
+                                x.Semester.Id == semester.Id &&
+                                x.Organiser.Id == org.Id &&
+                                x.LabelSet != null &&
+                                x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                            .ToList());
+                    }
+                    else
+                    {
+                        courses.AddRange(Db.Activities.OfType<Course>()
+                            .Where(x =>
+                                x.Semester.Id == semester.Id &&
+                                x.LabelSet != null &&
+                                x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                            .ToList());
+                    }
                 }
             }
 
@@ -2037,7 +2062,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 evt.Location = sb.ToString();
                 evt.Categories.Add(date.Controller);
-                evt.IsAllDay = false;
+                //evt.IsAllDay = false;
             }
 
 

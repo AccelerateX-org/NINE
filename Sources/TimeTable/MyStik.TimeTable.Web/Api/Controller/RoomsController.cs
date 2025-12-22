@@ -54,70 +54,28 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         [System.Web.Http.Route("")]
         //[System.Web.Http.HttpGet]
-        public IQueryable<RoomSummaryDto> GetRooms()
+        public IQueryable<RoomSummaryDto> GetRooms(string number="")
         {
             var result = new List<RoomSummaryDto>();
 
-            var rooms = Db.Rooms.ToList();
+            var rooms = string.IsNullOrEmpty(number) ?
+                Db.Rooms.ToList() :
+                Db.Rooms.Where(x => x.Number.ToLower().StartsWith(number.ToLower())).ToList();
 
             foreach (var room in rooms)
             {
                 var r = new RoomSummaryDto
                 {
-                    Id = room.Id,
                     Number = room.Number, 
                     Name = room.Name,
                     Description = room.Description,
                     Capactiy = room.Capacity,
-                    Assignees = new List<OrganiserDto>()
+                    Assignees = new List<string>()
                 };
 
                 foreach (var roomAssignment in room.Assignments)
                 {
-                    r.Assignees.Add(new OrganiserDto
-                    {
-                        Id = roomAssignment.Organiser.Id,
-                        Name = roomAssignment.Organiser.Name,
-                        ShortName = roomAssignment.Organiser.ShortName,
-                        Color = roomAssignment.Organiser.HtmlColor
-                    });
-                }
-
-                result.Add(r);
-            }
-
-            return result.AsQueryable();
-        }
-
-        [System.Web.Http.Route("search")]
-        //[System.Web.Http.HttpGet]
-        public IQueryable<RoomSummaryDto> GetRoomsByNumber(string searchPattern)
-        {
-            var result = new List<RoomSummaryDto>();
-
-            var rooms = Db.Rooms.Where(x => x.Number.ToLower().StartsWith(searchPattern.ToLower())).ToList();
-
-            foreach (var room in rooms)
-            {
-                var r = new RoomSummaryDto
-                {
-                    Id = room.Id,
-                    Number = room.Number,
-                    Name = room.Name,
-                    Description = room.Description,
-                    Capactiy = room.Capacity,
-                    Assignees = new List<OrganiserDto>()
-                };
-
-                foreach (var roomAssignment in room.Assignments)
-                {
-                    r.Assignees.Add(new OrganiserDto
-                    {
-                        Id = roomAssignment.Organiser.Id,
-                        Name = roomAssignment.Organiser.Name,
-                        ShortName = roomAssignment.Organiser.ShortName,
-                        Color = roomAssignment.Organiser.HtmlColor
-                    });
+                    r.Assignees.Add(roomAssignment.Organiser.ShortName);
                 }
 
                 result.Add(r);

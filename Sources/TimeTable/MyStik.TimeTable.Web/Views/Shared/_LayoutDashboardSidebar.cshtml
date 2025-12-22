@@ -2,8 +2,18 @@
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Services
 <!DOCTYPE html>
-<html lang="de-DE" data-bs-theme="dark" id="mainElement">
+<html lang="de-DE" data-bs-theme="light" id="mainElement">
 <head>
+    <script>
+        let themeName = "light";
+        if (localStorage.getItem("grapevine.theme") === null) {
+            localStorage.setItem("grapevine.theme", themeName.toString());
+        } else {
+            themeName = localStorage.getItem("grapevine.theme");
+        }
+        const element = document.getElementById("mainElement");
+        element.setAttribute("data-bs-theme", themeName);
+    </script>
     <meta content="de" http-equiv="Content-Language">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -66,22 +76,36 @@
         <ul class="navbar-nav">
             @if (Request.IsAuthenticated)
             {
-                @*
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle fa-fw"></i> @user.FullName
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="@Url.Action("PersonalMessage", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
-                        <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
-                        <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
-                        <li>
-                            <div class="dropdown-divider"></div>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
-                    </ul>
+                    <div class="btn-group">
+                        <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-sun"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="javascript:onSetTheme('light')" aria-label="light mode"><i class="bi bi-sun"></i></a></li>
+                            <li><a class="dropdown-item" href="javascript:onSetTheme('dark')" aria-label="dark mode"><i class="bi bi-moon-stars-fill"></i></a></li>
+                        </ul>
+                        <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-person"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+
+                            <li>
+                                <a class="dropdown-item" href="@Url.Action("Index", "Manage")">
+                                    <i class="´bi bi-person-check"></i> @Resources.MyUserProfile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="https://acceleratex-org.github.io/NINE/" target="_blank"><i class="bi bi-question-circle"></i> Dokumenation</a>
+                            </li>
+                            <li>
+                                <div class="dropdown-divider"></div>
+                            </li>
+                            <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="bi bi-door-closed"></i> @Resources.LogOut</a></li>
+                        </ul>
+                    </div>
                 </li>
-                *@
+                @*
                 <li class="nav-item">
                     <div class="btn-group">
                         <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -94,6 +118,7 @@
                         <a aria-label="Logout" href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-outline-light"><i class="bi bi-door-closed"></i></a>
                     </div>
                 </li>
+                    *@
             }
             else
             {
@@ -131,13 +156,13 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">CAP</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel"><i class="bi bi-broadcast"></i> HM<i>ster</i> Grapevine</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="list-group">
-        <a class="list-group-item list-group-item-action" href="https://acceleratex-org.github.io/NINE/" target="_blank"><i class="bi bi-question-circle"></i> Dokumenation</a>
         @if (Request.IsAuthenticated)
         {
+            @*
             <div class="list-group-item list-group-item-secondary">@user.FullName</div>
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dashboard")">
                 <i class="bi bi-grid"></i> Mein Dashboard
@@ -148,17 +173,34 @@
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Manage")">
                 <i class="´bi bi-person-check"></i> @Resources.MyUserProfile
             </a>
+            *@
+
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")" aria-label="Vorlesungen">
+                <i class="bi bi-collection-play"></i> Lehrveranstaltungen
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "OfficeHour")" aria-label="Sprechstunden">
+                <i class="bi bi-person-lines-fill"></i> Personen
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Rooms")" aria-label="Räume">
+                <i class="bi bi-building"></i> Räume
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula", "University")" aria-label="Studienangebote">
+                <i class="bi bi-award"></i> Studienangebote
+            </a>
+
         }
-        <div class="list-group-item list-group-item-secondary">Applications</div>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
-            <i class="bi bi-house"></i> Startseite
-        </a>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
-            <i class="bi bi-building"></i> Campus
-        </a>
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new { @area = "Gym" })">
-            <i class="bi bi-controller"></i> Gym
-        </a>
+        else
+        {
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
+                <i class="bi bi-house"></i> Startseite
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
+                <i class="bi bi-building"></i> Campus
+            </a>
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new { @area = "Gym" })">
+                <i class="bi bi-controller"></i> Gym
+            </a>
+        }
         @*
         <a class="list-group-item list-group-item-action" href="@Url.Action("PersonalMessage", "Notification")"><i class="bi bi-send"></i> Send me a notification</a>
         <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "UserProfile")"><i class="bi bi-gear"></i> @Resources.MySettings</a>
@@ -184,11 +226,11 @@
     @RenderSection("scripts", required: false)
 
     <script type="text/javascript">
-        var themeName = "light";
+        //var themeName = "light";
 
     $(function() {
 
-
+        /*
         if (localStorage.getItem("grapevine.theme") === null) {
             themeName = "light";
             localStorage.setItem("grapevine.theme", themeName.toString());
@@ -197,6 +239,7 @@
         }
 
         updateTheme();
+        */
 
         if (document.cookie.indexOf("cookieNotification") < 0) {
             $('#cookie-consent').slideDown('slow');
@@ -213,9 +256,12 @@
     });
 
         function onSetTheme(theme) {
-            themeName = theme;
-            localStorage.setItem("grapevine.theme", themeName.toString());
-            updateTheme();
+            theme = theme;
+            localStorage.setItem("grapevine.theme", theme.toString());
+
+            const element = document.getElementById("mainElement");
+            element.setAttribute("data-bs-theme", theme);
+            //updateTheme();
         }
 
         function updateTheme() {

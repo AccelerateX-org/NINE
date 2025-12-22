@@ -880,7 +880,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.IsDual = student.IsDual;
             model.IsPartTime = student.IsPartTime;
 
-            ViewBag.Curricula = org.Curricula.Where(x => x.IsPublished).OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            ViewBag.Curricula = org.Curricula.Where(x => !x.IsDeprecated).OrderBy(f => f.ShortName).Select(f => new SelectListItem
             {
                 Text = f.Name,
                 Value = f.Id.ToString(),

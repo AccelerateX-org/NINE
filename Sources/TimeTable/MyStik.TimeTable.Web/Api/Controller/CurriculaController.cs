@@ -1,8 +1,10 @@
-﻿using System;
+﻿using MyStik.TimeTable.Web.Api.Contracts;
+using MyStik.TimeTable.Web.Api.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using MyStik.TimeTable.Web.Api.DTOs;
+using System.Web.Http.Description;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -15,109 +17,36 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <summary>
         /// 
         /// </summary>
-        [Route("")]
-        public IQueryable<CurriculumDto> GetCurricula(string org = "")
+        [Route("{curriculum_id}")]
+        [ResponseType(typeof(CurriculumDto))]
+
+        public IHttpActionResult GetCurricula(string curriculum_id)
         {
-            var curriculaWithPlan =
-                string.IsNullOrEmpty(org)
-                    ? Db.Curricula.Where(x => x.Areas.Any()) .ToList()
-                    : Db.Curricula.Where(x => x.Areas.Any() && x.Organiser.ShortName.ToLower().Equals(org.ToLower())).ToList();
+            var curriculum = Db.Curricula.FirstOrDefault(x => x.ShortName == curriculum_id);
+            if (curriculum == null)
+                return NotFound();
 
-            var result = new List<CurriculumDto>();
-
-            foreach (var curriculum in curriculaWithPlan)
+            var dto = new CurriculumDto
             {
-                var curr = new CurriculumDto
-                {
-                    Id = curriculum.Id,
-                    Name = curriculum.Name,
-                    ShortName = curriculum.ShortName,
-                    
-                    Organiser = new OrganiserDto
-                    {
-                        Name = curriculum.Organiser.Name,
-                        ShortName = curriculum.Organiser.ShortName,
-                        Color = curriculum.Organiser.HtmlColor,
-                        Id = curriculum.Organiser.Id
-                    }
-                };
+                Name = curriculum.Name,
+                Curriculum_id = curriculum.ShortName,
+            };
 
-                result.Add(curr);
-            }
-
-            return result.AsQueryable();
-        }
-
-        /*
-        [Route("{name}")]
-        public NamedDto GetCurriculumInfo(string name)
-        {
-            return new NamedDto();
+            return Ok(dto);
         }
 
 
-        [Route("{name}/versions")]
-        public IQueryable<NamedDto> GetCurriculumVersions(string name)
-        {
-            return new List<NamedDto>().AsQueryable();
-        }
+        [HttpGet]
+        [Route("{curriculum_id}/moduleplan")]
+        [ResponseType(typeof(List<CurriculumSlotDto>))]
 
-        [Route("{name}/{version}/modules/{semester}")]
-        public IQueryable<CurriculumSchemeSemesterDto> GetCurriculumPlan(string name, string version, string semester)
-        {
-            var list = new List<CurriculumSchemeSemesterDto>();
-
-            // semester und Version werden noch nicht ausgewertet
-            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.ToUpper().Equals(name.Trim().ToUpper()));
-
-
-            if (curr == null)
-                return list.AsQueryable();
-
-            var accreditions =
-                Db.Accreditations.Where(x => x.Slot.CurriculumSection.Curriculum.Id == curr.Id)
-                    .Distinct()
-                    .OrderBy(x => x.Module.ShortName).ToList();
-
-
-            foreach (var ac in accreditions)
-            {
-                var semDto = list.FirstOrDefault(x => x.Term == ac.Slot.CurriculumSection.Order);
-
-                if (semDto == null)
-                {
-                    semDto = new CurriculumSchemeSemesterDto
-                    {
-                        Term = ac.Slot.CurriculumSection.Order
-                    };
-
-                    list.Add(semDto);
-                }
-
-
-                var moduleDto = new CurriculumSchemeModuleDto()
-                {
-                    Id = ac.Module.Id,
-                    Name = ac.Module.Name,
-                    Ects = ac.Slot.ECTS,
-                };
-
-                semDto.Modules.Add(moduleDto);
-            }
-
-            return list.AsQueryable();
-        }
-        */
-
-
-        [Route("{id}/slots")]
-        public IQueryable<CurriculumSlotDto> GetCurriculumPlan(Guid id)
+        public IHttpActionResult GetCurriculumPlan(string curriculum_id)
         {
             var list = new List<CurriculumSlotDto>();
 
-            var curr = Db.Curricula.FirstOrDefault(x => x.Id == id);
+            var curr = Db.Curricula.FirstOrDefault(x => x.ShortName == curriculum_id);
             if (curr == null)
-                return list.AsQueryable();
+                return NotFound();
 
             var allSlots = Db.CurriculumSlots
                 .Where(x => x.AreaOption != null &&
@@ -150,7 +79,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 list.Add(slotDto);
             }
 
-            return list.AsQueryable();
+            return Ok(list);
         }
     }
 }

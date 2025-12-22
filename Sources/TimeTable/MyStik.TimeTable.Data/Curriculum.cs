@@ -63,7 +63,8 @@ namespace MyStik.TimeTable.Data
         public bool IsPublished { get; set; }
 
         /// <summary>
-        /// Gilt nicht mehr, z.B. bei Erstsemestern
+        /// Is veraltet, d.h. wird nicht angeboten
+        /// angeboten = nicht deprectated
         /// </summary>
         public bool IsDeprecated { get; set; }
 
