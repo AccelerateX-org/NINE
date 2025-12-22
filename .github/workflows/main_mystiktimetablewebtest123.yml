@@ -30,7 +30,8 @@ jobs:
 
       - name: Publish to folder
         working-directory: ./Sources
-        run: msbuild /nologo /verbosity:m /t:Build /t:pipelinePreDeployCopyAllFilesToOneFolder /p:_PackageTempDir="\published\"
+        run: msbuild /nologo /verbosity:m/p:Configuration=Release /t:Publish /p:PublishDir=./publish
+#        run: msbuild /nologo /verbosity:m /t:Build /t:pipelinePreDeployCopyAllFilesToOneFolder /p:_PackageTempDir="\published\"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
