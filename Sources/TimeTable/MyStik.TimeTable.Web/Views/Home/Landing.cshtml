@@ -12,11 +12,11 @@
     var semester = semesterService.GetSemester(DateTime.Today);
 
     var activeUserToday = userDb.Users.Count(x => x.LastLogin >= DateTime.Today);
-    var activeUserSemester = userDb.Users.Count(x => x.LastLogin >= semester.StartCourses);
+    var activeUserSemester = semester != null ?  userDb.Users.Count(x => x.LastLogin >= semester.StartCourses) : 0;
     var activeUserTotal = userDb.Users.Count(x => x.LastLogin != null);
 
     var activeUserTodaySSO = userDb.Users.Count(x => x.LastLogin >= DateTime.Today && x.Logins.Any());
-    var activeUserSemesterSSO = userDb.Users.Count(x => x.LastLogin >= semester.StartCourses && x.Logins.Any());
+    var activeUserSemesterSSO = semester != null ? userDb.Users.Count(x => x.LastLogin >= semester.StartCourses && x.Logins.Any()) : 0;
     var activeUserTotalSSO = userDb.Users.Count(x => x.LastLogin != null && x.Logins.Any());
 
 }
@@ -222,7 +222,10 @@
                                 <p>Eine kleine Statistik zur Reichweite. Angabe der Personen, die sich im jeweiligen Zeitraum angemeldet haben. In Klammern dabei die Anzahl der Personen, die dafür den HM User Account nutzen:</p>
                                 <ul>
                                     <li>heute @DateTime.Today.ToShortDateString(): @activeUserToday (@activeUserTodaySSO)</li>
-                                    <lI>bisher im @semester.Name: @activeUserSemester (@activeUserSemesterSSO)</lI>
+                                    @if (semester != null)
+                                    {
+                                        <lI>bisher im @semester.Name: @activeUserSemester (@activeUserSemesterSSO)</lI>
+                                    }
                                     <li>insgesamt: @activeUserTotal (@activeUserTotalSSO)</li>
                                 </ul>
                             </div>

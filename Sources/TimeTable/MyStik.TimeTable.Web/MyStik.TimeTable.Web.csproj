@@ -3648,8 +3648,11 @@
     <Content Include="Areas\Admin\Views\User\_AccountList.cshtml" />
     <Content Include="Areas\Admin\Views\User\_AccountListEntry.cshtml" />
     <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy1.pubxml" />
+    <None Include="Properties\PublishProfiles\MyStikTimeTableWebtest123 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
+    <None Include="Properties\PublishProfiles\registry.hub.docker.com_olav.hinz%40hm.edu.pubxml" />
     <None Include="Properties\PublishProfiles\SystemTest.pubxml" />
     <None Include="Properties\PublishProfiles\XCopy.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />

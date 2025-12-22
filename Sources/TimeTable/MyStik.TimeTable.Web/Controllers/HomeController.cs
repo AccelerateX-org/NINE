@@ -1,12 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Net.Mail;
-using System.Web;
-using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Web;
+using System.Web.Mvc;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -18,6 +20,8 @@ namespace MyStik.TimeTable.Web.Controllers
     [HandleError(View = "~/Views/Error/Index")]
     public class HomeController : BaseController
     {
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
+
         [AllowAnonymous]
         public ActionResult Callback()
         {
@@ -59,6 +63,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Verteiler nach Rolle
             var user = GetCurrentUser();
+            if (user == null)
+            {
+                AuthenticationManager.SignOut();
+                return View("Landing");
+            }
             var student = GetCurrentStudent(user.Id);
             var members = MemberService.GetFacultyMemberships(user.Id);
 
