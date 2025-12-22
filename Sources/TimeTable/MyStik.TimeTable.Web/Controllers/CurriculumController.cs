@@ -1094,6 +1094,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CurriculumEditModel
             {
                 CurriculumId = curr.Id,
+                OrgId = curr.Organiser.Id,
                 Tag = curr.Tag,
                 Name = curr.Name,
                 ShortName = curr.ShortName,
@@ -1119,6 +1120,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 });
 
             ViewBag.Degrees = degrees;
+
+            var orgs =
+                Db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).Select(x => new SelectListItem
+                {
+                    Text = x.ShortName,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.Orgs = orgs;
 
 
             return View(model);
@@ -1148,7 +1158,16 @@ namespace MyStik.TimeTable.Web.Controllers
             cur.IsDeprecated = !model.IsDeprecated;
 
             var degree = Db.Degrees.SingleOrDefault(x => x.Id == model.DegreeId);
-            cur.Degree = degree;
+            if (degree != null)
+            {
+                cur.Degree = degree;
+            }
+
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.OrgId);
+            if (org != null)
+            {
+                cur.Organiser = org;
+            }
 
             Db.SaveChanges();
 

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Api.Contracts;
+using MyStik.TimeTable.Web.Api.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Api.DTOs;
+using System.Web.Http.Description;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -16,10 +18,14 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <summary>
         /// 
         /// </summary>
+        [HttpGet]
         [Route("")]
-        public IQueryable<SemesterDto> GetSemester()
+        [ResponseType(typeof(List<SemesterDto>))]
+
+        public IHttpActionResult GetSemester()
         {
-            var history = Db.Semesters.Where(x => x.StartCourses <= DateTime.Today);
+            var limit = DateTime.Today.AddYears(1);
+            var history = Db.Semesters.Where(x => x.StartCourses <= limit).OrderByDescending(x => x.StartCourses);
 
             var result = new List<SemesterDto>();
 
@@ -27,46 +33,42 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 result.Add(new SemesterDto
                 {
-                    Name = semester.Name
+                    Semester_Id = semester.Name,
+                    Begin = semester.StartCourses,
+                    End = semester.EndCourses
                 });    
             }
-
-            return result.AsQueryable();
+            return Ok(result);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [Route("{name}/statistics")]
-        public IQueryable<SemesterStatisticsDto> GetSemesterStatistics(string name)
+        [HttpGet]
+        [ResponseType(typeof(List<SemesterStatisticsDto>))]
+        [Route("{semester_id}/segments/{organiser_id}")]
+
+        public IHttpActionResult GetOrganiserSemester(string semester_id, string organiser_id)
         {
-            var semester = Db.Semesters.FirstOrDefault(x => x.Name.Equals(name));
+            var semester = Db.Semesters.SingleOrDefault(s => s.Name == semester_id);
+            var org = Db.Organisers.SingleOrDefault(o => o.ShortName == organiser_id);
 
-            var query = Db.Subscriptions.OfType<SemesterSubscription>()
-                .Where(s => s.SemesterGroup.Semester.Id == semester.Id)
-                .GroupBy(x => x.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum)
-                .Select(n => new
-                    {
-                        Name = n.Key.Organiser.ShortName,
-                        Name2 = n.Key.ShortName,
-                        Count = n.Count()
-                    })
-                ;
+            if (semester == null || org == null)
+                return NotFound();
 
+            var dates = Db.SemesterDates.Where(d => d.Semester.Id == semester.Id && d.Organiser != null && d.Organiser.Id == org.Id).OrderBy(d => d.From).ToList();
 
-            var result = new List<SemesterStatisticsDto>();
+            var response = new List<SemesterStatisticsDto>();
 
-            foreach (var group in query)
+            foreach (var date in dates)
             {
-                var stat = new SemesterStatisticsDto();
-
-                stat.Curriculum = $"{@group.Name}-{@group.Name2}";
-                stat.Subscriptions = group.Count;
-
-                result.Add(stat);
+                response.Add(new SemesterStatisticsDto
+                {
+                    Name = date.Description,
+                    Begin = date.From,
+                    End = date.To
+                });
             }
+            ;
 
-            return result.AsQueryable();
+            return Ok(response);
         }
 
     }

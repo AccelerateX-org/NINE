@@ -7,6 +7,7 @@ using MyStik.TimeTable.DataServices;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /*
     public class ConsultationRequest
     {
         public string Lecturer { get; set; }
@@ -88,4 +89,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
 
     }
+    */
 }

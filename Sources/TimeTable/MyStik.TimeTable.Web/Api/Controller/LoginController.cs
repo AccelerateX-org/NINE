@@ -76,7 +76,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     student2.Curriculum.Organiser).FirstOrDefault();
                 if (student != null)
                 {
-                    result.Curriculum = new CurriculumDto
+                    result.Curriculum = new StudentCurriculumDto
                     {
                         Name = student.Curriculum.Name,
                         ShortName = student.Curriculum.ShortName,

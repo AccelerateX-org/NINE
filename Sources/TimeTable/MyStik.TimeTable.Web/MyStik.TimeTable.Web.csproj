@@ -426,6 +426,7 @@
     <Compile Include="Api\Contracts\EventContracts.cs" />
     <Compile Include="Api\Contracts\LecturerContracts.cs" />
     <Compile Include="Api\Contracts\NotificationContracts.cs" />
+    <Compile Include="Api\Contracts\OrganisersContracts.cs" />
     <Compile Include="Api\Contracts\QuestionContracts.cs" />
     <Compile Include="Api\Contracts\RoomContracts.cs" />
     <Compile Include="Api\Contracts\CoursesContracts.cs" />
@@ -440,9 +441,10 @@
     <Compile Include="Api\Controller\ConsultationsController.cs" />
     <Compile Include="Api\Controller\CoursesController.cs" />
     <Compile Include="Api\Controller\CurriculaController.cs" />
-    <Compile Include="Api\Controller\LecturerController.cs" />
+    <Compile Include="Api\Controller\PersonsController.cs" />
     <Compile Include="Api\Controller\LoginController.cs" />
     <Compile Include="Api\Controller\ModulesController.cs" />
+    <Compile Include="Api\Controller\OrganisersController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
     <Compile Include="Api\Controller\QuestionsController.cs" />
     <Compile Include="Api\Controller\QuizGameController.cs" />
@@ -4876,6 +4878,12 @@
     <Content Include="Views\Lecturer\ImportMember.cshtml" />
     <Content Include="Views\Activity\PersonalAgenda.cshtml" />
     <Content Include="Views\Shared\_LayoutPublicSidebar.cshtml" />
+    <Content Include="Views\Exam\Dates.cshtml" />
+    <Content Include="Views\Exam\Observer.cshtml" />
+    <Content Include="Views\Exam\Students.cshtml" />
+    <Content Include="Views\Semester\Fulfillment.cshtml" />
+    <Content Include="Views\Semester\Forward.cshtml" />
+    <Content Include="Views\Semester\Conflicts.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

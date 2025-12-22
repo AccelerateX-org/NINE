@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /*
     public class SubscriptionRequest
     {
         public PushSubscription Subscription { get; set; }
@@ -51,13 +52,11 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("getkey")]
         public ApiPushKeyRequest GetPublicKey()
         {
-            /*
-                {
-                  "subject": "mailto:nine@hm.edu",
-                  "publicKey": "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA",
-                  "privateKey": "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c"
-                }
-             */
+               //{
+               //   "subject": "mailto:nine@hm.edu",
+               //   "publicKey": "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA",
+               //   "privateKey": "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c"
+               // }
 
 
 
@@ -137,4 +136,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
         }
 
     }
+    */
 }

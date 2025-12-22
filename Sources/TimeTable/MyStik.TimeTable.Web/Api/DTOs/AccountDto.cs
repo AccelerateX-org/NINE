@@ -13,8 +13,27 @@
         /// <summary>
         /// 
         /// </summary>
-        public CurriculumDto Curriculum { get; set; }
+        public StudentCurriculumDto Curriculum { get; set; }
     }
+
+    public class StudentCurriculumDto
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name { get; set; }
+
+        public string ShortName { get; set; }
+
+        public OrganiserDto Organiser { get; set; }
+
+        public string Semester { get; set; }
+    }
+
 
     /// <summary>
     /// 

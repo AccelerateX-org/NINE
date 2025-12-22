@@ -84,7 +84,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
-        public CourseApiModel Convert_new(Course course, bool useDetails = false)
+        public CourseApiModel Convert_new(Course course, bool useDetails = false, bool useSubscriptions = false)
         {
             var dto = new CourseApiModel();
 
@@ -155,51 +155,42 @@ namespace MyStik.TimeTable.Web.Api.Services
                 foreach (var host in activityDate.Hosts)
                 {
                     courseDate.hosts.Add(host.ShortName);
-                    if (_isAuth)
-                    {
-                        var user = _userDb.FindById(host.UserId);
-                        if (user != null)
-                        {
-                            var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
-                            if (claim != null)
-                            {
-                                courseDate.hosts.Add(claim.ClaimValue);
-                            }
-                        }
-                    }
                 }
                 dto.dates.Add(courseDate);
             }
 
-            dto.subscribers = new List<CourseSubscriberApiModel>();
-            var studService = new StudentService(_db);
-
-            foreach (var sub in course.Occurrence.Subscriptions)
+            if (useSubscriptions)
             {
-                var subscriber = new CourseSubscriberApiModel();
-                subscriber.id = "#NA";
+                dto.subscribers = new List<CourseSubscriberApiModel>();
+                var studService = new StudentService(_db);
 
-                var student = studService.GetCurrentStudent(sub.UserId);
-                if (student != null && student.Any())
+                foreach (var sub in course.Occurrence.Subscriptions)
                 {
-                    subscriber.id = student.First().Curriculum.ShortName;
+                    var subscriber = new CourseSubscriberApiModel();
+                    subscriber.id = "#NA";
 
-                    if (_isAuth)
+                    var student = studService.GetCurrentStudent(sub.UserId);
+                    if (student != null && student.Any())
                     {
-                        var user = _userDb.FindById(sub.UserId);
-                        if (user != null)
+                        subscriber.id = student.First().Curriculum.ShortName;
+
+                        if (_isAuth)
                         {
-                            var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
-                            if (claim != null)
+                            var user = _userDb.FindById(sub.UserId);
+                            if (user != null)
                             {
-                                subscriber.id = claim.ClaimValue;
+                                var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
+                                if (claim != null)
+                                {
+                                    subscriber.id = claim.ClaimValue;
+                                }
                             }
                         }
                     }
+                    subscriber.subscribed = sub.TimeStamp;
+                    dto.subscribers.Add(subscriber);
                 }
-                subscriber.subscribed = sub.TimeStamp;
-                dto.subscribers.Add(subscriber);
-            }   
+            }
 
             return dto;
         }

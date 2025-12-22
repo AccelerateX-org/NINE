@@ -21,6 +21,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index(Guid id)
         {
+            /*
             var org = GetOrganisation(id);
 
             var semester = SemesterService.GetSemester(DateTime.Today);
@@ -38,9 +39,36 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(org);
 
             return View(semesterList);
+            */
+
+            return RedirectToAction("Details", "Semester", new { orgId = id });
         }
 
-        public ActionResult Details(Guid orgId, Guid semId)
+        public ActionResult Details(Guid orgId, Guid? semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var currentSemester = sem;
+            var nextSemester = SemesterService.GetNextSemester(sem);
+            var prevSemester = SemesterService.GetPreviousSemester(sem);
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult Fulfillment(Guid orgId, Guid semId)
         {
             var org = GetOrganiser(orgId);
             var sem = SemesterService.GetSemester(semId);
@@ -55,6 +83,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult Forward(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult Conflicts(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = sem
+            };
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
 
         public ActionResult CreateDate(Guid orgId, Guid semId)
         {

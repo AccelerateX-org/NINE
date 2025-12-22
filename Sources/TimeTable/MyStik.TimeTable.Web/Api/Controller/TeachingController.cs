@@ -8,6 +8,7 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /*
     [RoutePrefix("api/v2/teaching")]
 
     public class TeachingController : ApiBaseController
@@ -49,4 +50,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
 
     }
+    */
 }

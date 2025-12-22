@@ -228,6 +228,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public Guid DegreeId { get; set; }
 
+        public Guid OrgId { get; set; }
+
         public int EctsTarget { get; set; }
 
         public bool AsDual { get; set; }
