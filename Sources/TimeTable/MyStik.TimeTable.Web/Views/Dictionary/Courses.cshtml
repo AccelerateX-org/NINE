@@ -7,7 +7,7 @@
     ViewBag.Title = "Kursplan";
 
     var db = new TimeTableDbContext();
-    var courseService = new CourseService(db);
+    var courseService = new CourseInfoService(Db);
 
     /*
     var courses = db.Activities.OfType<Course>().Where(x =>

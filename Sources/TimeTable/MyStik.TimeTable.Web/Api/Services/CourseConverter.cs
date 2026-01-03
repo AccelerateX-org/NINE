@@ -112,21 +112,22 @@ namespace MyStik.TimeTable.Web.Api.Services
 
                     if (curr != null)
                     {
-                        cohorte.curriculum = curr.ShortName;
+                        cohorte.curriculum_alias = curr.ShortName;
+                        cohorte.curriculum_id = curr.ID;
                     }
 
                     var org = _db.Organisers.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
 
                     if (org != null)
                     {
-                        cohorte.organiser = org.ShortName;
+                        cohorte.organiser_id = org.ShortName;
                     }
 
                     var inst = _db.Institutions.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
 
                     if (inst != null)
                     {
-                        cohorte.institution = inst.Tag;
+                        cohorte.institution_id = inst.Tag;
                     }
 
                     cohorte.label = label.Name;
@@ -306,7 +307,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var dto = new CourseSummaryDto();
 
-            var courseService = new CourseService(_db);
+            var courseService = new CourseInfoService(_db);
 
             var summary = courseService.GetCourseSummary(course);
 

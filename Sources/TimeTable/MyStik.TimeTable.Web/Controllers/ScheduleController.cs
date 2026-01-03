@@ -91,7 +91,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Curriculum = curriclum,
             };
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var course in courses)
             {

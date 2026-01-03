@@ -1,24 +1,50 @@
-﻿using System;
-using System.Data.Entity;
+﻿using MyStik.TimeTable.Data;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using MyStik.TimeTable.Data;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace MyStik.TimeTable.DataServices
+namespace MyStik.TimeTable.DataServices.CRUD
 {
-    public class CascadingDeleteService
+    public class CourseDeleteService
     {
         private TimeTableDbContext _db;
 
-        public CascadingDeleteService(TimeTableDbContext db)
+        public CourseDeleteService(TimeTableDbContext db)
         {
             _db = db;
         }
 
+        public bool DeleteCourse(Guid courseId)
+        {
+            var course = _db.Activities.SingleOrDefault(c => c.Id == courseId);
+            if (course == null)
+            {
+                return false;
+            }
+
+            // Entfernen von Abhängigkeiten, falls vorhanden
+            var subjectTeachings = _db.SubjectTeachings.Where(st => st.Course.Id == courseId).ToList();
+            foreach (var teaching in subjectTeachings)
+            {
+                _db.SubjectTeachings.Remove(teaching);
+            }
+            var scriptPublishings = _db.ScriptPublishings.Where(sp => sp.Course.Id == courseId).ToList();
+            foreach (var publishing in scriptPublishings)
+            {
+                _db.ScriptPublishings.Remove(publishing);
+            }
+
+            // jetzt noch die Aktivität löschen
+            var activityService = new ActivityDeleteService(_db);
+
+            return activityService.DeleteActivity(courseId);
+        }
 
         public void DeleteActivityDate(Guid id, bool deleteOccurrence = true)
         {
-            var date = _db.ActivityDates.Include(activityDate => activityDate.Occurrence).Include(activityDate1 => activityDate1.VirtualRooms).Include(activityDate2 =>
-                activityDate2.Changes.Select(activityDateChange => activityDateChange.NotificationStates)).SingleOrDefault(x => x.Id == id);
+            var date = _db.ActivityDates.SingleOrDefault(x => x.Id == id);
 
             if (date == null)
                 return;
@@ -59,14 +85,9 @@ namespace MyStik.TimeTable.DataServices
                 _db.VirtualRoomAccesses.Remove(vRoom);
             }
 
-
-
-
             _db.ActivityDates.Remove(date);
-
             _db.SaveChanges();
         }
-
 
         private void DeleteOccurrence(Occurrence occ)
         {
@@ -75,5 +96,6 @@ namespace MyStik.TimeTable.DataServices
                 _db.Occurrences.Remove(occ);
             }
         }
+
     }
 }

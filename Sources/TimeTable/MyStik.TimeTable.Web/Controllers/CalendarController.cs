@@ -397,7 +397,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -435,7 +435,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var bgColor = string.IsNullOrEmpty(color) ? "#47aba1" : color;
 
@@ -523,7 +523,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -613,7 +613,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.Id == slot.Id)))
                 .ToList();
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -665,7 +665,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.Id == slot.Id)))
                 .ToList();
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -729,7 +729,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             x.SubjectTeachings.Any(t => t.Subject.SubjectAccreditations.Any(a => a.Slot.Id == slot.Id)))
                         .ToList();
 
-                    var cs = new CourseService();
+                    var cs = new CourseInfoService(Db);
                     var courseSummaries = new List<CourseSummaryModel>();
 
                     foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -792,7 +792,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in allCourses.OrderBy(g => g.ShortName))
@@ -830,7 +830,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var semester = SemesterService.GetSemester(semId);
             var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
@@ -868,7 +868,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in allCourses.OrderBy(g => g.ShortName))
@@ -1214,7 +1214,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var events = new List<CalendarEventModel>();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             // start und end sind "echte" Daten, d.h. eine Woche
 
@@ -1323,7 +1323,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var events = new List<CalendarEventModel>();
 
@@ -1477,7 +1477,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var events = new List<CalendarEventModel>();
 
@@ -1593,7 +1593,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var bgColor = string.IsNullOrEmpty(color) ? "#feb151" : color;
 
 
-                var courseService = new CourseService(Db);
+                var courseService = new CourseInfoService(Db);
 
                 // 3. Suchergebnis
                 // das Semester suchen, dass zum Datum passt
@@ -2112,7 +2112,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var startDate = GetDateTime(start);
                 var endDate = GetDateTime(end);
 
-                var courseService = new CourseService(Db);
+                var courseService = new CourseInfoService(Db);
 
                 var events = new List<CalendarEventModel>();
 

@@ -30,7 +30,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester,
             };
 
-            var courseSummaryService = new CourseService(Db);
+            var courseSummaryService = new CourseInfoService(Db);
 
             foreach (var cieGroup in allCieGroups)
             {

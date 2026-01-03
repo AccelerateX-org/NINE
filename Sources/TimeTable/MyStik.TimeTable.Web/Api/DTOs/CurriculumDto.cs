@@ -8,9 +8,13 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     /// </summary>
     public class CurriculumDto
     {
+        public string Curriculum_alias { get; set; }
+
         public string Curriculum_id { get; set; }
 
-        public string Name { get; set; }    
+        public string Organiser_id { get; set; }
+
+        public string Title { get; set; }    
     }
 
     #region structure

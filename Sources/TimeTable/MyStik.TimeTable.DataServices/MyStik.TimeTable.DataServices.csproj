@@ -91,7 +91,8 @@
     <Compile Include="Booking\Data\BookingList.cs" />
     <Compile Include="Booking\Data\BookingTicket.cs" />
     <Compile Include="Booking\QuotaService.cs" />
-    <Compile Include="CascadingDeleteService.cs" />
+    <Compile Include="CRUD\ActivityDeleteService.cs" />
+    <Compile Include="CRUD\CourseDeleteService.cs" />
     <Compile Include="IO\Cie\Data\CieCourse.cs" />
     <Compile Include="IO\Cie\Data\CieModel.cs" />
     <Compile Include="IO\Cie\FileReader.cs" />
@@ -143,21 +144,17 @@
     <Compile Include="Lottery\IDrawingAlgorithm.cs" />
     <Compile Include="NewsletterSubscriptionTicket.cs" />
     <Compile Include="ListExtensions.cs" />
+    <Compile Include="OfficeHourCreateRequest.cs" />
     <Compile Include="OrganizerService.cs" />
     <Compile Include="RoomService.cs" />
     <Compile Include="SemesterService.cs" />
     <Compile Include="CourseSubscriptionTicket.cs" />
-    <Compile Include="TimeTableInfoService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="$(SolutionDir)\SolutionInfo.cs" Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
       <link>Properties\SolutionInfo.cs</link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyStik.TimeTable.Contracts\MyStik.TimeTable.Contracts.csproj">
-      <Project>{11cb6560-b6fc-481a-bdac-70326d835e64}</Project>
-      <Name>MyStik.TimeTable.Contracts</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MyStik.TimeTable.Data\MyStik.TimeTable.Data.csproj">
       <Project>{2c1bdfec-d9e1-492e-b4dc-1fcd0ef25567}</Project>
       <Name>MyStik.TimeTable.Data</Name>

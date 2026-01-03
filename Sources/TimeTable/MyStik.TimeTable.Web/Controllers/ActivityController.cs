@@ -230,7 +230,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         public ActionResult PersonalPlanWeekly(Guid? id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new ActivityPlanModel();
 
@@ -291,7 +291,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult MemberPlanWeekly(Guid id, Guid memberId)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new ActivityPlanModel();
 
@@ -345,7 +345,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(id);
             var user = AppUser;
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new DashboardStudentViewModel();
 

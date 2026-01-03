@@ -143,9 +143,23 @@
                     }
                     else
                     {
-                        <div class="list-group-item">
-                            importiert aus @Model.Summary.Course.ExternalSource (@Model.Summary.Course.ExternalId)
-                        </div>
+                        if (Model.Summary.Course.Owners.Any())
+                        {
+                            <div class="list-group-item">
+                                importiert aus @Model.Summary.Course.ExternalSource (@Model.Summary.Course.ExternalId)
+                                @foreach (var own in Model.Summary.Course.Owners)
+                                {
+                                    <div>@own.Member.FullName</div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="list-group-item list-group-item-danger">
+                                importiert aus @Model.Summary.Course.ExternalSource (@Model.Summary.Course.ExternalId)
+                                Keine Information zu Besitzer vorhanden
+                            </div>
+                        }
                     }
                     <div class="list-group-item">
                         @if (Model.Summary.Course.Semester != null && Model.Summary.Course.Organiser != null)

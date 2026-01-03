@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyStik.TimeTable.Contracts
+namespace MyStik.TimeTable.DataServices
 {
     public class OfficeHourCreateRequest
     {

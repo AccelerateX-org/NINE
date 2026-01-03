@@ -13,7 +13,7 @@
     var sem = Model.Semester;
 
     var lecturers = new List<OrganiserMember>();
-    var service = new CourseService();
+    var service = new CourseInfoService(Db);
 
     foreach (var subject in Model.Module.ModuleSubjects)
     {

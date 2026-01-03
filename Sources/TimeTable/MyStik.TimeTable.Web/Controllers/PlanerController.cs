@@ -444,7 +444,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             // Ermittlung der Semestergruppe
             // das Fachsemester
@@ -948,7 +948,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private ICollection<CourseSummaryModel> GetCourseSummaries(ICollection<Course> courses, ApplicationUser user, Semester semester)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var activities = Db.Activities.OfType<Course>().Where(a =>
                 a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&

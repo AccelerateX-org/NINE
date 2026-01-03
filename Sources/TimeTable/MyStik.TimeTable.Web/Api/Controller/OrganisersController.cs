@@ -39,7 +39,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("{organiser_id}/lecturers")]
         [HttpGet]
         [ResponseType(typeof(List<OrganiserLecturerApiContract>))]
-        public IHttpActionResult GetLecturers(string organiser_id, string pattern="")
+        public IHttpActionResult GetLecturers(string organiser_id)
         {
             var org = Db.Organisers.SingleOrDefault(x => x.ShortName == organiser_id);
 
@@ -59,10 +59,38 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return Ok(response);
         }
 
+        [Route("{organiser_id}/rooms")]
+        [HttpGet]
+        [ResponseType(typeof(List<OrganiserRoomApiContract>))]
+        public IHttpActionResult GetRooms(string organiser_id)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.ShortName == organiser_id);
+
+            if (org == null)
+                return NotFound();
+
+            var response = new List<OrganiserRoomApiContract>();
+            foreach (var assignment in org.RoomAssignments)
+            {
+                var owner = Db.RoomAssignments.FirstOrDefault(x => x.Room.Id == assignment.Room.Id && x.IsOwner);
+
+                response.Add(new OrganiserRoomApiContract
+                {
+                    Room_Id = assignment.Room.Number,
+                    Name = assignment.Room.Name,
+                    Capacity = assignment.Room.Capacity,
+                    Organiser_Id = owner?.Organiser.ShortName
+                });
+            }
+
+            return Ok(response);
+        }
+
+
         [Route("{organiser_id}/curricula")]
         [HttpGet]
         [ResponseType(typeof(List<OrganiserCurriculumApiContract>))]
-        public IHttpActionResult GetCurricula(string organiser_id, string pattern = "")
+        public IHttpActionResult GetCurricula(string organiser_id)
         {
             var org = Db.Organisers.SingleOrDefault(x => x.ShortName == organiser_id);
 
@@ -74,8 +102,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 response.Add(new OrganiserCurriculumApiContract
                 {
-                    Curriculum_Id = curr.ShortName,
-                    Name = curr.Name
+                    Curriculum_Id = curr.ID,
+                    Name = curr.Name,
+                    ShortName = curr.ShortName
                 });
             }
 
@@ -85,7 +114,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("{organiser_id}/modules")]
         [HttpGet]
         [ResponseType(typeof(List<OrganiserModuleApiContract>))]
-        public IHttpActionResult GetModules(string organiser_id, string pattern = "")
+        public IHttpActionResult GetModules(string organiser_id)
         {
             var org = Db.Organisers.SingleOrDefault(x => x.ShortName == organiser_id);
 

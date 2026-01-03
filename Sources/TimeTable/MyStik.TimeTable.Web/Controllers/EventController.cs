@@ -1239,11 +1239,11 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult DeleteEvent(EventDeleteModel model)
         {
-
+            /*
             var timeTableService = new TimeTableInfoService(Db);
 
             timeTableService.DeleteEvent(model.Course.Id);
-
+            */
 
             // Kehre zurück zur Seite der Aktivität
             return RedirectToAction("Index");

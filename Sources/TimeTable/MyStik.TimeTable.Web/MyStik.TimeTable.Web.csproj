@@ -809,7 +809,7 @@
     <Compile Include="Services\CalendarEventService.cs" />
     <Compile Include="Services\CalendarService.cs" />
     <Compile Include="Services\ChangeService.cs" />
-    <Compile Include="Services\CourseService.cs" />
+    <Compile Include="Services\CourseInfoService.cs" />
     <Compile Include="Services\CurriculumService.cs" />
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\LotteryMailService.cs" />
@@ -4934,10 +4934,6 @@
     <ProjectReference Include="..\..\Gym\MyStik.Gym.Data\MyStik.Gym.Data.csproj">
       <Project>{f4913b5e-d8bb-4210-9023-565f7cfd6bcb}</Project>
       <Name>MyStik.Gym.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyStik.TimeTable.Contracts\MyStik.TimeTable.Contracts.csproj">
-      <Project>{11cb6560-b6fc-481a-bdac-70326d835e64}</Project>
-      <Name>MyStik.TimeTable.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\MyStik.TimeTable.DataServices\MyStik.TimeTable.DataServices.csproj">
       <Project>{38bd20ff-9419-4a38-ab44-f13cb74bde0e}</Project>

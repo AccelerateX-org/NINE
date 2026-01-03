@@ -7,7 +7,7 @@
     ViewBag.Title = "Kurs planen";
 
     var db = new TimeTableDbContext();
-    var courseService = new CourseService(db);
+    var courseService = new CourseInfoService(Db);
     var semService = new SemesterService(db);
 
     var course = Model.Course;

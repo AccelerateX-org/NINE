@@ -30,7 +30,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
                 .ToList());
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))

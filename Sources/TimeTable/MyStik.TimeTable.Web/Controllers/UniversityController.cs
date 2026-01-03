@@ -131,7 +131,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Master of Arts in Business Administration | MBA
                 // Master of Business Administration | MBA
 
-
+                /*
                 var b1 = new Degree { Name = "Bachelor of Arts", ShortName = "B. A.", IsUndergraduate = true, IsCertificate = false, IsPhD = false};
                 var b2 = new Degree { Name = "Bachelor of Engineering", ShortName = "B. Eng.", IsUndergraduate = true, IsCertificate = false, IsPhD = false };
 
@@ -151,6 +151,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Degrees.Add(m5);
 
                 Db.SaveChanges();
+                */
             }
 
             ViewBag.Degree = degree;

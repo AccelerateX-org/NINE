@@ -24,14 +24,16 @@ namespace MyStik.TimeTable.Data
         public string Name { get; set; }
 
         /// <summary>
-        /// der gebräuchliche Kurzname
+        /// der gebräuchliche Kurzname - Alias
+        /// Definiert letztlich die Gruppe der Angebote
+        /// alle Versionen einer SPO
         /// </summary>
         public string ShortName { get; set; }
 
         public string Description { get; set; }
 
         /// <summary>
-        /// der technische Kurzname
+        /// der technische Kurzname - Bestandteil des Schlüssels für API
         /// </summary>
         public string Tag { get; set; }
 
@@ -92,6 +94,11 @@ namespace MyStik.TimeTable.Data
         public bool InSummerTerm { get; set; }
 
         /// <summary>
+        /// Inkraft treten der (Änderungs-)Satzung
+        /// </summary>
+        public DateTime? StatuteTakeEffect { get; set; }
+
+        /// <summary>
         /// Gültig ab Semester
         /// </summary>
         // public virtual Semester ValidSince { get; set; }
@@ -141,6 +148,13 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CurriculumArea> Areas { get; set; }
 
+        public string ID
+        {
+            get
+            {
+                return $"{Tag}_YYYYMMDD";
+            }
+        }
     }
 
     public class CurriculumOpportunity

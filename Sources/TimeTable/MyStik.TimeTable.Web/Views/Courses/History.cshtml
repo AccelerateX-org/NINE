@@ -54,7 +54,7 @@
     var prevSemester = semesterService.GetPreviousSemester(courseSemester);
     var nextSemester = semesterService.GetNextSemester(courseSemester);
 
-    var courseService = new CourseService();
+    var courseService = new CourseInfoService(Db);
 
 }
 

@@ -131,7 +131,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetLatestSemester(member.Organiser);
             var user = AppUser;
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             model.Courses = courseService.GetCourses(semester.Name, member);
 
@@ -1072,7 +1072,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
 
             writer.Write("Kurzname;Name;Rolle;Beschreibung;E-Mail");

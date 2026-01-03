@@ -530,7 +530,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var service = new CourseService(Db);
+            var service = new CourseInfoService(Db);
             var service2 = new StudentService(Db);
             var service1 = new LotteryService(Db, id);
             var lottery = service1.GetLottery();
@@ -593,7 +593,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var service = new CourseService(Db);
+            var service = new CourseInfoService(Db);
             var service2 = new StudentService(Db);
             var service1 = new LotteryService(Db, id);
             var lottery = service1.GetLottery();
@@ -1162,7 +1162,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Datenbank reparieren
             var occService = new OccurrenceService(UserManager);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var semesterService = new SemesterService();
 
             var user = UserManager.FindByName(User.Identity.Name);
@@ -1315,7 +1315,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(org);
 
 
-            var service1 = new CourseService(Db);
+            var service1 = new CourseInfoService(Db);
             var service2 = new StudentService(Db);
             var lottery = new LotteryService(Db, id).GetLottery();
             var model1 = new LotteryOverviewModel();
@@ -2123,7 +2123,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /*
         private LotteryGambleCourseViewModel GetCourseViewModel(Lottery lottery, Course wpm, ApplicationUser user)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var courseModel = new LotteryGambleCourseViewModel
             {
@@ -2208,7 +2208,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Overview(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
 
@@ -2272,7 +2272,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Selection(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
 
             var lottery = lotteryService.GetLottery();
@@ -2321,7 +2321,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult SelectCourses(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
             var service2 = new SubscriptionService(Db);
@@ -2415,7 +2415,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult CoursesSelected(Guid lotteryId, ICollection<Guid> courseIds)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, lotteryId);
             var studentService = new StudentService(Db);
 
@@ -2455,7 +2455,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult CoursesOrdered(Guid lotteryId, ICollection<Guid> courseIds, int confirm,
             bool acceptAny)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, lotteryId);
             var studentService = new StudentService(Db);
 
@@ -2493,7 +2493,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult SelectionConfirmed(Guid lotteryId, ICollection<Guid> courseIds, int confirm, bool acceptAny)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, lotteryId);
             var studentService = new StudentService(Db);
             var subscriptionService = new SubscriptionService(Db);
@@ -2622,7 +2622,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult ClearSelection(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
             var subscriptionService = new SubscriptionService(Db);
@@ -2652,7 +2652,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult RemoveSelection(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
             var subscriptionService = new SubscriptionService(Db);
@@ -2671,7 +2671,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult RemoveSelectionConfirmed(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
             var subscriptionService = new SubscriptionService(Db);
@@ -3150,7 +3150,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult ClearGames(Guid id)
         {
-            var service1 = new CourseService(Db);
+            var service1 = new CourseInfoService(Db);
             var service2 = new StudentService(Db);
             var service = new SubscriptionService(Db);
             var service3 = new LotteryService(Db, id);
@@ -3179,7 +3179,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var myOrganisation = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(myOrganisation);
 
-            var service = new CourseService(Db);
+            var service = new CourseInfoService(Db);
             var service2 = new StudentService(Db);
             var service1 = new LotteryService(Db, id);
             var lottery = service1.GetLottery();
@@ -3222,7 +3222,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult DeleteCourse(Guid lotteryId, Guid courseId)
         {
             var lottery = new LotteryService(Db, lotteryId).GetLottery();
-            var course = new CourseService(Db).GetCourse(courseId);
+            var course = new CourseInfoService(Db).GetCourse(courseId);
             var model1 = new LotteryDeleteCourseModel();
             model1.Lottery = lottery;
             model1.Course = course;
@@ -3235,7 +3235,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var lottery = new LotteryService(Db, model.Lottery.Id).GetLottery();
-            var course = new CourseService(Db).GetCourse(model.Course.Id);
+            var course = new CourseInfoService(Db).GetCourse(model.Course.Id);
             if (course.ShortName.Equals(model.Code))
             {
                 var subscription = course.Occurrence.Subscriptions.FirstOrDefault<OccurrenceSubscription>(x => x.UserId.Equals(user.Id));
@@ -3271,7 +3271,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private LotteryOverviewModel GetBookingModel(Guid id)
         {
-            var service = new CourseService(Db);
+            var service = new CourseInfoService(Db);
             var service2 = new SubscriptionService(Db);
             var user = GetCurrentUser();
             var currentStudent = new StudentService(Db).GetCurrentStudent(user).FirstOrDefault();
@@ -3618,7 +3618,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult CheckSelection(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
             var service2 = new SubscriptionService(Db);

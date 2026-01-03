@@ -237,6 +237,8 @@ namespace MyStik.TimeTable.Web.Models
         public bool AsPartTime { get; set; }
 
         public bool IsQualification { get; set; }
+
+        public DateTime StatuteDate { get; set; }
     }
 
 }

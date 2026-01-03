@@ -16,7 +16,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var date = Db.ActivityDates.SingleOrDefault(x => x.Id == id);
             var course = date.Activity as Course;
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new CourseDateInfoModel
             {

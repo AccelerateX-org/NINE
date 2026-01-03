@@ -15,6 +15,7 @@ using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.Booking;
+using MyStik.TimeTable.DataServices.CRUD;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -32,7 +33,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Details(Guid id)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             CourseSelectModel model = null;
 
@@ -911,7 +912,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var actSummary = new ActivitySummary { Activity = course };
 
             if (course != null)
-                new CourseService(Db).DeleteAllDates(course.Id);
+                new CourseInfoService(Db).DeleteAllDates(course.Id);
 
             // Kehre zurück zur Seite der Aktivität
             return RedirectToAction(actSummary.Action, actSummary.Controller, new { id = actSummary.Id });
@@ -957,9 +958,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-
-            var timeTableService = new TimeTableInfoService(Db);
-
+            var timeTableService = new CourseDeleteService(Db);
             timeTableService.DeleteCourse(model.Course.Id);
 
             // Kehre zurück zur Seite der Aktivität
@@ -1975,7 +1974,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var groups = courseService.GetSubscriptionGroups(course);
 
             return PartialView("_GroupList", groups);
@@ -2872,7 +2871,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
             var org = GetMyOrganisation();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new CourseDetailViewModel()
             {
@@ -2967,7 +2966,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AdminNewParticipients(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new CourseDetailViewModel()
             {
@@ -2992,7 +2991,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult SubscriptionProfile(Guid id)
         {
             var studentService = new StudentService(Db);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
 
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
@@ -3035,7 +3034,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     .OrderBy(c => c.Name)
                     .ToList();
 
-            var courseSerive = new CourseService(Db);
+            var courseSerive = new CourseInfoService(Db);
 
             foreach (var c in courses)
             {
@@ -3416,7 +3415,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
 
             var model = new CourseDetailViewModel()
@@ -3480,7 +3479,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
 
             var model = new CourseDetailViewModel()
@@ -3733,7 +3732,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
             var org = course.Organiser != null ? course.Organiser : GetMyOrganisation();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             courseService.RepairDates(course);
 
             var model = new CourseDetailViewModel()
@@ -3818,7 +3817,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AdminNewModule(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new CourseDetailViewModel()
             {
@@ -3841,7 +3840,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ParticipiantDetails(Guid id)
         {
             var studentService = new StudentService(Db);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
             var userId = subscription.UserId;
@@ -3872,7 +3871,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     .OrderBy(c => c.Name)
                     .ToList();
 
-            var courseSerive = new CourseService(Db);
+            var courseSerive = new CourseInfoService(Db);
 
             foreach (var c in courses)
             {
@@ -4404,7 +4403,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Planning(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var nextSemester = SemesterService.GetNextSemester(course.Semester);
 
@@ -4428,7 +4427,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult PlanningYear(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var nextSemester = SemesterService.GetNextSemester(course.Semester);
             var yearSemester = SemesterService.GetNextSemester(nextSemester);
@@ -4506,7 +4505,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var sourceSemester = course.Semester;
             var destSemester = segment.Semester;
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var summary = courseService.GetCourseSummary(course);
 

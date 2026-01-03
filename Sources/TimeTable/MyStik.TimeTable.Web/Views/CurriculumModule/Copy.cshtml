@@ -6,7 +6,7 @@
 @{
     ViewBag.Title = "Copy";
 
-    var courseService = new CourseService();
+    var courseService = new CourseInfoService(Db);
 
     List<Course> existingCourses = new List<Course>();
     foreach (var subject in Model.Module.ModuleSubjects.ToList())

@@ -22,7 +22,7 @@ namespace MyStik.TimeTable.Web.Services
                 Semester = semester,
             };
 
-            var courseSummaryService = new CourseService(_db);
+            var courseSummaryService = new CourseInfoService(_db);
 
             // die ich halte
             var courses = 

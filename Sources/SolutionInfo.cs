@@ -7,7 +7,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AccelerateX")]
 [assembly: AssemblyProduct("NINE")]
-[assembly: AssemblyCopyright("Copyright © 2014-2025")]
+[assembly: AssemblyCopyright("Copyright © 2014-2026")]
 [assembly: AssemblyTrademark("ax.nine")]
 [assembly: AssemblyCulture("")]
 
@@ -20,6 +20,6 @@ using System.Reflection;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:0
-[assembly: AssemblyVersion("0.22.7.0")]
-[assembly: AssemblyFileVersion("0.22.7.0")]
-[assembly: AssemblyInformationalVersion("0.22.7")]
+[assembly: AssemblyVersion("0.23.0.0")]
+[assembly: AssemblyFileVersion("0.23.0.0")]
+[assembly: AssemblyInformationalVersion("0.23.0")]

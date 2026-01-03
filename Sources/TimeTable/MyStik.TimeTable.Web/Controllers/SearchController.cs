@@ -48,7 +48,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(defaultModel);
             }
 
-            var courseList = new CourseService(Db).SearchCourses(searchText, org, semester);
+            var courseList = new CourseInfoService(Db).SearchCourses(searchText, org, semester);
             foreach (var course in courseList)
             {
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);

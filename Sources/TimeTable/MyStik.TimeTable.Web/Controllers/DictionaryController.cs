@@ -264,7 +264,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid? optId, Guid? labelId, int semNo)
         {
-            var cs = new CourseService();
+            var cs = new CourseInfoService();
             var model = new List<CourseSummaryModel>();
 
 
@@ -468,7 +468,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
             }
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var topic in allTopics)
             {
@@ -646,7 +646,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             */
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService(Db);
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -735,7 +735,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 SemesterGroup = semGroup
             };
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var courses = semGroup.Activities.OfType<Course>().ToList();
 
@@ -810,7 +810,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
             }
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var topic in allTopics)
             {
@@ -955,7 +955,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var students = StudentService.GetCurrentStudent(user.Id);
             var student = students.FirstOrDefault();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var courseSummary = courseService.GetCourseSummary(id);
 

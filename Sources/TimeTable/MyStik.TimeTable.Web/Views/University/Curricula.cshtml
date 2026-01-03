@@ -7,12 +7,11 @@
 
     var degr = db.Degrees.ToList();
     var orgs = db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).OrderBy(x => x.ShortName).ToList();
-
     /*
-    var cie = db.Curricula.Where(x => x.ShortName.StartsWith("CIE")).ToList();
+    var cie = db.Curricula.ToList();
     foreach (var c in cie)
     {
-        c.IsDeprecated = true;
+        c.Tag = c.ShortName;
     }
     db.SaveChanges();
     */

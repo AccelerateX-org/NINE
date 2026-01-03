@@ -53,7 +53,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Bezeichnung</th>
+                        <th>Alias</th>
+                        <th>Titel</th>
                         <th>Abschluss</th>
                         <th>Zeit</th>
                         <th>WB</th>
@@ -85,6 +86,7 @@
                             if (isMember || (!isMember && !curr.IsDeprecated))
                             {
                                 <tr class="@rowClass">
+                                    <td>@curr.ID</td>
                                     <td>@curr.ShortName</td>
                                     <td>
                                         <a href="@Url.Action("Details", "Curriculum", new { id = curr.Id })">

@@ -17,22 +17,47 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <summary>
         /// 
         /// </summary>
-        [Route("{curriculum_id}")]
-        [ResponseType(typeof(CurriculumDto))]
+        [Route("")]
+        [ResponseType(typeof(List<CurriculumDto>))]
 
-        public IHttpActionResult GetCurricula(string curriculum_id)
+        public IHttpActionResult GetCurricula(string curriculum_id = "")
         {
-            var curriculum = Db.Curricula.FirstOrDefault(x => x.ShortName == curriculum_id);
-            if (curriculum == null)
-                return NotFound();
+            var list = new List<CurriculumDto>();
 
-            var dto = new CurriculumDto
+            if (string.IsNullOrEmpty(curriculum_id))
             {
-                Name = curriculum.Name,
-                Curriculum_id = curriculum.ShortName,
-            };
+                var curricula = Db.Curricula.Where(x => !x.IsDeprecated).ToList();
+                foreach (var curriculum in curricula)
+                {
+                    var dto = new CurriculumDto
+                    {
+                        Title = curriculum.Name,
+                        Curriculum_alias = curriculum.ShortName,
+                        Curriculum_id = curriculum.ID,
+                        Organiser_id = curriculum.Organiser?.ShortName
+                    };
+                    list.Add(dto);
+                }
+                return Ok(list);
+            }
+            else
+            {
+                var curriculum = Db.Curricula.FirstOrDefault(x => x.ShortName == curriculum_id);
+                if (curriculum == null)
+                    return NotFound();
 
-            return Ok(dto);
+                var dto = new CurriculumDto
+                {
+                    Title = curriculum.Name,
+                    Curriculum_alias = curriculum.ShortName,
+                    Curriculum_id = curriculum.ID,
+                    Organiser_id = curriculum.Organiser?.ShortName  
+                };
+
+                list.Add(dto);
+
+                return Ok(list);
+            }
         }
 
 
@@ -44,7 +69,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         {
             var list = new List<CurriculumSlotDto>();
 
-            var curr = Db.Curricula.FirstOrDefault(x => x.ShortName == curriculum_id);
+            // TODO: split curriculum_id into tag and date
+            var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculum_id);
             if (curr == null)
                 return NotFound();
 
@@ -78,6 +104,64 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
                 list.Add(slotDto);
             }
+
+            return Ok(list);
+        }
+
+
+        [HttpGet]
+        [Route("{curriculum_id}/cohortes")]
+        [ResponseType(typeof(List<CourseCohorte>))]
+
+        public IHttpActionResult GetCohortes(string curriculum_id)
+        {
+            var list = new List<CourseCohorte>();
+
+            // TODO: split curriculum_id into tag and date
+            var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculum_id);
+            if (curr == null)
+                return NotFound();
+
+            if (curr.LabelSet != null)
+            {
+                foreach (var label in curr.LabelSet.ItemLabels)
+                {
+                    var cohort = new CourseCohorte
+                    {
+                        curriculum_id = curr.ID,
+                        curriculum_alias = curr.ShortName,
+                        label = label.Name,
+                    };
+                    list.Add(cohort);
+                }
+            }
+
+            if (curr.Organiser.LabelSet != null)
+            {
+                foreach (var label in curr.Organiser.LabelSet.ItemLabels)
+                {
+                    var cohort = new CourseCohorte
+                    {
+                        organiser_id = curr.Organiser.ShortName,
+                        label = label.Name,
+                    };
+                    list.Add(cohort);
+                }
+            }
+
+            if (curr.Organiser.Institution.LabelSet != null)
+            {
+                foreach (var label in curr.Organiser.Institution.LabelSet.ItemLabels)
+                {
+                    var cohort = new CourseCohorte
+                    {
+                        institution_id = curr.Organiser.Institution.Tag,
+                        label = label.Name,
+                    };
+                    list.Add(cohort);
+                }
+            }
+
 
             return Ok(list);
         }

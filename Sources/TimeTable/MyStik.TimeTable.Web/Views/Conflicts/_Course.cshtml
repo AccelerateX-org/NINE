@@ -4,7 +4,7 @@
 @model MyStik.TimeTable.Data.Course
 
 @{
-    var courseService = new CourseService();
+    var courseService = new CourseInfoService(Db);
     var summary = courseService.GetCourseSummary(Model);
     //var conflicts = courseService.GetConflicts(Model);
 }

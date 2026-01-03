@@ -84,7 +84,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Alle gebuchten Lehrveranstaltungen
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var model = new ScriptShopPeriodModel();
             model.Period = period;

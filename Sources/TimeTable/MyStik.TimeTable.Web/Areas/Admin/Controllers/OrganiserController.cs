@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.CRUD;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Models;
 
@@ -250,7 +251,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
 
-            var service = new TimeTableInfoService(Db);
+            //var service = new CourseInfoService(Db);
 
             var currs = org.Curricula.ToList();
 
@@ -274,7 +275,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             }
             Db.SaveChanges();
 
-
+            /*
             foreach (var curriculum in currs)
             {
                 service.DeleteCurriculum(curriculum);
@@ -285,6 +286,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             {
                 service.DeleteActivity(activity);
             }
+            */
 
             var members = org.Members.ToList();
             foreach (var member in members)
@@ -314,7 +316,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
 
-            var service = new TimeTableInfoService(Db);
+            //var service = new TimeTableInfoService(Db);
 
             var currs = org.Curricula.ToList();
 
@@ -338,7 +340,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             }
             Db.SaveChanges();
 
-
+            /*
             foreach (var curriculum in currs)
             {
                 service.DeleteCurriculum(curriculum);
@@ -349,6 +351,8 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             {
                 service.DeleteActivity(activity);
             }
+            */
+
 
             var members = org.Members.ToList();
             foreach (var member in members)

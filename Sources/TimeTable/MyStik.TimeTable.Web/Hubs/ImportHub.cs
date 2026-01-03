@@ -6,6 +6,7 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.CRUD;
 
 namespace MyStik.TimeTable.Web.Hubs
 {
@@ -21,7 +22,7 @@ namespace MyStik.TimeTable.Web.Hubs
             var db = new TimeTableDbContext();
 
             var semService = new SemesterService();
-            var timeTableService = new TimeTableInfoService(db);
+            var timeTableService = new CourseDeleteService(db);
 
             var msg = "Sammle Daten";
             var perc1 = 0;

@@ -10,9 +10,10 @@ namespace MyStik.TimeTable.Web.Api.Contracts
 {
     public class CourseCohorte
     {
-        public string institution { get; set; }
-        public string organiser { get; set; }
-        public string curriculum { get; set; }
+        public string institution_id { get; set; }
+        public string organiser_id { get; set; }
+        public string curriculum_id { get; set; }
+        public string curriculum_alias { get; set; }
         public string label { get; set; }
     }
 
@@ -52,11 +53,9 @@ namespace MyStik.TimeTable.Web.Api.Contracts
 
         public string description { get; set; }
 
-        public bool isCanceled { get; set; }
+        public List<string> room_ids { get; set; }
 
-        public List<string> rooms { get; set; }
-
-        public List<string> hosts { get; set; }
+        public List<string> lecturer_ids { get; set; }
     }
 
 
@@ -121,12 +120,12 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// <summary>
         /// FK 09
         /// </summary>
-        public string organiser { get; set; }
+        public string organiser_id { get; set; }
 
         /// <summary>
         /// SoSe 2026
         /// </summary>
-        public string semester { get; set; }
+        public string semester_id { get; set; }
 
         /// <summary>
         /// no identifier, allows duplicates
@@ -141,7 +140,7 @@ namespace MyStik.TimeTable.Web.Api.Contracts
 
         public List<CourseQuota> quotas { get; set; }
 
-        public List<CourseDateApiModel> dates { get; set; }
+        public List<CourseDateCreateApiModel> dates { get; set; }
     }
 
     public class CourseApiResponseModel

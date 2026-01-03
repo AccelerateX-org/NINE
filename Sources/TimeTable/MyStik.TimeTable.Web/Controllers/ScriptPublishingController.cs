@@ -72,7 +72,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Create(ScriptCreatetModel model)
         {
-            var courseSummaryService = new CourseService(Db);
+            var courseSummaryService = new CourseInfoService(Db);
 
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
@@ -256,7 +256,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Add(ScriptCreatetModel model)
         {
-            var courseSummaryService = new CourseService(Db);
+            var courseSummaryService = new CourseInfoService(Db);
 
             var user = GetCurrentUser();
             var org = GetMyOrganisation();

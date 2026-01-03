@@ -362,7 +362,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var sourceSemester = SemesterService.GetSemester(sourceSemId);
             var destSemester = SemesterService.GetSemester(destSemId);
 
-            var courseService = new CourseService();
+            var courseService = new CourseInfoService();
 
 
             var summary = courseService.GetCourseSummary(course);

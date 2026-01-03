@@ -9,6 +9,7 @@ using System.Text;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.CRUD;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -82,7 +83,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         c.Organiser.Id == org.Id)
                     .OrderBy(c => c.ShortName).ToList();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var course in courses)
             {
@@ -169,7 +170,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id)
                 ).OrderBy(c => c.ShortName).ToList();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var course in courses)
             {
@@ -212,7 +213,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     !c.SemesterGroups.Any()
                 ).OrderBy(c => c.ShortName).ToList();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var course in courses)
             {
@@ -331,8 +332,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult DeleteCourse(Guid id)
         {
-            var timeTableService = new TimeTableInfoService(Db);
-
+            var timeTableService = new CourseDeleteService(Db);
             timeTableService.DeleteCourse(id);
 
             // Kehre zurück zur Seite der Aktivität
@@ -839,7 +839,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
             };
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             var courses = Db.Activities.OfType<Course>().Where(x =>
                 x.Owners.Any(y => y.Member.Organiser.Id == org.Id) &&
@@ -867,7 +867,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     Organiser = org,
                 };
 
-                var courseService = new CourseService(Db);
+                var courseService = new CourseInfoService(Db);
 
                 var courses = Db.Activities.OfType<Course>().Where(x =>
                     x.Owners.Any(y => y.Member.Organiser.Id == org.Id) &&

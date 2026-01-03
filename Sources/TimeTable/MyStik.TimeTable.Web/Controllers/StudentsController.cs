@@ -798,7 +798,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 .OrderBy(c => c.Name)
                 .ToList();
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var course in courses)
             {

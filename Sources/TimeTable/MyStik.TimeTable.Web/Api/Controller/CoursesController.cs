@@ -2,11 +2,13 @@
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Data.Migrations;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.CRUD;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +58,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// 
         /// </summary>
         [Route("")]
-        public IQueryable<CourseApiModel> GetCourses(string organiser_id = "", string curriculum_id = "", string semester_id = "")
+        [ResponseType(typeof(List<CourseApiModel>))]
+
+        public IHttpActionResult GetCourses(string organiser_id = "", string curriculum_id = "", string semester_id = "")
         {
             var list = new List<CourseApiModel>();
 
@@ -70,7 +74,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 sem = Db.Semesters.SingleOrDefault(x => x.Name.Equals(semester_id));
             }
             if (sem == null)
-                return list.AsQueryable();
+                return Ok(list);
 
             bool isAuth = true;
             var converter = new CourseConverter(Db, UserManager, isAuth);
@@ -88,7 +92,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 {
                     var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(organiser_id));
                     if (org == null)
-                        return list.AsQueryable();
+                        return Ok(list);
                     courses = Db.Activities.OfType<Course>().Where(x =>
                         x.Semester != null &&
                         x.Organiser != null &&
@@ -99,7 +103,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 {
                     var curr = Db.Curricula.FirstOrDefault(x => x.ShortName.Equals(curriculum_id));
                     if (curr == null)
-                        return list.AsQueryable();
+                        return Ok(list);
                     foreach (var label in curr.LabelSet.ItemLabels.ToList())
                     {
                         var labeledCourses = Db.Activities.OfType<Course>()
@@ -119,12 +123,13 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 list.Add(converter.Convert_new(course));
             }
-            return list.AsQueryable();
+            return Ok(list);
         }
 
         /// <summary>
         /// 
         /// </summary>
+        [HttpGet]
         [Route("{course_id}")]
         [ResponseType(typeof(CourseApiModel))]
         public async Task<IHttpActionResult> GetCourse(Guid course_id, string api_key = "")
@@ -144,6 +149,48 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return Ok(dto);
         }
 
+        [HttpGet]
+        [Route("{course_id}/dates")]
+        [ResponseType(typeof(CourseApiModel))]
+        public async Task<IHttpActionResult> GetCourseDates(Guid course_id, string api_key = "")
+        {
+            if (!(await Db.Activities.FindAsync(course_id) is Course course))
+            {
+                return NotFound();
+            }
+
+            var apiKeyService = new ApiKeyService(Db);
+            var member = apiKeyService.IsValidApiKey(api_key);
+
+            bool isAuth = true;
+            var converter = new CourseConverter(Db, UserManager, isAuth);
+            var dto = converter.Convert_new(course, true, (member != null));
+
+            return Ok(dto);
+        }
+
+        [HttpGet]
+        [Route("{course_id}/subscriptions")]
+        [ResponseType(typeof(CourseApiModel))]
+        public async Task<IHttpActionResult> GetCourseSubscriptions(Guid course_id, string api_key = "")
+        {
+            if (!(await Db.Activities.FindAsync(course_id) is Course course))
+            {
+                return NotFound();
+            }
+
+            var apiKeyService = new ApiKeyService(Db);
+            var member = apiKeyService.IsValidApiKey(api_key);
+
+            bool isAuth = true;
+            var converter = new CourseConverter(Db, UserManager, isAuth);
+            var dto = converter.Convert_new(course, true, (member != null));
+
+            return Ok(dto);
+        }
+
+
+
         [HttpPost]
         [Route("")]
         [ResponseType(typeof(CourseApiResponseModel))]
@@ -156,19 +203,29 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return Unauthorized();
             }
 
-            var semester = Db.Semesters.SingleOrDefault(x => x.Name.Equals(request.semester));
-            var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(request.organiser));
-
-            if (semester == null || org == null)
+            if (member.IsCourseAdmin == false)
             {
-                return BadRequest("Invalid organiser or semester");
+                return Unauthorized();
             }
+
+
+            var semester = Db.Semesters.SingleOrDefault(x => x.Name.Equals(request.semester_id));
+
+            // Semester muss angegeben sein
+            if (semester == null)
+            {
+                return BadRequest("Invalid semester");
+            }
+
+            // Angabe Einrichtung optional, muss aber zu api_key passen
+            var org = string.IsNullOrEmpty(request.organiser_id) ? member.Organiser : Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(request.organiser_id));
 
             if (org.Id != member.Organiser.Id)
             {
                 return Unauthorized();
             }
 
+            // Die Occurrnce des Kurses
             var occ = new Data.Occurrence
             {
                 Capacity = -1,
@@ -188,29 +245,90 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 ShortName = request.code,
                 Description = request.description,
                 ExternalId = request.external_id,
-                Occurrence = occ
+                ExternalSource = "API",
+                Occurrence = occ,
             };
+
+            // Owner
+            var owner = new ActivityOwner
+            {
+                Activity = course,
+                Member = member,
+            };
+
+            course.Owners.Add(owner);
+
+            Db.ActivityOwners.Add(owner);
             Db.Occurrences.Add(occ);
             Db.Activities.Add(course);
 
             // Kohorten
 
+
             // Kapazitäten
 
             // Termine
 
+            try
+            {
+                await Db.SaveChangesAsync();
 
-            await Db.SaveChangesAsync();
+                var response = new CourseApiResponseModel
+                {
+                    course_id = course.Id,
+                    external_id = request.external_id,
+                    message = "Course created successfully"
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{course_id}")]
+        [ResponseType(typeof(CourseApiResponseModel))]
+        public IHttpActionResult DeleteCourse(string api_key, Guid course_id)
+        {
+            var authHeader = api_key;
+
+            var apiKeyService = new ApiKeyService(Db);
+            var member = apiKeyService.IsValidApiKey(authHeader);
+            if (member == null)
+            {
+                return Unauthorized();
+            }
+
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == course_id);
+            if (course == null)
+                return NotFound();
+
+            if (course.Organiser.Id != member.Organiser.Id)
+            {
+                return Unauthorized();
+            }
+
+            if (member.IsCourseAdmin == false)
+            {
+                return Unauthorized();
+            }
+
+            var service = new CourseDeleteService(Db);
+
+            service.DeleteCourse(course_id);
 
             var response = new CourseApiResponseModel
             {
-                course_id = Guid.NewGuid(), // course.Id,
-                external_id = request.external_id,
-                message = "Course created successfully"
-            };  
+                course_id = course_id,
+                message = "Course deleted successfully"
+            };
 
             return Ok(response);
         }
+
 
 
         [HttpPost]

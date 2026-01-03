@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using log4net;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
-using MyStik.TimeTable.Contracts;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;

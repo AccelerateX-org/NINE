@@ -24,6 +24,23 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         public string Name { get; set; }
     }
 
+    public class OrganiserRoomApiContract
+    {
+        /// <summary>
+        /// Short Name
+        /// </summary>
+        public string Room_Id { get; set; }
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Id des Owners
+        /// </summary>
+        public string Organiser_Id { get; set; }
+
+        public int Capacity { get; set; }
+    }
+
+
     public class OrganiserCurriculumApiContract
     {
         /// <summary>
@@ -31,6 +48,8 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// </summary>
         public string Curriculum_Id { get; set; }
         public string Name { get; set; }
+
+        public string ShortName { get; set; }
     }
 
 

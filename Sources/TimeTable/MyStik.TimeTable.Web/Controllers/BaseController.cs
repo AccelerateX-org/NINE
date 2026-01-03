@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.CRUD;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
@@ -40,7 +41,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        protected readonly CascadingDeleteService DeleteService;
+        protected readonly CourseDeleteService DeleteService;
 
         protected readonly StudentService StudentService;
 
@@ -76,7 +77,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             ActivityService = new ActivityService(Db);
             SemesterService = new SemesterService(Db);
-            DeleteService = new CascadingDeleteService(Db);
+            DeleteService = new CourseDeleteService(Db);
             StudentService = new StudentService(Db);
             MemberService = new MemberService(Db);
         }

@@ -11,10 +11,10 @@ namespace MyStik.TimeTable.Web.Services
     /// <summary>
     /// 
     /// </summary>
-    public class CourseService : BaseService
+    public class CourseInfoService : BaseService
     {
 
-        public CourseService() : base()
+        public CourseInfoService() : base()
         {
         }
 
@@ -22,7 +22,7 @@ namespace MyStik.TimeTable.Web.Services
         /// 
         /// </summary>
         /// <param name="db"></param>
-        public CourseService(TimeTableDbContext db) : base(db)
+        public CourseInfoService(TimeTableDbContext db) : base(db)
         {
         }
 

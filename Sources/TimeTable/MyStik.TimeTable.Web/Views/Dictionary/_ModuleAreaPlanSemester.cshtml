@@ -5,7 +5,7 @@
 
 @{
     var db = new TimeTableDbContext();
-    var courseService = new CourseService(db);
+    var courseService = new CourseInfoService(Db);
     var optionsSelected = new List<AreaOption>();
 
     foreach (var area in Model.Areas)

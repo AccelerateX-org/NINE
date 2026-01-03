@@ -267,10 +267,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = AppUser;
 
-            var _service = new TimeTableInfoService(Db);
+            //var _service = new TimeTableInfoService(Db);
 
-            var progs = _service.GetCurriculums();
-            ViewBag.Curriculums = progs;
+            //var progs = _service.GetCurriculums();
+            ViewBag.Curriculums = Db.Curricula.ToList();
             ViewBag.Semester = SemesterService.GetSemester(DateTime.Today);
 
 

@@ -71,7 +71,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             // Alle gebuchten Lehrveranstaltungen
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             model.Courses = new List<CourseSummaryModel>();
 

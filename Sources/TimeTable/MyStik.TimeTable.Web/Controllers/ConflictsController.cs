@@ -386,7 +386,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
                 .ToList());
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService();
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -431,7 +431,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.SubjectTeachings.Any(t => t.Subject.Module.Catalog.Id == catalog.Id))
                 .ToList());
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService();
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -478,7 +478,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.Dates.Any(d => d.Begin < segBorderFrom || d.End > segBorderTo))
                 .ToList());
 
-            var cs = new CourseService();
+            var cs = new CourseInfoService();
             var courseSummaries = new List<CourseSummaryModel>();
 
             foreach (var labeledCourse in courses.OrderBy(g => g.ShortName))
@@ -556,7 +556,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
 
-            var courseService = new CourseService();
+            var courseService = new CourseInfoService(Db);
 
             var ownConflicts = courseService.GetConflicts(course);
             var dayOfWeek = (DayOfWeek)Enum.GetValues(typeof(DayOfWeek)).GetValue(nDayOfWeek.Value);
@@ -695,7 +695,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private List<DateAlternativeModel> MoveDates(Course course, DayOfWeek dayofWeek, DateTime from, DateTime to)
         {
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var summary = courseService.GetCourseSummary(course);
 
             var org = course.Organiser;

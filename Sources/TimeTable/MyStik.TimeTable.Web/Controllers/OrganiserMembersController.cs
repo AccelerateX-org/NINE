@@ -122,7 +122,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var memberPage = organiser.Members.OrderBy(m => m.Name);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
 
             foreach (var member in memberPage)
             {
@@ -296,7 +296,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var vorSemester = SemesterService.GetPreviousSemester(semester);
             var vorVorSemester = SemesterService.GetPreviousSemester(vorSemester);
 
-            var courseService = new CourseService(Db);
+            var courseService = new CourseInfoService(Db);
             var userService = new UserInfoService();
 
             foreach (var member in memberPage)
