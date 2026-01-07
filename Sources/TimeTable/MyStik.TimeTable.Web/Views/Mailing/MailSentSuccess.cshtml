@@ -3,29 +3,13 @@
 }
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-events">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Mailversand erfolgreich</h1>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Mailversand erfolgreich</h5>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary"><i class="bi bi-grid"></i> zum Dashboard</a>
             </div>
         </div>
     </div>
 </div>
-
-
-@{
-    string action = ViewBag.ActionName;
-    string ctrl = ViewBag.ControllerName;
-    string cid = ViewBag.Id;
-}
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <a href="@Url.Action(action, ctrl, new { id = cid }, null)" class="btn btn-default"><i class="fa fa-back"></i> @ViewBag.Text</a>
-        </div>
-    </div>
-</div>
-

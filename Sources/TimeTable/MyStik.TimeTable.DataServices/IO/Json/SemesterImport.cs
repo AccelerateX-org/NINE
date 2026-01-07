@@ -322,18 +322,21 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                                 var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
                                 if (room == null)
                                 {
-                                    room = new Room
+                                    var db2 = new TimeTableDbContext();
+
+                                    var room2 = new Room
                                     {
                                         Number = scheduleDateRoom.RoomNumber,
                                         Capacity = 0,
                                         Description = string.Empty,
                                         Owner = string.Empty,
                                     };
-                                    db.Rooms.Add(room);
-                                    //db.SaveChanges();
+                                    db2.Rooms.Add(room2);
+                                    db2.SaveChanges();
 
                                     _numRooms++;
                                     _report.AppendFormat(" !!!NEUER RAUM!!!");
+                                    room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
                                 }
 
 
@@ -342,16 +345,24 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                                     x.Organiser.Id == organiser.Id);
                                 if (assignment == null)
                                 {
-                                    assignment = new RoomAssignment
+                                    var db2 = new TimeTableDbContext();
+                                    var room2 = db2.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
+                                    var organiser2 = db2.Organisers.SingleOrDefault(s => s.Id == _orgId);
+
+                                    var assignment2 = new RoomAssignment
                                     {
-                                        Organiser = organiser,
+                                        Organiser = organiser2,
                                         InternalNeedConfirmation = false, // offen für interne
                                         ExternalNeedConfirmation = true // geschlossen für externe
                                     };
 
-                                    room.Assignments.Add(assignment);
-                                    db.RoomAssignments.Add(assignment);
-                                    //db.SaveChanges();
+                                    room2.Assignments.Add(assignment2);
+                                    db2.RoomAssignments.Add(assignment2);
+                                    db2.SaveChanges();
+
+                                    assignment = db.RoomAssignments.SingleOrDefault(x =>
+                                        x.Room.Id == room.Id &&
+                                        x.Organiser.Id == organiser.Id);
                                 }
 
                                 occ.Rooms.Add(room);
@@ -371,18 +382,22 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                                 l.ShortName.Equals(scheduleDateLecturer.ShortName));
                             if (lecturer == null)
                             {
-                                lecturer = new OrganiserMember
+                                var db2 = new TimeTableDbContext();
+                                var organiser2 = db2.Organisers.SingleOrDefault(s => s.Id == _orgId);
+                                var lecturer2 = new OrganiserMember
                                 {
                                     ShortName = scheduleDateLecturer.ShortName,
                                     Name = scheduleDateLecturer.Name,
                                     Role = String.Empty,
                                     Description = String.Empty
                                 };
-                                organiser.Members.Add(lecturer);
-                                db.Members.Add(lecturer);
-                                //db.SaveChanges();
+                                organiser2.Members.Add(lecturer2);
+                                db2.Members.Add(lecturer2);
+                                db2.SaveChanges();
                                 _numLecturers++;
                                 _report.AppendFormat(" !!!NEUER DOZENT!!!");
+                                lecturer = organiser.Members.SingleOrDefault(l =>
+                                    l.ShortName.Equals(scheduleDateLecturer.ShortName));
                             }
 
                             occ.Hosts.Add(lecturer);

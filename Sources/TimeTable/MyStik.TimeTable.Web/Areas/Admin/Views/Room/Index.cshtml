@@ -1,6 +1,22 @@
 ﻿@model ICollection<MyStik.TimeTable.Data.Room>
 @{
     ViewBag.Title = "Räume";
+
+    @* Alte Dummy-Räume löschen
+    var db = new MyStik.TimeTable.Data.TimeTableDbContext();
+
+    var rooms = db.Rooms.Where(x => x.Number.Equals("Raumplanung folgt")).ToList();
+
+    foreach (var room in rooms)
+    {
+        foreach (var assign in room.Assignments.ToList())
+        {
+            db.RoomAssignments.Remove(assign);
+        }
+        db.Rooms.Remove(room);
+    }
+    db.SaveChanges();
+        *@
 }
 
 
