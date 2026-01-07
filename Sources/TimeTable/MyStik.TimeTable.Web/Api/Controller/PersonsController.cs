@@ -26,6 +26,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// <summary>
     /// 
     /// </summary>
+    /*
     [System.Web.Http.RoutePrefix("api/v2/persons")]
     public class PersonsController : ApiBaseController
     {
@@ -39,4 +40,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return Ok(response);
         }
     }
+    */
 }

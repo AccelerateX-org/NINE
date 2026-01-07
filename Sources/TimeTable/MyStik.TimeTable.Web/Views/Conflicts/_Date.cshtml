@@ -6,8 +6,8 @@
 
 
 @{
-    var courseService = new CourseInfoService(Db);
-    var summary = courseService.GetCourseSummary(Model.Course);
+    var courseService = new CourseInfoService();
+    var summary = courseService.GetCourseSummary(Model.Course.Id);
 }
 
 

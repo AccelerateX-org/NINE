@@ -152,7 +152,11 @@ namespace MyStik.TimeTable.Data
         {
             get
             {
-                return $"{Tag}_YYYYMMDD";
+                if (StatuteTakeEffect.HasValue)
+                {
+                    return $"{Tag}_{StatuteTakeEffect.Value:yyyyMMdd}";
+                }
+                return $"{Tag}";
             }
         }
     }

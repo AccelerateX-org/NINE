@@ -1,4 +1,5 @@
 ﻿//using Ical.Net.DataTypes;
+using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Data.Migrations;
 using MyStik.TimeTable.DataServices;
@@ -11,6 +12,7 @@ using MyStik.TimeTable.Web.Services;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -19,33 +21,6 @@ using System.Web.Http.Description;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class SubscriptionBasketModel
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public UserDto User { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ICollection<SubscriptionCourseModel> Courses { get; set; }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class SubscriptionCourseModel
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid Id { get; set; }
-    }
-
 
     /// <summary>
     /// 
@@ -53,7 +28,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     [RoutePrefix("api/v2/courses")]
     public class CoursesController : ApiBaseController
     {
-
+        #region Course
         /// <summary>
         /// 
         /// </summary>
@@ -132,63 +107,19 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [HttpGet]
         [Route("{course_id}")]
         [ResponseType(typeof(CourseApiModel))]
-        public async Task<IHttpActionResult> GetCourse(Guid course_id, string api_key = "")
+        public async Task<IHttpActionResult> GetCourse(Guid course_id)
         {
             if (!(await Db.Activities.FindAsync(course_id) is Course course))
             {
                 return NotFound();
             }
 
-            var apiKeyService = new ApiKeyService(Db);
-            var member = apiKeyService.IsValidApiKey(api_key);
-
             bool isAuth = true;
             var converter = new CourseConverter(Db, UserManager, isAuth);
-            var dto = converter.Convert_new(course, true, (member != null));
+            var dto = converter.Convert_new(course, true, false);
 
             return Ok(dto);
         }
-
-        [HttpGet]
-        [Route("{course_id}/dates")]
-        [ResponseType(typeof(CourseApiModel))]
-        public async Task<IHttpActionResult> GetCourseDates(Guid course_id, string api_key = "")
-        {
-            if (!(await Db.Activities.FindAsync(course_id) is Course course))
-            {
-                return NotFound();
-            }
-
-            var apiKeyService = new ApiKeyService(Db);
-            var member = apiKeyService.IsValidApiKey(api_key);
-
-            bool isAuth = true;
-            var converter = new CourseConverter(Db, UserManager, isAuth);
-            var dto = converter.Convert_new(course, true, (member != null));
-
-            return Ok(dto);
-        }
-
-        [HttpGet]
-        [Route("{course_id}/subscriptions")]
-        [ResponseType(typeof(CourseApiModel))]
-        public async Task<IHttpActionResult> GetCourseSubscriptions(Guid course_id, string api_key = "")
-        {
-            if (!(await Db.Activities.FindAsync(course_id) is Course course))
-            {
-                return NotFound();
-            }
-
-            var apiKeyService = new ApiKeyService(Db);
-            var member = apiKeyService.IsValidApiKey(api_key);
-
-            bool isAuth = true;
-            var converter = new CourseConverter(Db, UserManager, isAuth);
-            var dto = converter.Convert_new(course, true, (member != null));
-
-            return Ok(dto);
-        }
-
 
 
         [HttpPost]
@@ -208,83 +139,263 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return Unauthorized();
             }
 
+            Course course = null;
 
-            var semester = Db.Semesters.SingleOrDefault(x => x.Name.Equals(request.semester_id));
-
-            // Semester muss angegeben sein
-            if (semester == null)
+            try
             {
-                return BadRequest("Invalid semester");
+                var semester = Db.Semesters.SingleOrDefault(x => x.Name.Equals(request.semester_id));
+
+                // Semester muss angegeben sein
+                if (semester == null)
+                {
+                    return BadRequest("Invalid semester");
+                }
+
+                // Angabe Einrichtung optional, muss aber zu api_key passen
+                var org = string.IsNullOrEmpty(request.organiser_id) ? member.Organiser : Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(request.organiser_id));
+
+                if (org.Id != member.Organiser.Id)
+                {
+                    return Unauthorized();
+                }
+
+                // Die Occurrnce des Kurses
+                var occ = new Data.Occurrence
+                {
+                    Capacity = -1,
+                    IsAvailable = false,
+                    IsCanceled = false,
+                    IsMoved = false,
+                    FromIsRestricted = false,
+                    UntilIsRestricted = false,
+                    UseGroups = false,
+                };
+
+                course = new Course
+                {
+                    Semester = semester,
+                    Organiser = org,
+                    Name = request.title,
+                    ShortName = request.code,
+                    Description = request.description,
+                    ExternalId = request.external_id,
+                    ExternalSource = "API",
+                    Occurrence = occ,
+                };
+
+                // Owner
+                var owner = new ActivityOwner
+                {
+                    Activity = course,
+                    Member = member,
+                };
+
+                course.Owners.Add(owner);
+
+                // Labelset
+                var labelSet = new ItemLabelSet();
+                course.LabelSet = labelSet;
+
+                // Entities in Tabellen ablegen
+                Db.ItemLabelSets.Add(labelSet);
+                Db.ActivityOwners.Add(owner);
+                Db.Occurrences.Add(occ);
+                Db.Activities.Add(course);
+
+                // Kohorten
+                if (request.cohortes != null)
+                {
+                    foreach (var cohorte in request.cohortes)
+                    {
+                        var labels = new List<ItemLabel>();
+                        var msg = GetLabels(cohorte, labels);
+
+                        if (!string.IsNullOrEmpty(msg))
+                        {
+                            return BadRequest(msg);
+                        }
+
+
+                        // aktuell müssen Label existieren
+                        // neue Labels nur für eigene Einrichtung erlauben
+                        foreach (var label in labels)
+                        {
+                            course.LabelSet.ItemLabels.Add(label);
+                        }
+                    }
+                }
+
+                // Kapazitäten
+                if (request.quotas != null)
+                {
+                    foreach (var quota in request.quotas)
+                    {
+                        var seatQuota = new SeatQuota
+                        {
+                            Occurrence = course.Occurrence,
+                            MinCapacity = 0,
+                            MaxCapacity = quota.amount,
+                            Fractions = new List<SeatQuotaFraction>(),
+                        };
+
+                        if (quota.cohortes != null)
+                        {
+                            foreach (var cohorte in quota.cohortes)
+                            {
+                                var quotaFraction = new SeatQuotaFraction
+                                {
+                                    Quota = seatQuota,
+                                    ItemLabelSet = new ItemLabelSet()
+                                };
+
+                                // Labels suchen
+                                var labels = new List<ItemLabel>();
+                                var msg = GetLabels(cohorte, labels);
+
+                                if (!string.IsNullOrEmpty(msg))
+                                {
+                                    return BadRequest(msg);
+                                }
+
+                                foreach (var label in labels)
+                                {
+                                    quotaFraction.ItemLabelSet.ItemLabels.Add(label);
+                                }
+
+                                seatQuota.Fractions.Add(quotaFraction);
+                                Db.SeatQuotaFractions.Add(quotaFraction);
+                            }
+                        }
+
+                        Db.SeatQuotas.Add(seatQuota);
+                    }
+                }
+
+
+
+
+                // Termine => Sequenzen auswerten
+                if (request.sequences != null) 
+                {
+                var semesterService = new SemesterService(Db);
+
+                    foreach (var sequence in request.sequences)
+                    {
+                        var begin = sequence.first_begin.Date;
+                        var end = sequence.last_end.Date;
+
+                        var from = sequence.first_begin.TimeOfDay;
+                        var until = sequence.last_end.TimeOfDay;
+
+                        var date = begin;
+
+                        while (date <= end)
+                        {
+                            // Check ob Vorlesungsfrei
+                            var sem = semesterService.GetSemester(date);
+                            if (sem == null)
+                            {
+                                return BadRequest("invalid date");
+                            }
+
+                            // nur an Vorlesungstagen
+                            if (!semesterService.IsLectureDay(sem, org, date))
+                            {
+                                date = date.AddDays(sequence.frequency);
+                                continue;
+                            }
+
+                            var courseDate = new Data.ActivityDate
+                            {
+                                Activity = course,
+                                Title = sequence.title,
+                                Description = "",
+                                Begin = date.Add(from),
+                                End = date.Add(until),
+                                Occurrence = new Data.Occurrence
+                                {
+                                    Capacity = -1,
+                                    IsAvailable = false,
+                                    IsCanceled = false,
+                                    IsMoved = false,
+                                    FromIsRestricted = false,
+                                    UntilIsRestricted = false,
+                                    UseGroups = false,
+                                }
+                            };
+
+                            // Räume
+                            if (sequence.room_ids != null)
+                            {
+                                foreach (var roomNumber in sequence.room_ids)
+                                {
+                                    var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
+                                    if (room != null)
+                                    {
+                                        courseDate.Rooms.Add(room);
+                                        // Raumbuchungen ergänzen!
+                                    }
+                                    else
+                                    {
+                                        return BadRequest($"Invalid room: {roomNumber}");
+                                    }
+                                }
+                            }
+
+                            // Hosts
+                            if (sequence.lecturer_ids != null)
+                            {
+                                foreach (var host in sequence.lecturer_ids)
+                                {
+                                    var lecturer = course.Organiser.Members.FirstOrDefault(x => x.ShortName.Equals(host));
+                                    if (lecturer != null)
+                                    {
+                                        courseDate.Hosts.Add(lecturer);
+                                    }
+                                    else
+                                    {
+                                        return BadRequest($"Invalid lecturer: {host}");
+                                    }
+                                }
+                            }
+
+
+                            Db.ActivityDates.Add(courseDate);
+                            Db.Occurrences.Add(courseDate.Occurrence);
+
+                            date = date.AddDays(sequence.frequency);
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
-            // Angabe Einrichtung optional, muss aber zu api_key passen
-            var org = string.IsNullOrEmpty(request.organiser_id) ? member.Organiser : Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(request.organiser_id));
 
-            if (org.Id != member.Organiser.Id)
-            {
-                return Unauthorized();
-            }
-
-            // Die Occurrnce des Kurses
-            var occ = new Data.Occurrence
-            {
-                Capacity = -1,
-                IsAvailable = false,
-                IsCanceled = false,
-                IsMoved = false,
-                FromIsRestricted = false,
-                UntilIsRestricted = false,
-                UseGroups = false,
-            };
-
-            var course = new Course
-            {
-                Semester = semester,
-                Organiser = org,
-                Name = request.title,
-                ShortName = request.code,
-                Description = request.description,
-                ExternalId = request.external_id,
-                ExternalSource = "API",
-                Occurrence = occ,
-            };
-
-            // Owner
-            var owner = new ActivityOwner
-            {
-                Activity = course,
-                Member = member,
-            };
-
-            course.Owners.Add(owner);
-
-            Db.ActivityOwners.Add(owner);
-            Db.Occurrences.Add(occ);
-            Db.Activities.Add(course);
-
-            // Kohorten
-
-
-            // Kapazitäten
-
-            // Termine
 
             try
             {
                 await Db.SaveChangesAsync();
 
-                var response = new CourseApiResponseModel
+                if (course != null)
                 {
-                    course_id = course.Id,
-                    external_id = request.external_id,
-                    message = "Course created successfully"
-                };
+                    var response = new CourseApiResponseModel
+                    {
+                        course_id = course.Id,
+                        message = "Course created successfully"
+                    };
 
-                return Ok(response);
+                    return Ok(response);
+                }
+
+                return BadRequest("unexpected error");
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -293,10 +404,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [ResponseType(typeof(CourseApiResponseModel))]
         public IHttpActionResult DeleteCourse(string api_key, Guid course_id)
         {
-            var authHeader = api_key;
-
             var apiKeyService = new ApiKeyService(Db);
-            var member = apiKeyService.IsValidApiKey(authHeader);
+            var member = apiKeyService.IsValidApiKey(api_key);
             if (member == null)
             {
                 return Unauthorized();
@@ -328,6 +437,32 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return Ok(response);
         }
+        #endregion
+
+        #region Dates
+        [HttpGet]
+        [Route("{course_id}/dates")]
+        [ResponseType(typeof(CourseApiModel))]
+        public async Task<IHttpActionResult> GetCourseDates(string api_key, Guid course_id)
+        {
+            var apiKeyService = new ApiKeyService(Db);
+            var member = apiKeyService.IsValidApiKey(api_key);
+            if (member == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!(await Db.Activities.FindAsync(course_id) is Course course))
+            {
+                return NotFound();
+            }
+
+            bool isAuth = true;
+            var converter = new CourseConverter(Db, UserManager, isAuth);
+            var dto = converter.Convert_new(course, true, (member != null));
+
+            return Ok(dto);
+        }
 
 
 
@@ -346,6 +481,22 @@ namespace MyStik.TimeTable.Web.Api.Controller
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == course_id);
             if (course == null)
                 return NotFound();
+
+            if (course.Organiser.Id != member.Organiser.Id)
+            {
+                return Unauthorized();
+            }
+
+
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Activity.Id == course_id && x.Begin == request.begin && x.End == request.end);
+            if (date != null)
+            {
+                return BadRequest("Course date already exists");
+            }
+
+            // Eine Prüfung auf Vorlesungszeiten findet hier nicht statt
+            // Das wird nur bei Sequenzen gemacht
+            // Grund: es soll der spezifische Termin angelegt werden!
 
             var occ = new Data.Occurrence
             {
@@ -368,6 +519,42 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 Occurrence = occ
             };
 
+            // Räume
+            if (request.room_ids != null)
+            {
+                foreach (var roomNumber in request.room_ids)
+                {
+                    var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
+                    if (room != null)
+                    {
+                        courseDate.Rooms.Add(room);
+                        // Raumbuchungen ergänzen!
+                    }
+                    else
+                    {
+                        return BadRequest($"Invalid room: {roomNumber}");
+                    }
+                }
+            }
+
+            // Hosts
+            if (request.lecturer_ids != null)
+            {
+                foreach (var host in request.lecturer_ids)
+                {
+                    var lecturer = course.Organiser.Members.FirstOrDefault(x => x.ShortName.Equals(host));
+                    if (lecturer != null)
+                    {
+                        courseDate.Hosts.Add(lecturer);
+                    }
+                    else
+                    {
+                        return BadRequest($"Invalid lecturer: {host}");
+                    }
+                }
+            }
+
+
             Db.Occurrences.Add(occ);
             Db.ActivityDates.Add(courseDate);
 
@@ -388,27 +575,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [ResponseType(typeof(CourseDateApiModel))]
         public async Task<IHttpActionResult> UpdateCourseDate(string api_key, Guid course_id, [FromBody] CourseDateApiModel request)
         {
-            // Verhindert Redirects bei Unauthorized (401) Antworten => funktioniert so nicht
-            // dann erst mal raus
-            // HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
-            /*
-            Request.Headers.TryGetValues("Authorization", out var headers);
-            if (headers == null)
-            {
-                return Unauthorized();
-            }
-
-            var authHeader = headers.FirstOrDefault();
-            if (authHeader == null)
-            {
-                return Unauthorized();
-            }
-            */
-
-            var authHeader = api_key;
-
             var apiKeyService = new ApiKeyService(Db);
-            var member = apiKeyService.IsValidApiKey(authHeader);
+            var member = apiKeyService.IsValidApiKey(api_key);
             if (member == null)
             {
                 return Unauthorized();
@@ -439,27 +607,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [ResponseType(typeof(CourseDateApiModel))]
         public async Task<IHttpActionResult> DeleteCourseDate(string api_key, Guid course_id, [FromBody] CourseDateApiModel request)
         {
-            // Verhindert Redirects bei Unauthorized (401) Antworten => funktioniert so nicht
-            // dann erst mal raus
-            // HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
-            /*
-            Request.Headers.TryGetValues("Authorization", out var headers);
-            if (headers == null)
-            {
-                return Unauthorized();
-            }
-
-            var authHeader = headers.FirstOrDefault();
-            if (authHeader == null)
-            {
-                return Unauthorized();
-            }
-            */
-
-            var authHeader = api_key;
-
             var apiKeyService = new ApiKeyService(Db);
-            var member = apiKeyService.IsValidApiKey(authHeader);
+            var member = apiKeyService.IsValidApiKey(api_key);
             if (member == null)
             {
                 return Unauthorized();
@@ -483,12 +632,13 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return Ok(request);
         }
+        #endregion
 
-
-        [HttpPost]
+        #region Subscriptions
+        [HttpGet]
         [Route("{course_id}/subscriptions")]
-        [ResponseType(typeof(CourseSubscriptionApiModel))]
-        public async Task<IHttpActionResult> CreateCourseSubscription(string api_key, Guid course_id, string student_id)
+        [ResponseType(typeof(List<CourseSubscriberApiModel>))]
+        public async Task<IHttpActionResult> GetCourseSubscriptions(string api_key, Guid course_id)
         {
             var apiKeyService = new ApiKeyService(Db);
             var member = apiKeyService.IsValidApiKey(api_key);
@@ -497,38 +647,83 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return Unauthorized();
             }
 
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == course_id);
+            var course = await Db.Activities.OfType<Course>().SingleOrDefaultAsync(x => x.Id == course_id);
             if (course == null)
             {
                 return NotFound();
             }
 
-            var students = Db.Students.Where(x => !string.IsNullOrEmpty(x.Number) && x.Number.Equals(student_id)).ToList();
-            if (students.Count > 1)
+            var studentService = new StudentService(Db);
+
+            var subscribers = new List<CourseSubscriberApiModel>();
+
+            var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(x => x.Occurrence.Id == course.Occurrence.Id).ToList();
+            foreach (var subscription in subscriptions)
+            {
+                var user = await UserManager.FindByIdAsync(subscription.UserId);
+                if (user != null)
+                {
+                    var student = studentService.GetCurrentStudent(user.Id).FirstOrDefault();
+
+                    var subscriber = new CourseSubscriberApiModel
+                    {
+                        user_id = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName")?.ClaimValue,
+                        matriculation_number = student != null ? student.Number : string.Empty,
+                        subscrition_date = subscription.TimeStamp,
+                        on_waiting_list = subscription.OnWaitingList,
+                    };
+                    subscribers.Add(subscriber);
+                }
+            }
+
+            return Ok(subscribers);
+        }
+
+
+        [HttpPost]
+        [Route("{course_id}/subscriptions")]
+        [ResponseType(typeof(CourseSubscriptionApiModel))]
+        public async Task<IHttpActionResult> CreateCourseSubscription(string api_key, Guid course_id, [FromBody]CourseSubscriptionCreateApiModel request)
+        {
+            var apiKeyService = new ApiKeyService(Db);
+            var member = apiKeyService.IsValidApiKey(api_key);
+            if (member == null)
+            {
+                return Unauthorized();
+            }
+
+            var course = await Db.Activities.OfType<Course>().SingleOrDefaultAsync(x => x.Id == course_id);
+            if (course == null)
             {
                 return NotFound();
             }
 
-            Student student = null;
-            if (students.Count == 0)
+            ApplicationUser user = null;
+
+            // Die user_id schlägt die matriculation_number
+            if (!string.IsNullOrEmpty(request.matriculation_number) && string.IsNullOrEmpty(request.user_id))
+            {
+                var students = Db.Students.Where(x => !string.IsNullOrEmpty(x.Number) && x.Number.Equals(request.matriculation_number)).ToList();
+                if (students.Count != 1)
+                {
+                    return BadRequest("unambiguous matriculation number");
+                }
+                user = await UserManager.FindByIdAsync(students[0].UserId);
+            }
+
+            if (!string.IsNullOrEmpty(request.user_id))
             {
                 var userDb = new ApplicationDbContext();
-
-                var users = userDb.Users.Where(x => x.Claims.Any(c => c.ClaimType == "eduPersonPrincipalName" && c.ClaimValue.Equals(student_id))).ToList();
+                var users = userDb.Users.Where(x => x.Claims.Any(c => c.ClaimType == "eduPersonPrincipalName" && c.ClaimValue.Equals(request.user_id))).ToList();
 
                 if (users.Count != 1)
                 {
-                    return NotFound();
+                    return BadRequest("unambiguous user_id");
                 }
-                
-                student = Db.Students.FirstOrDefault(x => x.UserId.Equals(users[0].Id));
-            }
-            else
-            {
-                student = students.FirstOrDefault();
+                user = users[0];
             }
 
-            if (student == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -536,7 +731,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             var subscription = new OccurrenceSubscription
             {
                 Occurrence = course.Occurrence,
-                UserId = student.UserId,
+                UserId = user.Id,
                 TimeStamp = DateTime.Now,
                 Priority = 1,
                 OnWaitingList = false,
@@ -546,39 +741,25 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             await Db.SaveChangesAsync();
 
+
             var response = new CourseSubscriptionApiModel
             {
                 course_id = course.Id,
-                subscribed = subscription.TimeStamp,
-                onWaitingList = subscription.OnWaitingList
+                user_id = request.user_id,
+                matriculation_number = request.matriculation_number,
+                subscription_date = subscription.TimeStamp,
             };
 
 
             return Ok(response);
         }
 
+        /*
         [HttpPatch]
         [Route("{course_id}/subscriptions")]
         [ResponseType(typeof(CourseSubscriberApiModel))]
         public async Task<IHttpActionResult> UpdateCourseSubscription(string api_key, Guid course_id, [FromBody] CourseSubscriberApiModel request)
         {
-            // Verhindert Redirects bei Unauthorized (401) Antworten => funktioniert so nicht
-            // dann erst mal raus
-            // HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
-            /*
-            Request.Headers.TryGetValues("Authorization", out var headers);
-            if (headers == null)
-            {
-                return Unauthorized();
-            }
-
-            var authHeader = headers.FirstOrDefault();
-            if (authHeader == null)
-            {
-                return Unauthorized();
-            }
-            */
-
             var authHeader = api_key;
 
             var apiKeyService = new ApiKeyService(Db);
@@ -589,23 +770,13 @@ namespace MyStik.TimeTable.Web.Api.Controller
             }
 
 
-            /*
-            var course = new Course
-            {
-                Title = request.title,
-                Description = request.description,
-                ExternalId = request.externalId,
-            };
-
-
-            Db.Activities.Add(course);
-            */
             await Db.SaveChangesAsync();
 
-            request.id = Guid.NewGuid().ToString(); // course.Id;
+            request.user_id = Guid.NewGuid().ToString(); // course.Id;
 
             return Ok(request);
         }
+        */
 
         /// <summary>
         /// 
@@ -615,26 +786,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <returns></returns>
         [HttpDelete]
         [Route("{course_id}/subscriptions")]
-        [ResponseType(typeof(CourseSubscriberApiModel))]
-        public async Task<IHttpActionResult> DeleteCourseSubscription(string api_key, Guid course_id, [FromBody] CourseSubscriberApiModel request)
+        [ResponseType(typeof(CourseApiResponseModel))]
+        public async Task<IHttpActionResult> DeleteCourseSubscription(string api_key, Guid course_id, [FromBody] CourseSubscriptionCreateApiModel request)
         {
-            // Verhindert Redirects bei Unauthorized (401) Antworten => funktioniert so nicht
-            // dann erst mal raus
-            // HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
-            /*
-            Request.Headers.TryGetValues("Authorization", out var headers);
-            if (headers == null)
-            {
-                return Unauthorized();
-            }
-
-            var authHeader = headers.FirstOrDefault();
-            if (authHeader == null)
-            {
-                return Unauthorized();
-            }
-            */
-
             var apiKeyService = new ApiKeyService(Db);
             var member = apiKeyService.IsValidApiKey(api_key);
             if (member == null)
@@ -642,23 +796,133 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return Unauthorized();
             }
 
-
-            /*
-            var course = new Course
+            var course = await Db.Activities.OfType<Course>().SingleOrDefaultAsync(x => x.Id == course_id);
+            if (course == null)
             {
-                Title = request.title,
-                Description = request.description,
-                ExternalId = request.externalId,
-            };
+                return NotFound();
+            }
+
+            ApplicationUser user = null;
+
+            // Die user_id schlägt die matriculation_number
+            if (!string.IsNullOrEmpty(request.matriculation_number) && string.IsNullOrEmpty(request.user_id))
+            {
+                var students = Db.Students.Where(x => !string.IsNullOrEmpty(x.Number) && x.Number.Equals(request.matriculation_number)).ToList();
+                if (students.Count != 1)
+                {
+                    return BadRequest("unambiguous matriculation number");
+                }
+                user = await UserManager.FindByIdAsync(students[0].UserId);
+            }
+
+            if (!string.IsNullOrEmpty(request.user_id))
+            {
+                var userDb = new ApplicationDbContext();
+                var users = userDb.Users.Where(x => x.Claims.Any(c => c.ClaimType == "eduPersonPrincipalName" && c.ClaimValue.Equals(request.user_id))).ToList();
+
+                if (users.Count != 1)
+                {
+                    return BadRequest("unambiguous user_id");
+                }
+                user = users[0];
+            }
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Occurrence.Id == course.Occurrence.Id && x.UserId.Equals(user.Id));
+            if (subscription == null)
+            {
+                return NotFound();
+            }
+
+            var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
+            foreach (var drawing in allDrawings)
+            {
+                Db.SubscriptionDrawings.Remove(drawing);
+            }
+
+            course.Occurrence.Subscriptions.Remove(subscription);
+            Db.Subscriptions.Remove(subscription);
 
 
-            Db.Activities.Add(course);
-            */
             await Db.SaveChangesAsync();
 
-            request.id = Guid.NewGuid().ToString(); // course.Id;
+            var response = new CourseApiResponseModel
+            {
+                course_id = course_id,
+                message = "Subscription deleted successfully"
+            };
 
-            return Ok(request);
+            return Ok(response);
         }
+        #endregion
+
+        #region Helpers
+        private string GetLabels(CourseCohorte cohorte, List<ItemLabel> labels)
+        {
+            if (string.IsNullOrEmpty(cohorte.label))
+                return "Cohorte label is required";
+
+            var inst = Db.Institutions.FirstOrDefault(x => x.Tag.Equals(cohorte.institution_id));
+            if (inst == null)
+                return "Invalid Institution";
+
+
+            var targetOrg = inst.Organisers.FirstOrDefault(x => x.ShortName.Equals(cohorte.organiser_id));
+            if (targetOrg == null)
+            {
+                // Label auf Ebene Institution
+                var label = inst.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
+                if (label != null)
+                {
+                    labels.Add(label);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(cohorte.curriculum_id) && string.IsNullOrEmpty(cohorte.curriculum_alias))
+                {
+                    // Label auf Ebene Einrichtung
+                    var label = targetOrg.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
+                    if (label != null)
+                    {
+                        labels.Add(label);
+                    }
+                }
+                else
+                {
+                    // Label auf Ebene Studiengang bzw. Studiengänge, wenn mehrere SPOs gemeint durch Angabe des Alias
+                    if (string.IsNullOrEmpty(cohorte.curriculum_id))
+                    {
+                        var currs = Db.Curricula.Where(x => x.Organiser.Id == targetOrg.Id && x.ShortName.Equals(cohorte.curriculum_alias)).ToList();
+                        foreach (var curr in currs)
+                        {
+                            var label = curr.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
+                            if (label != null)
+                            {
+                                labels.Add(label);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var curr = Db.Curricula.SingleOrDefault(x => x.Organiser.Id == targetOrg.Id && x.ID.Equals(cohorte.curriculum_id));
+                        if (curr == null)
+                            return "Invalid Curriculum for Cohorte";
+                        var label = curr.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
+                        if (label != null)
+                        {
+                            labels.Add(label);
+                        }
+                    }
+                }
+            }
+            
+            return string.Empty;
+        }
+        #endregion
     }
 }

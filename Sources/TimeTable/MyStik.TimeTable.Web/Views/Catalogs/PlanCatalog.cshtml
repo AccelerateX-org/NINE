@@ -6,7 +6,7 @@
 
     @*
     var db = new TimeTableDbContext();
-    var courseService = new CourseInfoService(Db);
+    var courseService = new CourseInfoService(db);
 
     var allCourses = db.Activities.OfType<Course>()
         .Where(x => 

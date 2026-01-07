@@ -1,5 +1,4 @@
-﻿@using Microsoft.IdentityModel.Tokens
-@using MyStik.TimeTable.Data
+﻿@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.DataServices
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Models
@@ -9,7 +8,7 @@
     ViewBag.Title = "Kurs planen";
 
     var db = new TimeTableDbContext();
-    var courseService = new CourseInfoService(Db);
+    var courseService = new CourseInfoService(db);
     var semService = new SemesterService(db);
 
     var course = Model.Course;

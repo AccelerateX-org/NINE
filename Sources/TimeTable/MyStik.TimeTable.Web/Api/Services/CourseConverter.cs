@@ -168,12 +168,12 @@ namespace MyStik.TimeTable.Web.Api.Services
                 foreach (var sub in course.Occurrence.Subscriptions)
                 {
                     var subscriber = new CourseSubscriberApiModel();
-                    subscriber.id = "#NA";
+                    subscriber.user_id = "#NA";
 
                     var student = studService.GetCurrentStudent(sub.UserId);
                     if (student != null && student.Any())
                     {
-                        subscriber.id = student.First().Curriculum.ShortName;
+                        subscriber.user_id = student.First().Curriculum.ShortName;
 
                         if (_isAuth)
                         {
@@ -183,12 +183,12 @@ namespace MyStik.TimeTable.Web.Api.Services
                                 var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
                                 if (claim != null)
                                 {
-                                    subscriber.id = claim.ClaimValue;
+                                    subscriber.user_id = claim.ClaimValue;
                                 }
                             }
                         }
                     }
-                    subscriber.subscribed = sub.TimeStamp;
+                    //subscriber.subscribed = sub.TimeStamp;
                     dto.subscribers.Add(subscriber);
                 }
             }

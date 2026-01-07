@@ -209,6 +209,8 @@ namespace MyStik.TimeTable.Web.Models
 
     public class CurriculumEditModel
     {
+        public string ID { get; set; }
+
         public Guid CurriculumId { get; set; }
 
         public string Tag { get; set; }

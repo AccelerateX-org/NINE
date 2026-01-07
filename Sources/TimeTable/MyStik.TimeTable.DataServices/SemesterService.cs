@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MyStik.TimeTable.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MyStik.TimeTable.Data;
+using System.Web.UI.WebControls;
 
 namespace MyStik.TimeTable.DataServices
 {
@@ -496,5 +497,25 @@ namespace MyStik.TimeTable.DataServices
             return _db.SemesterGroups.Any(x => x.Semester.Id == semester.Id);
         }
 
+        public bool IsLectureDay(Semester sem, ActivityOrganiser org, DateTime date)
+        {
+            var dateList = sem.Dates.Where(x => x.Organiser == null || x.Organiser.Id == org.Id)
+                .ToList();
+
+
+            bool isVorlesung = true;
+            foreach (var sd in dateList)
+            {
+                // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                if (sd.From.Date <= date &&
+                    date <= sd.To.Date &&
+                    sd.HasCourses == false)
+                {
+                    isVorlesung = false;
+                }
+            }
+
+            return isVorlesung;
+        }
     }
 }

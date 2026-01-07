@@ -21,7 +21,7 @@ namespace MyStik.TimeTable.Web.Api.Contracts
     {
         public int amount { get; set; }
 
-        public List<CourseCohorte> fractions { get; set; }
+        public List<CourseCohorte> cohortes { get; set; }
     }
 
     public class CourseDateApiModel
@@ -43,12 +43,36 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         public List<string> hosts { get; set; }
     }
 
+    public class CourseDateSequenceCreateApiModel
+    {
+        public DateTime first_begin { get; set; }
+
+        public DateTime last_end { get; set; }
+
+        /// <summary>
+        /// Alle sieben Tage oder 14 Tage oder töglich (Block)
+        /// </summary>
+        public int frequency { get; set; }
+
+        /// <summary>
+        /// Vorlesung oder Übung - bekommt jedes Date
+        /// </summary>
+        public string title { get; set; }
+
+        public List<string> room_ids { get; set; }
+
+        public List<string> lecturer_ids { get; set; }
+    }
+
     public class CourseDateCreateApiModel
     {
         public DateTime begin { get; set; }
 
         public DateTime end { get; set; }
 
+        /// <summary>
+        /// Vorlesung oder Übung - bekommt jedes Date
+        /// </summary>
         public string title { get; set; }
 
         public string description { get; set; }
@@ -59,21 +83,6 @@ namespace MyStik.TimeTable.Web.Api.Contracts
     }
 
 
-    public class CourseSubscriberApiModel
-    {
-        public string id { get; set; }
-
-        public DateTime subscribed { get; set; }
-    }
-
-    public class CourseSubscriptionApiModel
-    {
-        public Guid course_id { get; set; }
-
-        public DateTime subscribed { get; set; }
-
-        public bool onWaitingList { get; set; }
-    }
 
 
 
@@ -140,13 +149,12 @@ namespace MyStik.TimeTable.Web.Api.Contracts
 
         public List<CourseQuota> quotas { get; set; }
 
-        public List<CourseDateCreateApiModel> dates { get; set; }
+        public List<CourseDateSequenceCreateApiModel> sequences { get; set; }
     }
 
     public class CourseApiResponseModel
     {
         public Guid course_id { get; set; }
-        public string external_id { get; set; }
         public string message { get; set; }
     }
 
@@ -157,4 +165,37 @@ namespace MyStik.TimeTable.Web.Api.Contracts
 
         public string message { get; set; }
     }
+
+    // Als Teil des Kurses
+    public class CourseSubscriberApiModel
+    {
+        public string user_id { get; set; }
+
+        public string matriculation_number { get; set; }
+
+        public DateTime subscrition_date { get; set; }
+
+        public bool on_waiting_list { get; set; }
+    }
+
+
+    public class CourseSubscriptionCreateApiModel
+    {
+        public string user_id { get; set; }
+
+        public string matriculation_number { get; set; }
+    }
+
+    // Antwort
+    public class CourseSubscriptionApiModel
+    {
+        public Guid course_id { get; set; }
+
+        public string user_id { get; set; }
+
+        public string matriculation_number { get; set; }
+
+        public DateTime subscription_date { get; set; }
+    }
+
 }

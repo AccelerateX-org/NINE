@@ -1093,6 +1093,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CurriculumEditModel
             {
+                ID = curr.ID,
                 CurriculumId = curr.Id,
                 OrgId = curr.Organiser.Id,
                 Tag = curr.Tag,
@@ -1104,7 +1105,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 IsDeprecated = !curr.IsDeprecated,
                 AsDual = curr.AsDual,
                 AsPartTime = curr.AsPartTime,
-                IsQualification = curr.IsQualification
+                IsQualification = curr.IsQualification,
+                StatuteDate = curr.StatuteTakeEffect.HasValue ? curr.StatuteTakeEffect.Value : DateTime.Today,  
             };
 
             if (curr.Degree != null)
@@ -1156,6 +1158,7 @@ namespace MyStik.TimeTable.Web.Controllers
             cur.IsQualification = model.IsQualification;
 
             cur.IsDeprecated = !model.IsDeprecated;
+            cur.StatuteTakeEffect = model.StatuteDate;
 
             var degree = Db.Degrees.SingleOrDefault(x => x.Id == model.DegreeId);
             if (degree != null)

@@ -4,8 +4,8 @@
 @{
     var course = Model.OriginCourse;
     var subject2 = Model.Subject;
-    var courseService = new CourseInfoService(Db);
-    var summary = courseService.GetCourseSummary(course);
+    var courseService = new CourseInfoService();
+    var summary = courseService.GetCourseSummary(course.Id);
 
 }
 
