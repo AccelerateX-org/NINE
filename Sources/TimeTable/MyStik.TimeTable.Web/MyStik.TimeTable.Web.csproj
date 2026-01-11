@@ -4888,6 +4888,7 @@
     <Content Include="Views\Semester\Fulfillment.cshtml" />
     <Content Include="Views\Semester\Forward.cshtml" />
     <Content Include="Views\Semester\Conflicts.cshtml" />
+    <Content Include="Views\Curriculum\Copy.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

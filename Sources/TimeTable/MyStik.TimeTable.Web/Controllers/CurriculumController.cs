@@ -69,7 +69,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Assessments = assessments;
 
-            // die Labels sammlen
+            // die Labels sammeln
             var labels = new List<ItemLabel>();
             foreach (var area in curr.Areas)
             {
@@ -1176,6 +1176,203 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Admin", new { id = cur.Id });
         }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Copy(Guid id)
+        {
+            var curr = Db.Curricula.Include(curriculum => curriculum.Organiser).SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumEditModel
+            {
+                ID = curr.ID,
+                CurriculumId = curr.Id,
+                OrgId = curr.Organiser.Id,
+                Tag = curr.Tag,
+                Name = curr.Name,
+                ShortName = curr.ShortName,
+                Description = curr.Description,
+                Version = curr.Version,
+                ThesisDuration = curr.ThesisDuration,
+                IsDeprecated = !curr.IsDeprecated,
+                AsDual = curr.AsDual,
+                AsPartTime = curr.AsPartTime,
+                IsQualification = curr.IsQualification,
+                StatuteDate = curr.StatuteTakeEffect ?? DateTime.Today,
+            };
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Copy(CurriculumEditModel model)
+        {
+            var curOld = Db.Curricula.Include(curriculum => curriculum.Autonomy.Committees)
+                .Include(curriculum1 => curriculum1.Organiser).Include(curriculum2 => curriculum2.Degree).Include(curriculum3 => curriculum3.Areas.Select(curriculumArea =>
+                    curriculumArea.Options.Select(areaOption =>
+                        areaOption.Slots.Select(curriculumSlot => curriculumSlot.Loadings.Select(slotLoading =>
+                            slotLoading.Chips.Select(slotLoadingChip =>
+                                slotLoadingChip.SubjectAccreditations.Select(subjectAccreditation =>
+                                    subjectAccreditation.Subject))))))).SingleOrDefault(x => x.Id == model.CurriculumId);
+
+            var curNew = new Curriculum
+            {
+                Organiser = curOld.Organiser,
+                Degree = curOld.Degree,
+                Tag = curOld.Tag,
+                Name = curOld.Name,
+                ShortName = curOld.ShortName,
+                Description = curOld.Description,
+                Version = string.Empty,
+                ThesisDuration = curOld.ThesisDuration,
+                EctsTarget = curOld.EctsTarget,
+                AsDual = model.AsDual,
+                AsPartTime = curOld.AsPartTime,
+                IsQualification = curOld.IsQualification,
+                IsDeprecated = curOld.IsDeprecated,
+                StatuteTakeEffect = model.StatuteDate,          // das aus dem Dialog
+                Areas = new List<CurriculumArea>(),
+            };
+
+            // Kopie der Bereiche
+            foreach (var area in curOld.Areas)
+            {
+                var newArea = new CurriculumArea
+                {
+                    Name = area.Name,
+                    Tag = area.Tag,
+                    Description = area.Description,
+                    Curriculum = curNew,
+                    Options = new List<AreaOption>()
+                };
+                // Kopie der Kapitel
+                foreach (var option in area.Options.ToList())
+                {
+                    var newOption = new AreaOption()
+                    {
+                        Name = option.Name,
+                        Tag = option.Tag,
+                        Description = option.Description,
+                        Area = newArea,
+                        Slots = new List<CurriculumSlot>()
+                    };
+                    // Kopie der Themen
+                    foreach (var slot in option.Slots.ToList())
+                    {
+                        var newSlot = new CurriculumSlot()
+                        {
+                            Name = slot.Name,
+                            Tag = slot.Tag,
+                            Position = slot.Position,
+                            Description = slot.Description,
+                            Weight = slot.Weight,
+                            ECTS = slot.ECTS,
+                            AreaOption = newOption,
+                            Loadings = new List<SlotLoading>()
+                        };
+                        foreach (var loading in slot.Loadings.ToList())
+                        {
+                            var newLoading = new SlotLoading()
+                            {
+                                Name = loading.Name,
+                                Description = loading.Description,
+                                Slot = newSlot,
+                                Chips = new List<SlotLoadingChip>()
+                            };
+                            foreach (var chip in loading.Chips.ToList())
+                            {
+                                var newChip = new SlotLoadingChip()
+                                {
+                                    ECTS = chip.ECTS,
+                                    Loading = newLoading,
+                                    SubjectAccreditations = new List<SubjectAccreditation>()
+                                };
+                                foreach (var accreditation in chip.SubjectAccreditations.ToList())
+                                {
+                                    var newAccredition = new SubjectAccreditation
+                                    {
+                                        ECTS = accreditation.ECTS,
+                                        Chip = newChip,
+                                        IncludeExamination = accreditation.IncludeExamination,
+                                        Subject = accreditation.Subject
+                                    };
+                                    newChip.SubjectAccreditations.Add(newAccredition);
+                                }
+                                newLoading.Chips.Add(newChip);
+                            }
+                            newSlot.Loadings.Add(newLoading);
+                        }
+                        newOption.Slots.Add(newSlot);
+                    }
+                    newArea.Options.Add(newOption);
+                }
+                curNew.Areas.Add(newArea);
+            }
+
+            // Autonomie
+            // Die Autonomie wird immer neu angelegt, die Gremien müssen neu zugewiesen werden
+            var autonomy = new Autonomy()
+            {
+                Committees = new List<Committee>()
+            };
+            curNew.Autonomy = autonomy;
+            Db.Autonomy.Add(autonomy);
+            foreach (var c in curOld.Autonomy.Committees)
+            {
+                curNew.Autonomy.Committees.Add(c);
+            }
+
+            Db.Curricula.Add(curNew);
+            Db.SaveChanges();
+
+            /*
+            cur.Tag = model.Tag;
+            cur.Name = model.Name;
+            cur.ShortName = model.ShortName;
+            cur.Description = model.Description;
+            cur.Version = model.Version;
+            cur.ThesisDuration = model.ThesisDuration;
+            cur.EctsTarget = model.EctsTarget;
+            cur.AsDual = model.AsDual;
+            cur.AsPartTime = model.AsPartTime;
+            cur.IsQualification = model.IsQualification;
+
+            cur.IsDeprecated = !model.IsDeprecated;
+            cur.StatuteTakeEffect = model.StatuteDate;
+
+            var degree = Db.Degrees.SingleOrDefault(x => x.Id == model.DegreeId);
+            if (degree != null)
+            {
+                cur.Degree = degree;
+            }
+
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == model.OrgId);
+            if (org != null)
+            {
+                cur.Organiser = org;
+            }
+
+            Db.SaveChanges();
+            */
+
+            return RedirectToAction("Admin", new { id = curNew.Id });
+        }
+
+
+
+
 
         public ActionResult ImportSections(Guid id)
         {

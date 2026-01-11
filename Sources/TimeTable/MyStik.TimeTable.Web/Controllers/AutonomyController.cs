@@ -12,30 +12,63 @@ namespace MyStik.TimeTable.Web.Controllers
         // GET: Autonomy
         public ActionResult Index(Guid id)
         {
-            var org = GetOrganiser(id);
-
-            var aut = org.Autonomy;
-
-            // Fehelende Selbstverwaltung automatisch ergänzen
-            if (aut == null)
+            /*
+            var orgs = Db.Organisers.ToList();
+            foreach (var org in orgs)
             {
-                aut = new Autonomy();
-                aut.Committees = new List<Committee>();
+                if (org != null && org.Autonomy != null)
+                {
+                    foreach (var c in org.Autonomy.Committees.ToList())
+                    {
+                        if (c.Curriculum != null)
+                        {
+                            var cur = Db.Curricula.SingleOrDefault(x => x.Id == c.Curriculum.Id);
+                            var aut = cur.Autonomy;
+                            if (aut == null)
+                            {
+                                aut = new MyStik.TimeTable.Data.Autonomy
+                                {
+                                    Committees = new List<MyStik.TimeTable.Data.Committee>()
+                                };
+                                cur.Autonomy = aut;
+                                Db.Autonomy.Add(aut);
+                            }
+                            if (!aut.Committees.Any(x => x.Id == c.Id))
+                            {
+                                aut.Committees.Add(c);
+                            }
+                            c.Curriculum = null;
+                            org.Autonomy.Committees.Remove(c);
+                        }
+                    }
+                }
+            }
+            Db.SaveChanges();
+            */
+            var org2 = GetOrganiser(id);
+            var model = new OrgAutonomyModel
+            {
+                Organiser = org2,
+                Committees = new List<Committee>()
+            };
 
-                Db.Autonomy.Add(aut);
-                org.Autonomy = aut;
-
-                Db.SaveChanges();
+            model.Committees.AddRange(org2.Autonomy.Committees);
+            foreach (var curr in Db.Curricula.Where(c => c.Organiser.Id == org2.Id).ToList())
+            {
+                if (curr.Autonomy == null)
+                {
+                    curr.Autonomy = new Autonomy
+                    {
+                        Committees = new List<Committee>()
+                    };
+                    Db.Autonomy.Add(curr.Autonomy);
+                    Db.SaveChanges();
+                }
+                model.Committees.AddRange(curr.Autonomy.Committees);
             }
 
 
-            var model = new OrgAutonomyModel
-            {
-                Organiser = org,
-                Autonomy = aut
-            };
-
-            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.UserRight = GetUserRight(org2);
 
             return View(model);
         }
@@ -72,6 +105,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
+            /*
             var aut = org.Autonomy;
 
             Committee committee = null;
@@ -99,6 +133,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Committees.Add(committee);
                 Db.SaveChanges();
             }
+            */
 
             return RedirectToAction("Index");
         }
@@ -149,7 +184,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CommitteeCreateModel();
             model.CommitteeId = committee.Id;
-            model.CurriculumId = committee.Curriculum?.Id ?? Guid.Empty;
+            //model.CurriculumId = committee.Curriculum?.Id ?? Guid.Empty;
             model.Description = committee.Description;
             model.Name = committee.Name;
 
@@ -167,7 +202,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // keine Zwei Gremien mit dem selben Namen
             committee.Name = model.Name;
             committee.Description = model.Description;
-            committee.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurriculumId);
+            //committee.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurriculumId);
 
             Db.SaveChanges();
            

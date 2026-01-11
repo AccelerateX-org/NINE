@@ -6,9 +6,7 @@
     ViewBag.Title = "Modulplan";
 
     var pk = Model.Curriculum.Organiser.Autonomy != null ?
-        Model.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK") &&
-                                                                                   x.Curriculum != null &&
-                                                                                   x.Curriculum.Id == Model.Curriculum.Id) : null;
+        Model.Curriculum.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
 
     var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
 

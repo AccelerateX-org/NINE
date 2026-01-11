@@ -4,12 +4,22 @@
 @{
     ViewBag.Title = "Gremien";
 
-    //var userDb = new ApplicationDbContext();
+    var db = new MyStik.TimeTable.Data.TimeTableDbContext();
+    var bwms = db.Curricula.Where(x => x.ShortName.Equals("BWM")).ToList();
+    var bwmOld = bwms.SingleOrDefault(x => x.ID.Equals("BWM_20250314"));
+    var bwmNew = bwms.SingleOrDefault(x => x.ID.Equals("BWM_20260314"));
 
-    //    var users = userDb.Users.Where(x => x.BinaryData != null).ToList();
+    foreach (var c in bwmNew.Autonomy.Committees)
+    {
+        bwmOld.Autonomy.Committees.Add(c);
+    }
 
+    db.SaveChanges();
 
+    var badCurrs = db.Curricula.Where(x => x.Autonomy == null).ToList();
 }
+
+
 
 
 @section styles
@@ -71,25 +81,18 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var c in Model.Autonomy.Committees)
+                @foreach (var c in Model.Committees)
                 {
-                    var name = c.Name;
-                    if (c.Curriculum != null)
-                    {
-                        name = name + " (" + c.Curriculum.ShortName + ")";
-                    }
+                    var currs = db.Curricula.Where(x => x.Autonomy != null && x.Autonomy.Committees.Any(y => y.Id == c.Id)).ToList();
                     <tr>
-                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@name</a></td>
+                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@c.Name</a></td>
                         <td>@c.Description</td>
-                        @if (c.Curriculum != null)
-                        {
-                            <td>@c.Curriculum.ShortName</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-
+                        <td>
+                            @foreach (var curr in currs.ToList())
+                            {
+                                <div>@curr.ID</div>
+                            }
+                        </td>
                         <td>@c.Members.Count</td>
                     </tr>
                 }
@@ -98,6 +101,39 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            @foreach (var bc in badCurrs)
+            {
+                <li>@bc.ID</li>
+            }
+        </ul>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            @foreach (var curr in Model.Organiser.Curricula)
+            {
+                <li>@curr.ID</li>
+                <ul>
+                    @foreach (var c in curr.Autonomy.Committees)
+                    {
+                        if (c.Curriculum != null)
+                        {
+                            <li>@c.Curriculum.ID</li>
+                        }
+                        else
+                        {
+                            <li>@c.Name (0)</li>
+                        }
+                    }
+                </ul>
+            }
+        </ul>
+    </div>
+</div>
 
 

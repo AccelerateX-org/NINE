@@ -7,9 +7,7 @@
     var userService = new UserInfoService();
 
     var pk = Model.Student.Curriculum.Organiser.Autonomy != null ?
-        Model.Student.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK") &&
-                                                                                   x.Curriculum != null &&
-                                                                                   x.Curriculum.Id == Model.Student.Curriculum.Id) : null;
+        Model.Student.Curriculum.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
 }
 
 <div class="row">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -152,7 +153,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var member = GetMyMembership(model.OrgId);
 
 
-            var curr = Db.Curricula.SingleOrDefault(x =>
+            var curr = Db.Curricula.Include(curriculum => curriculum.Autonomy).SingleOrDefault(x =>
                 x.ShortName.Equals(model.CurriculumShortName) && x.Organiser.Id == org.Id);
             var sem = Db.Semesters.SingleOrDefault(x => x.Name.Equals(model.SemesterName));
 
@@ -169,7 +170,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var committee = new Committee
             {
                 Name = "Aufnahmekommission für " + model.Name,
-                Curriculum = curr
+//                Curriculum = curr
             };
 
             var comMember = new CommitteeMember
@@ -177,6 +178,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Member = member,
                 HasChair = true
             };
+
+            curr.Autonomy.Committees.Add(committee);
 
             committee.Members = new List<CommitteeMember>();
             committee.Members.Add(comMember);

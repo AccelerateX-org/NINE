@@ -152,6 +152,8 @@ namespace MyStik.TimeTable.Data
         public string Description { get; set; }
         
         public virtual CurriculumSlot Slot { get; set; }
+
+        public virtual ICollection<SlotLoadingChip> Chips { get; set; }
     }
 
     public class SlotLoadingChip

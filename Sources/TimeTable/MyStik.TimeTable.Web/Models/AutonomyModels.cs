@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -7,7 +8,7 @@ namespace MyStik.TimeTable.Web.Models
     {
         public ActivityOrganiser Organiser { get; set; }
 
-        public Autonomy Autonomy { get; set; }
+        public List<Committee> Committees { get; set; }
     }
 
     public class CommitteeCreateModel
