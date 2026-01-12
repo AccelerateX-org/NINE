@@ -20,6 +20,14 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<Committee> Committees { get; set; }
 
+        public virtual ICollection<CommitteeCompetence> Competences { get; set; }
+    }
 
+    public class CommitteeCompetence
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+        public virtual Committee Committee { get; set; }
+        public virtual Autonomy Autonomy { get; set; }
     }
 }

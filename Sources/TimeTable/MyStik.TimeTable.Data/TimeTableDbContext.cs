@@ -234,6 +234,7 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<Autonomy> Autonomy { get; set; }
 
+        public DbSet<CommitteeCompetence> CommitteeCompetences { get; set; }
 
         public DbSet<Committee> Committees { get; set; }
 

@@ -1,22 +1,58 @@
-﻿@using ImageMagick
+﻿@using System.Data.Entity
+@using ImageMagick
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.OrgAutonomyModel
 @{
     ViewBag.Title = "Gremien";
 
     var db = new MyStik.TimeTable.Data.TimeTableDbContext();
-    var bwms = db.Curricula.Where(x => x.ShortName.Equals("BWM")).ToList();
+
+    var bwms = db.Curricula.Where(x => x.ShortName.Equals("BWM")).Include(curriculum => curriculum.Autonomy.Competences.Select(committeeCompetence => committeeCompetence.Committee)).ToList();
     var bwmOld = bwms.SingleOrDefault(x => x.ID.Equals("BWM_20250314"));
     var bwmNew = bwms.SingleOrDefault(x => x.ID.Equals("BWM_20260314"));
 
-    foreach (var c in bwmNew.Autonomy.Committees)
+    var slots = new List<CurriculumSlot>();
+
+    foreach (var areaOld in bwmOld.Areas.ToList())
     {
-        bwmOld.Autonomy.Committees.Add(c);
+        var areNew = bwmNew.Areas.SingleOrDefault(x => x.Tag.Equals(areaOld.Tag));
+        if (areNew != null)
+        {
+            foreach (var optionOld in areaOld.Options.ToList())
+            {
+                var optionNew = areNew.Options.SingleOrDefault(x => x.Tag.Equals(optionOld.Tag));
+                if (optionNew != null)
+                {
+                    foreach (var slotOld in optionOld.Slots.ToList())
+                    {
+                        var slotNew = optionNew.Slots.SingleOrDefault(x => x.Tag.Equals(slotOld.Tag));
+                        if (slotNew != null)
+                        {
+                            slots.Add(slotNew);
+
+                            foreach (var accreditationOld in slotOld.SubjectAccreditations.ToList())
+                            {
+                                var accreditationNew = slotNew.SubjectAccreditations.SingleOrDefault(x => x.Subject.Id.Equals(accreditationOld.Subject.Id));
+                                if (accreditationNew == null)
+                                {
+                                    accreditationNew = new SubjectAccreditation
+                                    {
+                                        Slot = slotNew,
+                                        Subject = accreditationOld.Subject,
+                                    };
+                                    db.SubjectAccreditations.Add(accreditationNew);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
     db.SaveChanges();
-
-    var badCurrs = db.Curricula.Where(x => x.Autonomy == null).ToList();
 }
 
 
@@ -81,59 +117,43 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var c in Model.Committees)
+                @foreach (var c in Model.Organiser.Autonomy.Competences)
                 {
-                    var currs = db.Curricula.Where(x => x.Autonomy != null && x.Autonomy.Committees.Any(y => y.Id == c.Id)).ToList();
                     <tr>
-                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@c.Name</a></td>
-                        <td>@c.Description</td>
+                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@c.Committee.Name</a></td>
+                        <td>@c.Committee.Description</td>
                         <td>
-                            @foreach (var curr in currs.ToList())
-                            {
-                                <div>@curr.ID</div>
-                            }
                         </td>
-                        <td>@c.Members.Count</td>
+                        <td>@c.Committee.Members.Count</td>
                     </tr>
+                }
+                @foreach (var curr in Model.Organiser.Curricula)
+                {
+                    foreach (var c in curr.Autonomy.Competences)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Committee", new {id=c.Id})">@c.Committee.Name</a></td>
+                            <td>@c.Committee.Description</td>
+                            <td>
+                                @curr.ID
+                            </td>
+                            <td>@c.Committee.Members.Count</td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <ul>
-            @foreach (var bc in badCurrs)
-            {
-                <li>@bc.ID</li>
-            }
-        </ul>
-    </div>
-</div>
 
 <div class="row">
     <div class="col-md-12">
         <ul>
-            @foreach (var curr in Model.Organiser.Curricula)
+            @foreach (var slot in slots)
             {
-                <li>@curr.ID</li>
-                <ul>
-                    @foreach (var c in curr.Autonomy.Committees)
-                    {
-                        if (c.Curriculum != null)
-                        {
-                            <li>@c.Curriculum.ID</li>
-                        }
-                        else
-                        {
-                            <li>@c.Name (0)</li>
-                        }
-                    }
-                </ul>
+                <li>@slot.Tag | @slot.AreaOption.Tag | @slot.AreaOption.Area.Tag</li>
             }
         </ul>
     </div>
 </div>
-
-

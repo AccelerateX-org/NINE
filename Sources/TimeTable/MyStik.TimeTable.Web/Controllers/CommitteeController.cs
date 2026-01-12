@@ -19,8 +19,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(model);
             }
 
-            var model2 = Db.Committees.Where(x => x.Autonomy.Id == id).ToList();
+            var model2 = Db.Committees.ToList();
             return View(model2);
+
+            //            var model2 = Db.Committees.Where(x => x.Autonomy.Id == id).ToList();
+            //            return View(model2);
         }
 
         public ActionResult Details(Guid id)

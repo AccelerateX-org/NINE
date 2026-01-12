@@ -69,9 +69,9 @@
                         foreach (var curr in org.Curricula.OrderBy(x => x.Name))
                         {
                             var pk = curr.Autonomy != null ?
-                                curr.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
+                                curr.Autonomy.Competences.FirstOrDefault(x => x.Committee.Name.Equals("PK")) : null;
 
-                            var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
+                            var pkv = pk != null ? pk.Committee.Members.FirstOrDefault(x => x.HasChair) : null;
 
                             var rowClass = "";
                             if (curr.IsDeprecated)

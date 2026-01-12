@@ -6,9 +6,9 @@
     ViewBag.Title = "Modulplan";
 
     var pk = Model.Curriculum.Organiser.Autonomy != null ?
-        Model.Curriculum.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
+        Model.Curriculum.Autonomy.Competences.FirstOrDefault(x => x.Committee.Name.Equals("PK")) : null;
 
-    var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
+    var pkv = pk != null ? pk.Committee.Members.FirstOrDefault(x => x.HasChair) : null;
 
     var db = new TimeTableDbContext();
 }

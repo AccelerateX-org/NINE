@@ -16,10 +16,11 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// deprecated
         /// </summary>
-        public virtual Curriculum Curriculum { get; set; }
-
+        //public virtual Curriculum Curriculum { get; set; }
 
         public virtual Autonomy Autonomy { get; set; }
+
+        public virtual ICollection<CommitteeCompetence> Competences { get; set; }
 
 
         public virtual ICollection<CommitteeMember> Members { get; set; }

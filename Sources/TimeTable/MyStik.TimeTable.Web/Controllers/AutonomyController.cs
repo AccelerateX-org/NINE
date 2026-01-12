@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
+using NodaTime;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -49,23 +50,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new OrgAutonomyModel
             {
                 Organiser = org2,
-                Committees = new List<Committee>()
             };
-
-            model.Committees.AddRange(org2.Autonomy.Committees);
-            foreach (var curr in Db.Curricula.Where(c => c.Organiser.Id == org2.Id).ToList())
-            {
-                if (curr.Autonomy == null)
-                {
-                    curr.Autonomy = new Autonomy
-                    {
-                        Committees = new List<Committee>()
-                    };
-                    Db.Autonomy.Add(curr.Autonomy);
-                    Db.SaveChanges();
-                }
-                model.Committees.AddRange(curr.Autonomy.Committees);
-            }
 
 
             ViewBag.UserRight = GetUserRight(org2);
@@ -158,8 +143,8 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult EditCommittee(Guid id)
         {
             var committee = Db.Committees.SingleOrDefault(x => x.Id == id);
-            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Id == committee.Autonomy.Id);
-
+            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Committees.Any(y => y.Id == committee.Id));
+            
 
             var selectList = new List<SelectListItem>();
             selectList.Add(new SelectListItem
@@ -196,7 +181,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult EditCommittee(CommitteeCreateModel model)
         {
             var committee = Db.Committees.SingleOrDefault(x => x.Id == model.CommitteeId);
-            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Id == committee.Autonomy.Id);
+            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Committees.Any(y => y.Id == committee.Id));
 
 
             // keine Zwei Gremien mit dem selben Namen
@@ -213,7 +198,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult DeleteCommittee(Guid id)
         {
             var committee = Db.Committees.SingleOrDefault(x => x.Id == id);
-            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Id == committee.Autonomy.Id);
+            var org = Db.Organisers.FirstOrDefault(x => x.Autonomy.Committees.Any(y => y.Id == committee.Id));
 
             foreach (var member in committee.Members.ToList())
             {

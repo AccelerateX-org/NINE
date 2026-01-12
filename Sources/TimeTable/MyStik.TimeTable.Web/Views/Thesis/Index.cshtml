@@ -7,7 +7,7 @@
     var userService = new UserInfoService();
 
     var pk = Model.Student.Curriculum.Organiser.Autonomy != null ?
-        Model.Student.Curriculum.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
+        Model.Student.Curriculum.Autonomy.Competences.FirstOrDefault(x => x.Committee.Name.Equals("PK")) : null;
 }
 
 <div class="row">
@@ -34,7 +34,7 @@
                         @if (pk != null)
                         {
                                 <ul>
-                                    @foreach (var p in pk.Members.Where(x => x.HasChair))
+                                    @foreach (var p in pk.Committee.Members.Where(x => x.HasChair))
                                     {
                                         <li>@p.Member.FullName</li>
                                     }
@@ -389,7 +389,7 @@
                                         <div class="alert alert-info">
                                             <strong>Prüfungskommission:</strong>
                                             <ul>
-                                                @foreach (var p in pk.Members.Where(x => x.HasChair))
+                                                @foreach (var p in pk.Committee.Members.Where(x => x.HasChair))
                                                 {
                                                     <li>@p.Member.FullName</li>
                                                 }

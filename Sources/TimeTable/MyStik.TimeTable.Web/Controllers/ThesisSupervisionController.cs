@@ -401,11 +401,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.ActionUser = senderUser;
 
-            var pk = t.Student.Curriculum.Autonomy?.Committees.FirstOrDefault(x =>
-                    x.Name.Equals("PK"));
+            var pk = t.Student.Curriculum.Autonomy?.Competences.FirstOrDefault(x =>
+                    x.Committee.Name.Equals("PK"));
 
 
-            var pkv = pk?.Members.FirstOrDefault(x => x.HasChair);
+            var pkv = pk?.Committee.Members.FirstOrDefault(x => x.HasChair);
 
             if (pkv?.Member != null)
             {

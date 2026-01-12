@@ -60,8 +60,8 @@ namespace MyStik.TimeTable.Web.Jobs
 
             var allCurrWithPk = allCurr.Where(x =>
                 x.Autonomy != null && 
-                x.Autonomy.Committees.Any(c =>
-                    c.Name.Equals("PK")))
+                x.Autonomy.Competences.Any(c =>
+                    c.Committee.Name.Equals("PK")))
                 .ToList();
 
 
