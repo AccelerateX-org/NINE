@@ -540,7 +540,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return PartialView("_CurriculumAllSelectList");
             }
         }
-        
+
         [HttpPost]
         public PartialViewResult CurriculaList3(Guid orgId)
         {
@@ -850,7 +850,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var member = members.SingleOrDefault(m => m.Organiser.Id == org.Id);
 
 
-            var roomList = member != null ? new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, member.IsRoomAdmin) : new List<Room>();
+            var roomList = member != null
+                ? new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, member.IsRoomAdmin)
+                : new List<Room>();
 
             // Nur noch Raumiste mit Owner
             // unklar, ob das so bleiben soll
@@ -1106,7 +1108,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 AsDual = curr.AsDual,
                 AsPartTime = curr.AsPartTime,
                 IsQualification = curr.IsQualification,
-                StatuteDate = curr.StatuteTakeEffect.HasValue ? curr.StatuteTakeEffect.Value : DateTime.Today,  
+                StatuteDate = curr.StatuteTakeEffect.HasValue ? curr.StatuteTakeEffect.Value : DateTime.Today,
             };
 
             if (curr.Degree != null)
@@ -1220,12 +1222,14 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Copy(CurriculumEditModel model)
         {
             var curOld = Db.Curricula.Include(curriculum => curriculum.Autonomy.Committees)
-                .Include(curriculum1 => curriculum1.Organiser).Include(curriculum2 => curriculum2.Degree).Include(curriculum3 => curriculum3.Areas.Select(curriculumArea =>
+                .Include(curriculum1 => curriculum1.Organiser).Include(curriculum2 => curriculum2.Degree)
+                .Include(curriculum3 => curriculum3.Areas.Select(curriculumArea =>
                     curriculumArea.Options.Select(areaOption =>
                         areaOption.Slots.Select(curriculumSlot => curriculumSlot.Loadings.Select(slotLoading =>
                             slotLoading.Chips.Select(slotLoadingChip =>
                                 slotLoadingChip.SubjectAccreditations.Select(subjectAccreditation =>
-                                    subjectAccreditation.Subject))))))).SingleOrDefault(x => x.Id == model.CurriculumId);
+                                    subjectAccreditation.Subject)))))))
+                .SingleOrDefault(x => x.Id == model.CurriculumId);
 
             var curNew = new Curriculum
             {
@@ -1242,7 +1246,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 AsPartTime = curOld.AsPartTime,
                 IsQualification = curOld.IsQualification,
                 IsDeprecated = curOld.IsDeprecated,
-                StatuteTakeEffect = model.StatuteDate,          // das aus dem Dialog
+                StatuteTakeEffect = model.StatuteDate, // das aus dem Dialog
                 Areas = new List<CurriculumArea>(),
             };
 
@@ -1310,14 +1314,19 @@ namespace MyStik.TimeTable.Web.Controllers
                                     };
                                     newChip.SubjectAccreditations.Add(newAccredition);
                                 }
+
                                 newLoading.Chips.Add(newChip);
                             }
+
                             newSlot.Loadings.Add(newLoading);
                         }
+
                         newOption.Slots.Add(newSlot);
                     }
+
                     newArea.Options.Add(newOption);
                 }
+
                 curNew.Areas.Add(newArea);
             }
 
@@ -2202,10 +2211,12 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         Db.SeatQuotaFractions.Remove(fraction);
                     }
+
                     Db.SeatQuotas.Remove(quotasItem);
                 }
 
-                var fractions = Db.SeatQuotaFractions.Where(x => x.Curriculum != null && x.Curriculum.Id == curriculum.Id).ToList();
+                var fractions = Db.SeatQuotaFractions
+                    .Where(x => x.Curriculum != null && x.Curriculum.Id == curriculum.Id).ToList();
                 foreach (var fraction in fractions)
                 {
                     Db.SeatQuotaFractions.Remove(fraction);
@@ -2924,7 +2935,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
             var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
 
-            var accrs = Db.SubjectAccreditations.Where(x => x.Slot.Id == slotId && x.Subject.Module.Id == moduleId).ToList();
+            var accrs = Db.SubjectAccreditations.Where(x => x.Slot.Id == slotId && x.Subject.Module.Id == moduleId)
+                .ToList();
 
             foreach (var accr in accrs)
             {
@@ -3174,4 +3186,5 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
             return RedirectToAction("Admin", new { id = id });
         }
+    }
 }
