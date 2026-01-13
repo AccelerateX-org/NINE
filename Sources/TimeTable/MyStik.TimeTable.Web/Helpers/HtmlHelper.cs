@@ -624,7 +624,7 @@ namespace MyStik.TimeTable.Web.Helpers
 
                 if (curr != null)
                 {
-                    var linkName = $"{curr.ShortName}:{label.Name}";
+                    var linkName = $"{curr.Alias}:{label.Name}";
                     sb.Append(htmlHelper.ActionLink(linkName, "Label", "Dictionary", new { semId = sem.Id, orgId = curr.Organiser.Id, currId = curr.Id, labelId = label.Id}, null));
                 }
 

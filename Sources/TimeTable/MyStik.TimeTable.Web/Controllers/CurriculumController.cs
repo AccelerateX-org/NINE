@@ -3166,5 +3166,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
-    }
+
+        public ActionResult RemoveSpoVersion(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            curr.StatuteTakeEffect = null;
+            Db.SaveChanges();
+            return RedirectToAction("Admin", new { id = id });
+        }
 }

@@ -210,7 +210,7 @@ if (showMenu)
                                                 {
                                                     <div>
                                                         <a href="@Url.Action("Details", "Curriculum", new { id = slot.AreaOption.Area.Curriculum.Id })">
-                                                            @slot.AreaOption.Area.Curriculum.Name
+                                                            @slot.AreaOption.Area.Curriculum.Alias
                                                         </a> |
                                                         <a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">
                                                             @slot.Tag
@@ -222,7 +222,7 @@ if (showMenu)
                                         </div>
                                         @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                                         {
-                                            <div class="row">
+                                            <div class="row mt-3">
                                                 <div class="col-4">
                                                     <div>Katalogverantwortung</div>
                                                 </div>
@@ -234,7 +234,7 @@ if (showMenu)
                                                 </div>
                                             </div>
                                         }
-                                        <div class="row">
+                                        <div class="row mt-3">
                                             <div class="col-4">
                                                 <div>Modulverantwortung</div>
                                             </div>
@@ -245,7 +245,7 @@ if (showMenu)
                                                 }
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mt-3">
                                             <div class="col-4">
                                                 <div>Prüfungsformen</div>
                                             </div>

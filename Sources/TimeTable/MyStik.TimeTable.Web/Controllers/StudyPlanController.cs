@@ -30,10 +30,10 @@ namespace MyStik.TimeTable.Web.Controllers
     public class StudyPlanController : BaseController
     {
         [AllowAnonymous]
-        public ActionResult Doc(string id, Guid? semId)
+        public ActionResult Doc(Guid id, Guid? semId)
         {
             var sem = semId.HasValue? SemesterService.GetSemester(semId.Value):SemesterService.GetSemester(DateTime.Today);
-            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.Equals(id));
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
             var subjects = Db.ModuleCourses.Where(x =>
                 x.SubjectAccreditations.Any(c =>
@@ -263,7 +263,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Doc", "StudyPlan", new { id = curr.ShortName, semId = semester.Id });
+            return RedirectToAction("Doc", "StudyPlan", new { id = curr.Id, semId = semester.Id });
         }
 
         public ActionResult Unpublish(Guid currId, Guid semId)

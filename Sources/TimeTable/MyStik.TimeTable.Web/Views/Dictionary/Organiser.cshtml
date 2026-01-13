@@ -60,7 +60,7 @@
                         @foreach (var curr in Model.Curricula.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
                         {
                             <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
-                                <strong>@curr.ShortName</strong>: @curr.Name
+                                <strong>@curr.Alias</strong>: @curr.Name
                             </a>
                         }
                     </div>

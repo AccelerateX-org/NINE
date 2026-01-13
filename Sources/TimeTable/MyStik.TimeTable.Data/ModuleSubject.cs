@@ -63,6 +63,8 @@ namespace MyStik.TimeTable.Data
 
         public string Tag { get; set; }
 
+        public string Alias => $"{Module.Name}";
+
         public string FullTag => $"{Module.FullTag}#{Tag}";
 
         public string FullName

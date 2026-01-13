@@ -23,7 +23,7 @@
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">@Model.Curriculum.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">@Model.Curriculum.Alias</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("SlotPlan", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">Modulplan</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Slot.Tag</li>
         </ol>

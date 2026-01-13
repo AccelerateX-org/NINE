@@ -24,7 +24,7 @@
             }
             @if (Model.Curriculum != null)
             {
-                <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new { semId = Model.Semester.Id, currId = Model.Curriculum.Id })">@Model.Curriculum.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new { semId = Model.Semester.Id, currId = Model.Curriculum.Id })">@Model.Curriculum.Alias</a></li>
             }
             @if (Model.Organiser != null && Model.Curriculum != null)
             {

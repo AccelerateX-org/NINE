@@ -5,6 +5,8 @@
 
     var db = new TimeTableDbContext();
 
+
+
     var degr = db.Degrees.ToList();
     var orgs = db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).OrderBy(x => x.ShortName).ToList();
     /*
@@ -15,6 +17,8 @@
     }
     db.SaveChanges();
     */
+
+    
 }
 
 

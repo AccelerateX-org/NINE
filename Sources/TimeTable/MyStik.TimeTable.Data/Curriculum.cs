@@ -99,9 +99,9 @@ namespace MyStik.TimeTable.Data
         public DateTime? StatuteTakeEffect { get; set; }
 
         /// <summary>
-        /// Gültig ab Semester
+        /// Gültig ab Semester - wenn nicht gesetzt, dann ohne Einschränkung
         /// </summary>
-        // public virtual Semester ValidSince { get; set; }
+        public virtual Semester ValidSince { get; set; }
 
         /// <summary>
         /// Der Abschluss
@@ -148,17 +148,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CurriculumArea> Areas { get; set; }
 
-        public string ID
-        {
-            get
-            {
-                if (StatuteTakeEffect.HasValue)
-                {
-                    return $"{Tag}_{StatuteTakeEffect.Value:yyyyMMdd}";
-                }
-                return $"{Tag}";
-            }
-        }
+        public string ID => StatuteTakeEffect.HasValue ? $"{Tag}_{StatuteTakeEffect.Value:yyyyMMdd}" : $"{Tag}";
+        public string Alias => StatuteTakeEffect.HasValue ? $"{ShortName} | {StatuteTakeEffect.Value.ToShortDateString()}" : $"{ShortName}";
     }
 
     public class CurriculumOpportunity
