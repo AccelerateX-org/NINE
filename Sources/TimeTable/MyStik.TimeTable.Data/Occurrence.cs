@@ -126,6 +126,16 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool UseWaitingList { get; set; }
 
+        /// <summary>
+        /// override für IsCoterie
+        /// </summary>
+        public bool IsFrozen => IsCoterie;
+
+        /// <summary>
+        /// override für HasHomeBias
+        /// </summary>
+        public bool AllowRequestForAccess => HasHomeBias;
+
         public SeatAllocationMethod AllocationMethod { get; set; }
 
         public virtual ICollection<OccurrenceSubscription> Subscriptions { get; set; }

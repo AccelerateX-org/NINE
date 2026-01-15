@@ -4120,15 +4120,18 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult AdminNewState(Guid id)
         {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Occurrence).SingleOrDefault(c => c.Id == id);
 
             var model = new CourseStateModel()
             {
                 Course = course,
                 CourseId = course.Id,
-                locked = course.Occurrence.IsAvailable ? 0 : 1,
-                editable = course.IsInternal ? 0 : 1,
-                projected = course.IsProjected ? 1 : 0
+                Locked = course.Occurrence.IsAvailable ? 0 : 1,
+                Editable = course.IsInternal ? 0 : 1,
+                Projected = course.IsProjected ? 1 : 0,
+                Frozen = course.Occurrence.IsFrozen ? 1 : 0,
+                AllowRequestForAccess = course.Occurrence.AllowRequestForAccess ? 1 : 0,
+                UseWaitingList = course.Occurrence.UseWaitingList ? 1 : 0,
             };
 
             ViewBag.UserRight = GetUserRight(User.Identity.Name, course);
@@ -4139,11 +4142,14 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult AdminNewState(CourseStateModel model)
         {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Occurrence).SingleOrDefault(c => c.Id == model.CourseId);
 
-            course.IsProjected = model.projected == 1;
-            course.Occurrence.IsAvailable = model.locked != 1;
-            course.IsInternal = model.editable != 1;
+            course.IsProjected = model.Projected == 1;
+            course.Occurrence.IsAvailable = model.Locked != 1;
+            course.IsInternal = model.Editable != 1;
+            course.Occurrence.IsCoterie = model.Frozen == 1;
+            course.Occurrence.HasHomeBias = model.AllowRequestForAccess == 1;
+            course.Occurrence.UseWaitingList = model.UseWaitingList == 1;
 
             Db.SaveChanges();
 

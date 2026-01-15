@@ -7,25 +7,32 @@
 
         if (Model.Summary.Lottery != null)
         {
-            <div class="alert alert-info">
-                <p>Die Platzvergabe erfolgt über das Wahlverfahren
-                    <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">@Model.Summary.Lottery.Name</a></p>
-                @if (Model.Subscription != null)
-                {
-                    if (Model.Subscription.OnWaitingList)
+            if (Model.Summary.Course.Occurrence.IsFrozen)
+            {
+                <div><i class="bi bi-thermometer-snow"></i> Teilnehmerliste eingefroren. Ein- bzw. Austragen nicht möglich.</div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <p>Die Platzvergabe erfolgt über das Wahlverfahren
+                        <a href="@Url.Action("Details", "Lottery", new { id = Model.Summary.Lottery.Id })">@Model.Summary.Lottery.Name</a></p>
+                    @if (Model.Subscription != null)
                     {
-                        <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+                        if (Model.Subscription.OnWaitingList)
+                        {
+                            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+                        }
+                        else
+                        {
+                            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+                        }
                     }
                     else
                     {
-                        <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+                        <p>Ich habe bisher keine Eintragung.</p>
                     }
-                }
-                else
-                {
-                    <p>Ich habe bisher keine Eintragung.</p>
-                }
-            </div>
+                </div>
+            }
         }
         else
         {
@@ -77,7 +84,14 @@
                     {
                         <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
                     }
-                    <a href="javascript:onSubscribe('@Model.Summary.Course.Id')" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+                    @if (Model.Summary.Course.Occurrence.IsFrozen)
+                    {
+                        <div><i class="bi bi-thermometer-snow"></i> Teilnehmerliste eingefroren. Austragen nicht möglich.</div>
+                    }
+                    else
+                    {
+                        <a href="javascript:onSubscribe('@Model.Summary.Course.Id')" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+                    }
                 </div>
 
             }
@@ -102,7 +116,15 @@
                             {
                             }
                         }
-                        <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="bi bi-pencil"></i> Eintragen auf @txtList</a>
+                        @if (Model.Summary.Course.Occurrence.IsFrozen)
+                        {
+                            <div><i class="bi bi-thermometer-snow"></i> Teilnehmerliste eingefroren. Eintragen nicht möglich.</div>
+                        }
+                        else
+                        {
+                            <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="bi bi-pencil"></i> Eintragen auf @txtList</a>
+                        }
+
                     </div>
 
                 }

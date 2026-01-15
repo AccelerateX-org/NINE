@@ -1359,11 +1359,26 @@ namespace MyStik.TimeTable.Web.Models
 
         public Guid CourseId { get;set; }
 
-        public int locked { get; set; }
+        public int Locked { get; set; }
 
-        public int editable { get; set; }
+        public int Editable { get; set; }
 
-        public int projected { get; set; }
+        public int Projected { get; set; }
+
+        /// <summary>
+        /// Teilnehmerliste eingefroren
+        /// </summary>
+        public int Frozen { get; set; }
+
+        /// <summary>
+        /// Anfrage auf Zugang erlauben
+        /// </summary>
+        public int AllowRequestForAccess { get; set; }
+
+        /// <summary>
+        /// Warteliste verwenden
+        /// </summary>
+        public int UseWaitingList { get; set; }
     }
 
 

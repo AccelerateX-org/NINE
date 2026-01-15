@@ -18,16 +18,16 @@
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">Ansicht im Vorlesungsverzeichnis</label>
                         <div class="col-sm-10">
-                            @if (Model.projected == 1)
+                            @if (Model.Projected == 1)
                             {
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="projected" id="projOn" value="1" checked>
+                                    <input class="form-check-input" type="radio" name="Projected" id="projOn" value="1" checked>
                                     <label class="form-check-label" for="projOn">
                                         Im Planungsmodus - wird im Vorlesungsverzeichnis nicht angezeigt
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="projected" id="projOff" value="0">
+                                    <input class="form-check-input" type="radio" name="Projected" id="projOff" value="0">
                                     <label class="form-check-label" for="projOff">
                                         Wird im Vorlesungsverzeichnis angezeigt
                                     </label>
@@ -36,13 +36,13 @@
                             else
                             {
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="projected" id="projOn" value="1">
+                                    <input class="form-check-input" type="radio" name="Projected" id="projOn" value="1">
                                     <label class="form-check-label" for="projOn">
                                         Im Planungsmodus - wird im Vorlesungsverzeichnis nicht angezeigt
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="projected" id="projOff" value="0" checked>
+                                    <input class="form-check-input" type="radio" name="Projected" id="projOff" value="0" checked>
                                     <label class="form-check-label" for="projOff">
                                         Wird im Vorlesungsverzeichnis angezeigt
                                     </label>
@@ -54,16 +54,16 @@
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">Eintragungen durch Studierende</label>
                         <div class="col-sm-10">
-                            @if (Model.locked == 1)
+                            @if (Model.Locked == 1)
                             {
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="locked" id="lockOn" value="1" checked>
+                                    <input class="form-check-input" type="radio" name="Locked" id="lockOn" value="1" checked>
                                     <label class="form-check-label" for="lockOn">
                                         Keine Eintragungen durch Studierende möglich
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="locked" id="lockOff" value="0">
+                                    <input class="form-check-input" type="radio" name="Locked" id="lockOff" value="0">
                                     <label class="form-check-label" for="lockOff">
                                         Studierende können sich eintragen
                                     </label>
@@ -72,13 +72,13 @@
                             else
                             {
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="locked" id="lockOn" value="1">
+                                    <input class="form-check-input" type="radio" name="Locked" id="lockOn" value="1">
                                     <label class="form-check-label" for="lockOn">
                                         Keine Eintragungen durch Studierende möglich
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="locked" id="lockOff" value="0" checked>
+                                    <input class="form-check-input" type="radio" name="Locked" id="lockOff" value="0" checked>
                                     <label class="form-check-label" for="lockOff">
                                         Studierende können sich eintragen
                                     </label>
@@ -87,22 +87,61 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Teilnehmerliste einfrieren</label>
+                        <div class="col-sm-10">
+                            @if (Model.Frozen == 1)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="Frozen" id="frozenOn" value="1" checked>
+                                    <label class="form-check-label" for="frozenOn">
+                                        Studierende können sich nicht mehr selber ein- bzw. austragen, unabhängig vom Status "Teilnehmer / Warteliste". 
+                                        Gilt auch, wenn Lehrveranstaltung Teil eines Wahlverfahrens ist.
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="Frozen" id="frozenOff" value="0">
+                                    <label class="form-check-label" for="frozenOff">
+                                        Studierende können sich selber ein- bzw. austragen (ursprüngliches Verhalten).
+                                    </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="Frozen" id="frozenOn" value="1">
+                                    <label class="form-check-label" for="frozenOn">
+                                        Studierende können sich nicht mehr selber ein- bzw. austragen, unabhängig vom Status "Teilnehmer / Warteliste".
+                                        Gilt auch, wenn Lehrveranstaltung Teil eines Wahlverfahrens ist.
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="Frozen" id="frozenOff" value="0" checked>
+                                    <label class="form-check-label" for="frozenOff">
+                                        Studierende können sich selber ein- bzw. austragen (ursprüngliches Verhalten).
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+
 
                     if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsOwner)
                     {
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label">Änderung durch Lehrende</label>
                             <div class="col-sm-10">
-                                @if (Model.editable == 1)
+                                @if (Model.Editable == 1)
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="editable" id="editOn" value="1" checked>
+                                        <input class="form-check-input" type="radio" name="Editable" id="editOn" value="1" checked>
                                         <label class="form-check-label" for="editOn">
                                             Lehrende können Angaben ändern
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="editable" id="editOff" value="0">
+                                        <input class="form-check-input" type="radio" name="Editable" id="editOff" value="0">
                                         <label class="form-check-label" for="editOff">
                                             Änderungen nur mit Admin-Rechten möglich
                                         </label>
@@ -111,13 +150,13 @@
                                 else
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="editable" id="editOn" value="1">
+                                        <input class="form-check-input" type="radio" name="Editable" id="editOn" value="1">
                                         <label class="form-check-label" for="editOn">
                                             Lehrende können Angaben ändern
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="editable" id="editOff" value="0" checked>
+                                        <input class="form-check-input" type="radio" name="Editable" id="editOff" value="0" checked>
                                         <label class="form-check-label" for="editOff">
                                             Änderungen nur mit Admin-Rechten möglich
                                         </label>
@@ -128,7 +167,7 @@
                     }
                     else
                     {
-                        @Html.HiddenFor(m => m.editable)
+                        @Html.HiddenFor(m => m.Editable)
                     }
 
                     <button type="submit" class="btn btn-primary">Speichern</button>
