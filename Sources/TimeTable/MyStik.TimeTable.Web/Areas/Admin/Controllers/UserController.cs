@@ -155,7 +155,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         [HttpPost]
         public PartialViewResult InactiveUser()
         {
-            var border = DateTime.Today.AddDays(-90);
+            var border = DateTime.Today.AddDays(-365);
 
             var userList = _db.Users
                 .Where(u => u.LastLogin.HasValue && u.LastLogin < border)

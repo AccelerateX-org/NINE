@@ -125,6 +125,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var semester = SemesterService.GetSemester(semId);
 
+            var currentSemester = semester;
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
             if (curr.LabelSet == null)
@@ -146,6 +150,10 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.UserRight = GetUserRight(curr.Organiser);
+
+            ViewBag.CurrentSemester = currentSemester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
 
             return View(model);
         }

@@ -93,6 +93,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = GetUserRight(org);
 
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = model.NextSemester;
+            ViewBag.PrevSemester = model.PreviousSemester;
+
             return View(model);
         }
 

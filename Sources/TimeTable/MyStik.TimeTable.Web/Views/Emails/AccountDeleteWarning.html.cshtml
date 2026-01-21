@@ -1,0 +1,57 @@
+﻿@model MyStik.TimeTable.Web.Models.AccountDeleteWarningEmail
+
+
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title></title>
+    <style type="text/css">
+        .mail-warning-style {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0000FF;
+        }
+
+        .mail-text-style {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .mail-stationary-style {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: xx-small;
+        }
+    </style>
+</head>
+<body>
+<div class="mail-text-style">
+
+    <p>Guten Tag @Model.User.FirstName @Model.User.LastName,</p>
+
+    @if (Model.User.ExpiryDate != null)
+    {
+        if (Model.User.LastLogin != null)
+        {
+            <p>
+                Sie haben sich zuletzt am @Model.User.LastLogin.Value.ToShortDateString() angemeldet.
+            </p>
+        }
+        <p>Ihr Benutzerkonto @Model.User.UserName wird am @Model.User.ExpiryDate.Value.ToShortDateString() ablaufen und dann automatisch gelöscht.</p>
+    }
+    else
+    {
+        <p>Ihr Benutzerkonto @Model.User.UserName wird demnächst ablaufen und dann automatisch gelöscht.</p>
+    }
+
+</div>
+<hr />
+
+    <div class="mail-stationary-style">Dies ist eine systemseitig erstellte E-Mail. Bitte antworten Sie nicht auf diese Nachricht.</div>
+    <div class="mail-stationary-style">Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:support-nine@hm.edu">NINE Support</a>.</div>
+</body>
+</html>
+
+
+

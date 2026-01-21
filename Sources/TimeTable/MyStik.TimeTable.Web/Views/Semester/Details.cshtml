@@ -60,6 +60,8 @@
                         <div class="list-group-item list-group-item-secondary">Allgemeines</div>
                         <a href="@Url.Action("Segments", "Semester", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Abschnitte"><i class="bi bi-calendar-range"></i><span class="d-none d-sm-inline"> Abschnitte</span></a>
                         <a href="@Url.Action("Organiser", "StudyPlan", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-file-earmark-check"></i><span class="d-none d-sm-inline"> Studienpläne</span></a>
+                        <a href="@Url.Action("SemesterReport", "Courses", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="list-group-item list-group-item-action" aria-label="Semesterbericht"><i class="bi bi-journal-text"></i> <span class="d-none d-sm-inline"> Semesterbericht</span>
+                        </a>
                     </div>
                 </div>
                 <div class="card mb-3">
@@ -113,8 +115,8 @@
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <div class="btn btn-group">
-                                    <a class="btn btn-outline-success" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 1 })"><i class="bi bi-check-circle"></i> alle anzeigen</a>
-                                    <a class="btn btn-outline-danger" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 2 })"><i class="bi bi-ban"></i> alle verbergen</a>
+                                    <a class="btn btn-outline-success" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 2 })"><i class="bi bi-check-circle"></i> alle anzeigen</a>
+                                    <a class="btn btn-outline-danger" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 1 })"><i class="bi bi-ban"></i> alle verbergen</a>
                                 </div>
                             }
                         </div>
@@ -147,8 +149,8 @@
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <div class="btn btn-group">
-                                    <a class="btn btn-outline-success" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 5 })"><i class="bi bi-door-open"></i> alle öffnen</a>
-                                    <a class="btn btn-outline-danger" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 6 })"><i class="bi bi-door-closed"></i> alle schließen</a>
+                                    <a class="btn btn-outline-success" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 6 })"><i class="bi bi-door-open"></i> alle öffnen</a>
+                                    <a class="btn btn-outline-danger" href="@Url.Action("Lock", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id, state = 5 })"><i class="bi bi-door-closed"></i> alle schließen</a>
                                 </div>
                             }
                         </div>

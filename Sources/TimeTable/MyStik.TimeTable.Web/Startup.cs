@@ -91,7 +91,6 @@ namespace MyStik.TimeTable.Web
                 Authorization = new[] { new HangFireAuthFilter() }
             });
 
-
             app.UseHangfireServer();
         }
     }

@@ -2139,7 +2139,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult DestroyConfirmed(Guid id)
         {
-            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var curriculum = Db.Curricula
+                .Include(curriculum1 => curriculum1.Organiser)
+                .Include(curriculum2 => curriculum2.LabelSet)
+                .Include(curriculum3 => curriculum3.BulletinBoard.Postings)
+                .Include(curriculum1 => curriculum1.CurriculumGroups.Select(curriculumGroup => curriculumGroup.CapacityGroups.Select(capacityGroup => capacityGroup.Aliases)))
+                .Include(curriculum2 => curriculum2.Areas.Select(curriculumArea => curriculumArea.Options.Select(areaOption => areaOption.Slots.Select(curriculumSlot => curriculumSlot.SubjectAccreditations)))).Include(curriculum1 => curriculum1.CurriculumGroups.Select(curriculumGroup1 => curriculumGroup1.CapacityGroups.Select(capacityGroup1 => capacityGroup1.SemesterGroups.Select(semesterGroup => semesterGroup.Subscriptions))))
+                .Include(curriculum2 => curriculum2.BulletinBoard.Autonomy.Committees.Select(committee => committee.Members)).SingleOrDefault(x => x.Id == id);
 
             var org = curriculum.Organiser;
 
@@ -2147,6 +2153,23 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (userRight.IsCurriculumAdmin)
             {
+                foreach (var area in curriculum.Areas.ToList())
+                {
+                    foreach (var option in area.Options.ToList())
+                    {
+                        foreach (var slot in option.Slots.ToList())
+                        {
+                            foreach (var accreditation in slot.SubjectAccreditations.ToList())
+                            {
+                                Db.SubjectAccreditations.Remove(accreditation);
+                            }
+                            Db.CurriculumSlots.Remove(slot);
+                        }
+                        Db.AreaOptions.Remove(option);
+                    }
+                    Db.CurriculumAreas.Remove(area);
+                }
+
                 foreach (var curriculumGroup in curriculum.CurriculumGroups.ToList())
                 {
                     foreach (var capacityGroup in curriculumGroup.CapacityGroups.ToList())

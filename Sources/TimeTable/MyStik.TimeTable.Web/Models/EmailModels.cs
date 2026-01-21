@@ -252,15 +252,36 @@ namespace MyStik.TimeTable.Web.Models
         public Thesis Thesis { get; set; }
     }
 
-    public class AccountDeleteEmail : BaseEmail
+    public class AccountDeleteWarningEmail : BaseEmail
     {
-        public AccountDeleteEmail() : base("AccountDeleteUser")
+        public AccountDeleteWarningEmail() : base("AccountDeleteWarning")
         {
-            Subject = "NINE: Benutzerkonto gelöscht";
+            Subject = "Ankuendigung Loeschung des Benutzerkontos";
         }
 
         public ApplicationUser User { get; set; }
-        public bool IsExpired { get; set; }
+    }
+
+    public class AccountDeleteExecutionEmail : BaseEmail
+    {
+        public AccountDeleteExecutionEmail() : base("AccountDeleteExecution")
+        {
+            Subject = "Benutzerkonto geloescht";
+        }
+
+        public ApplicationUser User { get; set; }
+    }
+
+    public class AccountDeleteErrorEmail : BaseEmail
+    {
+        public AccountDeleteErrorEmail() : base("AccountDeleteError")
+        {
+            Subject = "FEHLER: Benutzerkonto geloescht";
+        }
+
+        public ApplicationUser User { get; set; }
+
+        public string Message { get; set; }
     }
 
 

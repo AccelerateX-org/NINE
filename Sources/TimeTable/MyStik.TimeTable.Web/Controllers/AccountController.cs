@@ -626,6 +626,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
                 _db.SaveChanges();
 
+                var userClaims = UserManager.GetClaims(user.Id);
+                foreach (var userClaim in userClaims)
+                {
+                    UserManager.RemoveClaimAsync(user.Id, userClaim);
+                }
+
                 UserManager.Delete(user);
 
                 // Mail senden

@@ -1,4 +1,4 @@
-﻿@model MyStik.TimeTable.Web.Models.AccountDeleteEmail
+﻿@model MyStik.TimeTable.Web.Models.AccountDeleteExecutionEmail
 
 
 Content-Type: text/html; charset=utf-8
@@ -26,19 +26,23 @@ Content-Type: text/html; charset=utf-8
     </style>
 </head>
 <body>
-    <div class="mail-text-style">
-        
-        @if (Model.IsExpired && Model.User.ExpiryDate != null)
-        {
-            <p>Ihr Benutzerkonto @Model.User.UserName ist am @Model.User.ExpiryDate.Value.ToShortDateString() abgelaufen und wurde jetzt erfolgreich gelöscht.</p>
+<div class="mail-text-style">
 
-        }
-        else
-        {
-            <p>Ihr Benutzerkonto @Model.User.UserName wurde erfolgreich gelöscht.</p>
-        }
-        
-    </div>
+    <p>Guten Tag @Model.User.FirstName @Model.User.LastName,</p>
+
+    @if (Model.User.ExpiryDate != null)
+    {
+        <p>Ihr Benutzerkonto @Model.User.UserName ist am @Model.User.ExpiryDate.Value.ToShortDateString() abgelaufen und wurde jetzt erfolgreich gelöscht.</p>
+
+    }
+    else
+    {
+        <p>Ihr Benutzerkonto @Model.User.UserName wurde erfolgreich gelöscht.</p>
+    }
+
+</div>
+<hr />
+
     <div class="mail-stationary-style">Dies ist eine systemseitig erstellte E-Mail. Bitte antworten Sie nicht auf diese Nachricht.</div>
     <div class="mail-stationary-style">Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:support-nine@hm.edu">NINE Support</a>.</div>
 </body>

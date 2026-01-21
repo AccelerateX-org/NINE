@@ -4832,8 +4832,8 @@
     <Content Include="Views\Print\Module.cshtml" />
     <Content Include="Views\Shared\_PrintCurriculumModule.cshtml" />
     <Content Include="Views\Print\StudyPlan.cshtml" />
-    <Content Include="Views\Emails\AccountDeleteUser.html.cshtml" />
-    <Content Include="Views\Emails\AccountDeleteUser.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteExecution.html.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteExecution.cshtml" />
     <Content Include="Views\ThesisAdmin\Advisors.cshtml" />
     <Content Include="Views\Course\EditQuotaTarget.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumAllSelectList.cshtml" />
@@ -4889,6 +4889,10 @@
     <Content Include="Views\Semester\Forward.cshtml" />
     <Content Include="Views\Semester\Conflicts.cshtml" />
     <Content Include="Views\Curriculum\Copy.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteWarning.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteWarning.html.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteError.cshtml" />
+    <Content Include="Views\Emails\AccountDeleteError.html.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

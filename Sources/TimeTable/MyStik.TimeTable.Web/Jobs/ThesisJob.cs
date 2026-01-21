@@ -52,7 +52,9 @@ namespace MyStik.TimeTable.Web.Jobs
                     x.IssueDate == null && x.DeliveryDate == null &&
                     x.Supervisors.Any(s => s.AcceptanceDate.HasValue))
                 .OrderBy(x => x.Student.Curriculum.ShortName)
-                .ThenBy(x => x.PlannedBegin.Value).Include(thesis => thesis.Student.Curriculum.Autonomy.Committees)
+                .ThenBy(x => x.PlannedBegin.Value).Include(thesis => thesis.Student.Curriculum.Autonomy.Committees).Include(thesis1 =>
+                    thesis1.Student.Curriculum.Autonomy.Competences.Select(committeeCompetence =>
+                        committeeCompetence.Committee))
                 .ToList();
 
             var allCurr = allThesis.Select(x => x.Student.Curriculum).Distinct();
