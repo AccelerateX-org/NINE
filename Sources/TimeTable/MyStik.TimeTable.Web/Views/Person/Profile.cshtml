@@ -102,14 +102,21 @@
                     <div class="card-body">
                         <h5 class="card-title">Lehrveranstaltungen</h5>
                         <ul>
-                            @foreach (var course in Model.Courses)
+                            @if (Model.User != null)
                             {
-                                <li><a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a></li>
+
+                                foreach (var course in Model.Courses)
+                                {
+                                    <li><a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a></li>
+                                }
                             }
                         </ul>
                         <h5>Sprechstunden</h5>
                         <ul>
-                            @foreach (var course in Model.OfficeHours)
+                        @if (Model.User != null)
+                        {
+
+                            foreach (var course in Model.OfficeHours)
                             {
                                 if (course.ByAgreement)
                                 {
@@ -123,6 +130,7 @@
                                     }
                                 }
                             }
+                        }
                         </ul>
                     </div>
                 </div>
@@ -132,13 +140,16 @@
                     <div class="card-body">
                         <h5 class="card-title">Module</h5>
                         <ul>
-                            @foreach (var course in Model.Modules)
+                            @if (Model.User != null)
                             {
-                                <li>
-                                    <a href="@Url.Action("Details", "ModuleDescription", new { id = course.Id })">
-                                        @course.Name
-                                    </a>
-                                </li>
+                                foreach (var course in Model.Modules)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Details", "ModuleDescription", new { id = course.Id })">
+                                            @course.Name
+                                        </a>
+                                    </li>
+                                }
                             }
                         </ul>
                     </div>
@@ -147,23 +158,30 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="list-group">
-                        @foreach (var member in Model.Members.OrderBy(x => x.Organiser.ShortName).ToList())
+                        @if (Model.User != null)
                         {
-                            <div class="list-group-item">
-                                <a href="@Url.Action("Faculty", "University", new { id = member.Organiser.Id })">@member.Organiser.ShortName</a>
-                                @if (ViewBag.IsSelf == true)
-                                {
-                                    if (string.IsNullOrEmpty(member.ApiKey))
+                            foreach (var member in Model.Members.OrderBy(x => x.Organiser.ShortName).ToList())
+                            {
+                                <div class="list-group-item">
+                                    <a href="@Url.Action("Faculty", "University", new { id = member.Organiser.Id })">@member.Organiser.ShortName</a>
+                                    @if (ViewBag.IsSelf == true)
                                     {
-                                        <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new {memberId = member.Id})" class="btn btn-outline-primary">api key erzeugen</a>
+                                        if (string.IsNullOrEmpty(member.ApiKey))
+                                        {
+                                            <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new { memberId = member.Id })" class="btn btn-outline-primary">api key erzeugen</a>
+                                        }
+                                        else
+                                        {
+                                            <div>@member.ApiKey (@member.ApiKeyValidUntil.Value.ToShortDateString())</div>
+                                            <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new { memberId = member.Id })" class="btn btn-outline-primary">api key aktualisieren</a>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <div>@member.ApiKey (@member.ApiKeyValidUntil.Value.ToShortDateString())</div>
-                                        <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new {memberId = member.Id})" class="btn btn-outline-primary">api key aktualisieren</a>
-                                    }
-                                }
-                            </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div>Kein Member</div>
                         }
                     </div>
                 </div>

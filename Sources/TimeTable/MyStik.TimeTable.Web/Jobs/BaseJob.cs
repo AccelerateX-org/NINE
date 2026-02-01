@@ -37,7 +37,7 @@ namespace MyStik.TimeTable.Web.Jobs
             SmtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
         }
 
-        protected void SendMail(BaseEmail email)
+        protected bool SendMail(BaseEmail email)
         {
             email.From = SmtpSection.From;
 
@@ -45,10 +45,12 @@ namespace MyStik.TimeTable.Web.Jobs
             {
                 EmailService.Send(email);
                 Logger.InfoFormat("Mail with subject {0} sent", email.Subject);
+                return true;
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat("Erroe sending mail with subject {0} to {1}", email.Subject, email.To);
+                Logger.ErrorFormat("Error sending mail with subject {0} to {1}: {2}", email.Subject, email.To, ex.Message);
+                return false;
             }
         }
 

@@ -42,12 +42,22 @@ namespace MyStik.TimeTable.Web.Jobs
 
             // 1. Lösche alle abgelaufenen Konten
 
-            var nExpired = _db.Users.Count(x => x.ExpiryDate.HasValue && x.ExpiryDate < today);
+            var nExpired = _db.Users.Count(x => x.ExpiryDate.HasValue && x.ExpiryDate.Value < today);
             var nExpiredFraction = (int)(nExpired * percAccountFraction);
+
+            // wenn es nur ganz wenige sind, dann die gleich nehmen.
+            if (nExpired > 0 && nExpiredFraction == 0)
+            {
+                nExpiredFraction = nExpired;
+            }
+
             var nToCheck = Math.Min(nMaxAccounts, nExpiredFraction);
 
+            Logger.InfoFormat("Calculating size for deleting: {0} total fraction, {1} expired, {2} expired fraction, {3} final", nMaxAccounts, nExpired, nExpiredFraction, nToCheck);
+
+
             var accountsToDelete = _db.Users
-                .Where(x => x.ExpiryDate.HasValue && x.ExpiryDate < today)
+                .Where(x => x.ExpiryDate.HasValue && x.ExpiryDate.Value < today)
                 .OrderBy(x => x.ExpiryDate.Value)
                 .Take(nToCheck)
                 .Select(x => x.Id)
@@ -61,17 +71,19 @@ namespace MyStik.TimeTable.Web.Jobs
 
             // 2. Sende Warnungen aus, an alle inaktiven, die noch nicht gewarnt wurden
 
-            var nInActive = _db.Users.Count(x => x.LastLogin.HasValue && x.LastLogin < loginBorder && x.ExpiryDate == null);
+            var nInActive = _db.Users.Count(x => x.LastLogin.HasValue && x.LastLogin.Value < loginBorder && x.ExpiryDate == null);
             var nWarningFraction = (int)(nInActive * percAccountFraction);
             var nToWarn = Math.Min(nMaxAccounts, nWarningFraction);
 
+            Logger.InfoFormat("Calculating size for warning: {0} total fraction, {1} inactive, {2} inactive fraction, {3} final", nMaxAccounts, nInActive, nWarningFraction, nToWarn);
+
             var accountsToCheck = _db.Users
-                .Where(x => x.LastLogin.HasValue && x.LastLogin < loginBorder && x.ExpiryDate == null)
+                .Where(x => x.LastLogin.HasValue && x.LastLogin.Value < loginBorder && x.ExpiryDate == null)
                 .Take(nToWarn)
                 .Select(x => x.Id).ToList();
 
 
-            Logger.InfoFormat("Will check {0} account for deleting.", accountsToDelete.Count);
+            Logger.InfoFormat("Will check {0} account for warning.", accountsToCheck.Count);
             foreach (var account in accountsToCheck)
             {
                 WarnUserAccount(account);
@@ -141,11 +153,11 @@ namespace MyStik.TimeTable.Web.Jobs
                     SendMail(emailDelete);
 
                     // Löschen weil abgelaufen
-                    Logger.InfoFormat("Account with id {0} deleted (test)", accountId);
+                    Logger.InfoFormat("Account with id {0} deleted", accountId);
                 }
                 else
                 {
-                    Logger.InfoFormat("Account with id {0} pending re-login (test)", accountId);
+                    Logger.InfoFormat("Account with id {0} pending re-login", accountId);
                 }
             }
             else
@@ -172,7 +184,6 @@ namespace MyStik.TimeTable.Web.Jobs
             else
             {
                 user.ExpiryDate = DateTime.Today.AddDays(14);
-                _db.SaveChanges();
                 // Warnung versenden
 
                 var emailDelete = new AccountDeleteWarningEmail()
@@ -181,9 +192,16 @@ namespace MyStik.TimeTable.Web.Jobs
                     To = user.Email,
                 };
 
-                SendMail(emailDelete);
+                var success = SendMail(emailDelete);
 
-                Logger.InfoFormat("Account with id {0} warned (test)", accountId);
+                if (!success)
+                {
+                    user.ExpiryDate = DateTime.Today;
+                }
+                
+                Logger.InfoFormat("Account with id {0} warned. Account will be deleted at {1}", accountId, user.ExpiryDate.Value.ToShortDateString());
+
+                _db.SaveChanges();
             }
 
         }

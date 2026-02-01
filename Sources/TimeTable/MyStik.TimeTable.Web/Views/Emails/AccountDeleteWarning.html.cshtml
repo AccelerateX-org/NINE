@@ -35,15 +35,19 @@ Content-Type: text/html; charset=utf-8
         if (Model.User.LastLogin != null)
         {
             <p>
-                Sie haben sich zuletzt am @Model.User.LastLogin.Value.ToShortDateString() angemeldet.
+                Sie haben sich beim Anwendungssystem NINE/Hamster zuletzt am @Model.User.LastLogin.Value.ToShortDateString() angemeldet.
             </p>
         }
-        <p>Ihr Benutzerkonto @Model.User.UserName wird am @Model.User.ExpiryDate.Value.ToShortDateString() ablaufen und dann automatisch gelöscht.</p>
+        <p>Wenn Sie das Benutzerkonto weiter nutzen möchten, dann loggen Sie sich bis spätestens @Model.User.ExpiryDate.Value.ToShortDateString() bei <a href="https://nine.hm.edu">NINE/Hamster</a> mit dem Benutzerkonto @Model.User.UserName ein. Sonst wird es automatisch gelöscht.</p>
     }
     else
     {
         <p>Ihr Benutzerkonto @Model.User.UserName wird demnächst ablaufen und dann automatisch gelöscht.</p>
     }
+    
+    <p>Vielen Dank für Ihr Verständnis!</p>
+    
+    <p>Hamster Support Team</p>
 
 </div>
 <hr />
