@@ -5,8 +5,9 @@
 @{
     ViewBag.Title = "Modulplan";
 
-    var pk = Model.Curriculum.Organiser.Autonomy != null ?
-        Model.Curriculum.Autonomy.Competences.FirstOrDefault(x => x.Committee.Name.Equals("PK")) : null;
+    var pk = (Model.Curriculum.Autonomy != null &&
+              Model.Curriculum.Autonomy.Competences != null) ?
+        Model.Curriculum.Autonomy.Competences.FirstOrDefault(x => x.Committee != null && x.Committee.Name.Equals("PK")) : null;
 
     var pkv = pk != null ? pk.Committee.Members.FirstOrDefault(x => x.HasChair) : null;
 

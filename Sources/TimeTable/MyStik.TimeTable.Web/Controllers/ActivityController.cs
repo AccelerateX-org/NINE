@@ -794,7 +794,7 @@ namespace MyStik.TimeTable.Web.Controllers
             sb.AppendFormat("{0}: ", dateDay.ToShortDateString());
             if (delta == 1)
             {
-                sb.Append("Tagesprogram");
+                sb.Append("Tagesprogramm");
             }
             else if (delta == 7)
             {
