@@ -52,7 +52,7 @@
             <div class="btn-group">
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="switchLayout" onchange="onSwitchLayout()" aria-label="Schalter Layout">
-                    <label class="form-check-label" for="switchLayout" id="switchLayoutLabel">Neues Layout</label>
+                    <label class="form-check-label" for="switchLayout" id="switchLayoutLabel">Anzeige: neues Layout</label>
                 </div>
                 @*
                 <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Settings")"><i class="bi bi-gear"></i></a>
@@ -522,7 +522,7 @@
         if (localStorage.getItem("grapevine.dashboard.layout.useNewLayout") === null) {
             useNewLayout = false;
             localStorage.setItem("grapevine.dashboard.layout.useNewLayout", useNewLayout.toString());
-            $("#switchLayoutLabel").html("Altes Layout");
+            $("#switchLayoutLabel").html("Anzeige bisheriges Layout")
         }
         else {
             var str = localStorage.getItem("grapevine.dashboard.layout.useNewLayout");
@@ -589,7 +589,11 @@
 
     function updateLayout() {
         if (useNewLayout) {
-            $("#switchLayoutLabel").html("Neues Layout");
+            $("#switchLayoutLabel").html("Anzeige neues Layout")
+        } else {
+            $("#switchLayoutLabel").html("Anzeige bisheriges Layout")
+        }
+        if (useNewLayout) {
             $("#newLayout").show();
             $("#oldLayout").hide();
         } else {
