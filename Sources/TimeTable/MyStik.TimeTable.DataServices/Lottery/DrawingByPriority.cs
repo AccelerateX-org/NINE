@@ -149,8 +149,8 @@ namespace MyStik.TimeTable.DataServices.Lottery
             var nCapacity = lotPot.SeatsAvailable;
 
 
-            drawingService.AddMessage(lotPot.Course, null, "Starte Ziehung für Lostopf");
-            drawingService.AddMessage(lotPot.Course, null, $"Freie Plätze im Lostopf {nCapacity}");
+            drawingService.AddMessage(lotPot.Course, null, $"Starte Ziehung für Lostopf \"{lotPot.Name}\"");
+            drawingService.AddMessage(lotPot.Course, null, $"Freie Plätze im Lostopf \"{lotPot.Name}\": {nCapacity}");
 
 
             // alle gültigen Lose, die noch auf der Warteliste sind
@@ -240,9 +240,10 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     drawingService.AddMessage(game.UserId, $"Bisher keinen Platz erhalten");
 
                     // Suche einen Kurs, der noch freie Plätze hat und in dem er noch nicht drin ist
+                    // aber nicht die "sonstigen" - da sind die Buchungen außerhalb der Platzkontingente drin
                     var availableCourses = drawingService.LotPots.Where(x =>
                         !x.Course.Occurrence.Subscriptions.Any(s => s.UserId.Equals(game.UserId)) &&
-                        x.SeatsAvailable > 0).OrderByDescending(x => x.SeatsAvailable).ToList();
+                        x.SeatsAvailable > 0 && !x.BookingList.IsLost).OrderByDescending(x => x.SeatsAvailable).ToList();
 
                     drawingService.AddMessage(null, null, $"Es sind {availableCourses.Count} LVs noch frei");
 
@@ -320,7 +321,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     // Suche einen Kurs, der noch freie Plätze hat und in dem er noch nicht drin ist
                     var availableCourse = drawingService.LotPots.Where(x =>
                         !x.Course.Occurrence.Subscriptions.Any(s => s.UserId.Equals(game.UserId)) &&
-                        x.SeatsAvailable > 0).OrderByDescending(x => x.SeatsAvailable).FirstOrDefault();
+                        x.SeatsAvailable > 0 && !x.BookingList.IsLost).OrderByDescending(x => x.SeatsAvailable).FirstOrDefault();
 
                     if (availableCourse == null)
                     {

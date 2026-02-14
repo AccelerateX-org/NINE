@@ -696,6 +696,35 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult ConsistencyCheck(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            var org = GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(org);
+
+            // nur noch eine Ansicht für alle Vergabeverfahren
+            // Sortierung und Filterung über die Tabelle
+            return View(model);
+        }
+
+        public ActionResult ConsistencyCheckLottery(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            var org = GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(org);
+
+            // nur noch eine Ansicht für alle Vergabeverfahren
+            // Sortierung und Filterung über die Tabelle
+            return View(model);
+        }
+
+
         public ActionResult StudentsPrio(Guid id)
         {
             var model = new DrawingService(Db, id);
@@ -2557,6 +2586,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     Db.Subscriptions.Add(subscription);
 
+                    /*
+                    var log = new ActivitySubscriptionLog
+                    {
+                        Timestamp = DateTime.Now,
+                        OccurrenceId = course.Course.Occurrence.Id,
+                        SubsscriberUserId = user.Id,
+                        SubscriptionTimeStamp = subscription.TimeStamp,
+                        ActorUserId = user.Id,
+                        Action = SubscriptionLogAction.Subscribe,
+                        State = SubscriptionLogState.WaitingList,
+                        LotteryId = lottery.Id,
+                        Remark = $"Teilnahme an Lotterie {lottery.Name}"
+                    };
+                    */
+                    //Db.ActivitySubscriptionLogs.Add(log);
                 }
 
                 // Vergabe der Prioritäten entsprechend Einstellung
@@ -2912,6 +2956,23 @@ namespace MyStik.TimeTable.Web.Controllers
                             subscription.Occurrence = course.Occurrence;
 
                             Db.Subscriptions.Add(subscription);
+
+                            /*
+                            var log = new ActivitySubscriptionLog
+                            {
+                                Timestamp = DateTime.Now,
+                                OccurrenceId = course.Occurrence.Id,
+                                SubsscriberUserId = user.Id,
+                                SubscriptionTimeStamp = subscription.TimeStamp,
+                                ActorUserId = user.Id,
+                                Action = SubscriptionLogAction.Subscribe,
+                                State = SubscriptionLogState.WaitingList,
+                                LotteryId = lottery.Id,
+                                Remark = "Testverlosung"
+                            };
+                            */
+                            //Db.ActivitySubscriptionLogs.Add(log);
+
                         }
 
                         subscription.Priority = i; // Punkteumrechnung kommt später

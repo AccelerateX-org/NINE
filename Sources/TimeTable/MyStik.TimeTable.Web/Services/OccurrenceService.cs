@@ -446,6 +446,23 @@ namespace MyStik.TimeTable.Web.Services
 
 
             occurrence.Subscriptions.Add(subscription);
+
+            /*
+            var log = new ActivitySubscriptionLog
+            {
+                Timestamp = DateTime.Now,
+                OccurrenceId = occurrence.Id,
+                SubsscriberUserId = user.Id,
+                SubscriptionTimeStamp = subscription.TimeStamp,
+                ActorUserId = user.Id,
+                Action = SubscriptionLogAction.Subscribe,
+                State = SubscriptionLogState.Participant,
+                Remark = "Über Standarddienst"
+            };
+            */
+            //Db.ActivitySubscriptionLogs.Add(log);
+
+
             Db.SaveChanges();
 
             return subscription;
@@ -462,6 +479,22 @@ namespace MyStik.TimeTable.Web.Services
             };
 
             occurrence.Subscriptions.Add(subscription);
+
+            /*
+            var log = new ActivitySubscriptionLog
+            {
+                Timestamp = DateTime.Now,
+                OccurrenceId = occurrence.Id,
+                SubsscriberUserId = user.Id,
+                SubscriptionTimeStamp = subscription.TimeStamp,
+                ActorUserId = user.Id,
+                Action = SubscriptionLogAction.Subscribe,
+                State = SubscriptionLogState.WaitingList,
+                Remark = "Über Standarddienst"
+            };
+            */
+            //Db.ActivitySubscriptionLogs.Add(log);
+
             Db.SaveChanges();
 
             return subscription;

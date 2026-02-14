@@ -15,8 +15,16 @@ namespace MyStik.TimeTable.Web.Models
         public AgendaViewModel()
         {
             Activities = new List<AgendaActivityViewModel>();
+            CurrentActivities = new List<AgendaActivityViewModel>();
+            FutureActivities = new List<AgendaActivityViewModel>();
+            PastActivities = new List<AgendaActivityViewModel>();
+
             Days = new List<AgendaDayViewModel>();
+
         }
+
+        public Semester CurrentSemester { get; set; }
+        public Semester NextSemester { get; set; }
 
         public string Title { get; set; }
 
@@ -30,6 +38,20 @@ namespace MyStik.TimeTable.Web.Models
         public List<AgendaActivityViewModel> ActivitiesWithDates { get; set; }
         public List<AgendaActivityViewModel> ActivitiesNoDates { get; set; }
 
+        /// <summary>
+        /// Alle Aktivitäten, die gerade laufen, d.h. wo es noch einen Termin in der Zukunft gibt
+        /// </summary>
+        public List<AgendaActivityViewModel> CurrentActivities { get; set; }
+
+        /// <summary>
+        /// Alle Aktivitäten, deren erster Termin in der Zukunft liegen
+        /// </summary>
+        public List<AgendaActivityViewModel> FutureActivities { get; set; }
+
+        /// <summary>
+        /// Alle Aktivitäten, deren letzter Termin in der Vergangenheit liegt, aber zum Semester des aktuellen Zeitpunkts gehören
+        /// </summary>
+        public List<AgendaActivityViewModel> PastActivities { get; set; }
 
     }
 
@@ -91,12 +113,33 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ActivityDate Date { get; set; }
 
+        public ActivityDate FirstDate { get; set; }
+        public ActivityDate LastDate { get; set; }
+        public ActivityDate NextDate { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         public ActivitySlot Slot { get; set; }
 
         public OccurrenceSubscription Subscription { get; set; }
+
+        public bool IsFinished => NextDate == null && LastDate != null;
+        public bool IsFuture => FirstDate != null;
+
+        public bool IsCurrent => NextDate != null;
+
+
+        public ActivityDate RelevantDate
+        {
+            get
+            {
+                if (IsCurrent) return NextDate;
+                if (IsFinished) return LastDate;
+                return IsFuture ? FirstDate : null;
+            }
+        }
+
 
         /// <summary>
         /// 

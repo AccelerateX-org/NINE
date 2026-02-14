@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
 using System.Linq;
@@ -51,6 +52,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (activity is Reservation)
                 return RedirectToAction("Details", "Reservation", new {id = id});
+
+            if (activity is OfficeHour)
+                return RedirectToAction("Details", "OfficeHour", new { id = id });
+
 
             return View("Error");
         }
@@ -541,6 +546,21 @@ namespace MyStik.TimeTable.Web.Controllers
                     activity.Subscriptions.Remove(subscription);
                     Db.Subscriptions.Remove(subscription);
 
+                    /*
+                    var log = new ActivitySubscriptionLog
+                    {
+                        Timestamp = DateTime.Now,
+                        OccurrenceId = activity.Id,
+                        SubsscriberUserId = userProfile.Id,
+                        SubscriptionTimeStamp = subscription.TimeStamp,
+                        ActorUserId = userProfile.Id,
+                        Action = SubscriptionLogAction.Unsubscribe,
+                        State = subscription.OnWaitingList? SubscriptionLogState.WaitingList: SubscriptionLogState.Participant,
+                    };
+                    */
+                    //Db.ActivitySubscriptionLogs.Add(log);
+
+
                     Db.SaveChanges();
 
                     logger.InfoFormat("{0} ({1}) by [{2}]",
@@ -789,8 +809,14 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = UserManager.FindByName(User.Identity.Name);
 
             var dateDay = DateTime.Parse(day);
+            var currentSemester = SemesterService.GetSemester(dateDay);
+            var nextSemester = SemesterService.GetNextSemester(dateDay);
+
+            model.CurrentSemester = currentSemester;
+            model.NextSemester = nextSemester;
 
             var sb = new StringBuilder();
+            /*
             sb.AppendFormat("{0}: ", dateDay.ToShortDateString());
             if (delta == 1)
             {
@@ -828,6 +854,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var sem = SemesterService.GetSemester(dateDay);
 
             sb.AppendFormat(" | {0} - {1} | {2}", begin, end, sem.Name);
+            */
+            var begin = dateDay.Date;
+            var end = dateDay.AddDays(delta).Date;
+            sb.AppendFormat("{0} - {1}", begin, end);
 
             model.Title = sb.ToString();
 
@@ -850,24 +880,60 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Aktivitäten, die zum Semester des gewählten Tages gehören
             // in denen ich eingetragen bin und die keine Termine mehr haben
+
+            var coursesWithDates =
+                Db.Activities.OfType<Course>().Where(d =>
+                    (
+                        ((d.Occurrence != null && d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))) ||
+                         d.Dates.Any(x =>
+                             x.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id))))
+                        &&
+                        d.Dates.Any(x => x.Begin >= currentSemester.StartCourses)
+                    )
+                ).Distinct().Include(activity => activity.Dates).Include(activity1 =>
+                    activity1.Occurrence.Subscriptions).ToList();
+
+            foreach (var c in coursesWithDates)
+            {
+                var dates = c.Dates.OrderBy(x => x.Begin).ToList();
+                var activityModel = new AgendaActivityViewModel
+                {
+                    Activity = c,
+                    FirstDate = dates.FirstOrDefault(d => d.Begin > dateDay),
+                    NextDate = dates.FirstOrDefault(d => d.End >= begin && d.End <= end),
+                    LastDate = dates.LastOrDefault(d => d.End <= dateDay),
+                    Subscription = c.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id))
+                };
+
+                model.FutureActivities.Add(activityModel);
+            }
+
+
+            var myOfferedOfficeHours =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                    (
+                        (x.Owners.Any(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id))) &&
+                     (x.Semester.Id == currentSemester.Id || x.Semester.Id == nextSemester.Id))).ToList();
+
+
+            foreach (var c in myOfferedOfficeHours)
+            {
+                var dates = c.Dates.OrderBy(x => x.Begin).ToList();
+                var activityModel = new AgendaActivityViewModel
+                {
+                    Activity = c,
+                    FirstDate = dates.FirstOrDefault(d => d.Begin > dateDay),
+                    NextDate = dates.FirstOrDefault(d => d.End >= begin && d.End <= end),
+                    LastDate = dates.LastOrDefault(d => d.End <= dateDay),
+                    Subscription = null
+                };
+
+                model.FutureActivities.Add(activityModel);
+            }
+
+
+
             /*
-             * var coursesWithDates =
-                           Db.Activities.Where(d =>
-                               (
-                                   (d.Occurrence != null && d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
-                                   d.Dates.Any(x => x.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id))))
-                                   &&
-                                   d.Dates.Any(x => x.End >= begin)
-                               )
-                               ||
-                               (
-                                   (d.Occurrence != null && d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
-                                   d.Dates.Any(x => x.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))) 
-                                   &&
-                                   d.Semester != null && d.Semester.Id == sem.Id && !d.Dates.Any(x => x.End >= begin)
-                               )
-                               ).ToList();
-           */
             var activities = new List<AgendaActivityViewModel>();
 
             var coursesWithDates =
@@ -882,7 +948,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Termine nehmen
             // von bis
-            foreach (var c in coursesWithDates) 
+            foreach (var c in coursesWithDates)
             {
                 var subscription = c.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
                 var dates = c.Dates.Where(d => d.End >= begin && d.End <= end).ToList();
@@ -977,7 +1043,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Activities.OfType<Reservation>()
                     .Where(r => r.UserId.Equals(user.Id) && r.Dates.Any(d => d.End >= begin))
                     .ToList();
-
+            */
 
 
             return PartialView(model);

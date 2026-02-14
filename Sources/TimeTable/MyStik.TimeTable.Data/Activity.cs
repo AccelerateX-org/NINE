@@ -112,6 +112,42 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ActivityPublication> Publications { get; set; }
 
+    }
 
+    public enum SubscriptionLogAction
+    {
+        Subscribe,
+        Unsubscribe,
+        Changed
+    }
+
+    public enum SubscriptionLogState
+    {
+        Participant,
+        WaitingList
+    }
+
+    public class ActivitySubscriptionLog
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public Guid OccurrenceId { get; set; }
+
+        public string SubsscriberUserId { get; set; }
+
+        public DateTime SubscriptionTimeStamp { get; set; }
+
+        public string ActorUserId { get; set; }
+
+        public virtual Guid? LotteryId { get; set; }
+
+        public DateTime Timestamp { get; set; }
+
+        public SubscriptionLogAction Action { get; set; }
+
+        public SubscriptionLogState State { get; set; }
+
+        public string Remark { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -18,19 +19,19 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
     public class SemesterImport
     {
-        private ImportContext _import;
+        private readonly ImportContext _import;
 
-        private TimeTableDbContext db;
+        private readonly TimeTableDbContext db;
 
-        private Guid _semId;
-        private Guid _orgId;
-        private Guid _segmentId;
+        private readonly Guid _semId;
+        private readonly Guid _orgId;
+        private readonly Guid _segmentId;
 
 
         private int _numRooms;
         private int _numLecturers;
 
-        private Stopwatch sw = new Stopwatch();
+        private readonly Stopwatch sw = new Stopwatch();
 
         private readonly ILog _Logger = LogManager.GetLogger("Import");
 
@@ -39,9 +40,9 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
         private Semester _semester;
         private SemesterDate _segment;
 
-        private bool _isValid = true;
+        private readonly bool _isValid = true;
 
-        private StringBuilder _report = new StringBuilder();
+        private readonly StringBuilder _report = new StringBuilder();
 
 
         public SemesterImport(ImportContext import, Guid semId, Guid orgId, Guid segmentId)
@@ -69,7 +70,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 var course = validCourse.Value.First();
                 if (course == null)
                 {
-                    _import.AddErrorMessage("Import",  string.Format("Lehrveranstaltung ohne Inhalt: {0}", validCourse.Key), true);
+                    _import.AddErrorMessage("Import", $"Lehrveranstaltung ohne Inhalt: {validCourse.Key}", true);
                     continue;
                 }
 
@@ -97,13 +98,14 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                         }
                         else
                         {
-                            _import.AddErrorMessage("Import", string.Format("Modul nicht vorhanden: {0} - {1}", validCourse.Key, course.SubjectId), true);
+                            _import.AddErrorMessage("Import",
+                                $"Modul nicht vorhanden: {validCourse.Key} - {course.SubjectId}", true);
                         }
                     }
                 }
                 else
                 {
-                    _import.AddErrorMessage("Import", string.Format("Kein Modul angegeben: {0}", validCourse.Key), false);
+                    _import.AddErrorMessage("Import", $"Kein Modul angegeben: {validCourse.Key}", false);
                 }
 
             }
@@ -132,35 +134,45 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 return;
             }
 
-            foreach (var raum in rooms)
+            foreach (var raumListe in rooms)
             {
-                if (string.IsNullOrEmpty(raum))
+                if (string.IsNullOrEmpty(raumListe))
                 {
 
                 }
                 else
                 {
-                    var dbRooms = db.Rooms.Where(r => r.Number.Equals(raum)).ToList();
-                    if (dbRooms.Any())
+
+                    var raeume = raumListe.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var rr in raeume)
                     {
-                        nExist++;
-                        foreach (var dbRoom in dbRooms)
+                        var raum = rr.Trim();
+
+                        var dbRooms = db.Rooms.Where(r => r.Number.Equals(raum)).Include(room =>
+                            room.Assignments.Select(roomAssignment => roomAssignment.Organiser)).ToList();
+                        if (dbRooms.Any())
                         {
-                            if (dbRoom.Assignments.All(a => a.Organiser.Id != org.Id))
+                            nExist++;
+                            foreach (var dbRoom in dbRooms)
                             {
-                                _import.AddErrorMessage("Import",
-                                    $"Raum [{raum}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.",
-                                    false);
+                                if (dbRoom.Assignments.All(a => a.Organiser.Id != org.Id))
+                                {
+                                    _import.AddErrorMessage("Import",
+                                        $"Raum [{raum}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.",
+                                        false);
+                                }
                             }
                         }
+                        else
+                        {
+                            _import.AddErrorMessage("Import",
+                                $"Raum [{raum}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet",
+                                false);
+                            nNew++;
+                        }
                     }
-                    else
-                    {
-                        _import.AddErrorMessage("Import",
-                            $"Raum [{raum}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet",
-                            false);
-                        nNew++;
-                    }
+
                 }
             }
 
@@ -178,7 +190,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             var nExist = 0;
 
             var db = new TimeTableDbContext();
-            var org = db.Organisers.SingleOrDefault(o => o.Id == _orgId);
+            var org = db.Organisers.Include(activityOrganiser => activityOrganiser.Members).SingleOrDefault(o => o.Id == _orgId);
 
             if (org == null)
             {
@@ -186,34 +198,43 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 return;
             }
 
-            foreach (var doz in lecturer)
+            foreach (var dozList in lecturer)
             {
-                if (string.IsNullOrEmpty(doz))
+                if (string.IsNullOrEmpty(dozList))
                 {
                 }
                 else
                 {
-                    if (org.Members.Count(m => m.ShortName.Equals(doz)) > 1)
+                    var dozenten = dozList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var dd in dozenten)
                     {
-                        _import.AddErrorMessage("Import", string.Format("Kurzname {0} existieren mehrfach in Datenbank. Dozent wird keinem Termin zugeordnet", doz), true);
-                    }
-                    else
-                    {
-                        var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz));
-                        if (lec == null)
+                        var doz = dd.Trim();
+                        if (org.Members.Count(m => m.ShortName.Equals(doz)) > 1)
                         {
-                            _import.AddErrorMessage("Import", string.Format("Dozent [{0}] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz), false);
-                            nNew++;
+                            _import.AddErrorMessage("Import",
+                                $"Kurzname {doz} existieren mehrfach in Datenbank. Dozent wird keinem Termin zugeordnet", true);
                         }
                         else
                         {
-                            nExist++;
+                            var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz));
+                            if (lec == null)
+                            {
+                                _import.AddErrorMessage("Import",
+                                    $"Dozent [{doz}] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", false);
+                                nNew++;
+                            }
+                            else
+                            {
+                                nExist++;
+                            }
                         }
                     }
                 }
             }
 
-            _import.AddErrorMessage("Import", string.Format("Anzahl lehrende: {0}: {1} vorhanden - {2} werden angelegt", lecturer.Count, nExist, nNew), false);
+            _import.AddErrorMessage("Import",
+                $"Anzahl lehrende: {lecturer.Count}: {nExist} vorhanden - {nNew} werden angelegt", false);
 
 
             if (!_isValid)
@@ -240,7 +261,9 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 return msg;
             }
 
-            var course = db.Activities.OfType<Course>().FirstOrDefault(x =>
+            var course = db.Activities.OfType<Course>().Include(activity => activity.LabelSet)
+                .Include(course1 => course1.SubjectTeachings).Include(activity1 => activity1.Owners.Select(activityOwner => activityOwner.Member)).Include(activity => activity.Dates.Select(activityDate => activityDate.Hosts)).Include(activity1 =>
+                    activity1.Dates.Select(activityDate1 => activityDate1.Rooms)).FirstOrDefault(x =>
                 x.ExternalSource.Equals("CSV") &&
                 x.ExternalId.Equals(referenceCourse.CourseId) &&
                 x.Organiser.Id == _organiser.Id &&
@@ -254,7 +277,8 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             _report.AppendLine();
 
 
-            var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
+            var organiser = db.Organisers.Include(activityOrganiser => activityOrganiser.Institution.LabelSet)
+                .Include(activityOrganiser1 => activityOrganiser1.LabelSet).SingleOrDefault(s => s.Id == _orgId);
             var sem = db.Semesters.SingleOrDefault(s => s.Id == _semId);
             var segment = db.SemesterDates.SingleOrDefault(s => s.Id == _segmentId);
 
@@ -304,7 +328,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                     Segment = segment,
                     ShortName = shortName,
                     Name = referenceCourse.Title,
-                    Description = String.Empty,
+                    Description = string.Empty,
                     Occurrence = CreateDefaultOccurrence(),
                     IsInternal = true,
                     IsProjected = true,
@@ -363,9 +387,9 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 // Terminliste
                 var dateList = GetDates(simpleCourse);
                 // Dozent anlegen
-                var lecturer = GetLecturer(db, simpleCourse.Lecturer);
+                var lecturerList = GetLecturerList(db, simpleCourse.Lecturer);
                 // Raum anlegen
-                var room = GetRoom(db, simpleCourse.Room);
+                var roomList = GetRoomList(db, simpleCourse.Room);
 
                 // Levelset suchen
                 // Suche den Studiengang
@@ -374,7 +398,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                 // Ausgangslage: die Eirichtung, die gerade importiert
                 // Annahme 1: es ist die Institution
                 ItemLabelSet labelSet = null;
-                var levelId = simpleCourse.LabelLevel;
+                var levelId = simpleCourse.LabelLevel.ToUpper();
                 if (!string.IsNullOrEmpty(levelId))
                 {
                     if (organiser.Institution != null && levelId.ToUpper().Equals(organiser.Institution.Tag.ToUpper()))
@@ -387,7 +411,9 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                     }
                     else
                     {
-                        var curr = organiser.Curricula.FirstOrDefault(x => x.ShortName.ToUpper().Equals(levelId));
+                        //20260210: die Kurzbezeichnung (Alias) ist der "Gebrauchsname" und wird deshalb auch für die Suche nach dem Labelset herangezogen
+                        // der Tag (primuss ID) ist eindeutig, aber nicht schön.
+                        var curr = db.Curricula.Include(curriculum => curriculum.LabelSet).FirstOrDefault(x => x.ShortName.ToUpper().Equals(levelId));
                         if (curr != null)
                         {
                             labelSet = curr.LabelSet;
@@ -397,35 +423,42 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
 
                 // wenn kein Labelset identifiziert werden kann, dann wird das Label auch nicht importiert
                 // Label suchen ggf. anlegen
-                if (labelSet != null)
+                if (labelSet != null && !string.IsNullOrEmpty(simpleCourse.Label))
                 {
-                    var label = labelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(simpleCourse.Label));
-                    if (label == null)
+                    var labelList = simpleCourse.Label.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var s in labelList)
                     {
-                        label = new ItemLabel
+                        var labelName = s.Trim();
+                        var label = labelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(labelName));
+
+                        if (label == null)
                         {
-                            Name = simpleCourse.Label,
-                            Description = string.Empty
-                        };
+                            label = new ItemLabel
+                            {
+                                Name = labelName,
+                                Description = string.Empty
+                            };
 
-                        labelSet.ItemLabels.Add(label);
-                        db.ItemLabels.Add(label);
-                        db.SaveChanges();
+                            labelSet.ItemLabels.Add(label);
+                            db.ItemLabels.Add(label);
+                            db.SaveChanges();
+                        }
+
+                        if (course.LabelSet == null)
+                        {
+                            var ls = new ItemLabelSet();
+                            course.LabelSet = ls;
+                            db.ItemLabelSets.Add(ls);
+                            db.SaveChanges();
+                        }
+
+                        course.LabelSet.ItemLabels.Add(label);
                     }
-
-                    if (course.LabelSet == null)
-                    {
-                        var ls = new ItemLabelSet();
-                        course.LabelSet = ls;
-                        db.ItemLabelSets.Add(ls);
-                        db.SaveChanges();
-                    }
-
-                    course.LabelSet.ItemLabels.Add(label);
                 }
 
                 // Owner ergönzen
-                if (lecturer != null)
+                foreach (var lecturer in lecturerList)
                 {
                     var owner = course.Owners.FirstOrDefault(x => x.Member.Id == lecturer.Id);
 
@@ -468,14 +501,20 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
                         course.Dates.Add(courseDate);
                     }
 
-                    if (lecturer != null && courseDate.Hosts.All(x => x.Id != lecturer.Id))
+                    foreach (var lecturer in lecturerList)
                     {
-                        courseDate.Hosts.Add(lecturer);
+                        if (lecturer != null && courseDate.Hosts.All(x => x.Id != lecturer.Id))
+                        {
+                            courseDate.Hosts.Add(lecturer);
+                        }
                     }
 
-                    if (room != null && courseDate.Rooms.All(x => x.Id != room.Id))
+                    foreach (var room in roomList)
                     {
-                        courseDate.Rooms.Add(room);
+                        if (room != null && courseDate.Rooms.All(x => x.Id != room.Id))
+                        {
+                            courseDate.Rooms.Add(room);
+                        }
                     }
                 }
 
@@ -491,6 +530,23 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             return msg;
         }
 
+        private List<OrganiserMember> GetLecturerList(TimeTableDbContext db, string lecturerId)
+        {
+            var list = new List<OrganiserMember>();
+            if (string.IsNullOrEmpty(lecturerId)) return list;
+
+            var lecturerIds = lecturerId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var id in lecturerIds)
+            {
+                var lecturer = GetLecturer(db, id.Trim());
+                if (lecturer != null)
+                {
+                    list.Add(lecturer);
+                }
+            }
+            return list;
+        }
+
         private OrganiserMember GetLecturer(TimeTableDbContext db, string lecturerId)
         {
             OrganiserMember lecturer = null;
@@ -502,7 +558,7 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             lecturer = new OrganiserMember
             {
                 ShortName = lecturerId,
-                Name = string.Empty,
+                Name = lecturerId,
                 Role = string.Empty,
                 Description = string.Empty
             };
@@ -511,6 +567,23 @@ namespace MyStik.TimeTable.DataServices.IO.Csv
             db.SaveChanges();
             _numLecturers++;
             return lecturer;
+        }
+
+        private List<Room> GetRoomList(TimeTableDbContext db, string roomId)
+        {
+            var list = new List<Room>();
+            if (string.IsNullOrEmpty(roomId)) return list;
+
+            var roomIds = roomId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var id in roomIds)
+            {
+                var room = GetRoom(db, id.Trim());
+                if (room != null)
+                {
+                    list.Add(room);
+                }
+            }
+            return list;
         }
 
         private Room GetRoom(TimeTableDbContext db, string roomId)

@@ -1108,6 +1108,22 @@ namespace MyStik.TimeTable.Web.Controllers
                         };
 
                         Db.Subscriptions.Add(subscription);
+
+                        /*
+                        var log = new ActivitySubscriptionLog
+                        {
+                            Timestamp = DateTime.Now,
+                            OccurrenceId = occ.Id,
+                            SubsscriberUserId = user.Id,
+                            SubscriptionTimeStamp = subscription.TimeStamp,
+                            ActorUserId = user.Id,
+                            Action = SubscriptionLogAction.Subscribe,
+                            State = subscription.OnWaitingList ? SubscriptionLogState.WaitingList : SubscriptionLogState.Participant,
+                            Remark = "Über Dictionary"
+                        };
+                        */
+                        //Db.ActivitySubscriptionLogs.Add(log);
+
                     }
 
                 }

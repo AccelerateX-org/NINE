@@ -4,17 +4,94 @@
 
 <div class="list-group-item list-group-item-primary"><strong>@Model.Title</strong></div>
 
-@if (Model.Activities.Any())
-{
-    foreach (var activity in Model.ActivitiesWithDates)
+    @foreach (var activity in Model.FutureActivities.OrderBy(x => x.RelevantDate.Begin))
     {
         <div class="list-group-item">
             <div class="row">
+                <div class="col-md-1">
+                    @if (activity.Subscription != null)
+                    {
+                        if (activity.Subscription.OnWaitingList)
+                        {
+                            <i class="bi bi-hourglass text-info"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-check text-success"></i>
+                        }
+                    }
+                    else
+                    {
+                        if (activity.NextDate != null)
+                        {
+                        }
+                        else
+                        {
+                            if (activity.FirstDate != null)
+                            {
+                                <span class="badge bg-primary">@activity.Activity.Semester.Name</span>
+                            }
+                            else
+                            {
+                                if (activity.LastDate != null)
+                                {
+                                    <span class="badge bg-secondary">@activity.Activity.Semester.Name</span>
+                                }
+                                else
+                                {
+                                    <strong>ohne Termine</strong>
+                                }
+                            }
+                        }
+                    }
+                </div>
                 <div class="col-md-3">
-                    @Html.TimeSpanWithDate(activity.Date)
+                    @if (activity.NextDate != null)
+                    {
+                        @Html.TimeSpanWithDate(activity.NextDate)
+                    }
+                    else
+                    {
+                        if (activity.FirstDate != null)
+                        {
+                            @Html.TimeSpanWithDate(activity.FirstDate)
+                        }
+                        else
+                        {
+                            if (activity.LastDate != null)
+                            {
+                                @Html.TimeSpanWithDate(activity.LastDate)
+                            }
+                            else
+                            {
+                                <strong>ohne Termine</strong>
+                            }
+                        }
+                    }
                 </div>
                 <div class="col-md-2">
-                    @Html.RoomList(activity.Date.Rooms)
+                    @if (activity.NextDate != null)
+                    {
+                        @Html.RoomList(activity.NextDate.Rooms)
+                    }
+                    else
+                    {
+                        if (activity.FirstDate != null)
+                        {
+                            @Html.RoomList(activity.FirstDate.Rooms)
+                        }
+                        else
+                        {
+                            if (activity.LastDate != null)
+                            {
+                                @Html.RoomList(activity.LastDate.Rooms)
+                            }
+                            else
+                            {
+                                <strong>ohne Termine</strong>
+                            }
+                        }
+                    }
                 </div>
                 <div class="col-md-4">
                     @if (activity.Activity is Course)
@@ -33,21 +110,32 @@
                         }
                     }
                 </div>
-                <div class="col-md-2">
-                    @Html.LecturerList(activity.Date.Hosts)
-                </div>
                 <div class="col-md-1">
                     @if (activity.Activity is Course)
                     {
                         if (activity.Subscription != null)
                         {
-                            if (activity.Subscription.OnWaitingList)
+                            if (activity.NextDate != null)
                             {
-                                <span><i class="bi bi-hourglass"></i></span>
+                                @Html.LecturerList(activity.NextDate.Hosts)
                             }
                             else
                             {
-                                <span><i class="bi bi-person-check text-success"></i></span>
+                                if (activity.FirstDate != null)
+                                {
+                                    @Html.LecturerList(activity.FirstDate.Hosts)
+                                }
+                                else
+                                {
+                                    if (activity.LastDate != null)
+                                    {
+                                        @Html.LecturerList(activity.LastDate.Hosts)
+                                    }
+                                    else
+                                    {
+                                        <strong>ohne Termine</strong>
+                                    }
+                                }
                             }
                         }
                         else
@@ -55,70 +143,17 @@
                             var tn = activity.Activity.Occurrence.Subscriptions.Count();
 
                             <span class="badge bg-secondary">
-                                <i class="bi bi-person-check"></i> @tn
+                                <i class="bi bi-person"></i> @tn
                             </span>
                         }
-                    }
-                </div>
-            </div>
-        </div>
-    }
-    foreach (var activity in Model.ActivitiesNoDates)
-    {
-        <div class="list-group-item">
-            <div class="row">
-                <div class="col-md-3">
-                </div>
-                <div class="col-md-2">
-                </div>
-                <div class="col-md-4">
-                    @if (activity.Activity is Course)
-                    {
-                        <a href="@Url.Action("Details", "Course", new { id = activity.Activity.Id })">@activity.Activity.Name (@activity.Activity.ShortName)</a>
                     }
                     @if (activity.Activity is OfficeHour)
                     {
-                        if (activity.Subscription != null)
-                        {
-                            <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new { id = activity.Date.Id })">@activity.Activity.Name</a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("OfficeHour", "Lecturer", new { id = activity.Activity.Id })">@activity.Activity.Name</a>
-                        }
-                    }
-                </div>
-                <div class="col-md-2">
-                </div>
-                <div class="col-md-1">
-                    @if (activity.Activity is Course)
-                    {
-                        if (activity.Subscription != null)
-                        {
-                            if (activity.Subscription.OnWaitingList)
-                            {
-                                <span><i class="bi bi-hourglass"></i></span>
-                            }
-                            else
-                            {
-                                <span><i class="bi bi-person-check text-success"></i></span>
-                            }
-                        }
-                        else
-                        {
-                            var tn = activity.Activity.Occurrence.Subscriptions.Count();
 
-                            <span class="badge bg-secondary">
-                                <i class="bi bi-person-check"></i> @tn
-                            </span>
-                        }
                     }
+
                 </div>
             </div>
         </div>
     }
-}
-else
-{
-    <div class="list-group-item list-group-item-warning"><i>Keine Aktivitäten</i></div>
-}
+

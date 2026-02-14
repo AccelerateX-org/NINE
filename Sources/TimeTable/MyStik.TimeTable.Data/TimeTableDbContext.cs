@@ -69,6 +69,8 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<ActivityPublication> ActivitiesPublications { get; set; }
 
+        public DbSet<ActivitySubscriptionLog> ActivitySubscriptionLogs { get; set; }
+
         public DbSet<Semester> Semesters { get; set; }
         
         public DbSet<SemesterDate> SemesterDates { get; set; }

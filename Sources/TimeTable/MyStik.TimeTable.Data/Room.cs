@@ -62,6 +62,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool? IsBookable { get; set; }
 
+        public string ServiceUrl { get; set; }
+
         public virtual Availability Availability { get; set; }
 
 

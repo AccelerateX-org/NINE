@@ -55,7 +55,7 @@
                         var txt = string.Format("Windhundverfahren ab {0}", l.IsActiveFrom.Value.ToShortDateString());
                         if (l.IsFixed)
                         {
-                            txt = string.Format("Platzverlorsung {0} - {1}", l.IsActiveFrom.Value.ToShortDateString(), l.IsActiveUntil.Value.ToShortDateString());
+                            txt = string.Format("Platzverlosung {0} - {1}", l.IsActiveFrom.Value.ToShortDateString(), l.IsActiveUntil.Value.ToShortDateString());
                         }
 
                         <a class="list-group-item list-group-item-action" href="@Url.Action("Details", new { id = l.Id })">

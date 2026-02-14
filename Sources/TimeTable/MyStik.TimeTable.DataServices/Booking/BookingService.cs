@@ -316,6 +316,9 @@ namespace MyStik.TimeTable.DataServices.Booking
             foreach (var subscription in _occ.Subscriptions)
             {
                 var student = GetStudent(subscription.UserId);
+                if (student?.Curriculum == null) continue;
+
+
                 var booking = new Data.Booking
                 {
                     Student = student,
@@ -334,34 +337,34 @@ namespace MyStik.TimeTable.DataServices.Booking
                         break;
                     }
                     /*
+                        else
+                        {
+                            // verlorene Eintragung
+                            lostBookings.Bookings.Add(booking);
+                        }
+                        */
+                }
+
+                theList.Bookings.Add(booking);
+
+                /*
+                    var list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum != null && x.SeatQuota.Curriculum.Id == student.Curriculum.Id);
+                    if (list == null)
+                    {
+                        // zweiter Versuch: offene Liste ohne Angabe Studiengang
+                        list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum == null);
+                    }
+
+                    if (list != null)
+                    {
+                        list.Bookings.Add(booking);
+                    }
                     else
                     {
                         // verlorene Eintragung
                         lostBookings.Bookings.Add(booking);
                     }
                     */
-                }
-
-                theList.Bookings.Add(booking);
-
-                /*
-                var list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum != null && x.SeatQuota.Curriculum.Id == student.Curriculum.Id);
-                if (list == null)
-                {
-                    // zweiter Versuch: offene Liste ohne Angabe Studiengang
-                    list = _lists.FirstOrDefault(x => x.SeatQuota?.Curriculum == null);
-                }
-
-                if (list != null)
-                {
-                    list.Bookings.Add(booking);
-                }
-                else
-                {
-                    // verlorene Eintragung
-                    lostBookings.Bookings.Add(booking);
-                }
-                */
             }
 
             if (lostBookings.Bookings.Any())

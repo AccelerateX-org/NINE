@@ -1,0 +1,104 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.DataServices.Lottery.DrawingService
+@{
+    ViewBag.Title = "Status " + Model.Lottery.Name;
+    var userService = new UserInfoService();
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabStudents').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel'
+                ],
+                "paging": false,
+                "order": [[1, 'asc']]
+            });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
+        });
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Lottery.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Organiser.ShortName</a></li>
+                }
+                @if (Model.Lottery.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Lottery", new { semId = Model.Lottery.Semester.Id, orgId = Model.Lottery.Organiser.Id })">@Model.Lottery.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Lottery", new { id = Model.Lottery.Id })">@Model.Lottery.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Konsistenzprüfung</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="list-group">
+                    @foreach (var student in Model.Games)
+                    {
+                        var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
+
+                        if (user != null)
+                        {
+                            var courses = Model.Courses.Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+                            if (courses.Count > 1)
+                            {
+                                <div class="list-group-item">
+                                    <strong>@user.FullName</strong>
+                                    <ul>
+                                        @foreach (var course in courses)
+                                        {
+                                            var subscriptions = course.Occurrence.Subscriptions.Where(x => x.UserId.Equals(user.Id)).ToList();
+                                            <li>
+                                                <a href="@Url.Action("AdminNewParticipients", "Course", new { id = course.Id })" target="_blank">
+                                                    @course.Name (@course.ShortName)
+                                                </a>
+                                                <ul>
+                                                    @foreach (var sub in subscriptions)
+                                                    {
+                                                        var state = sub.OnWaitingList ? "Warteliste" : "Teilnehmer";
+                                                        <li>@sub.TimeStamp.ToString("dd.MM.yyyy HH:mm") mit Status @state</li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
