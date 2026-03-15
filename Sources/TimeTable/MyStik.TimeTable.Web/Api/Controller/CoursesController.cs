@@ -131,12 +131,12 @@ namespace MyStik.TimeTable.Web.Api.Controller
             var member = apiKeyService.IsValidApiKey(api_key);
             if (member == null)
             {
-                return Unauthorized();
+                return BadRequest("unknown user");
             }
 
             if (member.IsCourseAdmin == false)
             {
-                return Unauthorized();
+                return BadRequest("no access rights");
             }
 
             Course course = null;
@@ -156,7 +156,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
                 if (org.Id != member.Organiser.Id)
                 {
-                    return Unauthorized();
+                    return BadRequest("mismatch api_key and organiser_id");
                 }
 
                 // Die Occurrnce des Kurses
@@ -277,7 +277,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 // Termine => Sequenzen auswerten
                 if (request.sequences != null) 
                 {
-                var semesterService = new SemesterService(Db);
+                    var semesterService = new SemesterService(Db);
 
                     foreach (var sequence in request.sequences)
                     {
@@ -288,6 +288,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                         var until = sequence.last_end.TimeOfDay;
 
                         var date = begin;
+                        var frequency = sequence.frequency > 0 ? sequence.frequency : 7; // default: wöchentlich
 
                         while (date <= end)
                         {
@@ -301,7 +302,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                             // nur an Vorlesungstagen
                             if (!semesterService.IsLectureDay(sem, org, date))
                             {
-                                date = date.AddDays(sequence.frequency);
+                                date = date.AddDays(frequency);
                                 continue;
                             }
 
@@ -327,34 +328,54 @@ namespace MyStik.TimeTable.Web.Api.Controller
                             // Räume
                             if (sequence.room_ids != null)
                             {
-                                foreach (var roomNumber in sequence.room_ids)
+                                foreach (var rrr in sequence.room_ids)
                                 {
+                                    var roomNumber = rrr.Trim();
                                     var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
                                     if (room != null)
                                     {
                                         courseDate.Rooms.Add(room);
                                         // Raumbuchungen ergänzen!
                                     }
+                                    /*
                                     else
                                     {
+                                        // warum muss der Raum vorhanden sein? 
+                                        // es handelt sich im Infrastruktur, die sich nicht beliebig erweitern lässt.
                                         return BadRequest($"Invalid room: {roomNumber}");
                                     }
+                                    */
                                 }
                             }
 
                             // Hosts
                             if (sequence.lecturer_ids != null)
                             {
-                                foreach (var host in sequence.lecturer_ids)
+                                foreach (var hhh in sequence.lecturer_ids)
                                 {
-                                    var lecturer = course.Organiser.Members.FirstOrDefault(x => x.ShortName.Equals(host));
+                                    var host = hhh.Trim();
+                                    var lecturer = org.Members
+                                        .FirstOrDefault(x => x.ShortName.Equals(host) ||
+                                                             x.Name.Equals(host));
                                     if (lecturer != null)
                                     {
                                         courseDate.Hosts.Add(lecturer);
                                     }
                                     else
                                     {
-                                        return BadRequest($"Invalid lecturer: {host}");
+                                        // warum Lehrende anlegen? Es könnte sich um einen Gastdozenten handeln, der nicht in der Einrichtung verankert ist.
+                                        // In diesem Fall könnte man den Lehrenden anlegen und mit einem speziellen Flag versehen,
+                                        // damit er später identifiziert und ggf. gelöscht werden kann.
+                                        lecturer = new OrganiserMember()
+                                        {
+                                            Name = host,
+                                            ShortName = host,
+                                            Organiser = course.Organiser,
+                                        };
+                                        org.Members.Add(lecturer);
+                                        Db.Members.Add(lecturer);
+
+                                        // return BadRequest($"Invalid lecturer: {host}");
                                     }
                                 }
                             }
@@ -363,7 +384,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                             Db.ActivityDates.Add(courseDate);
                             Db.Occurrences.Add(courseDate.Occurrence);
 
-                            date = date.AddDays(sequence.frequency);
+                            date = date.AddDays(frequency);
                         }
 
                     }
@@ -866,7 +887,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
             if (string.IsNullOrEmpty(cohorte.label))
                 return "Cohorte label is required";
 
-            var inst = Db.Institutions.FirstOrDefault(x => x.Tag.Equals(cohorte.institution_id));
+            var inst = Db.Institutions.Include(institution => institution.LabelSet.ItemLabels).Include(institution1 => institution1.Organisers.Select(activityOrganiser =>
+                activityOrganiser.LabelSet.ItemLabels)).FirstOrDefault(x => x.Tag.Equals(cohorte.institution_id));
             if (inst == null)
                 return "Invalid Institution";
 
@@ -897,7 +919,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     // Label auf Ebene Studiengang bzw. Studiengänge, wenn mehrere SPOs gemeint durch Angabe des Alias
                     if (string.IsNullOrEmpty(cohorte.curriculum_id))
                     {
-                        var currs = Db.Curricula.Where(x => x.Organiser.Id == targetOrg.Id && x.ShortName.Equals(cohorte.curriculum_alias)).ToList();
+                        var currs = Db.Curricula.Where(x => x.Organiser.Id == targetOrg.Id && x.ShortName.Equals(cohorte.curriculum_alias)).Include(curriculum =>
+                            curriculum.LabelSet.ItemLabels).ToList();
                         foreach (var curr in currs)
                         {
                             var label = curr.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
@@ -909,13 +932,15 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     }
                     else
                     {
-                        var curr = Db.Curricula.SingleOrDefault(x => x.Organiser.Id == targetOrg.Id && x.ID.Equals(cohorte.curriculum_id));
-                        if (curr == null)
-                            return "Invalid Curriculum for Cohorte";
-                        var label = curr.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
-                        if (label != null)
+                        var currs = Db.Curricula.Where(x => x.Organiser.Id == targetOrg.Id && x.Tag.Equals(cohorte.curriculum_id))
+                            .Include(curriculum => curriculum.LabelSet.ItemLabels).ToList();
+                        foreach (var curr in currs)
                         {
-                            labels.Add(label);
+                            var label = curr.LabelSet.ItemLabels.SingleOrDefault(x => x.Name.Equals(cohorte.label));
+                            if (label != null)
+                            {
+                                labels.Add(label);
+                            }
                         }
                     }
                 }

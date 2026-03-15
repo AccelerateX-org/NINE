@@ -59,35 +59,42 @@ namespace MyStik.TimeTable.Web.Controllers
             var nextSemester = SemesterService.GetNextSemester(semester);
             var previousSemester = SemesterService.GetPreviousSemester(semester);
 
-            var user = GetCurrentUser();
-            var userId = user.Id;
+            // 1. Suche den gesuchten member
+            if (memberId == null)
+                return RedirectToAction("Index", "Home");
 
-            OrganiserMember member = null;
-            if (memberId != null)
+            var member = Db.Members.SingleOrDefault(x => x.Id == memberId);
+            if (member == null)
+                return RedirectToAction("Index", "Home");
+
+            var user = GetCurrentUser();
+
+            var model = new PersonViewModel();
+
+            if (string.IsNullOrEmpty(member.UserId))
             {
-                member = Db.Members.SingleOrDefault(x => x.Id == memberId);
-                if (member == null)
+                model.Members = new List<OrganiserMember>();
+                model.Members.Add(member);
+                FillModel(model, semester);
+                ViewBag.IsSelf = false;
+            }
+            else
+            {
+                var userId = member.UserId;
+                var members = Db.Members.Where(x => x.UserId.Equals(userId)).ToList();
+                if (!members.Any())
                 {
                     return RedirectToAction("Index", "Home");
                 }
-                userId = member.UserId;
+
+                model.User = GetUser(userId);
+                model.Members = members;
+
+                FillModel(model, semester);
+
+                ViewBag.IsSelf = user.Id.Equals(userId);
             }
-
-            var members = Db.Members.Where(x => x.UserId.Equals(userId)).ToList();
-            if (!members.Any())
-            {
-                return RedirectToAction("Index", "Home");    
-            }
-
-            var model = new PersonViewModel
-            {
-                User = GetUser(userId),
-                Members = members,
-            };
-
-            FillModel(model, semester);
-
-            ViewBag.IsSelf = user.Id.Equals(userId);
+                
             ViewBag.UserRight = GetUserRight();
             ViewBag.PrevSemester = previousSemester;
             ViewBag.CurrentSemester = semester;

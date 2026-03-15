@@ -74,160 +74,54 @@
                     </div>
                 </div>
             }
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title">Eigene Räume @Model.Organiser.ShortName</h5>
-                                    </div>
-                                    <table class="table table-sm table-striped table-hover" id="tabRooms2">
-                                        <thead>
-                                            <tr>
-                                                <th>Nummer</th>
-                                                <th>Bezeichnung</th>
-                                                <th>Plätze</th>
-                                                <th>Buchbar</th>
-                                                <th>Besitzer</th>
-                                                <th>Verfügbarkeiten</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var room in ownRooms.OrderBy(x => x.Number))
-                                            {
-                                                var ownerAssign = room.Assignments.FirstOrDefault(x => x.IsOwner);
+            <table class="table table-sm table-striped table-hover" id="tabRooms2">
+                <thead>
+                <tr>
+                    <th>Nummer</th>
+                    <th>Bezeichnung</th>
+                    <th>Plätze</th>
+                    <th>Buchbar</th>
+                    <th>Besitzer</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var room in ownRooms.OrderBy(x => x.Number))
+                {
+                    var ownerAssign = room.Assignments.FirstOrDefault(x => x.IsOwner);
+                    var myAssign = room.Assignments.FirstOrDefault(x => x.Organiser.Id == Model.Organiser.Id);
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("Details", "Room", new { id = room.Id })">
+                                @room.Number
+                            </a>
+                        </td>
+                        <td>@room.Name</td>
+                        <td>@room.Capacity</td>
+                        @if (room.IsBookable != null && room.IsBookable.Value == true && myAssign != null && !myAssign.InternalNeedConfirmation)
+                        {
+                            <td><i class="bi bi-check-lg text-success"></i> für jede:n in @Model.Organiser.ShortName</td>
+                        }
+                        else
+                        {
+                            <td><i class="bi bi-x-lg text-danger"></i> nur für Admins in @Model.Organiser.ShortName</td>
+                        }
+                        @if (ownerAssign != null)
+                        {
+                            <td>@ownerAssign.Organiser.ShortName</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
 
-                                                <tr>
-                                                    <td>
-                                                        <a href="@Url.Action("Details", "Room", new { id = room.Id })">
-                                                            @room.Number
-                                                        </a>
-                                                    </td>
-                                                    <td>@room.Name</td>
-                                                    <td>@room.Capacity</td>
-                                                    @if (room.IsBookable != null && room.IsBookable.Value == true)
-                                                    {
-                                                        <td><i class="bi bi-check-lg text-success"></i></td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td><i class="bi bi-x-lg text-danger"></i></td>
-                                                    }
-                                                    @if (ownerAssign != null)
-                                                    {
-                                                        <td>@ownerAssign.Organiser.ShortName</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                <td>
-                                                    @foreach (var assign in room.Assignments.Where(x => x.Organiser.Id != Model.Organiser.Id).OrderBy(x => x.Organiser.ShortName))
-                                                    {
-                                                        if (room.Availability != null)
-                                                        {
-                                                            var grids = room.Availability.PlanningGrids.Where(g => g.Organiser.Id == assign.Organiser.Id).ToList();
-                                                            if (grids.Count > 0)
-                                                            {
-                                                                <div>
-                                                                    @assign.Organiser.ShortName:
-                                                                    @foreach (var grid in grids)
-                                                                    {
-                                                                        <span class="badge bg-secondary">@grid.State</span>
-                                                                    }
-                                                                </div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div>@assign.Organiser.ShortName (keine Verfügbarkeiten)</div>
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <div>@assign.Organiser.ShortName (keine Verfügbarkeiten)</div>
-                                                        }
-                                                    }
-                                                </td>
-                                                </tr>
-                                            }
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @*
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title">Mitnutzung von Räumen bei anderen Einrichtungen</h5>
-                                    </div>
-                                    <table class="table table-sm table-striped table-hover" id="tabRooms">
-                                        <thead>
-                                            <tr>
-                                                <th>Nummer</th>
-                                                <th>Bezeichnung</th>
-                                                <th>Plätze</th>
-                                                <th>Besitzer</th>
-                                                <th>Buchbar von</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var room in otherRooms.OrderBy(x => x.Number))
-                                            {
-                                                var ownerAssign = room.Assignments.FirstOrDefault(x => x.IsOwner);
-
-                                                <tr>
-                                                    <td>
-                                                        <a href="@Url.Action("Details", "Room", new { id = room.Id })">
-                                                            @room.Number
-                                                        </a>
-                                                    </td>
-                                                    <td>@room.Name</td>
-                                                    <td>@room.Capacity</td>
-                                                    @if (ownerAssign != null)
-                                                    {
-                                                        <td>@ownerAssign.Organiser.ShortName</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                    <td>
-                                                        @foreach (var assign in room.Assignments.OrderBy(x => x.Organiser.ShortName))
-                                                        {
-                                                            if (ownerAssign != null)
-                                                            {
-                                                                if (assign.Organiser.Id != Model.Organiser.Id && assign.Organiser.Id != ownerAssign.Organiser.Id)
-                                                                {
-                                                                    <div>@assign.Organiser.ShortName</div>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <div>@assign.Organiser.ShortName: Nicht buchbar</div>
-                                                            }
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    *@
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 
 

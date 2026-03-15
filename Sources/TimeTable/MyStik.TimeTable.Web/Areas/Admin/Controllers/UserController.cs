@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using Microsoft.AspNet.Identity;
+using MyStik.TimeTable.Data.Migrations;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
@@ -592,6 +593,12 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(users);
         }
 
+        public ActionResult ApiKeys()
+        {
+            var members = Db.Members.Where(x => !string.IsNullOrEmpty(x.ApiKey)).ToList();
+
+            return View(members);
+        }
 
         public ActionResult AllStudents()
         {

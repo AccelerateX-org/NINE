@@ -48,7 +48,7 @@
                 @if (!isStudent)
                 {
                     <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
-                    <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
+                    <a href="@Url.Action("Index", "ItemLabels", new { id = Model.Id })" class="list-group-item list-group-item-action">Kohorten</a>
                 }
                 <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studienangebote</a>
                 <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>

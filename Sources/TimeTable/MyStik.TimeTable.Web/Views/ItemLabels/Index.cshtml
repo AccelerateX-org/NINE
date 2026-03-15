@@ -133,7 +133,7 @@
                                     @foreach (var c in Model.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.ShortName))
                                     {
                                         <li>
-                                            <a href="@Url.Action("AddLabel", new { currId = c.Id })" class="dropdown-item">
+                                            <a href="@Url.Action("CreateLabel", new { currId = c.Id })" class="dropdown-item">
                                                 @c.ShortName
                                             </a>
                                         </li>

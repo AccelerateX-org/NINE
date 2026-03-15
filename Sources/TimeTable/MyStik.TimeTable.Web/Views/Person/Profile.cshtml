@@ -36,35 +36,24 @@
     </nav>
 </div>
 <div class="row">
+@if (Model.User != null)
+{
+
     <div class="col-md-2 col-sm-4 col-xs-6">
         <div class="card">
-            @if (Model.User != null)
+            @if (Model.User.BinaryData == null || Model.User.BinaryData.Length == 0)
             {
-                if (Model.User.BinaryData == null || Model.User.BinaryData.Length == 0)
-                {
-                    <div>
-                        <i class="bi bi-person-bounding-box"></i>
-                    </div>
-                }
-                else
-                {
-                    <img src="@Url.Action("GetProfileImage", new { id = Model.User.Id })" class="card-img-top" />
-                }
+                <div>
+                    <i class="bi bi-person-bounding-box"></i>
+                </div>
             }
             else
             {
-                <div>
-                    <i class="bi bi-person-exclamation"></i> Kein Benutzerkonto
-                </div>
+                <img src="@Url.Action("GetProfileImage", new { id = Model.User.Id })" class="card-img-top"/>
             }
 
-        <div class="card-body">
-            @if (Model.User != null)
-            {
+            <div class="card-body">
                 <h5 class="card-title">@Model.FullName</h5>
-                @*
-                <h6 class="card-subtitle mb-2 text-body-secondary">subtext</h6>
-                    *@
                 <div class="btn-group">
                     @if (!string.IsNullOrEmpty(mainMember.UrlProfile))
                     {
@@ -76,47 +65,29 @@
                         <i class="bi bi-calendar"></i>
                     </a>
                 </div>
-            }
+                }
 
-            @*
-            @if (ViewBag.IsSelf == true)
-            {
-                <hr />
-                <div class="btn-group">
-                    <a class="btn btn-outline-primary" href="@Url.Action("Index", "UserProfile")">
-                        <i class="bi bi-person-gear"></i>
-                    </a>
-                    <a class="btn btn-outline-primary" href="@Url.Action("Link", "Person")">
-                        <i class="bi bi-link"></i>
-                    </a>
-                </div>
-            }
-                *@
-        </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-10 col-sm-8 col-xs-6">
+}
+<div class="col-md-10 col-sm-8 col-xs-6">
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Lehrveranstaltungen</h5>
                         <ul>
-                            @if (Model.User != null)
+                            @foreach (var course in Model.Courses)
                             {
-
-                                foreach (var course in Model.Courses)
-                                {
-                                    <li><a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a></li>
-                                }
+                                <li><a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a></li>
                             }
                         </ul>
-                        <h5>Sprechstunden</h5>
-                        <ul>
                         @if (Model.User != null)
                         {
-
-                            foreach (var course in Model.OfficeHours)
+                            <h5>Sprechstunden</h5>
+                            <ul>
+                            @foreach (var course in Model.OfficeHours)
                             {
                                 if (course.ByAgreement)
                                 {
@@ -130,8 +101,8 @@
                                     }
                                 }
                             }
+                            </ul>
                         }
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -158,30 +129,23 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="list-group">
-                        @if (Model.User != null)
+                        @foreach (var member in Model.Members.OrderBy(x => x.Organiser.ShortName).ToList())
                         {
-                            foreach (var member in Model.Members.OrderBy(x => x.Organiser.ShortName).ToList())
-                            {
-                                <div class="list-group-item">
-                                    <a href="@Url.Action("Faculty", "University", new { id = member.Organiser.Id })">@member.Organiser.ShortName</a>
-                                    @if (ViewBag.IsSelf == true)
+                            <div class="list-group-item">
+                                <a href="@Url.Action("Faculty", "University", new { id = member.Organiser.Id })">@member.Organiser.ShortName</a>
+                                @if (ViewBag.IsSelf == true)
+                                {
+                                    if (string.IsNullOrEmpty(member.ApiKey))
                                     {
-                                        if (string.IsNullOrEmpty(member.ApiKey))
-                                        {
-                                            <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new { memberId = member.Id })" class="btn btn-outline-primary">api key erzeugen</a>
-                                        }
-                                        else
-                                        {
-                                            <div>@member.ApiKey (@member.ApiKeyValidUntil.Value.ToShortDateString())</div>
-                                            <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new { memberId = member.Id })" class="btn btn-outline-primary">api key aktualisieren</a>
-                                        }
+                                        <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new { memberId = member.Id })" class="btn btn-outline-primary">api key erzeugen</a>
                                     }
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div>Kein Member</div>
+                                    else
+                                    {
+                                        <div>@member.ApiKey (@member.ApiKeyValidUntil.Value.ToShortDateString())</div>
+                                        <a href="@Url.Action("GenerateApiKey", "OrganiserMembers", new { memberId = member.Id })" class="btn btn-outline-primary">api key aktualisieren</a>
+                                    }
+                                }
+                            </div>
                         }
                     </div>
                 </div>

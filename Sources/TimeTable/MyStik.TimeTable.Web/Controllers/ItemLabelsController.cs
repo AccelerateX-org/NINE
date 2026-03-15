@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
-    public class LabelsController : BaseController
+    public class ItemLabelsController : BaseController
     {
         // GET: Labels
         public ActionResult Index(Guid? id)
@@ -33,9 +33,9 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult AddLabel(Guid currId)
+        public ActionResult CreateLabel(Guid currId)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var curr = Db.Curricula.Include(curriculum => curriculum.LabelSet).SingleOrDefault(x => x.Id == currId);
 
             if (curr.LabelSet == null)
             {
@@ -45,24 +45,37 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            var model = new ItemLabelEditModel()
+            var model = new ItemLabelCreateModel()
             {
-                Curriculum = curr,
+                CurriculumId = curr.Id,
             };
+
+            ViewBag.Curriculum = curr;
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult AddLabel(ItemLabelEditModel model)
+        public ActionResult CreateLabel(ItemLabelCreateModel model)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var curr = Db.Curricula.Include(curriculum => curriculum.LabelSet.ItemLabels)
+                .Include(curriculum1 => curriculum1.Organiser).SingleOrDefault(x => x.Id == model.CurriculumId);
 
-            var label = new ItemLabel();
+            var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(model.Name));
 
-            label.Name = model.Name;
-            label.Description = model.Description;
-            label.HtmlColor = model.HtmlColor;
+            if (label != null) 
+                return RedirectToAction("Index", new { id = curr.Organiser.Id });
+            
+            
+            label = new ItemLabel
+            {
+                Name = model.Name,
+                Description = model.Description,
+                HtmlColor = model.HtmlColor
+            };
+
+            Db.ItemLabels.Add(label);
+
             label.LabelSets.Add(curr.LabelSet);
 
             curr.LabelSet.ItemLabels.Add(label);
@@ -205,5 +218,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(label);
         }
+
+        public ActionResult CreateTest(Guid currId)
+        {
+            var curr = Db.Curricula.Include(curriculum => curriculum.LabelSet).SingleOrDefault(x => x.Id == currId);
+
+            if (curr.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                curr.LabelSet = labelSet;
+                Db.ItemLabelSets.Add(labelSet);
+                Db.SaveChanges();
+            }
+
+            var model = new ItemLabelCreateModel()
+            {
+                CurriculumId = curr.Id,
+            };
+
+            ViewBag.Curriculum = curr;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateTest(ItemLabelCreateModel model)
+        {
+            var curr = Db.Curricula.Include(curriculum => curriculum.LabelSet)
+                .Include(curriculum1 => curriculum1.Organiser).SingleOrDefault(x => x.Id == model.CurriculumId);
+
+            return RedirectToAction("Index", new { id = curr.Organiser.Id });
+        }
+
+
+
     }
 }

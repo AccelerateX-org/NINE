@@ -386,7 +386,8 @@ namespace MyStik.TimeTable.DataServices.Booking
                 foreach (var quota in _occ.SeatQuotas)
                 {
                     var list = _lists.FirstOrDefault(x => x.SeatQuota != null && x.SeatQuota.Id == quota.Id);
-                    var check = quotaService.IsAvailable(list.SeatQuota, student.Curriculum, new List<ItemLabel>());
+                    var labels = student.LabelSet != null ? student.LabelSet.ItemLabels: new List<ItemLabel>();
+                    var check = quotaService.IsAvailable(list.SeatQuota, student.Curriculum, labels);
                     if (check.Success)
                     {
                         return list;

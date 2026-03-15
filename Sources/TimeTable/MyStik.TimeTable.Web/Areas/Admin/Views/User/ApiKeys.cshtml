@@ -1,0 +1,35 @@
+﻿@model ICollection<MyStik.TimeTable.Data.OrganiserMember>
+
+@{
+    ViewBag.Title = "ApiKeys";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>Org</th>
+                    <th>Name</th>
+                    <th>Key</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var member in Model)
+                    {
+                        <tr>
+                            <td>@member.Organiser.ShortName</td>
+                            <td>@member.FullName</td>
+                            <td>@member.ApiKey</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+

@@ -10,18 +10,33 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
             <li class="breadcrumb-item active" aria-current="page">Raumverzeichnis</li>
         </ol>
     </nav>
-
+</div>
+<div class="row">
     <div class="col-md-12">
         <div class="card">
             <ul class="list-group">
-                @foreach (var org in Model.OrderBy(x => x.ShortName))
+                @foreach (var org in Model.OrderByDescending(x => x.IsFaculty).ThenBy(x => x.ShortName))
                 {
-                    <a href="@Url.Action("Organiser", new { id=org.Id})" class="list-group-item list-group-item-action">
-                        @Html.FacultyLabel(org) @org.Name
-                    </a>
+                    var hasRooms = org.RoomAssignments.Count(x => x.IsOwner);
+
+                    if (hasRooms > 0)
+                    {
+
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="@Url.Action("Organiser", new { id = org.Id })">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">@org.ShortName | @org.Name</div>
+                            </div>
+                            <span class="badge text-bg-primary rounded-pill">@hasRooms</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="list-group-item disabled">@org.ShortName | @org.Name</div>
+                    }
                 }
             </ul>
         </div>

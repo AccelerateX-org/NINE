@@ -225,6 +225,7 @@ namespace MyStik.TimeTable.Web.Services
                     r.Assignments.Any(a => a.Organiser.Id == orgId)).ToList();
 
             return _db.Rooms.Where(r =>
+                r.IsBookable != null && r.IsBookable.Value &&
                 r.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation)).ToList();
         }
 
@@ -321,6 +322,7 @@ namespace MyStik.TimeTable.Web.Services
             else
             {
                 rooms = _db.Rooms.Where(room =>
+                    room.IsBookable != null && room.IsBookable.Value &&
                     room.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation) &&
                     !room.Dates.Any(d =>
                             (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum

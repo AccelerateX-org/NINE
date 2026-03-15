@@ -599,7 +599,7 @@
     <Compile Include="Controllers\InstitutionController.cs" />
     <Compile Include="Controllers\InternshipAdminController.cs" />
     <Compile Include="Controllers\InternshipController.cs" />
-    <Compile Include="Controllers\LabelsController.cs" />
+    <Compile Include="Controllers\ItemLabelsController.cs" />
     <Compile Include="Controllers\LabelSetController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
@@ -3679,6 +3679,7 @@
     <Content Include="Areas\Admin\Views\User\Accounts.cshtml" />
     <Content Include="Areas\Admin\Views\User\_AccountList.cshtml" />
     <Content Include="Areas\Admin\Views\User\_AccountListEntry.cshtml" />
+    <Content Include="Areas\Admin\Views\User\ApiKeys.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\MyStikTimeTableWeb20250712113512 - Web Deploy1.pubxml" />
@@ -4690,8 +4691,8 @@
     <Content Include="Views\ModuleDescription\History.cshtml" />
     <Content Include="Views\University\Faculty.cshtml" />
     <Content Include="Views\University\Faculties.cshtml" />
-    <Content Include="Views\Labels\EditLabel.cshtml" />
-    <Content Include="Views\Labels\AddLabel.cshtml" />
+    <Content Include="Views\ItemLabels\EditLabel.cshtml" />
+    <Content Include="Views\ItemLabels\CreateLabel.cshtml" />
     <Content Include="Views\University\Curricula.cshtml" />
     <Content Include="Views\University\Degree.cshtml" />
     <Content Include="Views\Curriculum\CreateSlot.cshtml" />
@@ -4714,7 +4715,7 @@
     <Content Include="Views\Course\AdminNewLabels.cshtml" />
     <Content Include="Views\Course\EditLabel.cshtml" />
     <Content Include="Views\Curriculum\ImportLabelsSuccess.cshtml" />
-    <Content Include="Views\Labels\AllLabels.cshtml" />
+    <Content Include="Views\ItemLabels\AllLabels.cshtml" />
     <Content Include="Views\Subscription\ChangeLabel.cshtml" />
     <Content Include="Views\Course\AdminNewDictionary.cshtml" />
     <Content Include="Views\Catalogs\PlanCatalog.cshtml" />
@@ -4727,7 +4728,7 @@
     <Content Include="Views\Notification\PersonalMessage.cshtml" />
     <Content Include="Views\University\Services.cshtml" />
     <Content Include="Views\Curriculum\AllSlots.cshtml" />
-    <Content Include="Views\Labels\Index.cshtml" />
+    <Content Include="Views\ItemLabels\Index.cshtml" />
     <Content Include="Views\Dictionary\Label.cshtml" />
     <Content Include="Views\Import\Delete.cshtml" />
     <Content Include="Views\ImportCsv\Upload.cshtml" />
@@ -4782,7 +4783,7 @@
     <Content Include="Views\LabelSet\_LabelSelectListCurriculum.cshtml" />
     <Content Include="Views\LabelSet\_LabelSelectListInstitution.cshtml" />
     <Content Include="Views\LabelSet\_LabelListGroupInstitution.cshtml" />
-    <Content Include="Views\Labels\MergeLabel.cshtml" />
+    <Content Include="Views\ItemLabels\MergeLabel.cshtml" />
     <Content Include="Views\Lottery\StudentsSamePrio.cshtml" />
     <Content Include="Views\Alumni\Admin.cshtml" />
     <Content Include="Views\Lecturer\PersonalDates.cshtml" />
@@ -4860,8 +4861,8 @@
     <Content Include="Views\Students\Labels.cshtml" />
     <Content Include="Views\Account\Dummy.cshtml" />
     <Content Include="Views\University\Members.cshtml" />
-    <Content Include="Views\Labels\Details.cshtml" />
-    <Content Include="Views\Labels\DeleteLabel.cshtml" />
+    <Content Include="Views\ItemLabels\Details.cshtml" />
+    <Content Include="Views\ItemLabels\DeleteLabel.cshtml" />
     <Content Include="Views\Students\_StudentsList.cshtml" />
     <Content Include="Views\Lottery\CheckSelection.cshtml" />
     <Content Include="Views\Lottery\Organiser.cshtml" />
@@ -4895,6 +4896,7 @@
     <Content Include="Views\Emails\AccountDeleteError.html.cshtml" />
     <Content Include="Views\Lottery\ConsistencyCheck.cshtml" />
     <Content Include="Views\Lottery\ConsistencyCheckLottery.cshtml" />
+    <Content Include="Views\ItemLabels\CreateTest.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

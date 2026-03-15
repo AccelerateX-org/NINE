@@ -18,6 +18,9 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        /// <summary>
+        /// deprecated: use Comptences instead
+        /// </summary>
         public virtual ICollection<Committee> Committees { get; set; }
 
         public virtual ICollection<CommitteeCompetence> Competences { get; set; }

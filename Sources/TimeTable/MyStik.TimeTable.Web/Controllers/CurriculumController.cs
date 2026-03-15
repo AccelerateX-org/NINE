@@ -861,32 +861,6 @@ namespace MyStik.TimeTable.Web.Controllers
             // jetzt den Namensfilter ansetzen
             roomList = roomList.Where(l => l.Number.ToUpper().Contains(number.ToUpper())).ToList();
 
-            /*
-             * braucht es nicht mehr, da der Raumzugriff bereits über die RoomAssignment gesteuert wird
-             * und das mit den "Raumanfragen" ist nicht implementiert worden
-            foreach (var room in roomList)
-            {
-                var owner = room.Assignments.FirstOrDefault(x => x.IsOwner);
-                if (owner != null)
-                {
-                    if (owner.Organiser.Id == org.Id)
-                    {
-                        if (owner.InternalNeedConfirmation)
-                        {
-                            room.Number += $" (interne Buchungsanfrage {owner.Organiser.ShortName})";
-                        }
-                    }
-                    else
-                    {
-                        if (owner.ExternalNeedConfirmation)
-                        {
-                            room.Number += $" (Buchungsanfrage bei {owner.Organiser.ShortName})";
-                        }
-                    }
-                }
-            }
-            */
-
 
             var list = roomList
                 .OrderBy(l => l.Number)
@@ -900,80 +874,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(list);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="number"></param>
-        /// <param name="sem"></param>
-        /// <param name="day"></param>
-        /// <param name="from"></param>
-        /// <param name="until"></param>
-        /// <returns></returns>
-        /*
-        [HttpPost]
-        public JsonResult RoomListForDay(string number, string sem, int? day, TimeSpan? from, TimeSpan? until)
-        {
-            IEnumerable<Room> roomList;
-            var org = GetMyOrganisation();
-            var member = MemberService.GetMember(org.Id);
-            var isOrgAdmin = false;
-            if (member != null)
-            {
-                if (member.IsRoomAdmin || member.IsAdmin)
-                {
-                    isOrgAdmin = true;
-                }
-            }
-
-
-
-            var allRooms = Db.Rooms.Where(r => r.Number.ToUpper().StartsWith(number.ToUpper())).OrderBy(r => r.Number)
-                .ToList();
-
-            // Bei kurzer Eingabe nicht prüfen => performancegründe
-            if (number.Length < 3)
-            {
-                var list = allRooms
-                    .Select(l => new
-                    {
-                        name = l.FullName,
-                        capacity = Math.Abs(l.Capacity),
-                    })
-                    .Take(10)
-                    .ToList();
-
-                return Json(list);
-            }
-
-
-
-            var semester = new SemesterService().GetSemester(sem);
-
-            if (semester != null && day.HasValue && @from.HasValue && until.HasValue)
-            {
-                var dayOfWeek = (DayOfWeek)day.Value;
-
-                roomList = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(dayOfWeek, from.Value,
-                    until.Value, semester, isOrgAdmin, allRooms);
-            }
-            else
-            {
-                roomList = new MyStik.TimeTable.Web.Services.RoomService().GetAllRooms(isOrgAdmin, allRooms);
-            }
-
-
-            var list2 = roomList
-                .Select(l => new
-                {
-                    name = l.FullName,
-                    capacity = Math.Abs(l.Capacity),
-                })
-                .Take(10)
-                .ToList();
-
-            return Json(list2);
-        }
-        */
 
 
         /// <summary>

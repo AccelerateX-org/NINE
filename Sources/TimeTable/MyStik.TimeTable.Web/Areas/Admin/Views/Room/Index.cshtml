@@ -99,13 +99,12 @@
                             </td>
                             @if (room.IsBookable != null && room.IsBookable.Value == true)
                             {
-                                <td><i class="bi bi-check-lg text-success"></i></td>
+                                <td><i class="bi bi-check-lg text-success"></i><span hidden="true">1</span></td>
                             }
                             else
                             {
-                                <td><i class="bi bi-x-lg text-danger"></i></td>
+                                <td><i class="bi bi-x-lg text-danger"></i><span hidden="true">0</span></td>
                             }
-                            <td></td>
                             <td>
                                 <div class="btn-group">
                                     <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi bi-pen"></i></a>
