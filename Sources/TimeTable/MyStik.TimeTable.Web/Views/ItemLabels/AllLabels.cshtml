@@ -14,6 +14,20 @@
 
 }
 
+<div class="row">
+    <div class="col-12">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<h1>ACHTUNG: reine technische Sicht ohne Funktionen - dient der Fehlersuche</h1>
 <h2>Gruppen</h2>
 <ul>
     @foreach (var group in capGroups)

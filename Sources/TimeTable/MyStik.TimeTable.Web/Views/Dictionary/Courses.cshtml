@@ -47,7 +47,8 @@
     <script>
         $(document).ready(function () {
             $('#tabCourses').DataTable({
-                "paging": false
+                "paging": false,
+                "order": [[1, 'asc']]
             });
         });
     </script>
@@ -93,15 +94,17 @@
         <div class="card">
             <table id="tabCourses" class="table table-striped table-bordered">
                 <thead>
-                    <tr>
-                        <th>Kurzname</th>
-                        <th>Titel</th>
-                        <th>Module</th>
-                        <th>Kohorten</th>
-                        <th>Art</th>
-                        <th>Raumangabe(n)</th>
-                        <th>Lehrende</th>
-                    </tr>
+                <tr>
+                    <th>Anbieter</th>
+                    <th>Kurzname</th>
+                    <th>Titel</th>
+                    <th>Kohorten</th>
+                    <th>Abschnitt</th>
+                    <th>Zeitraum</th>
+                    <th>Raumangabe(n)</th>
+                    <th>Lehrende</th>
+                    <th>Platzkontingente</th>
+                </tr>
                 </thead>
                 <tbody>
                     @foreach (var course in courses)
@@ -115,57 +118,53 @@
                             var teachings = c.Course.SubjectTeachings.ToList();
 
                             <tr>
+                                <td>@c.Course.Organiser.ShortName</td>
                                 <td>
                                     @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
                                 </td>
                                 <td>
                                     @c.Course.Name
                                 </td>
-                                @if (teachings.Any())
-                                {
-                                    <td>
-                                        @foreach (var teaching in teachings)
-                                        {
-                                            var accreditations = teaching.Subject.SubjectAccreditations.ToList();
-                                            if (accreditations.Any())
-                                            {
-                                                foreach (var accreditation in accreditations)
-                                                {
-                                                    <div>@accreditation.Slot.AreaOption.Area.Curriculum.ShortName: @accreditation.Slot.Tag (@teaching.Subject.Name)</div>
-                                                }
-                                            }
-                                        }
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-
                                 <td>
                                     @Html.LabelList(c.Course)
                                 </td>
-                                @if (c.IsPureBlock())
-                                {
-                                    <td>Blockkurs</td>
-                                }
-                                else if (c.IsPureRegular())
-                                {
-                                    <td>Regelmäßig</td>
-                                }
-                                else if (c.IsPureWeekEndCourse())
-                                {
-                                    <td>Wochenendkurs</td>
-                                }
-                                else
-                                {
-                                    <td>Einzeltermine</td>
-                                }
+                                <td>
+                                    @if (c.Course.Segment != null)
+                                    {
+                                        <div>@c.Course.Segment.Description</div>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DateList(c.Dates)
+                                </td>
                                 <td>
                                     @Html.RoomList(c.Rooms)
                                 </td>
                                 <td>
                                     @Html.LecturerList(c.Lecturers)
+                                </td>
+                                <td>
+                                    @if (c.Course.Occurrence != null)
+                                    {
+                                        if (c.Course.Occurrence.SeatQuotas.Any())
+                                        {
+                                            foreach (var quota in c.Course.Occurrence.SeatQuotas)
+                                            {
+                                                <div>@quota.Summary</div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (c.Course.Occurrence.Capacity < 1)
+                                            {
+                                                <div>Offene Liste</div>
+                                            }
+                                            else
+                                            {
+                                                <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
+                                            }
+                                        }
+                                    }
                                 </td>
                             </tr>
                         }

@@ -942,7 +942,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult DeleteCourse(CourseDeleteModel model)
         {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.Course.Id);
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Occurrence.Subscriptions).SingleOrDefault(c => c.Id == model.Course.Id);
 
             if (course.Occurrence != null && course.Occurrence.Subscriptions.Any())
             {
@@ -3327,59 +3327,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("AdminNewParticipients", new { id = course.Id });
         }
 
-        /*
-        public ActionResult RemoveSubscription2(Guid id, string userId)
+
+        public ActionResult RemoveAllSubscriptions(Guid id)
         {
-            var logger = LogManager.GetLogger("DischargeActivity");
-
-            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
-            var host = GetCurrentUser();
 
-            if (occurrence != null && !string.IsNullOrEmpty(userId))
-            {
-                var subscription =
-                    occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(userId));
+            var model = new CourseDeleteModel { Course = course };
 
-                if (subscription != null)
-                {
-                    var subService = new SubscriptionService(Db);
-                    subService.DeleteSubscription(subscription);
-
-                    var mailService = new SubscriptionMailService();
-                    mailService.SendSubscriptionEMail(course, userId, host);
-
-                    var subscriber = GetUser(subscription.UserId);
-                    logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
-                        course.Name, course.ShortName, subscriber.UserName);
-                }
-                else
-                {
-                    logger.ErrorFormat("subscription missing {0}, {1}", occurrence.Id, userId);
-                }
-
-            }
-            else
-            {
-                logger.ErrorFormat("Occurrence or user missing [{0}], [{1}]", id, userId);
-            }
-
-
-            return RedirectToAction("AdminNewParticipients", new { id = course.Id });
+            return View(model);
         }
-        */
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult RemoveSubscription(Guid id)
+        [HttpPost]
+        public ActionResult RemoveAllSubscriptions(CourseDeleteModel model)
         {
             var logger = LogManager.GetLogger("DischargeActivity");
 
-            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Occurrence.Subscriptions).SingleOrDefault(c => c.Occurrence.Id == model.Course.Id);
+            var occurrence = course.Occurrence;
             var host = GetCurrentUser();
 
             if (occurrence != null)

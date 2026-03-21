@@ -24,9 +24,25 @@
     }
 }
 
-
-
-@Html.Partial("_CourseSummaryHeader", Model.Summary)
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Summary.Course.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
+                }
+                @if (Model.Summary.Course.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Summary.Course.Semester.Id, orgId = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Course", new { id = Model.Summary.Course.Id })">@Model.Summary.Course.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Teilnehmende</li>
+            </ol>
+        </nav>
+    </div>
+</div>
 
 @if (Model.Course.IsInternal)
 {
@@ -67,24 +83,21 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary">
-                            <i class="fas fa-chevron-left"></i> Zurück
-                        </a>
                         @if ((!Model.Summary.Course.IsInternal && Model.Summary.Lottery == null) || ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner)
                         {
-                            <a class="btn btn-outline-primary" href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" ><i class="bi bi-download"></i> Listen</a>
+                            <a class="btn btn-outline-primary" href="@Url.Action("Download", new {id = Model.Summary.Course.Id})"><i class="bi bi-download"></i> Listen</a>
                             <a class="btn btn-outline-secondary" href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-person"></i> Alle auf Teilnehmerliste setzen</a>
                             <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-hourglass"></i> Alle auf Warteliste setzen</a>
-                            <a class="btn btn-outline-danger" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-x"></i> Alle austragen</a>
+                            <a class="btn btn-outline-danger" href="@Url.Action("RemoveAllSubscriptions", new {id = Model.Course.Occurrence.Id})"><i class="bi bi-x"></i> Alle austragen</a>
                         }
                         @*
-                        @if (ViewBag.UserRight.IsCourseAdmin)
-                        {
-                            <a class="btn btn-outline-secondary" href="@Url.Action("RawAdmin", new {id = Model.Course.Id})" class="btn btn-default">
-                                <i class="fa fa-cogs"></i> Low Level Admin
-                            </a>
-                        }
-                            *@
+                            @if (ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                <a class="btn btn-outline-secondary" href="@Url.Action("RawAdmin", new {id = Model.Course.Id})" class="btn btn-default">
+                                    <i class="fa fa-cogs"></i> Low Level Admin
+                                </a>
+                            }
+                        *@
                     </div>
                 </div>
             </div>

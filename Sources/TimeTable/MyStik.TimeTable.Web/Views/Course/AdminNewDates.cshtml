@@ -19,7 +19,7 @@
                     <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Summary.Course.Semester.Id, orgId = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Semester.Name</a></li>
                 }
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Course", new { id = Model.Summary.Course.Id })">@Model.Summary.Course.ShortName</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Termine</li>
+                <li class="breadcrumb-item active" aria-current="page">Terminverwaltung</li>
             </ol>
         </nav>
     </div>
@@ -45,9 +45,6 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group me-2">
-                            <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="bi bi-chevron-left"></i> Zurück</a>
-                        </div>
                         @if (!Model.Summary.Course.IsInternal || (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin))
                         {
                             <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
@@ -64,6 +61,18 @@
                                 <a id="removeHosts" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Lehrende entfernen"><i class="bi bi-person-x"></i></a>
                                 <a id="addVirtualRoom" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="virtuellen Raum hinzufügen"><i class="bi bi-tv"></i><i class="bi bi-plus"></i></a>
                                 <a id="removeVirtualRooms" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="virtuelle Räume entfernen"><i class="bi bi-tv"></i><i class="bi bi-x"></i></a>
+                            </div>
+                            <div id="dropDownMenuDisabled" class="btn-group me-2" role="group">
+                                <button class="btn btn-outline-danger" disabled><i class="bi bi-x"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-arrow-repeat"></i> </button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-calendar-x"></i> </button>
+                                <button class="btn btn-outline-danger" disabled><i class="bi bi-trash"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-building"></i><i class="bi bi-plus"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-building"></i><i class="bi bi-x"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-person-plus"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-person-x"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-tv"></i><i class="bi bi-plus"></i></button>
+                                <button class="btn btn-outline-secondary" disabled><i class="bi bi-tv"></i><i class="bi bi-x"></i></button>
                             </div>
                         }
                     </div>
@@ -236,8 +245,7 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             });
 
-                //$("tr[history]").hide();
-                $('#dropDownMenu').hide();
+            $('#dropDownMenu').hide();
 
                 $("#toggleHistoryOn").click(function() {
                     $("tr[history]").show();
@@ -738,8 +746,10 @@
 
             if (nChecked > 0) {
                 $('#dropDownMenu').show();
+                $('#dropDownMenuDisabled').hide();
             } else {
                 $('#dropDownMenu').hide();
+                $('#dropDownMenuDisabled').show();
             }
 
         }
@@ -749,9 +759,11 @@
             if ($("#" + elem.id).is(':checked')) {
                 $('.chk').attr('checked', true);
                 $('#dropDownMenu').show();
+                $('#dropDownMenuDisabled').hide();
             } else {
                 $('.chk').attr('checked', false);
                 $('#dropDownMenu').hide();
+                $('#dropDownMenuDisabled').show();
             }
         }
 

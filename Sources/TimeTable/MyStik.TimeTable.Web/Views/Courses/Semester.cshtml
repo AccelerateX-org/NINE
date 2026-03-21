@@ -67,7 +67,8 @@
                     buttons: [
                         'copy', 'excel'
                     ],
-                    "paging": false
+                    "paging": false,
+                    "order": [[2, 'asc']]
                 });
             });
 
@@ -286,6 +287,7 @@
                 <thead>
                     <tr>
                         <th>Status</th>
+                        <th>Anbieter</th>
                         <th>Kurzname</th>
                         <th>Titel</th>
                         <th>Kohorten</th>
@@ -309,7 +311,7 @@
                                 linkName = c.Course.ShortName;
                             }
                             <tr>
-                                @if (ViewBag.UserRight.IsCourseAdmin)
+                                @if (ViewBag.UserRight.IsCourseAdmin && ViewBag.UserRight.Member.Organiser.Id == c.Course.Organiser.Id)
                                 {
                                     <td>
                                         <div class="btn-group">
@@ -375,6 +377,7 @@
                                 }
                             </td>
                                 }
+                                <td>@c.Course.Organiser.ShortName</td>
                                 <td>
                                     @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
                                     @if (c.Course.Occurrence == null)
@@ -425,21 +428,6 @@
                                             else
                                             {
                                                 <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
-                                                /*
-                                                foreach (var label in c.Course.LabelSet.ItemLabels)
-                                                {
-                                                    var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
-                                                    if (curr != null)
-                                                    {
-                                                        <div>Alte Systematik: @c.Course.Occurrence.Capacity Plätze</div>
-                                                        <div>Kontingent für SG @curr.ShortName kann erstellt werden</div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div>FEHLER: Kein Label für Studiengang - Kein Kontingent möglich</div>
-                                                    }
-                                                }
-                                                */
                                             }
                                         }
                                     }

@@ -1,17 +1,18 @@
-﻿using System;
+﻿using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.CRUD;
+using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.CRUD;
-using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -70,18 +71,41 @@ namespace MyStik.TimeTable.Web.Controllers
             model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
             model.NextSemester = SemesterService.GetNextSemester(semester);
 
+            /*
             var lastEnd = DateTime.Today.AddDays(-90);
             var alLotteries = Db.Lotteries.Where(x =>
                 x.LastDrawing >= lastEnd && x.IsAvailable &&
                 x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.FirstDrawing).ToList();
 
             model.ActiveLotteries.AddRange(alLotteries);
+            */
 
+            /*
             var courses =
                 Db.Activities.OfType<Course>().Where(c =>
                         c.Semester.Id == semester.Id &&
                         c.Organiser.Id == org.Id)
                     .OrderBy(c => c.ShortName).ToList();
+            */
+
+            var courses = new List<Course>();
+
+            foreach (var curr in org.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.Name).ToList())
+            {
+                foreach (var label in curr.LabelSet.ItemLabels.ToList())
+                {
+                    var labeledCourses = Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList();
+
+                    courses.AddRange(labeledCourses);
+                }
+            }
+
+            courses = courses.Distinct().ToList();
 
             var courseService = new CourseInfoService(Db);
 
