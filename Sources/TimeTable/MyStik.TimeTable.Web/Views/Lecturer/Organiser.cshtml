@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Models
 @using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
@@ -8,26 +9,39 @@
 
     @*
     var db = new TimeTableDbContext();
-    foreach (var member in db.Members.ToList())
+    var orgFK11 = db.Organisers.Include(activityOrganiser => activityOrganiser.Members).FirstOrDefault(x => x.ShortName == "FK 11");
+
+    if (orgFK11 != null && Model.Organiser.ShortName.Equals("MUC.HEALTH"))
     {
-        if (string.IsNullOrEmpty(member.UserId))
+        var orgMucHealth = Model.Organiser;
+
+        foreach (var memberFK11 in orgFK11.Members.Where(x => !string.IsNullOrEmpty(x.UserId)).ToList())
         {
-            member.IsAssociated = false;
-        }
-        else
-        {
-            member.IsAssociated = true;
+            // Prüfen, ob der Lehrende auch in MUC.HEALTH Mitglied ist
+            var memberMucHealth = orgMucHealth.Members.FirstOrDefault(x => x.UserId.Equals(memberFK11.UserId));
+
+            if (memberMucHealth == null)
+            {
+                // Lehrender ist nicht Mitglied in MUC.HEALTH, also hinzufügen
+                var newMember = new OrganiserMember
+                {
+                    Name = memberFK11.Name,
+                    FirstName = memberFK11.FirstName,
+                    Title = memberFK11.Title,
+                    ShortName = memberFK11.ShortName,
+                    UserId = memberFK11.UserId,
+                    IsAssociated = true
+                };
+                orgMucHealth.Members.Add(newMember);
+            }
         }
     }
+
+
     db.SaveChanges();
-    *@
+*@
 
-    @*
-    var userService = new UserInfoService();
 
-    var userDb = new ApplicationDbContext();
-    var maxUser = userDb.Users.Where(x => x.BinaryData != null);
-        *@
 
     List<OrganiserMember> memberList = null;
     if (ViewBag.UserRight.IsMemberAdmin || ViewBag.UserRight.IsOrgMember)

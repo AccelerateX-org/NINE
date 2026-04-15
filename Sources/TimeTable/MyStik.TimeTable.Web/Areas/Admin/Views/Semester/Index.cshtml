@@ -4,19 +4,16 @@
 @{
     ViewBag.Title = "Index";
 }
-<div class="page-header">
-    <h1>
-        Semester <small>Vorlesungszeiten</small>
-    </h1>
-</div>
-
-
-
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">Semester mit vorlesungsfreien Zeiten</h1>
+            </div>
+            <div class="list-group">
+                <div class="list-group-i">
+                    <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi bi-plus-circle"></i> Hinzufügen</a>
+                </div>
             </div>
             <table class="table table-sm">
                 <thead>

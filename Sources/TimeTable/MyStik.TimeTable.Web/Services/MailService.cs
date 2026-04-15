@@ -217,7 +217,7 @@ namespace MyStik.TimeTable.Web.Services
                 if (sender.MemberState == MemberState.Staff)
                 {
                     var ms = new MemoryStream();
-                    var writer = new StreamWriter(ms, Encoding.Default);
+                    var writer = new StreamWriter(ms, Encoding.UTF8);
 
                     writer.Write(
                         "Name;Vorname;E-Mail;Versand;Bemerkung");

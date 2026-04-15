@@ -2,7 +2,6 @@
 using MyStik.Gym.Data;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Transformers;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

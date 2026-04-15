@@ -98,6 +98,10 @@
     <Compile Include="IO\Cie\FileReader.cs" />
     <Compile Include="IO\Cie\ImportContext.cs" />
     <Compile Include="IO\Cie\SemesterImport.cs" />
+    <Compile Include="IO\CSV2\FileReader.cs" />
+    <Compile Include="IO\CSV2\ImportContext.cs" />
+    <Compile Include="IO\CSV2\ImportCourse.cs" />
+    <Compile Include="IO\CSV2\SemesterImport.cs" />
     <Compile Include="IO\Csv\Data\SimpleCourse.cs" />
     <Compile Include="IO\Csv\FileReader.cs" />
     <Compile Include="IO\Csv\ImportContext.cs" />

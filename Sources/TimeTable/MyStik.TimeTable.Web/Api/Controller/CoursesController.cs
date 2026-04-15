@@ -9,7 +9,6 @@ using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

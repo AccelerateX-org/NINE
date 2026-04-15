@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Models;
 
@@ -340,6 +342,34 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+
+        public ActionResult FillHolidays(Guid id)
+        {
+            var model = new SemesterEditViewModel();
+
+            var semester = Db.Semesters.Include(semester1 => semester1.Dates).SingleOrDefault(s => s.Id == id);
+
+            if (semester.Dates.Any())
+                return RedirectToAction("Details", new { id = id });
+
+            var service = new SemesterService(Db);
+            var holidays = service.CreateHolidays(semester);
+
+            if (semester.Dates == null)
+            {
+                semester.Dates = new System.Collections.Generic.List<SemesterDate>();
+            }
+
+            foreach (var semesterDate in holidays)
+            {
+                semester.Dates.Add(semesterDate);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new {id = id});
         }
 
     }

@@ -5,28 +5,22 @@
     ViewBag.Title = "Zeitplan";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Detailinformationen zu Semester @Model.Name</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-he">
+                <h1 class="card-ti">Detailinformationen zu Semester @Model.Name</h1>
+                <h4 class="card-sub">
                     Vorlesungszeit von @Model.StartCourses.Date.ToShortDateString() bis @Model.EndCourses.Date.ToShortDateString()
-                    @Html.ActionButton("fa-cogs", "Einstellungen", "Edit", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
-                    @Html.ActionButton("fa-plus", "Neuer Termin", "CreateDate", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
-
                 </h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-it">
+                    <a href="@Url.Action("Edit", "Semester", new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi bi-gear"></i> Einstellungen</a>
+                    <a href="@Url.Action("CreateDate", "Semester", new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi bi-plus"></i> Neuer Termin</a>
+                    <a href="@Url.Action("FillHolidays", "Semester", new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi bi-plus"></i> Vorlesungsfreie Zeiten</a>
+                </div>
             </div>
             <table class="table table-bordered">
                 <thead>
@@ -39,36 +33,36 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in Model.Dates.OrderBy(x=>x.From))
-                {
-                    <tr>
-                        <td>@Html.TimeSpan(item)</td>
-                        @if (item.Organiser == null)
-                        {
-                            <td>hochschulweit</td>
-                        }
-                        else
-                        {
-                            <td>@item.Organiser.ShortName</td>
-                        }
-                        @if (item.HasCourses == false)
-                        {
-                            <td> <i>(Vorlesungsfrei)</i></td>
-                        }
-                        else
-                        {
-                            <td>mit Lehrveranstaltungen</td>
-                        }
-                        <td>@item.Description</td>
-                        <td>
-                            @Html.ActionButton("fa-pencil text-danger", "bearbeiten", "EditDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                            @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs text-danger" })
-                        </td>
-                    </tr>
-                }
+                    @foreach (var item in Model.Dates.OrderBy(x => x.From))
+                    {
+                        <tr>
+                            <td>@Html.TimeSpan(item)</td>
+                            @if (item.Organiser == null)
+                            {
+                                <td>hochschulweit</td>
+                            }
+                            else
+                            {
+                                <td>@item.Organiser.ShortName</td>
+                            }
+                            @if (item.HasCourses == false)
+                            {
+                                <td> <i>(Vorlesungsfrei)</i></td>
+                            }
+                            else
+                            {
+                                <td>mit Lehrveranstaltungen</td>
+                            }
+                            <td>@item.Description</td>
+                            <td>
+                                @Html.ActionButton("fa-pencil text-danger", "bearbeiten", "EditDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                                @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs text-danger" })
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
-</div>
 
+</div>

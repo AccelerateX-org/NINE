@@ -632,7 +632,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (mailModel.SenderUser.MemberState == MemberState.Staff)
             {
                 var ms = new MemoryStream();
-                var writer = new StreamWriter(ms, Encoding.Default);
+                var writer = new StreamWriter(ms, Encoding.UTF8);
 
                 writer.Write(
                     "Name;Vorname;E-Mail;Versand;Bemerkung");
@@ -759,7 +759,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                                                        curr.Id).ToList();
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
             writer.Write(

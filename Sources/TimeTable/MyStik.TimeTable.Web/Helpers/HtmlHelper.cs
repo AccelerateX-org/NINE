@@ -534,8 +534,11 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<div>");
 
-                sb.AppendFormat("{0} [{1:hh\\:mm} - {2:hh\\:mm}]",
+/*                sb.AppendFormat("{0} [{1:hh\\:mm} - {2:hh\\:mm}]",
                     courseDate.DefaultDate.ToString("dddd", new CultureInfo("de-DE")), courseDate.StartTime, courseDate.EndTime);
+*/
+                sb.AppendFormat("{0:ddd} [{1:hh\\:mm} - {2:hh\\:mm}]",
+                    courseDate.DefaultDate, courseDate.StartTime, courseDate.EndTime);
 
                 sb.Append("</div>");
 

@@ -2537,7 +2537,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult EditSlot(CurriculumAreaCreateModel model)
         {
-            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == model.SlotId);
+            var slot = Db.CurriculumSlots.Include(curriculumSlot => curriculumSlot.AreaOption.Slots).SingleOrDefault(x => x.Id == model.SlotId);
 
             if (string.IsNullOrEmpty(model.Tag))
                 return View(model);

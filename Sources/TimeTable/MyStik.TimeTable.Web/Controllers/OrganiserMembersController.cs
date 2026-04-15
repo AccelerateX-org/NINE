@@ -67,7 +67,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var myUser = UserManager.FindByName(User.Identity.Name);
 
-            var vorSemester = new SemesterService().GetSemester(semester, 1);
+            var vorSemester = new SemesterService().GetNextSemester(semester);
 
             var userService = new UserInfoService();
 
@@ -194,7 +194,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var memberPage = organiser.Members.Where(x => x.Dates.Any(d => d.Begin >= day && d.End < nextDay)).OrderBy(m => m.Name);
 
-            var vorSemester = new SemesterService().GetSemester(semester, 1);
+            var vorSemester = new SemesterService().GetNextSemester(semester);
 
 
             foreach (var member in memberPage)

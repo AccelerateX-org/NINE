@@ -4898,6 +4898,7 @@
     <Content Include="Views\Lottery\ConsistencyCheckLottery.cshtml" />
     <Content Include="Views\ItemLabels\CreateTest.cshtml" />
     <Content Include="Views\Course\RemoveAllSubscriptions.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Double.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

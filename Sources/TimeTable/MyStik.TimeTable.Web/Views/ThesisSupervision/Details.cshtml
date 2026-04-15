@@ -12,38 +12,48 @@
 <div class="row">
 <div class="col-md-12">
 <div class="card">
-<div class="card-header">
-    @if (isMultiple)
-    {
-        if (Model.Position == 1)
+    <div class="card-header">
+        @if (Model.User != null)
         {
-            <h4>Status Abschlussarbeit @Model.User.FullName (ErstprüferIn)</h4>
+            if (isMultiple)
+            {
+                if (Model.Position == 1)
+                {
+                    <h4>Status Abschlussarbeit @Model.User.FullName (ErstprüferIn)</h4>
+                }
+                else
+                {
+                    <h4>Status Abschlussarbeit @Model.User.FullName (ZweitprüferIn)</h4>
+                }
+            }
+            else
+            {
+                <h4>Status Abschlussarbeit @Model.User.FullName</h4>
+            }
         }
         else
         {
-            <h4>Status Abschlussarbeit @Model.User.FullName (ZweitprüferIn)</h4>
+            <h4>Status Abschlussarbeit - kein Account vorhanden</h4>
         }
-    }
-    else
-    {
-        <h4>Status Abschlussarbeit @Model.User.FullName</h4>
-    }
-</div>
+    </div>
 <div class="list-group">
 <div class="list-group-item">
     <a href="@Url.Action("Index")" class="btn btn-outline-primary"><i class="fa fa-arrow-left"></i> zurück</a>
-    <a href="mailto:@Model.User.Email" class="btn btn-outline-primary">E-Mail senden</a>
+    @if (Model.User != null)
+    {
+        <a href="mailto:@Model.User.Email" class="btn btn-outline-primary">E-Mail senden</a>
+    }
 </div>
 @{
-    var isNameOk = !string.IsNullOrEmpty(Model.User.FirstName) && !string.IsNullOrEmpty(Model.User.LastName);
+    var isNameOk = Model.User != null && !string.IsNullOrEmpty(Model.User.FirstName) && !string.IsNullOrEmpty(Model.User.LastName);
     var isStudOk = !string.IsNullOrEmpty(Model.Student.Number);
 
     var isOk = isNameOk && isStudOk;
 
-    var mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+    var mediaStyle = isOk ? "bi-check text-success" : "bi-exclamation-triangle text-danger";
 }
 <div class="list-group-item">
-    <h4><i class="fas @mediaStyle"></i> Allgemeine Angaben</h4>
+    <h4><i class="bi @mediaStyle"></i> Allgemeine Angaben</h4>
     <ul class="fa-ul">
         @if (isNameOk)
         {
@@ -212,7 +222,6 @@
     {
         <a href="@Url.Action("Accept", new {id=Model.Supervisor.Id})" class="btn btn-success">Betreuung annehmen</a>
         <a href="@Url.Action("Reject", new {id=Model.Supervisor.Id})" class="btn btn-danger">Betreuung ablehnen</a>
-        <a href="mailto:@Model.User.Email" class="btn btn-default">E-Mail senden</a>
     }
     @if (Model.Position == 1)
     {

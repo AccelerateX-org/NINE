@@ -1,0 +1,2 @@
+﻿FK;Semester;KursID;Erster;Letzter;Wochentage;Frequenz;Beginn;Ende;Räume;Dozenten;Kohorten;Kapazität;Titel;Module
+FK 05;SoSe 2026:Semesterbegleitend;AKD.Vo;;;Mi;7;11:45;13:15;G 0.01;Hoffmann Alex;DMB:DM4A,DMB:DM4B;20;Akzidenzdruck;FK 05:DMT:AKD:Vo

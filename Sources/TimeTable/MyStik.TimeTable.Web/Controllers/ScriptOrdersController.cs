@@ -207,7 +207,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.Write(
                 "Name;Vorname;E-Mail;Versand;Bemerkung");
@@ -258,7 +258,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = CreateOrderModel(id);
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.Write(
                 "Titel;Version;Anzahl;URL");

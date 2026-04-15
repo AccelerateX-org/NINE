@@ -53,7 +53,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             var logs = db.Log.Where(log => log.Date >= start).OrderBy(log => log.Date);
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
             writer.Write("Datum;Zeit;Level;Logger;Nachricht");

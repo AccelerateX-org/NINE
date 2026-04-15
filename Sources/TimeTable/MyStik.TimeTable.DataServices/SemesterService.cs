@@ -1,7 +1,9 @@
 ﻿using MyStik.TimeTable.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Web.Caching;
 using System.Web.UI.WebControls;
 
 namespace MyStik.TimeTable.DataServices
@@ -32,6 +34,11 @@ namespace MyStik.TimeTable.DataServices
         }
 
 
+        private Semester GetSemester(Guid semId)
+        {
+            return _db.Semesters.SingleOrDefault(s => (s.Id == semId));
+        }
+
         /// <summary>
         /// Liefert das aktuelle Semester
         /// Kriterium: aktuelles Datum liegt in der Vorlesungszeit
@@ -39,13 +46,247 @@ namespace MyStik.TimeTable.DataServices
         /// <returns></returns>
         public Semester GetSemester(DateTime day)
         {
-            return _db.Semesters.FirstOrDefault(s => s.StartCourses <= day && day <= s.EndCourses);
+            var sem = _db.Semesters
+                .FirstOrDefault(s => s.StartCourses <= day && day <= s.EndCourses);
+            if (sem != null) return sem;
+
+            sem = CreateSemester(day);
+            _db.Semesters.Add(sem);
+            _db.SaveChanges();
+
+            return sem;
         }
+
+        public Semester CreateSemester(DateTime day)
+        {
+            // Semester anlegen
+            // SoSe yyyy: 15.03.yyyy - 30.09.yyyy
+            // WiSe yyyy: 01.10.yyyy - 14.03.yyyy+1
+            var year = day.Year;
+            var soseStart = new DateTime(year, 3, 15);
+            var soseEnd   = new DateTime(year, 9, 30);
+
+            var semName = "";
+            DateTime startCourses;
+            DateTime endCourses;
+
+            if (day < soseStart)
+            {
+                semName = $"WiSe {year - 1}";
+                startCourses = new DateTime(year - 1, 10, 1);
+                endCourses = new DateTime(year, 3, 14);
+            }
+            else if (day > soseEnd)
+            {
+                semName = $"WiSe {year}";
+                startCourses = new DateTime(year, 10, 1);
+                endCourses = new DateTime(year + 1, 3, 14);
+            }
+            else
+            {
+                semName = $"SoSe {year}";
+                startCourses = soseStart;
+                endCourses = soseEnd;
+            }
+
+            var sem = new Semester()
+            {
+                Name = semName,
+                StartCourses = startCourses,
+                EndCourses = endCourses,
+            };
+            sem.Dates = CreateHolidays(sem);
+
+            return sem;
+        }
+
+        public ICollection<SemesterDate> CreateHolidays(Semester sem)
+        {
+            var list = new List<SemesterDate>();
+            var year = sem.StartCourses.Year;
+
+            if (sem.StartCourses.Month == 3)
+            {
+                // Sommer
+                // Ostern
+                var easter = GetEaster(year);
+                list.Add(new SemesterDate()
+                {
+                    Description = "Ostern",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = easter.AddDays(-3),
+                    To = easter.AddDays(2)
+                });
+                // Pfingsten => 6 Wochen nach Ostern
+                list.Add(new SemesterDate()
+                {
+                    Description = "Pfingsten",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = easter.AddDays(42 - 2),
+                    To = easter.AddDays(42 + 2)
+                });
+                // 1. Mai
+                list.Add(new SemesterDate()
+                {
+                    Description = "1. Mai",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = new DateTime(year, 5,1),
+                    To = new DateTime(year, 5, 1),
+                });
+                // Christi Himmelfahrt => Do vor Pfingsten
+                list.Add(new SemesterDate()
+                {
+                    Description = "Christi Himmelfahrt",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = easter.AddDays(42 - 10),
+                    To = easter.AddDays(42 - 10)
+                });
+                // Fronleichnam => Do nach Pfingsten
+                list.Add(new SemesterDate()
+                {
+                    Description = "Fronleichnam",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = easter.AddDays(42 + 11),
+                    To = easter.AddDays(42 + 11)
+                });
+            }
+            else
+            {
+                // Winter
+                // 03.10.
+                list.Add(new SemesterDate()
+                {
+                    Description = "Tag der deutschen Einheit",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = new DateTime(year, 10, 3),
+                    To = new DateTime(year, 10, 3),
+                });
+                // 01.11.
+                list.Add(new SemesterDate()
+                {
+                    Description = "Allerheiligen",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = new DateTime(year, 11, 1),
+                    To = new DateTime(year, 11, 1),
+                });
+                // Weihnachten 24.12. 
+                var xMas = new DateTime(year, 12, 24);
+                var kings = new DateTime(year + 1, 1, 6);
+                var xMasStart = xMas;
+                var xMasEnd = kings;
+
+                switch (xMas.DayOfWeek)
+                {
+                    case DayOfWeek.Sunday:
+                        xMasStart = xMas.AddDays(-1);
+                        break;
+                    case DayOfWeek.Monday:
+                        xMasStart = xMas.AddDays(-2);
+                        break;
+                    case DayOfWeek.Tuesday:
+                        xMasStart = xMas.AddDays(-3);
+                        break;
+                }
+
+                switch (kings.DayOfWeek)
+                {
+                    case DayOfWeek.Saturday:
+                        xMasEnd = xMas.AddDays(1);
+                        break;
+                    case DayOfWeek.Friday:
+                        xMasStart = xMas.AddDays(2);
+                        break;
+                    case DayOfWeek.Thursday:
+                        xMasStart = xMas.AddDays(3);
+                        break;
+                }
+
+
+                list.Add(new SemesterDate()
+                {
+                    Description = "Weihnachten",
+                    Semester = sem,
+                    HasCourses = false,
+                    From = xMasStart,
+                    To = xMasEnd,
+                });
+
+            }
+
+
+
+            return list;
+        }
+
+        private DateTime GetEaster(int year)
+        {
+            var day = 0;
+            var month = 0;
+
+            var g = year % 19;
+            var c = year / 100;
+            var h = (c - c / 4 - (8 * c + 13) / 25 + 19 * g + 15) % 30;
+            var i = h - h / 28 * (1 - h / 28 * (29 / (h + 1)) * ((21 - g) / 11));
+
+            day = i - ((year + year / 4 + i + 2 - c + c / 4) % 7) + 28;
+            month = 3;
+            if (day > 31)
+            {
+                month++;
+                day -= 31;
+            }
+
+            var result = new DateTime(year, month, day);
+            return result;
+        }
+
+        public Semester GetSemester(string name)
+        {
+            return _db.Semesters.SingleOrDefault(s => (s.Name.ToUpper().Equals(name.ToUpper())));
+        }
+
 
 
         public Semester GetNextSemester(DateTime day)
         {
             var sem = _db.Semesters.Where(s => s.StartCourses > day).OrderBy(s => s.StartCourses).FirstOrDefault();
+            if (sem != null) return sem;
+
+            // das letzte Semester, das vor dem Tag endet
+            var lastSem = _db.Semesters.Where(s => s.EndCourses >= day).OrderBy(s => s.StartCourses).FirstOrDefault();
+
+            // wenn dieses Semester nicht existiert, dann existiert kein Semester
+            // das wäre dann eine Exception wert
+            if (lastSem == null)
+                throw new Exception("Es existiert kein Semester, das vor dem Tag endet. Es kann kein neues Semester angelegt werden.");
+
+            sem = CreateSemester(lastSem.EndCourses.AddDays(1));
+            _db.Semesters.Add(sem);
+            _db.SaveChanges();
+
+            return sem;
+        }
+
+        public Semester GetPreviousSemester(DateTime day)
+        {
+            var sem = _db.Semesters.Where(s => s.EndCourses < day).OrderByDescending(s => s.EndCourses).FirstOrDefault();
+            if (sem != null) return sem;
+
+            var futureSem = _db.Semesters.Where(s => s.StartCourses <= day).OrderByDescending(s => s.StartCourses).FirstOrDefault();
+
+            if (futureSem == null)
+                throw new Exception("Es existiert kein Semester, das nach dem Tag beginnt. Es kann kein neues Semester angelegt werden.");
+
+            sem = CreateSemester(futureSem.StartCourses.AddDays(-1));
+            _db.Semesters.Add(sem);
+            _db.SaveChanges();
 
             return sem;
         }
@@ -55,57 +296,25 @@ namespace MyStik.TimeTable.DataServices
             if (semester == null)
                 return null;
 
-            var today = semester.StartCourses;
+            var day = semester.StartCourses;
 
-            var sem = _db.Semesters.Where(s => s.StartCourses > today).OrderBy(s => s.StartCourses).FirstOrDefault();
-
-            return sem;
+            return GetNextSemester(day);
         }
 
 
         public Semester GetPreviousSemester(Semester semester)
         {
-            var today = semester.EndCourses;
-            
-            var sem = _db.Semesters.Where(s => s.EndCourses < today).OrderByDescending(s => s.EndCourses).FirstOrDefault();
+            if (semester == null)
+                return null;
 
-            return sem;
-        }
+            var day = semester.StartCourses;
 
+            return GetPreviousSemester(day);
 
-        public Semester GetSemester(Semester semester, int delta)
-        {
-            var semesters = _db.Semesters.Where(s => s.StartCourses < semester.StartCourses).OrderByDescending(s => s.StartCourses);
-            if (semesters.Count() >= delta)
-            {
-                return semesters.ToArray()[delta-1];
-            }
-
-            return new Semester { Name = "N.A." };
         }
 
 
 
-
-
-        public Semester GetSemester(DateTime from, DateTime to)
-        {
-            var semester = _db.Semesters.SingleOrDefault(s => (s.StartCourses<=from && to <= s.EndCourses) ||
-                (from <= s.StartCourses && to >= s.StartCourses) ||
-                (to >= s.EndCourses && from <= s.EndCourses));
-
-            return semester;
-        }
-
-        public Semester GetSemester(string name)
-        {
-            return _db.Semesters.SingleOrDefault(s => (s.Name.ToUpper().Equals(name.ToUpper())));
-        }
-
-        public Semester GetSemester(Guid semId)
-        {
-            return _db.Semesters.SingleOrDefault(s => (s.Id == semId));
-        }
 
 
 
@@ -130,7 +339,7 @@ namespace MyStik.TimeTable.DataServices
 
         public ICollection<DateTime> GetDays(Guid semId, DayOfWeek dayOfWeek, DateTime start, DateTime end)
         {
-            var semester = _db.Semesters.SingleOrDefault(s => s.Id == semId);
+            var semester = _db.Semesters.Include(semester1 => semester1.Dates).SingleOrDefault(s => s.Id == semId);
             if (semester == null)
             {
                 return new List<DateTime>();
@@ -138,12 +347,8 @@ namespace MyStik.TimeTable.DataServices
 
             var dates = new List<DateTime>();
 
-
-            if (semester == null)
-                return dates;
-
-            DateTime firstDate = start > semester.StartCourses ? start : semester.StartCourses;
-            DateTime lastDate = end < semester.EndCourses ? end : semester.EndCourses;
+            var firstDate = start > semester.StartCourses ? start : semester.StartCourses;
+            var lastDate = end < semester.EndCourses ? end : semester.EndCourses;
 
             var semesterStartTag = (int)((DateTime)firstDate).DayOfWeek;
 
@@ -157,7 +362,7 @@ namespace MyStik.TimeTable.DataServices
             while (occDate <= lastDate)
             {
                 var isVorlesung = true;
-                foreach (SemesterDate sd in semester.Dates)
+                foreach (var sd in semester.Dates)
                 {
                     // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
                     if (sd.From.Date <= occDate.Date &&
