@@ -12,6 +12,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public string Remark { get; set; }
 
+        public ActivityOrganiser Organiser { get; set; }
+
         public Curriculum Curriculum { get; set; }
 
         public Semester Semester { get; set; }

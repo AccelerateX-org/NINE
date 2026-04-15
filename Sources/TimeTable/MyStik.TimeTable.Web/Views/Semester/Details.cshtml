@@ -71,7 +71,8 @@
                         <a href="@Url.Action("Lecturer", "Semester", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-calendar-check"></i><span class="d-none d-sm-inline"> Verfügbarkeiten</span></a>
                         <a href="@Url.Action("Forward", "Semester", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-repeat"></i><span class="d-none d-sm-inline"> Fortschreibung</span></a>
                         <a href="@Url.Action("Index", "Import", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-upload"></i><span class="d-none d-sm-inline"> Import</span></a>
-                        <a href="@Url.Action("Conflicts", "Semester", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-lightning"></i><span class="d-none d-sm-inline"> Konfliktbehebung</span></a>
+                        <a href="@Url.Action("Conflicts", "Semester", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-lightning"></i><span class="d-none d-sm-inline"> Konflikte</span></a>
+                        <a href="@Url.Action("Courses", "Semester", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item list-group-item-action" aria-label="Studienpläne"><i class="bi bi-book"></i><span class="d-none d-sm-inline"> Angebot</span></a>
                     </div>
                 </div>
                 <div class="card mb-3">

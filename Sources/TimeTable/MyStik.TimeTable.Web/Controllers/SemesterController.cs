@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.Ajax.Utilities;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization.Configuration;
 using System.Threading;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -408,6 +410,63 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult Courses(Guid? orgId, Guid? semId)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
+
+            if (orgId.HasValue && semId.HasValue)
+            {
+                semester = SemesterService.GetSemester(semId.Value);
+                org = GetOrganiser(orgId.Value);
+            }
+
+            var model = new OrganiserViewModel
+            {
+                Semester = semester,
+                Organiser = org,
+            };
+
+            model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
+            model.NextSemester = SemesterService.GetNextSemester(semester);
+
+            var courses = new List<Course>();
+
+            foreach (var curr in org.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.Name).ToList())
+            {
+                foreach (var label in curr.LabelSet.ItemLabels.ToList())
+                {
+                    var labeledCourses = Db.Activities.OfType<Course>()
+                        .Where(x =>
+                            x.Semester.Id == semester.Id &&
+                            x.LabelSet != null &&
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                        .ToList();
+
+                    courses.AddRange(labeledCourses);
+                }
+            }
+
+            courses = courses.Distinct().ToList();
+
+            var courseService = new CourseInfoService(Db);
+
+            foreach (var course in courses)
+            {
+                var summary = courseService.GetCourseSummary(course);
+                model.Courses.Add(summary);
+            }
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = model.NextSemester;
+            ViewBag.PrevSemester = model.PreviousSemester;
+
+            return View(model);
+        }
+
 
     }
 }

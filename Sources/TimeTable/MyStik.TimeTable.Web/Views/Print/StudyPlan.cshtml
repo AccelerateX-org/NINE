@@ -24,7 +24,7 @@
             }
             else
             {
-                <p>@Model.Curriculum.Description</p>
+                <p>@Html.Raw(Model.Curriculum.Description)</p>
             }
             <h4>Struktur nach Themenbereichen</h4>
             @foreach (var area in Model.Curriculum.Areas)
@@ -36,7 +36,7 @@
                     }
                     else
                     {
-                        <p>@area.Description</p>
+                        <p>@Html.Raw(area.Description)</p>
                     }
 
 
@@ -80,7 +80,7 @@
                             }
                             else
                             {
-                                <p>@option.Description</p>
+                                <p>@Html.Raw(option.Description)</p>
                             }
                             <table class="table">
                                 <thead>

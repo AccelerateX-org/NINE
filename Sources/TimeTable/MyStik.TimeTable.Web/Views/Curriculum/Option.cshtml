@@ -78,7 +78,7 @@
                 {
                     <a href="@Url.Action("Slot", new { id = slot.Id })" class="list-group-item list-group-item-action">
                         <h5>@slot.Name (@slot.Tag)</h5>
-                        <p>@slot.Description</p>
+                        <p>@Html.Raw(slot.Description)</p>
                     </a>
                 }
             </div>

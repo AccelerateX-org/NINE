@@ -87,6 +87,34 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Organiser(Guid orgId, Guid semId)
+        {
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            var model = new StudyPlanViewModel
+            {
+                Organiser = org,
+                Semester = semester
+                //    Modules = modules
+            };
+
+            // hier muss überprüft werden, ob der aktuelle Benutzer
+            // der Fakultät des Studiengangs angehört oder nicht
+            ViewBag.UserRight = GetUserRight(org);
+
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.PrevSemester = prevSemester;
+
+
+            return View(model);
+        }
+
+
         public ActionResult Admin(Guid currId, Guid semId)
         {
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
