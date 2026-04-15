@@ -857,7 +857,7 @@ namespace MyStik.TimeTable.Web.Controllers
             */
             var begin = dateDay.Date;
             var end = dateDay.AddDays(delta).Date;
-            sb.AppendFormat("{0} - {1}", begin, end);
+            sb.AppendFormat("{0:d} - {1:d}", begin, end);
 
             model.Title = sb.ToString();
 
@@ -1175,7 +1175,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
             writer.Write(

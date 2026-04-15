@@ -29,9 +29,9 @@ namespace MyStik.TimeTable.Web.Controllers
 			logger.InfoFormat("List for [{0}]", summary.Activity.Name);
 
 			var ms = new MemoryStream();
-			var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
-			writer.Write(
+            writer.Write(
                 "Name;Vorname;Studienangebot;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
@@ -92,7 +92,7 @@ namespace MyStik.TimeTable.Web.Controllers
 			var semester = SemesterService.GetSemester(DateTime.Today);
 
 			var ms = new MemoryStream();
-			var writer = new StreamWriter(ms, Encoding.Default);
+			var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
 			writer.Write(
@@ -158,7 +158,7 @@ namespace MyStik.TimeTable.Web.Controllers
 			var semester = SemesterService.GetSemester(DateTime.Today);
 
 			var ms = new MemoryStream();
-			var writer = new StreamWriter(ms, Encoding.Default);
+			var writer = new StreamWriter(ms, Encoding.UTF8);
 
 			writer.Write(
 				"Name;Vorname;Studienangebot;Semester;Status;E-Mail");

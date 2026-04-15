@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -1144,11 +1145,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult DeleteDate(Guid id)
         {
-            var occ = Db.Occurrences.SingleOrDefault(o => o.Id == id);
+            var occ = Db.Occurrences.Include(occurrence => occurrence.Subscriptions).SingleOrDefault(o => o.Id == id);
 
             var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
 
-            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == summary.Date.Id);
+            var date = Db.ActivityDates.Include(activityDate => activityDate.Activity).Include(activityDate1 => activityDate1.VirtualRooms).Include(activityDate2 => activityDate2.Slots.Select(activitySlot =>
+                activitySlot.Occurrence.Subscriptions)).SingleOrDefault(d => d.Id == summary.Date.Id);
             var oh = date.Activity as OfficeHour;
 
             var actSummary = new ActivitySummary {Activity = date.Activity};
@@ -1174,6 +1176,12 @@ namespace MyStik.TimeTable.Web.Controllers
             date.Activity.Dates.Remove(date);
             date.Hosts.Clear();
             date.Rooms.Clear();
+
+            foreach (var vRoom in date.VirtualRooms.ToList())
+            {
+                Db.VirtualRoomAccesses.Remove(vRoom);
+            }
+
             Db.ActivityDates.Remove(date);
 
             Db.SaveChanges();
@@ -1803,7 +1811,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public FileResult SubscriptionList(Guid id)
         {
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.Write("Datum;Von;Bis;Name;Vorname;Datum der Eintragung;Anliegen");
             writer.Write(Environment.NewLine);
@@ -1862,7 +1870,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public FileResult SubscriptionDateList(Guid id)
         {
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.Write("Datum;Von;Bis;Name;Vorname;Datum der Eintragung;Anliegen");
             writer.Write(Environment.NewLine);

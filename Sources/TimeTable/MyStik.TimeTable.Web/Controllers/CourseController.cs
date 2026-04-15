@@ -2901,7 +2901,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.WriteLine("LV Name;{0}", course.Name);
             writer.WriteLine("LV Kurzname;{0}", course.ShortName);

@@ -8,26 +8,43 @@
     var hasPrio1 = hasLottery && Model.Subscription.Priority.HasValue && (Model.Subscription.Priority.Value == 1) && Model.Summary.Lottery.AllowManualSubscription;
 }
 
-
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                @if (Model.Summary.Course.Organiser != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
+                }
+                @if (Model.Summary.Course.Semester != null)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Summary.Course.Semester.Id, orgId = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Semester.Name</a></li>
+                }
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Course", new { id = Model.Summary.Course.Id })">@Model.Summary.Course.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("AdminNewParticipients", "Course", new { id = Model.Summary.Course.Id })">Teilnehmende</a></li>
                 @if (Model.User != null)
                 {
-                    <h4>@Model.User.FullName</h4>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.User.FullName</li>
                 }
                 else
                 {
-                    <h4 class="text-danger">Kein Benutzerkonto vorhanden</h4>
+                    <li class="breadcrumb-item active" aria-current="page">Kein Benutzerkonto vorhanden</li>
                 }
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Eintragung in Lehrveranstaltung @Model.Summary.Course.ShortName</h4>
             </div>
-            
+
             <div class="list-group">
                 <div class="list-group-item">
-                    <div class="btn-group">
-                        <a class="btn btn-outline-secondary" href="@Url.Action("AdminNewParticipients", new {id=Model.Course.Id})"><i class="fas fa-chevron-left"></i> zurück</a>
-                    </div>
                     <div class="btn-group" role="group" aria-label="...">
                         @if (Model.User != null)
                         {
@@ -88,18 +105,25 @@
                         </div>
                     }
                 </div>
-                <div class="list-group-item">
-                    <h5 class="card-subtitle">Weitere Belegungen im @Model.Semester.Name</h5>
-                    <table class="table">
-                        <thead>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Weitere Belegungen im @Model.Semester.Name</h4>
+            </div>
+            <div class="list-group-item">
+                <table class="table">
+                    <thead>
                         <tr>
                             <th>Bezeichnung</th>
                             <th>Kohorten</th>
                             <th>Dozent(en)</th>
                             <th>Status</th>
                         </tr>
-                        </thead>
-                        <tbody>
+                    </thead>
+                    <tbody>
                         @foreach (var item in Model.CourseSubscriptions)
                         {
                             var linkText = item.CourseSummary.Course.Name + " (" + item.CourseSummary.Course.ShortName + ")";
@@ -133,13 +157,11 @@
                             </tr>
 
                         }
-                        </tbody>
-                    </table>
-
-                </div>
+                    </tbody>
+                </table>
             </div>
-            
-
         </div>
     </div>
 </div>
+
+

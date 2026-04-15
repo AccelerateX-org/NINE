@@ -899,7 +899,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult Persons(string searchString)
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
-            var vorSemester = new SemesterService().GetSemester(semester, 1);
+            var vorSemester = new SemesterService().GetNextSemester(semester);
 
             var model = new List<StudentViewModel>();
 
@@ -1059,7 +1059,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(id.ToUpper()));
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
 

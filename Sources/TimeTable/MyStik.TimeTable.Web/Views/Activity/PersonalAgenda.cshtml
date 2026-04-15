@@ -6,6 +6,8 @@
 
     @foreach (var activity in Model.FutureActivities.OrderBy(x => x.RelevantDate.Begin))
     {
+        var isCurrent = activity.Activity.Semester.Id == Model.CurrentSemester.Id;
+
         <div class="list-group-item">
             <div class="row">
                 <div class="col-md-1">
@@ -22,26 +24,13 @@
                     }
                     else
                     {
-                        if (activity.NextDate != null)
+                        if (isCurrent)
                         {
+                            <span class="badge bg-primary">@activity.Activity.Semester.Name</span>
                         }
                         else
                         {
-                            if (activity.FirstDate != null)
-                            {
-                                <span class="badge bg-primary">@activity.Activity.Semester.Name</span>
-                            }
-                            else
-                            {
-                                if (activity.LastDate != null)
-                                {
-                                    <span class="badge bg-secondary">@activity.Activity.Semester.Name</span>
-                                }
-                                else
-                                {
-                                    <strong>ohne Termine</strong>
-                                }
-                            }
+                            <span class="badge bg-secondary">@activity.Activity.Semester.Name</span>
                         }
                     }
                 </div>

@@ -59,27 +59,31 @@ namespace MyStik.TimeTable.Web.Controllers
             var nextSemester = SemesterService.GetNextSemester(semester);
             var previousSemester = SemesterService.GetPreviousSemester(semester);
 
+            // 0. Suche die Mitglieder des aktuellen Users
+            var user = GetCurrentUser();
+            var model = new PersonViewModel
+            {
+                User = user
+            };
+
             // 1. Suche den gesuchten member
             if (memberId == null)
-                return RedirectToAction("Index", "Home");
-
-            var member = Db.Members.SingleOrDefault(x => x.Id == memberId);
-            if (member == null)
-                return RedirectToAction("Index", "Home");
-
-            var user = GetCurrentUser();
-
-            var model = new PersonViewModel();
-
-            if (string.IsNullOrEmpty(member.UserId))
             {
-                model.Members = new List<OrganiserMember>();
-                model.Members.Add(member);
+                var members = Db.Members.Where(x => x.UserId.Equals(user.Id)).ToList();
+                if (!members.Any())
+                    return RedirectToAction("Index", "Home");
+
+                model.Members = members;
                 FillModel(model, semester);
-                ViewBag.IsSelf = false;
+                ViewBag.IsSelf = true;
+
             }
             else
             {
+                var member = Db.Members.SingleOrDefault(x => x.Id == memberId);
+                if (member == null || string.IsNullOrEmpty(member.UserId))
+                    return RedirectToAction("Index", "Home");
+
                 var userId = member.UserId;
                 var members = Db.Members.Where(x => x.UserId.Equals(userId)).ToList();
                 if (!members.Any())
@@ -94,7 +98,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 ViewBag.IsSelf = user.Id.Equals(userId);
             }
-                
+
+
             ViewBag.UserRight = GetUserRight();
             ViewBag.PrevSemester = previousSemester;
             ViewBag.CurrentSemester = semester;

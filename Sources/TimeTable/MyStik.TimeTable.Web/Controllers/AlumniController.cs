@@ -291,7 +291,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var alumni = Db.Alumnae.Where(x => x.Curriculum.Organiser.Id == member.Organiser.Id).ToList();
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             var sbTitle = new StringBuilder();
             sbTitle.Append("Anrede;");

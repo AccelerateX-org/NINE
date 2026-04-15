@@ -751,7 +751,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.InitLotPots();
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
             // SG; Semester;Bedarf;Flexibel;Prio
@@ -3097,7 +3097,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.Write(
                 "Stud;LV;Doz;Prio;Status;Eingetragen");

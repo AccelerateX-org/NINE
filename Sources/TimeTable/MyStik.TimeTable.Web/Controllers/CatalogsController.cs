@@ -531,7 +531,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
             writer.Write(
                 "Catalog;Tag;Titel");

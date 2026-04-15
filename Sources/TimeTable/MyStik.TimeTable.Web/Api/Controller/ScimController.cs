@@ -9,7 +9,6 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using Hangfire;
 using MyStik.TimeTable.Web.Api.Contracts;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {

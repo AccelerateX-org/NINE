@@ -1,0 +1,4 @@
+﻿@model double?
+@Html.TextBox("", 
+    Model.HasValue ? Model.Value.ToString("0.##", System.Globalization.CultureInfo.CurrentUICulture) : "", 
+    new { type = "number", step = "0.01", min = "0" })

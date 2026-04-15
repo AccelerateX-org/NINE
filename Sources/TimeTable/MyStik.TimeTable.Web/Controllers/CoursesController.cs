@@ -488,7 +488,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = CreateSemesterReport(semester, org);
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
             writer.Write("Studienangebot;Gruppe;Kürzel;Vorname;Nachname;E-Mail;Kurzname;Titel;Eintragungen");
@@ -545,7 +545,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = CreateSemesterReport(semester, org);
 
             var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
+            var writer = new StreamWriter(ms, Encoding.UTF8);
 
 
             writer.Write("Studienangebot;Gruppe;Kürzel;Vorname;Nachname;Kurzname;Titel;Datum");

@@ -149,24 +149,24 @@
     <div class="col-md-2">
         <div class="card mb-3">
             <div class="list-group">
-                <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action"><i class="bi bi-envelope"></i> Mailverteiler</a>
-                <a href="@Url.Action("Organiser", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-building-fill-gear"></i> Raumverzeichnis</a>
-                <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-building-check"></i> Raumreservierungen</a>
+                <a href="@Url.Action("Organiser", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-houses"></i> Raumverzeichnis</a>
+                <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-boxes"></i> Modulkataloge</a>
+                <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-mortarboard"></i> Studienangebote</a>
+                <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi-house-check"></i> Raumreservierungen</a>
+                <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
+                <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-signpost-split"></i> Semesterplanung</a>
             </div>
         </div>
         <div class="card mb-3">
             <div class="list-group">
-                <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-mortarboard"></i> Studienangebote</a>
-                <a href="@Url.Action("Organiser", "Dictionary", new { orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action"><i class="bi bi-collection-play"></i> Lehrveranstaltungen</a>
                 <a href="@Url.Action("Organiser", "Lottery", new {orgId = Model.Id, semId = ViewBag.CurrentSemester.Id })" class="list-group-item list-group-item-action"><i class="bi bi-shuffle"></i> Wahlverfahren</a>
                 <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-lines-fill"></i> Aufnahmeverfahren</a>
                 <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-book"></i> Abschlussarbeiten</a>
-                <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-boxes"></i> Modulkataloge</a>
             </div>
         </div>
         <div class="card mb-3">
             <div class="list-group">
-                <a href="@Url.Action("Index", "Labels", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-people"></i> Kohorten</a>
+                <a href="@Url.Action("Index", "ItemLabels", new { id = Model.Id })" class="list-group-item list-group-item-action"><i class="bi bi-people"></i> Kohorten</a>
                 <a href="@Url.Action("Organiser", "Lecturer", new {id=Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-vcard"></i> Lehrende</a>
                 <a href="@Url.Action("Index", "Students", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-badge"></i> Studierende</a>
                 <a href="@Url.Action("List", "Alumni", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-hearts"></i> Alumni</a>
@@ -174,8 +174,8 @@
         </div>
         <div class="card mb-3">
             <div class="list-group">
-                <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-signpost-split"></i> Semesterplanung</a>
                 <a href="@Url.Action("Index", "Infoscreens", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-person-video3"></i> Infoscreens</a>
+                <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action"><i class="bi bi-envelope"></i> Mailverteiler</a>
                 <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action"><i class="bi bi-send"></i> Newsletter</a>
                 <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action"><i class="bi bi-gear"></i> Rechte & Rollen</a>
             </div>
