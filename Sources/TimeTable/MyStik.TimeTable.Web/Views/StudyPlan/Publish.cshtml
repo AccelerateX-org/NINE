@@ -21,8 +21,9 @@
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.Curriculum.Id)
-                    @Html.HiddenFor(m => m.Semester.Id)
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.CurriculumId)
+                    @Html.HiddenFor(m => m.SemesterId)
                     <div class="row">
                         <div class="col-4">
                             <label for="Remark" class="form-label">Bemerkung</label>

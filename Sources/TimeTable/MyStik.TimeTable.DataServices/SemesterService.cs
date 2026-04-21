@@ -48,11 +48,15 @@ namespace MyStik.TimeTable.DataServices
         {
             var sem = _db.Semesters
                 .FirstOrDefault(s => s.StartCourses <= day && day <= s.EndCourses);
+
+            /*
             if (sem != null) return sem;
 
             sem = CreateSemester(day);
             _db.Semesters.Add(sem);
             _db.SaveChanges();
+            */
+
 
             return sem;
         }
@@ -267,11 +271,14 @@ namespace MyStik.TimeTable.DataServices
             if (lastSem == null)
                 throw new Exception("Es existiert kein Semester, das vor dem Tag endet. Es kann kein neues Semester angelegt werden.");
 
+            return lastSem;
+            /*
             sem = CreateSemester(lastSem.EndCourses.AddDays(1));
             _db.Semesters.Add(sem);
             _db.SaveChanges();
 
             return sem;
+            */
         }
 
         public Semester GetPreviousSemester(DateTime day)
@@ -284,11 +291,15 @@ namespace MyStik.TimeTable.DataServices
             if (futureSem == null)
                 throw new Exception("Es existiert kein Semester, das nach dem Tag beginnt. Es kann kein neues Semester angelegt werden.");
 
+            return futureSem;
+
+            /*
             sem = CreateSemester(futureSem.StartCourses.AddDays(-1));
             _db.Semesters.Add(sem);
             _db.SaveChanges();
 
             return sem;
+            */
         }
 
         public Semester GetNextSemester(Semester semester)

@@ -431,17 +431,24 @@ namespace MyStik.TimeTable.Web.Controllers
             model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
             model.NextSemester = SemesterService.GetNextSemester(semester);
 
-            var courses = new List<Course>();
+            // Eigenes Angebot + Export
+            var courses = Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semester.Id &&
+                    x.Organiser.Id == org.Id)
+                .ToList();
 
+            // Import: das was andere FKs anbieten
             foreach (var curr in org.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.Name).ToList())
             {
                 foreach (var label in curr.LabelSet.ItemLabels.ToList())
                 {
                     var labeledCourses = Db.Activities.OfType<Course>()
                         .Where(x =>
+                            x.Organiser.Id != org.Id &&         // Angebote anderer FKs
                             x.Semester.Id == semester.Id &&
                             x.LabelSet != null &&
-                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id)) // in eigenem Curriculum gelabelt
                         .ToList();
 
                     courses.AddRange(labeledCourses);

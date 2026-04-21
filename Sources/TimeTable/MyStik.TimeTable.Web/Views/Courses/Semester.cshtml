@@ -265,11 +265,10 @@
                         <th>Kurzname</th>
                         <th>Titel</th>
                         <th>Kohorten</th>
-                        <th>Abschnitt</th>
                         <th>Zeitraum</th>
                         <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
-                        <th>Platzkontingente</th>
+                        <th>Kontingente</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -293,25 +292,33 @@
                                     }
                                 </td>
                                 <td>
-                                    @c.Course.Name
+                                    <div class="text-break">@c.Course.Name</div>
                                 </td>
                                 <td>
                                     @if (c.Course.LabelSet != null)
                                     {
-                                        @Html.LabelList(c.Course)
+                                        @Html.LabelLinkList(c.Course)
                                     }
                                 </td>
                                 <td>
-                                    @if (c.Course.Segment != null)
+                                    @if (c.Dates.Count == 1)
                                     {
-                                        <div>@c.Course.Segment.Description</div>
+                                        @Html.DateList(c.Dates)
+                                    }
+                                    else
+                                    {
+                                        <div>diverse</div>
                                     }
                                 </td>
                                 <td>
-                                    @Html.DateList(c.Dates)
-                                </td>
-                                <td>
-                                    @Html.RoomList(c.Rooms)
+                                    @if (c.Rooms.Count == 1)
+                                    {
+                                        @Html.RoomList(c.Rooms)
+                                    }
+                                    else
+                                    {
+                                        <div>diverse</div>
+                                    }
                                 </td>
                                 <td>
                                     @Html.LecturerList(c.Lecturers)
@@ -321,16 +328,13 @@
                                     {
                                         if (c.Course.Occurrence.SeatQuotas.Any())
                                         {
-                                            foreach (var quota in c.Course.Occurrence.SeatQuotas)
-                                            {
-                                                <div>@quota.Summary</div>
-                                            }
+                                            <div>ja</div>
                                         }
                                         else
                                         {
                                             if (c.Course.Occurrence.Capacity < 1)
                                             {
-                                                <div>Offene Liste</div>
+                                                <div>nein</div>
                                             }
                                             else
                                             {

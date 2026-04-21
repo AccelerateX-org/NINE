@@ -43,8 +43,8 @@ namespace IOTester
                 {
                     importer.CheckLecturer(validCourse.Key, dataSet.Lecturers);
                     importer.CheckRooms(validCourse.Key, dataSet.Rooms);
-                    importer.CheckCohorts(validCourse.Key, dataSet.Cohorts);
-                    importer.CheckModules(validCourse.Key, dataSet.Modules);
+                    //importer.CheckCohorts(validCourse.Key, dataSet.Cohorts);
+                    //importer.CheckModules(validCourse.Key, dataSet.Modules);
                 }
             }
 

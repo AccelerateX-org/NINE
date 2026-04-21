@@ -71,34 +71,25 @@ namespace MyStik.TimeTable.Web.Controllers
             model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
             model.NextSemester = SemesterService.GetNextSemester(semester);
 
-            /*
-            var lastEnd = DateTime.Today.AddDays(-90);
-            var alLotteries = Db.Lotteries.Where(x =>
-                x.LastDrawing >= lastEnd && x.IsAvailable &&
-                x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.FirstDrawing).ToList();
 
-            model.ActiveLotteries.AddRange(alLotteries);
-            */
+            // Eigenes Angebot + Export
+            var courses = Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semester.Id &&
+                    x.Organiser.Id == org.Id)
+                .ToList();
 
-            /*
-            var courses =
-                Db.Activities.OfType<Course>().Where(c =>
-                        c.Semester.Id == semester.Id &&
-                        c.Organiser.Id == org.Id)
-                    .OrderBy(c => c.ShortName).ToList();
-            */
-
-            var courses = new List<Course>();
-
+            // Import: das was andere FKs anbieten
             foreach (var curr in org.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.Name).ToList())
             {
                 foreach (var label in curr.LabelSet.ItemLabels.ToList())
                 {
                     var labeledCourses = Db.Activities.OfType<Course>()
                         .Where(x =>
+                            x.Organiser.Id != org.Id &&         // Angebote anderer FKs
                             x.Semester.Id == semester.Id &&
                             x.LabelSet != null &&
-                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
+                            x.LabelSet.ItemLabels.Any(l => l.Id == label.Id)) // in eigenem Curriculum gelabelt
                         .ToList();
 
                     courses.AddRange(labeledCourses);

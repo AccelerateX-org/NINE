@@ -22,6 +22,11 @@ namespace MyStik.TimeTable.Web.Controllers
     {
         public Curriculum Curriculum { get; set; } 
         public Semester Semester { get; set; }
+        
+        public Guid CurriculumId { get; set; }
+
+        public Guid SemesterId { get; set; }
+
         public string Remark { get; set; }
 
         public bool RollForward { get; set; }
@@ -142,7 +147,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new StudyPlanPublishingModel
             {
                 Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId),
-                Semester = Db.Semesters.SingleOrDefault(y => y.Id == semId)
+                Semester = Db.Semesters.SingleOrDefault(y => y.Id == semId),
+                CurriculumId = currId,
+                SemesterId = semId
             };
 
             return View(model);
@@ -153,8 +160,8 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
 
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
-            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.Semester.Id);
+            var curr = Db.Curricula.Include(curriculum => curriculum.Organiser.Members).SingleOrDefault(x => x.Id == model.CurriculumId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemesterId);
             var member =
                 curr.Organiser.Members.SingleOrDefault(m =>
                     !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
@@ -168,7 +175,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 x.SubjectAccreditations.Any(c =>
                     c.Slot != null &&
                     c.Slot.AreaOption != null &&
-                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
+                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).Include(moduleSubject => moduleSubject.Module.Descriptions.Select(moduleDescription => moduleDescription.Semester)).Include(moduleSubject1 => moduleSubject1.Module.Descriptions.Select(moduleDescription1 => moduleDescription1.ChangeLog)).Include(moduleSubject => moduleSubject.Module.ExaminationOptions.Select(examinationOption => examinationOption.ExaminationDescriptions.Select(examinationDescription => examinationDescription.FirstExminer))).Include(moduleSubject1 => moduleSubject1.Module.ExaminationOptions.Select(examinationOption1 => examinationOption1.ExaminationDescriptions.Select(examinationDescription1 => examinationDescription1.SecondExaminer))).Include(moduleSubject => moduleSubject.Module.ExaminationOptions.Select(examinationOption2 => examinationOption2.ExaminationDescriptions.Select(examinationDescription2 => examinationDescription2.ChangeLog))).Include(moduleSubject1 => moduleSubject1.Module.ExaminationOptions.Select(examinationOption3 =>
+                examinationOption3.ExaminationDescriptions.Select(examinationDescription3 =>
+                    examinationDescription3.Semester))).ToList();
 
             var modules = subjects.Select(x => x.Module).Distinct().ToList();
 

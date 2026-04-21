@@ -1,8 +1,34 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Data.Semester>
 
 @{
     ViewBag.Title = "Index";
+    /*
+    var db = new TimeTableDbContext();
+
+    var lower = new DateTime(2010, 10, 1);
+    var upper = new DateTime(2035, 3, 15);
+
+    var oldSem = db.Semesters
+        .Where(x => x.EndCourses < lower || x.StartCourses >= upper)
+        .Include(semester => semester.Dates.Select(semesterDate => semesterDate.Organiser)).Include(semester1 => semester1.Groups)
+        .OrderByDescending(x => x.StartCourses)
+        .Take(500).ToList();
+
+    foreach (var semester in oldSem)
+    {
+        foreach (var semesterDate in semester.Dates.ToList())
+        {
+            db.SemesterDates.Remove(semesterDate);
+        }
+
+        db.Semesters.Remove(semester);
+    }
+
+    db.SaveChanges();
+    */
 }
 <div class="row">
     <div class="col-md-12">

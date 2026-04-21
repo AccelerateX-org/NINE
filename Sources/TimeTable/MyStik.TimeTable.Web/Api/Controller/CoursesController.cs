@@ -918,6 +918,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     // Label auf Ebene Studiengang bzw. Studiengänge, wenn mehrere SPOs gemeint durch Angabe des Alias
                     if (string.IsNullOrEmpty(cohorte.curriculum_id))
                     {
+                        // Wenn der Alias zusammengesetzt ist, dann exakt vergleichen
+                        // Trennzeichen wäre der _
                         var currs = Db.Curricula.Where(x => x.Organiser.Id == targetOrg.Id && x.ShortName.Equals(cohorte.curriculum_alias)).Include(curriculum =>
                             curriculum.LabelSet.ItemLabels).ToList();
                         foreach (var curr in currs)

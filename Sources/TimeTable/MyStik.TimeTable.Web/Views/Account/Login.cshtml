@@ -5,71 +5,81 @@
     Layout = "~/Views/Shared/_LayoutPublicSidebar.cshtml";
     ViewBag.Title = Resources.LoginTab;
 }
-
 <div class="row mt-3 justify-content-center">
-    <div class="col-md-4">
-        <h2>Anmelden</h2>
-        <p>Wie kann ich <strong>Hamster Apps</strong> wie grapevine, gym oder jotter nutzen?</p>
-        <h4>HM User Account</h4>
-        <p>Als Mitglied der HM (Studierende, Lehrende) kann ich wie gewohnt meinen <i>HM User Account</i> nutzen.</p>
-        <p><strong>Wichtiger Hinweis:</strong> wenn ich bisher mich über den <strong>Hamster Account</strong> angemeldet habe, dann muss ich mich zuerst damit anmelden und dann unter der Funktion "Mein Benutzerkonto" den <i>HM User Account</i> verknüpfen.</p>
-        <h4>Hamster Account <small>(ehem. NINE Account)</small></h4>
-        <p>Wenn ich (noch) keinen <i>HM User Account</i> habe, z.B. bei Teilnahme an Aufnahmeverfahren, dann kann ich zunächst einen <strong>Hamster Account</strong> anlegen. Ich kann später unter der Funktion "Mein Benutzerkonto" den <i>HM User Account</i> verknüpfen.</p>
+    <div class="col-md-8">
+        <div class="alert alert-danger">
+            <h2>Wichtige Info für alle Nutzenden der HM App</h2>
+            <p>Durch die Umstellung auf Exchange ist eine 
+                <a href="https://collab.dvb.bayern/spaces/HMUT/pages/2576569676/HM+App+Neu-+Anmeldung" target="_blank">Aktion in der HM App</a>
+                erforderlich. Anfragen dazu bitte an die zentrale IT senden.</p>
+        </div>
     </div>
-    <div class="col-md-4">
-        <ul class="nav nav-underline">
-            <li class="nav-item">
-                <a class="nav-link active" aria-current="page" data-bs-toggle="tab" href="#loginHamster">Hamster Account</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" aria-current="page" data-bs-toggle="tab" href="#loginHM">HM User Account</a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane active" id="loginHamster">
-                <div class="card">
-                    <div class="card-body">
+</div>
 
-                        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form", role = "form" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+    <div class="row mt-3 justify-content-center">
+        <div class="col-md-4">
+            <h2>Anmelden</h2>
+            <p>Wie kann ich <strong>Hamster Apps</strong> wie grapevine, gym oder jotter nutzen?</p>
+            <h4>HM User Account</h4>
+            <p>Als Mitglied der HM (Studierende, Lehrende) kann ich wie gewohnt meinen <i>HM User Account</i> nutzen.</p>
+            <p><strong>Wichtiger Hinweis:</strong> wenn ich bisher mich über den <strong>Hamster Account</strong> angemeldet habe, dann muss ich mich zuerst damit anmelden und dann unter der Funktion "Mein Benutzerkonto" den <i>HM User Account</i> verknüpfen.</p>
+            <h4>Hamster Account <small>(ehem. NINE Account)</small></h4>
+            <p>Wenn ich (noch) keinen <i>HM User Account</i> habe, z.B. bei Teilnahme an Aufnahmeverfahren, dann kann ich zunächst einen <strong>Hamster Account</strong> anlegen. Ich kann später unter der Funktion "Mein Benutzerkonto" den <i>HM User Account</i> verknüpfen.</p>
+        </div>
+        <div class="col-md-4">
+            <ul class="nav nav-underline">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" data-bs-toggle="tab" href="#loginHamster">Hamster Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" data-bs-toggle="tab" href="#loginHM">HM User Account</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="loginHamster">
+                    <div class="card">
+                        <div class="card-body">
+
+                            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form", role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
 
-                            <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-envelope fa-fw"></i></span>
-                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = Resources.EmailPlaceholder })
-                            </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fas fa-envelope fa-fw"></i></span>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = Resources.EmailPlaceholder })
+                                </div>
 
-                            <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon2"><i class="fas fa-key fa-fw"></i></span>
-                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Resources.PasswordPlaceholder })
-                            </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon2"><i class="fas fa-key fa-fw"></i></span>
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Resources.PasswordPlaceholder })
+                                </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-outline-primary btn-block">
-                                    @Resources.LoginButton <i class="fas fa-sign-in-alt"></i>
-                                </button>
-                            </div>
-                        }
-                        <hr />
-                        <ul class="fa-ul mt-2">
-                            <li><i class="fas fa-question fa-li text-primary"></i>@Html.ActionLink(Resources.ForgotPasswordLink, "ForgotPassword")</li>
-                            <li><i class="fas fa-pen fa-li text-primary"></i>@Html.ActionLink(Resources.RegisterLink, "Register")</li>
-                        </ul>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-outline-primary btn-block">
+                                        @Resources.LoginButton <i class="fas fa-sign-in-alt"></i>
+                                    </button>
+                                </div>
+                            }
+                            <hr />
+                            <ul class="fa-ul mt-2">
+                                <li><i class="fas fa-question fa-li text-primary"></i>@Html.ActionLink(Resources.ForgotPasswordLink, "ForgotPassword")</li>
+                                <li><i class="fas fa-pen fa-li text-primary"></i>@Html.ActionLink(Resources.RegisterLink, "Register")</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="tab-pane" id="loginHM">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="form-group">
-                            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                <div class="tab-pane" id="loginHM">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
