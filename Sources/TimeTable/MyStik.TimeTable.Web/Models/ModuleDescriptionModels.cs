@@ -107,6 +107,8 @@ namespace MyStik.TimeTable.Web.Models
         public string Name { get; set; }
 
         public double SWS { get; set; }
+        public int SWS_Big { get; set; }
+        public int SWS_Small { get; set; }
     }
 
 }

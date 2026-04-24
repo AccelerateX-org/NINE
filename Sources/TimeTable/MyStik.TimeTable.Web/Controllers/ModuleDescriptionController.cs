@@ -889,7 +889,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new SubjectViewModel
             {
-                Module = module
+                Module = module,
+                SWS_Big = 2,
+                SWS_Small = 0
             };
 
             var teachingForms =
@@ -906,6 +908,19 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.TeachingTypeId = Guid.Parse(teachingForms.First().Value);
             }
 
+            ViewBag.SWS_Big_Select = new SelectList(Enumerable.Range(0, 20).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.SWS_Big);
+
+            ViewBag.SWS_Small_Select = new SelectList(Enumerable.Range(0, 99).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.SWS_Small);
+
+
             return View(model);
         }
 
@@ -915,10 +930,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.Module.Id);
             var type = Db.TeachingFormats.SingleOrDefault(x => x.Id == model.TeachingTypeId);
 
+            var sws_total = model.SWS_Big + model.SWS_Small / 100.0;
+
             var subject = new ModuleSubject
             {
                 Module = module,
-                SWS = model.SWS,
+                SWS = sws_total,
                 Tag = model.Tag,
                 Name = model.Name,
                 TeachingFormat = type
@@ -941,6 +958,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Tag = subject.Tag,
                 Name = subject.Name,
                 SWS = subject.SWS,
+                SWS_Big = (int)Math.Floor(subject.SWS),
+                SWS_Small = (int)((subject.SWS - Math.Floor(subject.SWS)) * 100 + 0.0001),
                 TeachingTypeId = subject.TeachingFormat.Id,
             };
 
@@ -952,6 +971,18 @@ namespace MyStik.TimeTable.Web.Controllers
                 });
 
             ViewBag.TeachingOptions = teachingForms;
+
+            ViewBag.SWS_Big_Select = new SelectList(Enumerable.Range(0, 20).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.SWS_Big);
+
+            ViewBag.SWS_Small_Select = new SelectList(Enumerable.Range(0, 99).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.SWS_Small);
 
             return View(model);
         }
@@ -988,7 +1019,10 @@ namespace MyStik.TimeTable.Web.Controllers
             subject.TeachingFormat = type;
             subject.Tag = model.Tag;
             subject.Name = model.Name;
-            subject.SWS = model.SWS;
+
+            var sws_total = model.SWS_Big + model.SWS_Small / 100.0;
+
+            subject.SWS = sws_total;
 
             Db.SaveChanges();
 

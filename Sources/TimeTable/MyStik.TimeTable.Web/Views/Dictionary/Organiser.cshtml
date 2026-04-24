@@ -1,7 +1,27 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
 @model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @{
     ViewBag.Title = "Vorlesungsverzeichnis";
+
+    /*
+    var db = new TimeTableDbContext();
+
+    var allCurrs = db.Curricula.Where(x => x.LabelSet != null).Include(curriculum => curriculum.LabelSet).ToList();
+
+    var labelSets = db.Activities.OfType<Course>()
+        .Where(x =>
+            x.Semester.Id == Model.Semester.Id &&
+            x.Organiser.Id == Model.Organiser.Id &&
+            x.LabelSet != null)
+        .Select(x => x.LabelSet).Include(itemLabelSet => itemLabelSet.ItemLabels)
+        .ToList();
+
+    var allLabels = labelSets.SelectMany(labelSet => labelSet.ItemLabels).Distinct().ToList();
+
+    var selectedCurrs = (from label in allLabels from curr in allCurrs where curr.LabelSet.ItemLabels.Contains(label) select curr).Distinct().ToList();
+    */
+
 }
 
 
@@ -130,6 +150,17 @@
         </div>
     </div>
 </div>
+@*
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            @foreach (var c in selectedCurrs)
+            {
+                <li>@c.ShortName | @c.Name</li>
+            }
+        </ul>
+    </div>
 
-
+</div>
+    *@
 

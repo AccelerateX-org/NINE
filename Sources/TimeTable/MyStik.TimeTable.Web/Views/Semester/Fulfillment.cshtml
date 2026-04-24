@@ -1,13 +1,129 @@
-﻿@model MyStik.TimeTable.Web.Models.SemesterViewModel
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.SemesterViewModel
 
 @{
     ViewBag.Title = "Besetzung";
+
+    var db = new TimeTableDbContext();
+
+    var fulfillments = new Dictionary<OrganiserMember, List<Course>>();
+
+    var members = db.Members.Where(x =>
+        x.Dates.Any(y => y.Activity.Semester != null && y.Activity.Semester.Id == Model.Semester.Id &&
+                         y.Activity.Organiser != null && y.Activity.Organiser.Id == Model.Organiser.Id)).Include(organiserMember => organiserMember.Organiser).ToList();
+
+    foreach (var member in members)
+    {
+        var courses = db.Activities.OfType<Course>()
+            .Where(x => x.Semester != null && x.Semester.Id == Model.Semester.Id &&
+                        x.Organiser != null && x.Organiser.Id == Model.Organiser.Id &&
+                x.Dates.Any(d => d.Hosts.Any(h => h.Id == member.Id)))
+            .ToList();
+
+        fulfillments.Add(member, courses);
+    }
+
+
 }
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Semester", new {orgId=Model.Organiser.Id, semId=ViewBag.CurrentSemester.Id })">Semesterplanung</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Besetzung</li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <div class="btn-group">
+                        @if (ViewBag.PrevSemester != null)
+                        {
+                            <a href="@Url.Action("Fulfillment", "Semester", new {semId=ViewBag.PrevSemester.Id, orgId=Model.Organiser.Id})"><i class="bi bi-chevron-double-left"></i></a>
+                        }
+                        else
+                        {
+                            <a class="disabled" href="#"><i class="bi bi-chevron-double-left"></i></a>
+                        }
+                        <span class="ms-2 me-2">@ViewBag.CurrentSemester.Name</span>
+                        @if (ViewBag.NextSemester != null)
+                        {
+                            <a href="@Url.Action("Fulfillment", "Semester", new {semId=ViewBag.NextSemester.Id, orgId=Model.Organiser.Id})"><i class="bi bi-chevron-double-right"></i></a>
+                        }
+                        else
+                        {
+                            <a class="disabled" href="#"><i class="bi bi-chevron-double-right"></i></a>
+                        }
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
 
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <h5 class="card-title">Besetzung</h5>
+            <table id="tabMember" class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>FK</th>
+                        <th>Kurzname</th>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        <th>Lehrveranstaltungen</th>
+                        <th>Fach</th>
+                        <th>SWS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fulfillment in fulfillments)
+                    {
+                        var member = fulfillment.Key;
+                        var courses = fulfillment.Value;
+
+                        foreach (var course in courses)
+                        {
+                            foreach (var teaching in course.SubjectTeachings)
+                            {
+                                <tr>
+                                    <td>@member.Organiser.ShortName</td>
+                                    <td>@member.ShortName</td>
+                                    <td>@member.Name</td>
+                                    <td>@member.FirstName</td>
+                                    <td>@course.ShortName</td>
+                                    <td>@teaching.Subject.FullName</td>
+                                    <td>@teaching.Subject.SWS</td>
+                                </tr>
+                            }
+                        }
+
+
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabMember').DataTable({
+                "paging": false
+            });
+        });
+    </script>
+
+}

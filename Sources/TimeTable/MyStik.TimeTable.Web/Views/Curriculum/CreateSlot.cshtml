@@ -38,9 +38,15 @@
                         </div>
                     </div>
                     <div class="row">
-                        <label for="Name" class="col-sm-2 col-form-label">ECTS</label>
-                        <div class="col-sm-10">
-                            @Html.TextBoxFor(m => m.Ects, new { @class = "form-control" })
+                        <div class="col-4">ECTS / LP</div>
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.Ects_Big, (IEnumerable<SelectListItem>)ViewBag.SWS_Big_Select, new { @class = "form-control" })
+                        </div>
+                        <div class="col-auto">
+                            <strong>,</strong>
+                        </div>
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.Ects_Small, (IEnumerable<SelectListItem>)ViewBag.SWS_Small_Select, new { @class = "form-control" })
                         </div>
                     </div>
                     <div class="row">

@@ -173,8 +173,9 @@ namespace MyStik.TimeTable.Web.Models
         public string Description { get; set; }
         public int Semester { get; set; }
         
-        [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = true)]
         public double Ects { get; set; }
+        public int Ects_Big { get; set; }
+        public int Ects_Small { get; set; }
 
     }
 

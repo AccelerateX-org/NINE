@@ -4,48 +4,27 @@
 @{
     ViewBag.Title = "Lehrangebot";
 
-    @*
-        var db = new TimeTableDbContext();
+    /*
+    var db = new TimeTableDbContext();
 
-        var datesToDelete = new List<ActivityDate>();
-
-        var match = false;
-        if (Model.Organiser.ShortName == "FK 11" &&
-            Model.Semester.Name == "WiSe 2025")
+    if (Model.Organiser.ShortName == "MUC.HEALTH" &&
+        (Model.Semester.Name == "WiSe 2025" || Model.Semester.Name == "SoSe 2026"))
+    {
+        var fk11 = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("FK 11"));
+        if (fk11 != null)
         {
-            match = true;
-            var org = db.Organisers.SingleOrDefault(x => x.Id == Model.Organiser.Id);
-            var sem = db.Semesters.SingleOrDefault(x => x.Id == Model.Semester.Id);
-
-
             foreach (var c in Model.Courses)
             {
-                var nDates = c.Course.Dates.Count();
-                var occs = c.Course.Dates.Select(x => x.Occurrence).Distinct();
-                var nOccs = occs.Count();
-                var nDiff = nDates - nOccs;
-
-                if (nDiff == 0)
+                if (c.Course.Organiser.Id == fk11.Id)
                 {
-                    continue;
-                }
-
-                foreach (var occ in occs)
-                {
-                    var dates = db.ActivityDates.Where(x => x.Occurrence.Id == occ.Id).ToList();
-
-                    if (dates.Count() == 1)
-                    {
-                        continue;
-                    }
-
-                    datesToDelete.Add(dates.First());
+                    c.Course.Organiser = Model.Organiser;
                 }
             }
 
-            //db.SaveChanges();
+            db.SaveChanges();
         }
-    *@
+    }
+    */
 }
 
 @section styles

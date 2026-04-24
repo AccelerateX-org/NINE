@@ -73,15 +73,21 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Fulfillment(Guid orgId, Guid semId)
         {
             var org = GetOrganiser(orgId);
-            var sem = SemesterService.GetSemester(semId);
+            var semester = SemesterService.GetSemester(semId);
 
             var model = new SemesterViewModel()
             {
                 Organiser = org,
-                Semester = sem
+                Semester = semester
             };
 
+            model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
+            model.NextSemester = SemesterService.GetNextSemester(semester);
+
             ViewBag.UserRight = GetUserRight(org);
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = model.NextSemester;
+            ViewBag.PrevSemester = model.PreviousSemester;
 
             return View(model);
         }

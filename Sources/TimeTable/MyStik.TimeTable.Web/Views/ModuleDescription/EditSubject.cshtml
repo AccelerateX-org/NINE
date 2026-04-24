@@ -1,13 +1,13 @@
 ﻿@model MyStik.TimeTable.Web.Models.SubjectViewModel
 @{
-    ViewBag.Title = "CreateExamination";
+    ViewBag.Title = "Lehrform ändern";
 }
 
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Prüfungform ändern</h4>
+                <h4>Lehrform ändern</h4>
             </div>
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
@@ -33,8 +33,14 @@
                     </div>
                     <div class="row">
                         <div class="col-4">SWS</div>
-                        <div class="col-8">
-                            @Html.TextBoxFor(m => m.SWS, new { @class = "form-control" })
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.SWS_Big, (IEnumerable<SelectListItem>)ViewBag.SWS_Big_Select, new { @class = "form-control" })
+                        </div>
+                        <div class="col-auto">
+                            <strong>,</strong>
+                        </div>
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.SWS_Small, (IEnumerable<SelectListItem>)ViewBag.SWS_Small_Select, new { @class = "form-control" })
                         </div>
                     </div>
                     <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Änderungen speichern</button>

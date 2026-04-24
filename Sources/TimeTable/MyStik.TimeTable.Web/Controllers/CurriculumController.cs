@@ -2489,7 +2489,21 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CurriculumAreaCreateModel
             {
                 OptionId = option.Id,
+                Ects_Big = 5,
+                Ects_Small = 0
             };
+
+            ViewBag.SWS_Big_Select = new SelectList(Enumerable.Range(0, 20).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.Ects_Big);
+
+            ViewBag.SWS_Small_Select = new SelectList(Enumerable.Range(0, 99).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.Ects_Small);
 
             return View(model);
         }
@@ -2505,8 +2519,12 @@ namespace MyStik.TimeTable.Web.Controllers
             slot.Name = model.Name;
             slot.Description = model.Description;
             slot.Semester = model.Semester;
-            slot.ECTS = model.Ects;
             slot.AreaOption = option;
+
+            var ects_total = model.Ects_Big + model.Ects_Small / 100.0;
+
+            slot.ECTS = ects_total;
+
 
             Db.CurriculumSlots.Add(slot);
             Db.SaveChanges();
@@ -2528,8 +2546,23 @@ namespace MyStik.TimeTable.Web.Controllers
                 Name = slot.Name,
                 Tag = slot.Tag,
                 Semester = slot.Semester,
-                Ects = slot.ECTS
+                Ects = slot.ECTS,
+                Ects_Big = (int)Math.Floor(slot.ECTS),
+                Ects_Small = (int)((slot.ECTS - Math.Floor(slot.ECTS)) * 100 + 0.0001),
             };
+
+            ViewBag.SWS_Big_Select = new SelectList(Enumerable.Range(0, 20).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.Ects_Big);
+
+            ViewBag.SWS_Small_Select = new SelectList(Enumerable.Range(0, 99).Select(x => new SelectListItem
+            {
+                Text = x.ToString("D2"),
+                Value = x.ToString()
+            }), "Value", "Text", model.Ects_Small);
+
 
             return View(model);
         }
@@ -2551,7 +2584,10 @@ namespace MyStik.TimeTable.Web.Controllers
             slot.Name = model.Name;
             slot.Description = model.Description;
             slot.Semester = model.Semester;
-            slot.ECTS = model.Ects;
+
+            var ects_total = model.Ects_Big + model.Ects_Small / 100.0;
+
+            slot.ECTS = ects_total;
 
             Db.SaveChanges();
 
