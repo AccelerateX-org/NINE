@@ -4,27 +4,62 @@
 @{
     ViewBag.Title = "Lehrangebot";
 
-    /*
+
     var db = new TimeTableDbContext();
 
     if (Model.Organiser.ShortName == "MUC.HEALTH" &&
         (Model.Semester.Name == "WiSe 2025" || Model.Semester.Name == "SoSe 2026"))
     {
         var fk11 = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("FK 11"));
-        if (fk11 != null)
+        var mucHealth = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("MUC.HEALTH"));
+
+        if (fk11 != null && mucHealth != null)
         {
             foreach (var c in Model.Courses)
             {
+                /*
                 if (c.Course.Organiser.Id == fk11.Id)
                 {
-                    c.Course.Organiser = Model.Organiser;
+
+                    var cc = db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == c.Course.Id);
+                    cc.Organiser = mucHealth;
+                    db.SaveChanges();
+
+                }
+                */
+
+                if (c.Course.Organiser.Id == mucHealth.Id)
+                {
+                    foreach (var date in c.Course.Dates)
+                    {
+                        foreach (var lecturer in date.Hosts.ToList())
+                        {
+                            if (lecturer.Organiser.Id == fk11.Id && !string.IsNullOrEmpty(lecturer.UserId))
+                            {
+                                var correspondingLecturer = mucHealth.Members.FirstOrDefault(x => x.UserId.Equals(lecturer.UserId));
+                                if (correspondingLecturer != null)
+                                {
+                                    var dd = db.ActivityDates.SingleOrDefault(x => x.Id == date.Id);
+                                    var fk11Lecturer = db.Members.SingleOrDefault(x => x.Id == lecturer.Id);
+                                    var mucHealthLecturer = db.Members.SingleOrDefault(x => x.Id == correspondingLecturer.Id);
+
+                                    if (dd != null && fk11Lecturer != null && mucHealthLecturer != null)
+                                    {
+                                        dd.Hosts.Remove(fk11Lecturer);
+                                        dd.Hosts.Add(mucHealthLecturer);
+                                        db.SaveChanges();
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
 
-            db.SaveChanges();
         }
     }
-    */
+
 }
 
 @section styles
@@ -380,7 +415,13 @@
                                     @Html.RoomList(c.Rooms)
                                 </td>
                                 <td>
-                                    @Html.LecturerList(c.Lecturers)
+                                    @*
+                                        @Html.LecturerList(c.Lecturers)
+                                    *@
+                                    @foreach (var l in c.Lecturers)
+                                    {
+                                        <div>@l.FullName | @l.Organiser.ShortName</div>
+                                    }
                                 </td>
                                 <td>
                                     @if (c.Course.Occurrence != null)
