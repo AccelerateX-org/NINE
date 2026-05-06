@@ -25,8 +25,8 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// der gebräuchliche Kurzname - Alias
-        /// Definiert letztlich die Gruppe der Angebote
-        /// alle Versionen einer SPO
+        /// das ist der Rufname, kann sich irgendwie zusammensetzen
+        /// Kann, muss nicht identifizieren
         /// </summary>
         public string ShortName { get; set; }
 
@@ -34,6 +34,8 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// der technische Kurzname - Bestandteil des Schlüssels für API
+        /// Definiert das Studienangebot versionsübergreifend
+        /// Zusammengesetzter Schlüssel mit dem Inkrafttreten der Satzung
         /// </summary>
         public string Tag { get; set; }
 
@@ -95,11 +97,13 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Inkraft treten der (Änderungs-)Satzung
+        /// das was im Titel steht
         /// </summary>
         public DateTime? StatuteTakeEffect { get; set; }
 
         /// <summary>
         /// Gültig ab Semester - wenn nicht gesetzt, dann ohne Einschränkung
+        /// Das was am Ende des Dokuments steht
         /// </summary>
         public virtual Semester ValidSince { get; set; }
 

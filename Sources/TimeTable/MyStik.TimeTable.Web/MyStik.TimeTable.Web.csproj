@@ -429,7 +429,6 @@
     <Compile Include="Api\Contracts\OrganisersContracts.cs" />
     <Compile Include="Api\Contracts\QuestionContracts.cs" />
     <Compile Include="Api\Contracts\RoomContracts.cs" />
-    <Compile Include="Api\Contracts\CoursesContracts.cs" />
     <Compile Include="Api\Contracts\ScimContracts.cs" />
     <Compile Include="Api\Controller\AgendaController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />

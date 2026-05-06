@@ -7,6 +7,7 @@ using MyStik.TimeTable.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MyStik.TimeTable.DataServices.IO.Contracts;
 using static MyStik.TimeTable.Web.IdentifyConfig;
 
 namespace MyStik.TimeTable.Web.Api.Services
@@ -84,29 +85,30 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
-        public CourseApiModel Convert_new(Course course, bool useDetails = false, bool useSubscriptions = false)
+        public CourseApiContract Convert_new(Course course, bool useDetails = false, bool useSubscriptions = false)
         {
-            var dto = new CourseApiModel();
+            var dto = new CourseApiContract();
 
-            dto.id = course.Id;
-            dto.externalId = course.ExternalId;
-            dto.semester = course.Semester.Name;
-            dto.organiser = course.Organiser.ShortName;
-            dto.title = course.Name;
-            dto.code = course.ShortName;
-            dto.description = course.Description;
+            dto.CourseId = course.Id.ToString();
+            dto.ExternalId = course.ExternalId;
+            dto.SemesterId = course.Semester.Name;
+            dto.OrganiserId = course.Organiser.ShortName;
+            dto.Title = course.Name;
+            dto.Code = course.ShortName;
+            dto.Description = course.Description;
 
             if (!useDetails)
             {
                 return dto;
             }
 
-            dto.cohortes = new List<CourseCohorte>();
+            /*
+            dto.Cohorts = new List<CourseApiCohortContract>();
             if (course.LabelSet != null)
             {
                 foreach (var label in course.LabelSet.ItemLabels)
                 {
-                    var cohorte = new CourseCohorte();
+                    var cohorte = new CourseApiCohortContract();
 
                     var curr = _db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
 
@@ -130,50 +132,50 @@ namespace MyStik.TimeTable.Web.Api.Services
                         cohorte.institution_id = inst.Tag;
                     }
 
-                    cohorte.label = label.Name;
-                    dto.cohortes.Add(cohorte);
+                    cohorte.Label = label.Name;
+                    dto.Cohorts.Add(cohorte);
                 }
             }
 
-            dto.dates = new List<CourseDateApiModel>();
+            dto.Dates = new List<CourseDateApiModel>();
             var dates = course.Dates.OrderBy(d => d.Begin).ToList();
 
             foreach (var activityDate in dates)
             {
                 var courseDate = new CourseDateApiModel();
-                courseDate.id = activityDate.Id;
-                courseDate.begin = activityDate.Begin;
-                courseDate.end = activityDate.End;
-                courseDate.title = activityDate.Title;
-                courseDate.description = activityDate.Description;
-                courseDate.isCanceled = activityDate.Occurrence.IsCanceled;
-                courseDate.rooms = new List<string>();
+                courseDate.Id = activityDate.Id;
+                courseDate.Begin = activityDate.Begin;
+                courseDate.End = activityDate.End;
+                courseDate.Title = activityDate.Title;
+                courseDate.Description = activityDate.Description;
+                courseDate.IsCanceled = activityDate.Occurrence.IsCanceled;
+                courseDate.Rooms = new List<string>();
                 foreach (var room in activityDate.Rooms)
                 {
-                    courseDate.rooms.Add(room.Number);
+                    courseDate.Rooms.Add(room.Number);
                 }
-                courseDate.hosts = new List<string>();
+                courseDate.Hosts = new List<string>();
                 foreach (var host in activityDate.Hosts)
                 {
-                    courseDate.hosts.Add(host.ShortName);
+                    courseDate.Hosts.Add(host.ShortName);
                 }
-                dto.dates.Add(courseDate);
+                dto.Dates.Add(courseDate);
             }
 
             if (useSubscriptions)
             {
-                dto.subscribers = new List<CourseSubscriberApiModel>();
+                dto.Subscribers = new List<CourseSubscriberApiModel>();
                 var studService = new StudentService(_db);
 
                 foreach (var sub in course.Occurrence.Subscriptions)
                 {
                     var subscriber = new CourseSubscriberApiModel();
-                    subscriber.user_id = "#NA";
+                    subscriber.UserId = "#NA";
 
                     var student = studService.GetCurrentStudent(sub.UserId);
                     if (student != null && student.Any())
                     {
-                        subscriber.user_id = student.First().Curriculum.ShortName;
+                        subscriber.UserId = student.First().Curriculum.ShortName;
 
                         if (_isAuth)
                         {
@@ -183,16 +185,16 @@ namespace MyStik.TimeTable.Web.Api.Services
                                 var claim = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName");
                                 if (claim != null)
                                 {
-                                    subscriber.user_id = claim.ClaimValue;
+                                    subscriber.UserId = claim.ClaimValue;
                                 }
                             }
                         }
                     }
                     //subscriber.subscribed = sub.TimeStamp;
-                    dto.subscribers.Add(subscriber);
+                    dto.Subscribers.Add(subscriber);
                 }
             }
-
+            */
             return dto;
         }
 

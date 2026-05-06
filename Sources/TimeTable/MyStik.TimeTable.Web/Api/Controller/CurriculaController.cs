@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
+using MyStik.TimeTable.DataServices.IO.Contracts;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -111,11 +112,11 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
         [HttpGet]
         [Route("{curriculum_id}/cohortes")]
-        [ResponseType(typeof(List<CourseCohorte>))]
+        [ResponseType(typeof(List<CourseApiCohortContract>))]
 
         public IHttpActionResult GetCohortes(string curriculum_id)
         {
-            var list = new List<CourseCohorte>();
+            var list = new List<CourseApiCohortContract>();
 
             // TODO: split curriculum_id into tag and date
             var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculum_id);
@@ -126,11 +127,11 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 foreach (var label in curr.LabelSet.ItemLabels)
                 {
-                    var cohort = new CourseCohorte
+                    var cohort = new CourseApiCohortContract
                     {
-                        curriculum_id = curr.ID,
-                        curriculum_alias = curr.ShortName,
-                        label = label.Name,
+                        CurriculumId = curr.ID,
+                        CurriculumAlias = curr.ShortName,
+                        Label = label.Name,
                     };
                     list.Add(cohort);
                 }
@@ -140,10 +141,10 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 foreach (var label in curr.Organiser.LabelSet.ItemLabels)
                 {
-                    var cohort = new CourseCohorte
+                    var cohort = new CourseApiCohortContract
                     {
-                        organiser_id = curr.Organiser.ShortName,
-                        label = label.Name,
+                        OrganiserId = curr.Organiser.ShortName,
+                        Label = label.Name,
                     };
                     list.Add(cohort);
                 }
@@ -153,10 +154,10 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 foreach (var label in curr.Organiser.Institution.LabelSet.ItemLabels)
                 {
-                    var cohort = new CourseCohorte
+                    var cohort = new CourseApiCohortContract
                     {
-                        institution_id = curr.Organiser.Institution.Tag,
-                        label = label.Name,
+                        InstitutionId = curr.Organiser.Institution.Tag,
+                        Label = label.Name,
                     };
                     list.Add(cohort);
                 }
