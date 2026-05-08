@@ -42,10 +42,11 @@ const config: Config = {
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
-  i18n: {
+    i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
+  
 
   presets: [
     [
@@ -111,16 +112,16 @@ const config: Config = {
           title: 'Documentation',
           items: [
             {
-              label: 'User Manual',
-              to: '/docs/category/benutzerhandbuch',
+              label: 'User guide',
+              to: '/docs/category/user-guide',
             },
             {
               label: 'Tutorials',
-              to: '/docs/category/tutorien',
+              to: '/docs/category/tutorials',
             },
             {
-              label: 'Administrators Manual',
-              to: '/docs/category/administration',
+              label: 'Administrator Guide',
+              to: '/docs/category/administration-guide',
             },
           ],
         },
