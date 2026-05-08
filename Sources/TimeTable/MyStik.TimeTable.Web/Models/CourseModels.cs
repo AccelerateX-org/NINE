@@ -300,40 +300,36 @@ namespace MyStik.TimeTable.Web.Models
             return null;
         }
 
-        public Room GetFavoriteRoom()
+        public List<Room> GetFavoriteRooms()
         {
-            var maxUses = 1;
-            Room favRoom = null;
+            var roomDateCount = new Dictionary<Room, int>();
 
             foreach (var room in Rooms)
             {
                 var nUses = Course.Dates.Count(x => x.Rooms.Any(r => r.Id == room.Id));
-                if (nUses > maxUses)
-                {
-                    maxUses = nUses;
-                    favRoom = room;
-                }
+                roomDateCount.Add(room, nUses);
             }
 
-            return favRoom;
+            var maxUses = (int)(roomDateCount.Values.Max() * 0.8);
+            var favRooms = roomDateCount.Where(x => x.Value >= maxUses).Select(x => x.Key).ToList();
+
+            return favRooms;
         }
 
-        public OrganiserMember GetFavoriteHost()
+        public List<OrganiserMember> GetFavoriteHosts()
         {
-            var maxUses = 1;
-            OrganiserMember favMember = null;
+            var memberDateCount = new Dictionary<OrganiserMember, int>();
 
             foreach (var host in Lecturers)
             {
                 var nUses = Course.Dates.Count(x => x.Hosts.Any(r => r.Id == host.Id));
-                if (nUses > maxUses)
-                {
-                    maxUses = nUses;
-                    favMember = host;
-                }
+                memberDateCount.Add(host, nUses);
             }
 
-            return favMember;
+            var maxUses = (int)(memberDateCount.Values.Max() * 0.8);
+            var favMembers = memberDateCount.Where(x => x.Value >= maxUses).Select(x => x.Key).ToList();    
+
+            return favMembers;
         }
 
     }

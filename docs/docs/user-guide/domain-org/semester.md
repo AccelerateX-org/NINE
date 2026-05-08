@@ -2,35 +2,34 @@
 sidebar_position: 2
 ---
 
-# Lehrperioden
+# Time boxing
 
-Semester und Semesterabschnitte
+Semester und Segments.
 
-Eine Lehrperiode ist eine organisatorische Einheit mit Angaben zum zeitlichen Ausmaß.
+A semester is defined as a period with a recurrent workflow. The workflow is represented by segments.
 
-Hinweis:
-Im Sprachgebrauch werden Lehrperioden wie Semester eher über zeitliche Ausdehnungen wie Vorlesungs- oder Prüfungszeit wahrgenommen. In NINE sind Lehrperioden organisatorische Zuordnungen. Dies erlaubt z.B. die Durchführung von Lehrveranstaltungen auch "außerhalb" einer definierten "Vorlesungszeit".
+:::info
+Instiutions are thinking of semesters in terms like "Vorlesungszeit" or "Prüfungszeit".
+Segments are just periods related organisational to the time frame of a semester.
+:::
 
-Eine Lehrperiode ist durch einen eindeutigen Kurznamen innerhalb einer Institution gekennzeichnet, z.B. SoSe 2024.
+## Semester
 
-Hinweis:
-In der Regel gibt es keine gesetzlichen Vorgaben zur Bezeichnung von Lehrperioden. Jede Institution verwendet in der Regel eigene Systematiken. Zudem erlaubt dies auch die Abbildung anderer Formen wie Trisemester.
+Semester are defined by its
 
-Eine Lehrperiode besitzt einen Anfang und ein Ende (jeweils als Datum). Anfang und Ende gehören zur Lehrperiode, d.h. [Anfang 00:00] bis [Ende 23:59:59]
+- name, i.e. "SoSe 2026"
+- date of begin
+- date of end
 
-## Abschnitte
 
-Innerhalb einer Lehrperiode können Abschnitte definiert werden. Auf Ebene der Institution sind dies in der Regel vorlesungsfreie Zeiten (z.B. Feiertage, Ferien). Auf Ebene einer Einrichtung lassen sich Segmente definieren, z.B. "Semesterbegleitend" oder "Blockwochen".
+## Segments
 
-Die Angaben der Abschnitte werden bei der Generierung konkreter Termine für Lehrveranstaltungen und/oder zur Konsistenzprüfung von Planungen verwendet.
+Segments are defined by its
 
-## Verwendung
+- name, i.e. "SoSe 2026"
+- date of begin
+- date of end
 
-Lehrperioden werden verwendet für
+For generating dates segments may be flaged as "holiday". 
 
-- Lehrveranstaltungen
-- Modulbeschreibungen
-- Studium (Beginn, Ende)
-- Wahlverfahren
-- Auswahlverfahren
-
+Segments can be defined on instiution level ("hochschulweit") and organiser level ("fakultätsweit").

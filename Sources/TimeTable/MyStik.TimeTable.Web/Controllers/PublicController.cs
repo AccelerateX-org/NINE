@@ -1,6 +1,7 @@
 ﻿using log4net;
 using MyStik.TimeTable.Web.Models;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -20,7 +21,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Reservation(Guid id)
         {
             var logger = LogManager.GetLogger("Reservation");
-            var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
+            var room = Db.Rooms.Include(room1 => room1.Dates).SingleOrDefault(r => r.Id == id);
 
             var model = new RoomReservationViewModel();
 
@@ -30,9 +31,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 model.Room = room;
                 // Alle Belegungen, die heute stattfinden und deren Ende nach dem aktuellen Zeitpunkt liegen
+                /*
                 model.CurrentDates = room.Dates.Where(d =>
                     d.End >= DateTime.Now && d.End <= DateTime.Today.AddDays(1) &&
                     d.Occurrence != null && !d.Occurrence.IsCanceled)
+                    .OrderBy(d => d.Begin).ToList();
+                */
+
+                model.CurrentDates = room.Dates.Where(d =>
+                        d.End >= DateTime.Now && d.End <= DateTime.Today.AddDays(1))
                     .OrderBy(d => d.Begin).ToList();
 
                 var nextDate = model.CurrentDates.FirstOrDefault();

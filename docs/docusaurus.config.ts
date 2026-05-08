@@ -5,9 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'NINE',
-  tagline: 'no information, no education',
-  favicon: 'img/favicon.ico',
+  title: 'hamSTER',
+  tagline: 'holistic augmented multi-modal Studying, Teaching, Examining and Researching',
+  favicon: 'img/CAP_Hamster_bw.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -28,7 +28,16 @@ const config: Config = {
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  
+  markdown: {
+    mermaid: true,
+    hooks: {
+      // This hook is called when a markdown link is being processed.
+      // You can use it to modify the link destination or add custom attributes.
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
+
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -75,17 +84,17 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'NINE',
+      title: 'hamSTER',
       logo: {
-        alt: 'NINE Logo',
-        src: 'img/logo.svg',
+        alt: 'hamSTER Logo',
+        src: 'img/CAP_Hamster_bw_3.png',
       },
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Dokumentation',
+          label: 'Documentation',
         },
         {to: '/blog', label: 'Change Log', position: 'left'},
         {
@@ -99,18 +108,18 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Documentation',
           items: [
             {
-              label: 'Benutzerhandbuch',
+              label: 'User Manual',
               to: '/docs/category/benutzerhandbuch',
             },
             {
-              label: 'Tutorien',
+              label: 'Tutorials',
               to: '/docs/category/tutorien',
             },
             {
-              label: 'Administration',
+              label: 'Administrators Manual',
               to: '/docs/category/administration',
             },
           ],

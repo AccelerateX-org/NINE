@@ -1,8 +1,8 @@
 {
-  "label": "Tutorien",
+  "label": "Tutorials",
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "Die wichtigsten Prozesse."
+    "description": "Using the workflows."
   }
 }

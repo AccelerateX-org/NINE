@@ -2,6 +2,8 @@ import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import React from 'react';
+import { Icon } from "@iconify/react";
 
 type FeatureItem = {
   title: string;
@@ -12,32 +14,34 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Dezentrale Administration',
-    icon: "bi bi-people",
+    title: 'Federated Administration',
+    icon: "ant-design:team-outlined",
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Eingenverantwortung und schlanke Prozesse.
+        hamSTER offers a detailed concept for roles and permissions, 
+        allowing  efficient management of institutions, schools, faculties and departments 
       </>
     ),
   },
   {
-    title: 'Modularer Aufbau',
-    icon: "bi bi-boxes",
+    title: 'Modular Architecture',
+    icon: "streamline:module-puzzle-3",
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Kein "alles oder nichts".
+        hamSTER is built on a modular architecture, allowing using feature subsets. No all or nothing.
       </>
     ),
   },
   {
-    title: 'Integrierbar',
-    icon: "bi bi-plug",
+    title: 'Build for Sovereignty',
+    icon: "ph:shipping-container-light",
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Verschiedene Schnittstellen und APIs.
+        hamSTER is build on services offering APIs for integration and extension. 
+        The plattform is based on a containerized architecture using open source infrastructures.
       </>
     ),
   },
@@ -47,7 +51,7 @@ function Feature({title, icon, Svg, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <h1><i className={icon}></i></h1>
+        <Icon icon={icon} style={{ fontSize: "72px" }}/>
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>

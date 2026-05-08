@@ -4000,7 +4000,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult AdminNewDictionary(Guid id)
         {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Organiser)
+                .Include(activity1 => activity1.Semester).SingleOrDefault(c => c.Id == id);
             var semester = course.Semester;
             var org = course.Organiser;
 
@@ -4036,13 +4037,13 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-
+            var limit = DateTime.Today.AddYears(-1);
 
             // Alle Semester, die in Zukunft enden
             ViewBag.Semester = Db.Semesters
-                .Where(x => x.EndCourses >= DateTime.Today)
+                .Where(x => x.EndCourses >= limit)
                 .OrderBy(s => s.StartCourses)
-                .Take(3)
+                .Take(5)
                 .Select(c => new SelectListItem
                 {
                     Text = c.Name,

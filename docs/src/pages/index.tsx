@@ -8,6 +8,7 @@ import Heading from '@theme/Heading';
 
 import styles from './index.module.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import React from 'react';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -15,9 +16,16 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className="hero__title">
-          <i className="bi bi-calendar-date"></i> {siteConfig.title}
+          {siteConfig.title}
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <div className={styles.buttons}>
+          <Link
+            className="button button--secondary button--lg"
+            to="/docs/intro">
+            Get started
+          </Link>
+        </div>
       </div>
     </header>
   );

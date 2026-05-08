@@ -26,29 +26,25 @@
         .text-hamster {
             color: #fc5555;
         }
+
+        .bg-hamster {
+            background-color: #78a3aa;
+        }
     </style>
 }
 
 <div class="row justify-content-center">
     <div class="col col-12">
         <div class="card mt-4">
-            <div class="card-body bg-dark text-white">
+            <div class="card-header bg-hamster text-white">
                 <div class="row">
                     <div class="col-md-10">
-                        @*
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <img alt="Logo HM" src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top" />
-
-                                </div>
-                            </div>
-                        *@
                         <div class="row">
                             <div class="col-md-1 col-sm-4 col-xs-6">
                                 <img alt="Hamster Logo" src="~/Assets/img/cap/CAP_Hamster_bw_3.png" class="card-img-bottom bg-light-subtle" />
                             </div>
                             <div class="col-md-11 col-sm-8 col-xs-6">
-                                <h1 class="card-title">Willkommen bei <strong>Hamster</strong></h1>
+                                <h1 class="card-title">Willkommen bei <strong>hamSTER</strong></h1>
                                 <p class="card-text mt-3">
                                     Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre.<br />
                                     Ein <span class="fw-bolder">Campus Adventure Playground </span>powered by
@@ -68,7 +64,7 @@
                     </div>
                 </div>
             </div>
-            <div class="list-group">
+            <div class="list-group list-group-flush">
                 <div class="list-group-item bg-light">
                     <div class="row">
                         <div class="col-sm-6 col-md-6 col-lg-4">
@@ -109,7 +105,7 @@
                                             </p>
                                         </div>
                                         <p class="mb-1">
-                                            For developers - create your own apps using the Hamster API
+                                            For developers - create your own apps using the hamSTER API
                                         </p>
                                         <small>weiter >></small>
                                     </a>
@@ -238,7 +234,7 @@
                 <div class="list-group-item list-group-item-action bg-dark">
                     <div class="col">
                         <div class="d-flex flex-row mb-3">
-                            <a class="p-2 text-white" href="https://github.com/AccelerateX-org">Hamster @Html.AssemblyVersion()</a>
+                            <a class="p-2 text-white" href="https://acceleratex-org.github.io/NINE/">Hamster @Html.AssemblyVersion()</a>
                             <a class="p-2 text-white" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
                             <a class="p-2 text-white" href="@Url.Action("PrivacyStatement", "Home")">@Resources.PrivacyLink</a>
                             <a class="p-2 text-white" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>

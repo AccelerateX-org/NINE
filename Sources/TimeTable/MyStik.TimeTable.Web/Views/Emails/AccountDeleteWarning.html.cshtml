@@ -35,10 +35,10 @@ Content-Type: text/html; charset=utf-8
         if (Model.User.LastLogin != null)
         {
             <p>
-                Sie haben sich beim Anwendungssystem NINE/Hamster zuletzt am @Model.User.LastLogin.Value.ToShortDateString() angemeldet.
+                Sie haben sich beim Anwendungssystem hamSTER (aka NINE) zuletzt am @Model.User.LastLogin.Value.ToShortDateString() angemeldet.
             </p>
         }
-        <p>Wenn Sie das Benutzerkonto weiter nutzen möchten, dann loggen Sie sich bis spätestens @Model.User.ExpiryDate.Value.ToShortDateString() bei <a href="https://nine.hm.edu">NINE/Hamster</a> mit dem Benutzerkonto @Model.User.UserName ein. Sonst wird es automatisch gelöscht.</p>
+        <p>Wenn Sie das Benutzerkonto weiter nutzen möchten, dann loggen Sie sich bis spätestens @Model.User.ExpiryDate.Value.ToShortDateString() bei <a href="https://nine.hm.edu">hamSTER</a> mit dem Benutzerkonto @Model.User.UserName ein. Sonst wird es automatisch gelöscht.</p>
     }
     else
     {

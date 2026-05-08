@@ -918,19 +918,19 @@ namespace MyStik.TimeTable.Web.Services
         {
             var dates = new List<ActivityDate>();
 
-            List<Room> favRooms = new List<Room>();
-            List<OrganiserMember> favHosts = new List<OrganiserMember>();
+            var favRooms = new List<Room>();
+            var favHosts = new List<OrganiserMember>();
 
-            var room = summary.GetFavoriteRoom();
-            var host = summary.GetFavoriteHost();
+            var rooms = summary.GetFavoriteRooms();
+            var hosts = summary.GetFavoriteHosts();
 
 
-            if (room != null)
+            foreach (var room in rooms)
             {
                 favRooms.Add(room);
             }
 
-            if (host != null)
+            foreach (var host in hosts)
             {
                 favHosts.Add(host);
             }

@@ -523,17 +523,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
                             if (planSegment != null)
                             {
-                                var room = summary.GetFavoriteRoom();
-                                var host = summary.GetFavoriteHost();
+                                var rooms = summary.GetFavoriteRooms();
+                                var hosts = summary.GetFavoriteHosts();
 
                                 // auf den richtigen EntityTracker holen
-                                if (room != null)
+                                foreach (var room in rooms)
                                 {
                                     var r = Db.Rooms.SingleOrDefault(x => x.Id == room.Id);
                                     favRooms.Add(r);
                                 }
 
-                                if (host != null)
+                                foreach (var host in hosts)
                                 {
                                     var h = Db.Members.SingleOrDefault(x => x.Id == host.Id);
                                     favHosts.Add(h);
@@ -651,17 +651,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
                             if (planSegment != null)
                             {
-                                var room = summary.GetFavoriteRoom();
-                                var host = summary.GetFavoriteHost();
+                                var rooms = summary.GetFavoriteRooms();
+                                var hosts = summary.GetFavoriteHosts();
 
                                 // auf den richtigen EntityTracker holen
-                                if (room != null)
+                                foreach (var room in rooms)
                                 {
                                     var r = Db.Rooms.SingleOrDefault(x => x.Id == room.Id);
                                     favRooms.Add(r);
                                 }
 
-                                if (host != null)
+                                foreach (var host in hosts)
                                 {
                                     var h = Db.Members.SingleOrDefault(x => x.Id == host.Id);
                                     favHosts.Add(h);

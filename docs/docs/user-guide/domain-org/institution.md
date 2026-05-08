@@ -2,29 +2,31 @@
 sidebar_position: 1
 ---
 
-# Institutionen
+# Institutions
 
-Wer etwas veranstaltet.
+hamSTER is made for institutions of educations, i.e. universities or schools. 
 
+:::warning
+The data model itself is multitenancy, information across instituations are stored in centralized databases.
+Aspecets of federate usage on institution level depends on the operational use case 
+:::
 
-## Allgemeines
+## Attributes
 
-Eine Institution ist gekennzeichnet durch einen innerhalb einer Systeminstanz eindeutigen Kurznamen, eine Bezeichnung, eine Bildmarke sowie eine Domain.
+For identifying an instution the following attributes are avaiable:
 
+- Short name
+- Name
+- Icon
 
-Eine Institution setzt sich aus Einrichtungen zusammen.
+## Hierarchy
 
-Einer Institution ist im Besitz von Gebäuden bzw. hat das Nutzungsrecht an (Teilen von) Gebäuden.
+An instituion is divided into *organisers*. 
 
-Des weiteren werden auf Ebene einer Institution die Bezeichnung von Lehr- und Prüfungsformaten verwaltet, z.B. "Vorlesung", "seminaristischer Unterricht", "schriftliche Prüfung".
+## Time boxing
 
-Hinweis:
-Die Definition der Begriffe sind in der Regel Bestandteil von allgemeinen Prüfungsordnungen einer Einrichtung.
+An institution is working on an individual schedule, i.g. [semester](semester.md)
 
-## Einrichtung
+## Legal standards
 
-Eine Einrichtung ist gekennzeichnet durch einen innerhalb einer Institution eindeutigen Kurznamen und eine Bezeichnung.
-
-Einer Einrichtung sind Personen als Mitglieder zugeordnet. Eine Person kann Mitglied mehrerer Einrichtungen sein. Innerhalb einer Einrichtung ist eine Mitglied über einen Kurznamen eindeutig gekennzeichnet. Zugriffsrechte auf verschiedene Elemente sind auf Ebene der Mitglieder geregelt, d.h. ein Mitglied kann in einer Einrichtung "Admin" sein, in einer anderen Einrichtung nicht.
-
-Einer Einrichtung sind Räume zugeordnet. Eine Raumzuordnung umfasst dabei Rechte, z.B. die "Heimateinrichtung".
+An institution is defining types of teaching and examination as a standard.
