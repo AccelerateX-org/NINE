@@ -43,8 +43,7 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
         public List<CourseApiTeachingContract> Teachings { get; set; }
         public List<CourseApiDateContract> Dates { get; set; }
 
-        public List<CourseApiSubscriberContract> Subscribers { get; set; }
-
+        public List<CourseApiSubscriptionContract> Subscriptions { get; set; }
     }
 
 
@@ -115,13 +114,13 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
     }
 
     // Als Teil des Kurses
-    public class CourseApiSubscriberContract
+    public class CourseApiSubscriptionContract
     {
         public string UserId { get; set; }
 
         public string MatriculationNumber { get; set; }
 
-        public DateTime SubscritionDate { get; set; }
+        public DateTime SubscriptionDate { get; set; }
 
         public bool OnWaitingList { get; set; }
     }
@@ -138,34 +137,12 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
 
         public string Description { get; set; }
 
-        public bool IsCanceled { get; set; }
-
         public List<string> Rooms { get; set; }
 
         public List<string> Hosts { get; set; }
     }
 
     #endregion
-
-    public class CourseDateCreateApiModel
-    {
-        public DateTime Begin { get; set; }
-
-        public DateTime End { get; set; }
-
-        /// <summary>
-        /// Vorlesung oder Übung - bekommt jedes Date
-        /// </summary>
-        public string Title { get; set; }
-
-        public string Description { get; set; }
-
-        public List<string> RoomIds { get; set; }
-
-        public List<string> LecturerIds { get; set; }
-    }
-
-
 
 
 

@@ -192,6 +192,27 @@ namespace MyStik.TimeTable.Data
             }
         }
 
+        public string PersonName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    sb.AppendFormat("{0}", Name);
+                }
+
+                if (!string.IsNullOrEmpty(FirstName))
+                {
+                    sb.AppendFormat(" {0}", FirstName);
+                }
+
+                return sb.ToString();
+            }
+        }
+
+
         public string FullTag => $"{Organiser.Tag}#{ShortName}";
 
         public string Tag => ShortName;

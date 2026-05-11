@@ -2,6 +2,7 @@
 using MyStik.TimeTable.Web.Api.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -19,65 +20,56 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// 
         /// </summary>
         [Route("")]
-        [ResponseType(typeof(List<CurriculumDto>))]
+        [ResponseType(typeof(List<CurriculumApiContract>))]
 
-        public IHttpActionResult GetCurricula(string curriculum_id = "")
+        public IHttpActionResult GetCurricula(string institutionId, string organiserId = "", string curriculumId = "", string semesterId = "")
         {
-            var list = new List<CurriculumDto>();
+            var list = new List<CurriculumApiContract>();
+            var curricula = Db.Curricula.Where(x =>
+                x.Organiser.Institution.Tag.Equals(institutionId) &&
+                (string.IsNullOrEmpty(organiserId) || x.Organiser.ShortName.Equals(organiserId)) &&
+                (string.IsNullOrEmpty(curriculumId) || x.Tag.Equals(curriculumId)) &&
+                !x.IsDeprecated).Include(curriculum => curriculum.Degree).Include(curriculum1 =>
+                curriculum1.Organiser.Institution).ToList();
 
-            if (string.IsNullOrEmpty(curriculum_id))
+            foreach (var curriculum in curricula)
             {
-                var curricula = Db.Curricula.Where(x => !x.IsDeprecated).ToList();
-                foreach (var curriculum in curricula)
-                {
-                    var dto = new CurriculumDto
-                    {
-                        Title = curriculum.Name,
-                        Curriculum_alias = curriculum.ShortName,
-                        Curriculum_id = curriculum.ID,
-                        Organiser_id = curriculum.Organiser?.ShortName
-                    };
-                    list.Add(dto);
-                }
-                return Ok(list);
-            }
-            else
-            {
-                var curriculum = Db.Curricula.FirstOrDefault(x => x.ShortName == curriculum_id);
-                if (curriculum == null)
-                    return NotFound();
-
-                var dto = new CurriculumDto
+                var dto = new CurriculumApiContract
                 {
                     Title = curriculum.Name,
-                    Curriculum_alias = curriculum.ShortName,
-                    Curriculum_id = curriculum.ID,
-                    Organiser_id = curriculum.Organiser?.ShortName  
+                    Alias = curriculum.ShortName,
+                    CurriculumId = curriculum.Tag,
+                    Version = curriculum.StatuteTakeEffect,
+                    OrganiserId = curriculum.Organiser?.ShortName,
+                    InstitutionId = curriculum.Organiser?.Institution?.Tag,
+                    Level = curriculum.Degree?.Level.ToString(),
+                    Degree = curriculum.Degree?.Name
                 };
 
                 list.Add(dto);
-
-                return Ok(list);
             }
+
+            return Ok(list);
         }
 
 
         [HttpGet]
-        [Route("{curriculum_id}/moduleplan")]
+        [Route("{institutionId}/{organiserId}/{curriculumId}/{version}/modules")]
         [ResponseType(typeof(List<CurriculumSlotDto>))]
 
-        public IHttpActionResult GetCurriculumPlan(string curriculum_id)
+        public IHttpActionResult GetCurriculumPlan(string institutionId, string organiserId, string curriculumId, DateTime? version = null)
         {
             var list = new List<CurriculumSlotDto>();
 
             // TODO: split curriculum_id into tag and date
-            var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculum_id);
+            var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculumId);
             if (curr == null)
                 return NotFound();
 
             var allSlots = Db.CurriculumSlots
                 .Where(x => x.AreaOption != null &&
-                            x.AreaOption.Area.Curriculum.Id == curr.Id).ToList();
+                            x.AreaOption.Area.Curriculum.Id == curr.Id).Include(curriculumSlot =>
+                    curriculumSlot.SubjectAccreditations.Select(subjectAccreditation => subjectAccreditation.Subject)).ToList();
 
             foreach (var slot in allSlots)
             {

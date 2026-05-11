@@ -1,12 +1,14 @@
-﻿using System;
+﻿using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.Web.Api.DTOs;
+using MyStik.TimeTable.Web.Api.Services;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.Web.Api.DTOs;
-using MyStik.TimeTable.Web.Api.Services;
+using System.Web.Http.Description;
+using MyStik.TimeTable.DataServices.IO.Contracts;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -17,48 +19,35 @@ namespace MyStik.TimeTable.Web.Api.Controller
     [RoutePrefix("api/v2/modules")]
     public class ModulesController : ApiBaseController
     {
-        [System.Web.Http.Route("")]
-        public IQueryable<ModuleDtoVersion2> GetModules()
+        [System.Web.Http.Route("{institutionId}/{organiserId}/{catalogId}")]
+        [ResponseType(typeof(List<ModuleApiContract>))]
+
+        public IHttpActionResult GetModules(string institutionId, string organiserId = "", string catalogId = "")
         {
+            var list = new List<ModuleApiContract>();
 
-            var list = new List<ModuleDtoVersion2>();
-
-            var modules = Db.CurriculumModules.Where(x => x.Catalog != null).ToList();
+            var modules = Db.CurriculumModules.Where(x => 
+                x.Catalog.Organiser.Institution.Tag.Equals(institutionId) &&
+                (string.IsNullOrEmpty(organiserId) || x.Catalog.Organiser.ShortName.Equals(organiserId)) &&
+                (string.IsNullOrEmpty(catalogId) || x.Catalog.Tag.Equals(catalogId)) && 
+                x.Catalog != null).Include(curriculumModule => curriculumModule.Catalog.Organiser.Institution).ToList();
 
             foreach (var curriculumModule in modules)
             {
 
-                var dto = new ModuleDtoVersion2
+                var dto = new ModuleApiContract
                 {
-                    CatalogId = curriculumModule.FullTag,
+                    InstitutionId = curriculumModule.Catalog.Organiser.Institution.Tag,
+                    OrganiserId = curriculumModule.Catalog.Organiser.ShortName,
+                    CatalogId = curriculumModule.Tag,
+                    ModuleId = curriculumModule.Tag,
                     Title = curriculumModule.Name,
-                    UrlDescription = $"/ModuleDescription/Details/{curriculumModule.Id}",
-                    Teachings = new List<TeachingDtoVersion2>()
                 };
-
-                foreach (var subject in curriculumModule.ModuleSubjects)
-                {
-                    foreach (var accreditation in subject.SubjectAccreditations)
-                    {
-                        var teachingDto = new TeachingDtoVersion2
-                        {
-                            Semester = accreditation.Slot.Semester,
-                            CurriculumId = accreditation.Slot.AreaOption.Area.Curriculum.ShortName,
-                            CurriculumTitle = accreditation.Slot.AreaOption.Area.Curriculum.Name,
-                            UrlCurriculumPlan = $"/Curriculum/Details/{accreditation.Slot.AreaOption.Area.Curriculum.Id}",
-                            SubjectTitle = subject.Name,
-                            SubjectTeachingFormat = subject.TeachingFormat.Tag
-                        };
-
-                        dto.Teachings.Add(teachingDto);
-                    }
-
-                }
 
                 list.Add(dto);
             }
 
-            return list.AsQueryable();
+            return Ok(list);
         }
 
         /// <summary>

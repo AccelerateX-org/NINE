@@ -99,6 +99,8 @@
     <Compile Include="IO\Cie\ImportContext.cs" />
     <Compile Include="IO\Cie\SemesterImport.cs" />
     <Compile Include="IO\Contracts\CoursesContracts.cs" />
+    <Compile Include="IO\Contracts\CurriculaContracts.cs" />
+    <Compile Include="IO\Contracts\ModuleContracts.cs" />
     <Compile Include="IO\CSV2\FileReader.cs" />
     <Compile Include="IO\CSV2\ImportContext.cs" />
     <Compile Include="IO\CSV2\ImportCourse.cs" />

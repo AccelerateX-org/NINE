@@ -198,7 +198,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return BadRequest("missing organisation in institution");
             }
 
-            // Angabe Einrichtung optional, muss aber zu api_key passen
+            // Angabe Einrichtung optional muss aber zu api_key passen
             if (member.Organiser.Id != org.Id)
             {
                 return BadRequest("mismatch apiKey and organiser membership");
@@ -235,7 +235,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             try
             {
 
-                // Die Occurrnce des Kurses
+                // Die Occurrence des Kurses
                 var occ = new Data.Occurrence
                 {
                     Capacity = -1,
@@ -338,13 +338,93 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     }
                 }
 
+                // Termine => Einzeltermine auswerten
+                var semesterService = new SemesterService(Db);
 
+
+                if (request.Dates != null)
+                {
+                    foreach (var apiDateContract in request.Dates)
+                    {
+                        var begin = apiDateContract.Begin;
+                        var end = apiDateContract.End;
+
+                        var sem = semesterService.GetSemester(begin);
+                        if (sem == null)
+                        {
+                            return BadRequest("invalid date");
+                        }
+                        // nur an Vorlesungstagen
+                        if (!semesterService.IsLectureDay(sem, org, begin))
+                        {
+                            continue;
+                        }
+
+                        var courseDate = new Data.ActivityDate
+                        {
+                            Activity = course,
+                            Title = apiDateContract.Title,
+                            Description = apiDateContract.Description,
+                            Begin = begin,
+                            End = end,
+                            Occurrence = new Data.Occurrence
+                            {
+                                Capacity = -1,
+                                IsAvailable = false,
+                                IsCanceled = false,
+                                IsMoved = false,
+                                FromIsRestricted = false,
+                                UntilIsRestricted = false,
+                                UseGroups = false,
+                            }
+                        };
+
+                        // Räume
+                        if (apiDateContract.Rooms != null)
+                        {
+                            foreach (var rrr in apiDateContract.Rooms)
+                            {
+                                var roomNumber = rrr.Trim();
+                                var room = Db.Rooms.Include(room1 =>
+                                    room1.Assignments.Select(roomAssignment => roomAssignment.Organiser)).SingleOrDefault(x => x.Number.Equals(roomNumber));
+                                if (room == null)
+                                    return BadRequest($"unknown room: {roomNumber}");
+
+                                var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
+
+                                if (assignment == null)
+                                    return BadRequest($"room: {roomNumber} not available for organiser: {org.ShortName}");
+
+                                // Raumbuchung ergänzen!
+                                courseDate.Rooms.Add(room);
+                            }
+                        }
+
+                        // Hosts
+                        if (apiDateContract.Hosts != null)
+                        {
+                            foreach (var hhh in apiDateContract.Hosts)
+                            {
+                                var host = hhh.Trim();
+                                var lecturer = org.Members
+                                    .FirstOrDefault(x => x.FullName.Equals(host) ||
+                                                         x.ShortName.Equals(host));
+                                if (lecturer == null)
+                                    return BadRequest($"lecturer: {host} not available for organiser: {org.ShortName}");
+
+                                courseDate.Hosts.Add(lecturer);
+                            }
+                        }
+
+                        Db.ActivityDates.Add(courseDate);
+                        Db.Occurrences.Add(courseDate.Occurrence);
+                    }
+                }
 
 
                 // Termine => Sequenzen auswerten
                 if (request.Sequences != null) 
                 {
-                    var semesterService = new SemesterService(Db);
 
                     foreach (var sequence in request.Sequences)
                     {
@@ -557,7 +637,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [HttpPost]
         [Route("{course_id}/dates")]
         [ResponseType(typeof(CourseDateApiResponseModel))]
-        public async Task<IHttpActionResult> CreateCourseDate(string apiKey, Guid courseId, [FromBody] CourseDateCreateApiModel request)
+        public async Task<IHttpActionResult> CreateCourseDate(string apiKey, Guid courseId, [FromBody] CourseApiDateContract request)
         {
             var apiKeyService = new ApiKeyService(Db);
             var member = apiKeyService.IsValidApiKey(apiKey);
@@ -566,15 +646,16 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return Unauthorized();
             }
 
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+            var course = Db.Activities.OfType<Course>().Include(activity => activity.Organiser.Members).SingleOrDefault(x => x.Id == courseId);
             if (course == null)
                 return NotFound();
 
             if (course.Organiser.Id != member.Organiser.Id)
             {
-                return Unauthorized();
+                return BadRequest("mismatch apiKey and organiser membership");
             }
 
+            var org = course.Organiser;
 
             var date = Db.ActivityDates.SingleOrDefault(x => x.Activity.Id == courseId && x.Begin == request.Begin && x.End == request.End);
             if (date != null)
@@ -608,37 +689,39 @@ namespace MyStik.TimeTable.Web.Api.Controller
             };
 
             // Räume
-            if (request.RoomIds != null)
+            if (request.Rooms != null)
             {
-                foreach (var roomNumber in request.RoomIds)
+                foreach (var rrr in request.Rooms)
                 {
-                    var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
-                    if (room != null)
-                    {
-                        courseDate.Rooms.Add(room);
-                        // Raumbuchungen ergänzen!
-                    }
-                    else
-                    {
-                        return BadRequest($"Invalid room: {roomNumber}");
-                    }
+                    var roomNumber = rrr.Trim();
+                    var room = Db.Rooms.Include(room1 =>
+                        room1.Assignments.Select(roomAssignment => roomAssignment.Organiser)).SingleOrDefault(x => x.Number.Equals(roomNumber));
+                    if (room == null)
+                        return BadRequest($"unknown room: {roomNumber}");
+
+                    var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
+
+                    if (assignment == null)
+                        return BadRequest($"room: {roomNumber} not available for organiser: {org.ShortName}");
+
+                    // Raumbuchung ergänzen!
+                    courseDate.Rooms.Add(room);
                 }
             }
 
             // Hosts
-            if (request.LecturerIds != null)
+            if (request.Hosts != null)
             {
-                foreach (var host in request.LecturerIds)
+                foreach (var hhh in request.Hosts)
                 {
-                    var lecturer = course.Organiser.Members.FirstOrDefault(x => x.ShortName.Equals(host));
-                    if (lecturer != null)
-                    {
-                        courseDate.Hosts.Add(lecturer);
-                    }
-                    else
-                    {
-                        return BadRequest($"Invalid lecturer: {host}");
-                    }
+                    var host = hhh.Trim();
+                    var lecturer = org.Members
+                        .FirstOrDefault(x => x.FullName.Equals(host) ||
+                                             x.ShortName.Equals(host));
+                    if (lecturer == null)
+                        return BadRequest($"lecturer: {host} not available for organiser: {org.ShortName}");
+
+                    courseDate.Hosts.Add(lecturer);
                 }
             }
 
@@ -725,7 +808,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         #region Subscriptions
         [HttpGet]
         [Route("{course_id}/subscriptions")]
-        [ResponseType(typeof(List<CourseApiSubscriberContract>))]
+        [ResponseType(typeof(List<CourseApiSubscriptionContract>))]
         public async Task<IHttpActionResult> GetCourseSubscriptions(string apiKey, Guid courseId)
         {
             var apiKeyService = new ApiKeyService(Db);
@@ -743,7 +826,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             var studentService = new StudentService(Db);
 
-            var subscribers = new List<CourseApiSubscriberContract>();
+            var subscribers = new List<CourseApiSubscriptionContract>();
 
             var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(x => x.Occurrence.Id == course.Occurrence.Id).ToList();
             foreach (var subscription in subscriptions)
@@ -753,11 +836,11 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 {
                     var student = studentService.GetCurrentStudent(user.Id).FirstOrDefault();
 
-                    var subscriber = new CourseApiSubscriberContract
+                    var subscriber = new CourseApiSubscriptionContract
                     {
                         UserId = user.Claims.FirstOrDefault(c => c.ClaimType == "eduPersonPrincipalName")?.ClaimValue,
                         MatriculationNumber = student != null ? student.Number : string.Empty,
-                        SubscritionDate = subscription.TimeStamp,
+                        SubscriptionDate = subscription.TimeStamp,
                         OnWaitingList = subscription.OnWaitingList,
                     };
                     subscribers.Add(subscriber);

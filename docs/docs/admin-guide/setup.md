@@ -1,18 +1,20 @@
-# Einrichtung
+---
+sidebar_position: 2
+---
 
-## Vorgehen
+# Configuration
 
-- Institution und Einrichtung
-- Assistent Member
-  - x Lehrende anlegen
-- Assistent Studienprogramm 
-  - Trivialer Modulplan (BA / MA)
-  - X Module pro Semester => Module, Akkreditierung werden automatisch angelegt
-  - Pro Modul-Slot genau ein Modul, identische Bezeichnung
-- Assistent Räume
-  - X Räume anlegen lassen, alle gleich groß oder min/max Zufall
-- Assistent Stundenplan
-  - Alle Modul-Slots durchgehen und Kurse anlegen
-  - pro Semester immer 5 Tage
+Things only the sys admin can do.
 
-SWS umwandeln in h, immer ein Block
+## Institution and Organisers
+
+Account with Admin-Rights.
+
+## Rooms
+
+Room Catalog and Assignments.
+
+## Accounts
+
+- View
+- Delete

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Module
@@ -21,6 +21,93 @@ Die Systematik der Modulkataloge kann frei gewählt werden, z.B. entlang von Fac
 Zum Anlegen von Modulkatalogen erfordern administrative Rechte auf Ebene von Studiengängen. Für einen Modulkatalog können Mitglieder der eigene Einrichtung als Katalogverantwortliche festgelegt werden. Katalogverantwortliche können weitere Katalogverantwortliche aufnehmen oder löschen. Katalogverantwortliche haben das Recht Module anzulegen und zu verändern.
 
 ## Module
+
+### Struktur
+
+Als Elemente eines Moduls gelten
+- Titel (de/en)
+- Lehr- / Lernziele
+- Fächer
+- Lehrformate
+- konkretes Prüfungsangebot
+  - Auswahl aus der Liste der Prüfungsformate des Moduls
+  - Zugelassene Hilfsmittel
+  - Beschreibung der Anforderungen, Ablauf (v.a. bei ModA)
+
+Eine Änderung des Modultitels geht in der Regel einher mit der Änderung der Lehr- / Lernziele. Umgekehrt führt eine Änderung der Lehr- / Lernziele nicht zwingend zu einer Änderung des Modultitels.
+
+:::info
+Überlegung: was würde passieren, wenn der Modultitel zur semesterweisen Fortschreibung gehört. Dann hätte ein Modul keinen zeitlich invarianten Titel (wie der Modulslot), sondern kann semester für semester anders heißen, mit anderen Inhalten.
+
+Der Bedarf zum eigenen Titel kommt aus dem der Zuordnung eines Moduls zu einem Studienangebot, wobei ja das Fach angebunden wird, welches einen Titel hat. Mit anderen Worten: es wird unterschieden zwischen der Domäne der Module und deren Einsatz in der Domäne Studienangebote. Diese Trennung erzeugt zunächst Komplexität,liefert aber Spielräume zur Abbildung von real beobachten "Sonderfällen", wie "AW in SG A 2,5 LP, in SG B 3 LP".
+:::
+
+
+## Vorgehen / Anwendungsfälle
+
+Grundidee: die Prozesse werden in der Anwendung ausgelöst und verfolgt.
+
+
+### Änderung am Modul - Ebene Studienplan
+
+Änderungen an Lehr- und Prüfungsangebot sowie Lehr-/Lernzielen für das Folgesemester möglich, bis zur Verabschiedung und Fortschreibung.
+
+Kann vom MV gemacht werden.
+
+### Änderungen am Modul - Ebene SPO
+
+Eine Änderung ist nur dann möglich, wenn beide Bedingungen erfüllt sind (UND)
+
+- Keines der Fächer eines Modul ist einem Studiengang zugeordnet ("akkreditiert")
+- Es kein Lehrangebot zugeordnet
+
+Kann vom MV gemacht werden
+
+Alles andere führt zu einer neuen Version eines Moduls. Diese Kopie ist keinem Studiengang zugeordnet und daher änderbar.
+
+Situation: Keine Akkreditierung, aber Lehrveranstaltungen
+
+- Ohne Akkreditierung keine Abrechnung im LVN möglich
+- Reine Spassveranstaltung
+- Historisierung kann trotzdem sinnvoll sein
+
+Moduländerung löst keine SPO-Änderung aus.
+
+Situation: Akkreditierung, abe keine Lehrveranstaltungen
+
+- "wurde bisher nie angeboten"
+- kein bei "Pflichtmodulen" nicht passieren
+- Annahme "Wahl(pflicht)modul"
+
+Moduländerung löst SPO-Änderung aus.
+
+
+### Änderungen an einer SPO - Modulebene
+
+Es kommt zu einer Änderung an einem oder mehreren Modulen.
+
+Es wird im aktuellen Studienangebot ein Change-Request angelegt
+
+- Bisheriges Modul
+- Neues Modul
+- Status
+
+### Änderung einer SPO - Strukturebene
+
+Eine veröffentlichte SPO kann auf Strukturebene nicht geändert werden.
+
+- keine Änderung an Slots
+- keine Änderung an Themengebiete und Optionen
+
+Es muss eine Kopie angelegt werden. Diese Kopie ist unveröffentlicht und damit änderbar.
+
+Beim Kopieren können die Änderungsanträge berücksichtigt werden.
+
+Eine neue SPO anlegen, dass kann nur wer? => Admin-Rechte auf Ebene Studienangebote => das reicht zunächst
+
+Eine neue SPO hat keine Änderungsanträge, weil nicht veröffentlicht.
+
+## Module (alt)
 
 Ein Modul ist durch eine innerhalb des zugeordneten Modulkatalogs eindeutigen Kurznamen und eine Versionsnummer gekennzeichnet und besitzt einen Modultitel, jeweils in deutscher und englischer Sprache.
 
