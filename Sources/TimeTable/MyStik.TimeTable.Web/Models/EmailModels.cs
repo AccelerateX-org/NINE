@@ -19,6 +19,8 @@ namespace MyStik.TimeTable.Web.Models
             
         }
 
+        public string MessageId => $"<{System.Guid.NewGuid()}@hm.edu>";
+
         /// <summary>
         /// 
         /// </summary>

@@ -154,6 +154,8 @@ namespace MyStik.TimeTable.Data
 
         public string ID => StatuteTakeEffect.HasValue ? $"{Tag}_{StatuteTakeEffect.Value:yyyyMMdd}" : $"{Tag}";
         public string Alias => StatuteTakeEffect.HasValue ? $"{ShortName} | {StatuteTakeEffect.Value.ToShortDateString()}" : $"{ShortName}";
+
+        public string SPO => StatuteTakeEffect.HasValue ? $"{Tag} | {StatuteTakeEffect.Value.ToShortDateString()}" : $"{Tag} | ohne Datum";
     }
 
     public class CurriculumOpportunity

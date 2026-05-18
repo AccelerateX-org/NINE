@@ -22,63 +22,63 @@
                 {
                     @Html.HiddenFor(m => m.CurriculumId)
                     <div class="row">
-                        <label for="ShortName" class="col-sm-2 col-form-label">Alias</label>
-                        <div class="col-sm-10">
-                            @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
-                        <div class="col-sm-10">
+                        <label for="Name" class="col-sm-4 col-form-label">Bezeichnung</label>
+                        <div class="col-sm-8">
                             @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
                         </div>
                     </div>
-                    <div class="row">
-                        <label for="Tag" class="col-sm-2 col-form-label">Primuss Code</label>
-                        <div class="col-sm-10">
+                    <div class="row mt-3">
+                        <label for="ShortName" class="col-sm-4 col-form-label">Kurzname, Gebrauchsname, eindeutiger Begriff, z.B. "SG neu", "SG aktuell" oder "SG 2024"</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label for="Tag" class="col-sm-4 col-form-label">Primuss Code</label>
+                        <div class="col-sm-8">
                             @Html.TextBoxFor(m => m.Tag, new { @class = "form-control" })
                         </div>
                     </div>
                     <div class="row">
-                        <label for="StatuteDate" class="col-sm-2 col-form-label">In Kraft Treten SPO</label>
-                        <div class="col-sm-10">
-                            @Html.TextBoxFor(m => m.StatuteDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type="date" })
+                        <label for="StatuteDate" class="col-sm-4 col-form-label">Datum der SPO-Fassung (Änderungssatzung)</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.StatuteDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
                         </div>
                     </div>
-                    <div class="row">
-                        <label for="OrgId" class="col-sm-2 col-form-label">Zuordnung</label>
-                        <div class="col-sm-10">
+                    <div class="row mt-3">
+                        <label for="OrgId" class="col-sm-4 col-form-label">Zuordnung</label>
+                        <div class="col-sm-8">
                             @Html.DropDownListFor(model => model.OrgId, (IEnumerable<SelectListItem>)ViewBag.Orgs, new { @class = "form-select" })
                         </div>
                     </div>
 
                     <div class="row">
-                        <label for="Description" class="col-sm-2 col-form-label">Beschreibung</label>
-                        <div class="col-sm-10">
+                        <label for="Description" class="col-sm-4 col-form-label">Beschreibung</label>
+                        <div class="col-sm-8">
                             @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
                         </div>
                     </div>
                     <div class="row">
-                        <label for="Version" class="col-sm-2 col-form-label">Version / Anmerkung / Status</label>
-                        <div class="col-sm-10">
+                        <label for="Version" class="col-sm-4 col-form-label">Version / Anmerkung / Status</label>
+                        <div class="col-sm-8">
                             @Html.TextBoxFor(m => m.Version, new { @class = "form-control" })
                         </div>
                     </div>
                     <div class="row">
-                        <label for="DegreeId" class="col-sm-2 col-form-label">Abschluss</label>
-                        <div class="col-sm-10">
+                        <label for="DegreeId" class="col-sm-4 col-form-label">Abschluss</label>
+                        <div class="col-sm-8">
                             @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.Degrees, new { @class = "form-select" })
                         </div>
                     </div>
                     <div class="row">
-                        <label for="EctsTarget" class="col-sm-2 col-form-label">ECTS Ziel</label>
-                        <div class="col-sm-10">
+                        <label for="EctsTarget" class="col-sm-4 col-form-label">ECTS Ziel</label>
+                        <div class="col-sm-8">
                             @Html.TextBoxFor(m => m.EctsTarget, new { @class = "form-control" })
                         </div>
                     </div>
                     <div class="row">
-                        <label class="col-sm-2 col-form-label">Studienart</label>
-                        <div class="col-sm-10">
+                        <label class="col-sm-4 col-form-label">Studienart</label>
+                        <div class="col-sm-8">
                             <div>
                                 @Html.CheckBoxFor(item => item.AsPartTime)
                                 <label for="AsPartTime" class="control-label">Teilzeit (Der Standard ist Vollzeit)</label>
@@ -96,20 +96,20 @@
 
 
                     <div class="row">
-                        <label for="ThesisDuration" class="col-sm-2 col-form-label">Bearbeitungsdauer Abschlussarbeit (in Monaten)</label>
-                        <div class="col-sm-10">
+                        <label for="ThesisDuration" class="col-sm-4 col-form-label">Bearbeitungsdauer Abschlussarbeit (in Monaten)</label>
+                        <div class="col-sm-8">
                             @Html.TextBoxFor(m => m.ThesisDuration, new { @class = "form-control" })
                         </div>
                     </div>
                     <div class="row mt-3">
-                        <div class="offset-2 col-sm-10">
+                        <div class="offset-2 col-sm-8">
                             @Html.CheckBoxFor(item => item.IsDeprecated)
                             <label for="IsDeprecated" class="control-label">Studiengang wird angeboten</label>
                         </div>
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save"></i> Speichern</button>
                             <a href="@Url.Action("Admin",  new{id=Model.CurriculumId})" class="btn btn-outline-secondary">Abbrechen</a>
                         </div>

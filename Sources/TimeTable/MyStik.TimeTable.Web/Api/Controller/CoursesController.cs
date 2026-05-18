@@ -107,7 +107,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// 
         /// </summary>
         [HttpGet]
-        [Route("{course_id}")]
+        [Route("{courseId}")]
         [ResponseType(typeof(CourseApiContract))]
         public async Task<IHttpActionResult> GetCourse(Guid courseId)
         {
@@ -568,7 +568,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         }
 
         [HttpDelete]
-        [Route("{course_id}")]
+        [Route("{courseId}")]
         [ResponseType(typeof(CourseApiResponseModel))]
         public IHttpActionResult DeleteCourse(string apiKey, Guid courseId)
         {
@@ -609,7 +609,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
         #region Dates
         [HttpGet]
-        [Route("{course_id}/dates")]
+        [Route("{courseId}/dates")]
         [ResponseType(typeof(CourseApiContract))]
         public async Task<IHttpActionResult> GetCourseDates(string apiKey, Guid courseId)
         {
@@ -635,7 +635,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
 
         [HttpPost]
-        [Route("{course_id}/dates")]
+        [Route("{courseId}/dates")]
         [ResponseType(typeof(CourseDateApiResponseModel))]
         public async Task<IHttpActionResult> CreateCourseDate(string apiKey, Guid courseId, [FromBody] CourseApiDateContract request)
         {
@@ -742,7 +742,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         }
 
         [HttpPatch]
-        [Route("{course_id}/dates")]
+        [Route("{courseId}/dates")]
         [ResponseType(typeof(CourseDateApiModel))]
         public async Task<IHttpActionResult> UpdateCourseDate(string apiKey, Guid courseId, [FromBody] CourseDateApiModel request)
         {
@@ -774,7 +774,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
 
         [HttpDelete]
-        [Route("{course_id}/dates")]
+        [Route("{courseId}/dates")]
         [ResponseType(typeof(CourseDateApiModel))]
         public async Task<IHttpActionResult> DeleteCourseDate(string apiKey, Guid courseId, [FromBody] CourseDateApiModel request)
         {
@@ -807,7 +807,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
         #region Subscriptions
         [HttpGet]
-        [Route("{course_id}/subscriptions")]
+        [Route("{courseId}/subscriptions")]
         [ResponseType(typeof(List<CourseApiSubscriptionContract>))]
         public async Task<IHttpActionResult> GetCourseSubscriptions(string apiKey, Guid courseId)
         {
@@ -852,7 +852,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
 
         [HttpPost]
-        [Route("{course_id}/subscriptions")]
+        [Route("{courseId}/subscriptions")]
         [ResponseType(typeof(CourseSubscriptionApiModel))]
         public async Task<IHttpActionResult> CreateCourseSubscription(string apiKey, Guid courseId, [FromBody]CourseSubscriptionCreateApiModel request)
         {
@@ -927,7 +927,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
         /*
         [HttpPatch]
-        [Route("{course_id}/subscriptions")]
+        [Route("{courseId}/subscriptions")]
         [ResponseType(typeof(CourseSubscriberApiModel))]
         public async Task<IHttpActionResult> UpdateCourseSubscription(string api_key, Guid course_id, [FromBody] CourseSubscriberApiModel request)
         {
@@ -956,7 +956,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("{course_id}/subscriptions")]
+        [Route("{courseId}/subscriptions")]
         [ResponseType(typeof(CourseApiResponseModel))]
         public async Task<IHttpActionResult> DeleteCourseSubscription(string apiKey, Guid courseId, [FromBody] CourseSubscriptionCreateApiModel request)
         {

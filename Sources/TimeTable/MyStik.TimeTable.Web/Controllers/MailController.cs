@@ -42,6 +42,7 @@ namespace MyStik.TimeTable.Web.Controllers
         protected void InitSenderTopic(string section)
         {
             From = InitFrom(section);
+            Headers["Message-ID"] = $"<{System.Guid.NewGuid()}@hm.edu>";
         }
         /// <summary>
         /// 

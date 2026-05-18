@@ -92,7 +92,7 @@
                                         </tr>
                                         <tr>
                                             <th>
-                                                @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control" })
+                                                @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.OrganiserMember, new { @class = "form-control" })
                                             </th>
                                             <th>
                                                 <input type="text" class="form-control" id="DozId">
@@ -133,7 +133,7 @@
                                         </tr>
                                         <tr>
                                             <th>
-                                                @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control", disabled = "" })
+                                                @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.OrganiserRooms, new { @class = "form-control" })
                                             </th>
                                             <th>
                                                 <input type="text" class="form-control" id="RoomId">

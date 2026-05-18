@@ -349,11 +349,29 @@ namespace MyStik.TimeTable.Web.Controllers
                 ShortInfo = date.Occurrence.Information,
             };
 
+            var members = GetMyMemberships();
+
+            var orgsMember = members.Where(x => x.IsMemberAdmin || x.Organiser.Id == course.Organiser.Id).Select(x => x.Organiser).ToList();
+            var orgsRooms = members.Select(x => x.Organiser).ToList();
+
+            ViewBag.OrganiserMember = orgsMember.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            ViewBag.OrganiserRooms = orgsRooms.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
             ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
+
 
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;

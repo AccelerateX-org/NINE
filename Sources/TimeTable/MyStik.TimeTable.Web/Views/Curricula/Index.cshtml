@@ -122,6 +122,7 @@
                 <thead>
                     <tr>
                         <th>Alias</th>
+                        <th>SPO-Version</th>
                         <th>Titel</th>
                         <th>Abschluss</th>
                         <th>Level</th>
@@ -153,7 +154,8 @@
                             if (isMember || (!isMember && !curr.IsDeprecated))
                             {
                                 <tr class="@rowClass">
-                                    <td>@curr.Alias</td>
+                                    <td>@curr.ShortName</td>
+                                    <td>@curr.SPO</td>
                                     <td>
                                         <a href="@Url.Action("Details", "Curriculum", new { id = curr.Id })">
                                             @curr.Name
