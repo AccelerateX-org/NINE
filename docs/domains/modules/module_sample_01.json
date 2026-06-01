@@ -1,0 +1,19 @@
+{
+    "_id": "",
+    "catalog_id": "",
+    "identifiers": null,
+    "editors": [
+        {
+            "member_id": "HM:FK 09:HINZ",
+            "name": "Hinz Olav"
+        },
+        {
+            "member_id": "HM:FK 09:BRUN",
+            "name": "Brunner Klaus"
+        }
+    ],
+    "usages": null,
+    "subjects":  null,
+    "examinations": null,
+    "objectives": null
+}

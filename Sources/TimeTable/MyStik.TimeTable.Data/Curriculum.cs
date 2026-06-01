@@ -98,6 +98,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Inkraft treten der (Änderungs-)Satzung
         /// das was im Titel steht
+        /// also nicht das Inkraft Treten der Regelungen
         /// </summary>
         public DateTime? StatuteTakeEffect { get; set; }
 

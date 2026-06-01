@@ -19,10 +19,56 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <summary>
         /// 
         /// </summary>
+        [HttpGet]
         [Route("")]
         [ResponseType(typeof(List<CurriculumApiContract>))]
 
-        public IHttpActionResult GetCurricula(string institutionId, string organiserId = "", string curriculumId = "", string semesterId = "")
+        public IHttpActionResult GetCurricula(string institutionId, string organiserId = "", string curriculumId = "", string amendmentId = "")
+        {
+            var list = new List<CurriculumApiContract>();
+            var curricula = Db.Curricula.Where(x =>
+                x.Organiser.Institution.Tag.Equals(institutionId) &&
+                (string.IsNullOrEmpty(organiserId) || x.Organiser.ShortName.Equals(organiserId)) &&
+                (string.IsNullOrEmpty(curriculumId) || x.Tag.Equals(curriculumId)) &&
+                !x.IsDeprecated).Include(curriculum => curriculum.Degree).Include(curriculum1 =>
+                curriculum1.Organiser.Institution).ToList();
+
+            foreach (var curriculum in curricula)
+            {
+                // TO-DO: nur die jeweils aktuelle version
+
+                var dto = new CurriculumApiContract
+                {
+                    Id = curriculum.Id,
+                    InstitutionId = curriculum.Organiser?.Institution?.Tag,
+                    OrganiserId = curriculum.Organiser?.ShortName,
+                    CurriculumId = curriculum.Tag,
+                    AmendmentId = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd"),
+                    Alias = curriculum.ShortName,
+                    Name = curriculum.Name,
+                    Degree = curriculum.Degree?.Name,
+                    Level = curriculum.Degree?.Level.ToString(),
+                    CreditPoints = curriculum.EctsTarget,
+                    Duration = 3.5, // curriculum.DurationTarget,
+                    AsDual = curriculum.AsDual,
+                    AsPartTime = curriculum.AsPartTime,
+                    IsQualification = curriculum.IsQualification,
+                    InSummerTerm = curriculum.InSummerTerm,
+                    InWinterTerm = curriculum.InWinterTerm,
+                    Language = "de" // curriculum.Language,
+                };
+
+                list.Add(dto);
+            }
+
+            return Ok(list);
+        }
+
+        [HttpGet]
+        [Route("{institutionId}/{organiserId}/{curriculumId}")]
+        [ResponseType(typeof(List<CurriculumApiContract>))]
+
+        public IHttpActionResult GetCurriculaVersions(string institutionId, string organiserId, string curriculumId)
         {
             var list = new List<CurriculumApiContract>();
             var curricula = Db.Curricula.Where(x =>
@@ -36,14 +82,23 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 var dto = new CurriculumApiContract
                 {
-                    Title = curriculum.Name,
-                    Alias = curriculum.ShortName,
-                    CurriculumId = curriculum.Tag,
-                    Version = curriculum.StatuteTakeEffect,
-                    OrganiserId = curriculum.Organiser?.ShortName,
+                    Id = curriculum.Id,
                     InstitutionId = curriculum.Organiser?.Institution?.Tag,
+                    OrganiserId = curriculum.Organiser?.ShortName,
+                    CurriculumId = curriculum.Tag,
+                    AmendmentId = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd"),
+                    Alias = curriculum.ShortName,
+                    Name = curriculum.Name,
+                    Degree = curriculum.Degree?.Name,
                     Level = curriculum.Degree?.Level.ToString(),
-                    Degree = curriculum.Degree?.Name
+                    CreditPoints = curriculum.EctsTarget,
+                    Duration = 3.5, // curriculum.DurationTarget,
+                    AsDual = curriculum.AsDual,
+                    AsPartTime = curriculum.AsPartTime,
+                    IsQualification = curriculum.IsQualification,
+                    InSummerTerm = curriculum.InSummerTerm,
+                    InWinterTerm = curriculum.InWinterTerm,
+                    Language = "de" // curriculum.Language,
                 };
 
                 list.Add(dto);
@@ -51,6 +106,47 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return Ok(list);
         }
+
+
+        [HttpGet]
+        [Route("{id}")]
+        [ResponseType(typeof(CurriculumApiContract))]
+
+        public IHttpActionResult GetCurriculum(Guid id)
+        {
+            var curriculum = Db.Curricula.Include(curriculum1 => curriculum1.Degree).Include(curriculum2 =>
+                curriculum2.Organiser.Institution).SingleOrDefault(x => x.Id == id);
+
+            if (curriculum == null)
+            {
+                return NotFound();
+            }
+
+
+            var dto = new CurriculumApiContract
+            {
+                Id = curriculum.Id,
+                InstitutionId = curriculum.Organiser?.Institution?.Tag,
+                OrganiserId = curriculum.Organiser?.ShortName,
+                CurriculumId = curriculum.Tag,
+                AmendmentId = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd"),
+                Alias = curriculum.ShortName,
+                Name = curriculum.Name,
+                Degree = curriculum.Degree?.Name,
+                Level = curriculum.Degree?.Level.ToString(),
+                CreditPoints = curriculum.EctsTarget,
+                Duration = 3.5, // curriculum.DurationTarget,
+                AsDual = curriculum.AsDual,
+                AsPartTime = curriculum.AsPartTime,
+                IsQualification = curriculum.IsQualification,
+                InSummerTerm = curriculum.InSummerTerm,
+                InWinterTerm = curriculum.InWinterTerm,
+                Language = "de" // curriculum.Language,
+            };
+
+            return Ok(dto);
+        }
+
 
 
         [HttpGet]

@@ -1,0 +1,22 @@
+{
+    "_id": "",
+    "identifiers": null,
+    "context": null,
+    "usages": null,
+    "subjects": [
+        {
+            "subject_id": "Q1",
+            "title": "Quantitative Methods",
+            "format": "SU",
+            "cost": 2
+        },
+        {
+            "subject_id": "Q2",
+            "title": "Qualitative Methods",
+            "format": "SU",
+            "cost": 2
+        }
+    ],
+    "examinations": null,
+    "objectives": null
+}

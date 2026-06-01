@@ -1,0 +1,22 @@
+{
+    "_id": "",
+    "identifiers": null,
+    "context": null,
+    "usages": null,
+    "subjects": [
+        {
+            "subject_id": "VO",
+            "title": null,
+            "format": "SU",
+            "cost": 2
+        },
+        {
+            "subject_id": "UE",
+            "title": null,
+            "format": "Ü",
+            "cost": 2
+        }
+    ],
+    "examinations": null,
+    "objectives": null
+}

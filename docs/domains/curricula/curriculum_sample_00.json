@@ -1,0 +1,37 @@
+{
+    "id": "",
+    "curriculumId": "HM:FK 10:BWB:2022-05-22",
+    "alias": "BWB aktuell",
+    "name": "Betriebswirtschaftslehre Bachelor",
+    "degree": "Bachelor of Science",
+    "level": "Bachelor",
+    "creditPoints": 210,
+    "duration": 3.5,
+    "asDual": false,
+    "asPartTime": false,
+    "language": "de",
+    "isQualification": true,
+    "inSummerTerm": false,
+    "inWinterTerm": true,
+    "units": [
+        {
+            "id": "",
+            "themeId": "PRA",
+            "optionId": "PM",
+            "slotId": "G12",
+            "name": "Praktikum",
+            "semester": 4,
+            "creditPoints": 6,
+            "loadings": [
+                {
+                    "chips" : [
+                        {
+                            "subjectId": "HM:FK 09:WIB_T:GDI_v001:VO",
+                            "creditPoints": 6
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

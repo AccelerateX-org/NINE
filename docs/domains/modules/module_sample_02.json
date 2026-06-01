@@ -1,0 +1,18 @@
+{
+    "_id": "",
+    "identifiers": null,
+    "context": null,
+    "usages": [
+        {
+            "subject_id": "VO",
+            "slot_id": "HM:FK 09:WIB:2022-05-22:GS:PM:G12"
+        },
+        {
+            "subject_id": "UE",
+            "slot_id": "HM:FK 09:WIB:2022-05-22:GS:PM:G12"
+        }
+    ],
+    "subjects": null,
+    "examinations": null,
+    "objectives": null
+}

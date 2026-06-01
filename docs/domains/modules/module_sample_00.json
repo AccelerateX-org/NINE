@@ -1,0 +1,19 @@
+{
+    "_id": "",
+    "catalog_id": "HM:FK 09:WIB_T:GDI",
+    "identifiers": [
+        {
+            "language": "de",
+            "title": "Grundlagen der Informatik"
+        },
+        {
+            "language": "en",
+            "title": "Fundamentals of Computer Science"
+        }
+    ],
+    "editors": null,
+    "usages": null,
+    "subjects":  null,
+    "examinations": null,
+    "objectives": null
+}

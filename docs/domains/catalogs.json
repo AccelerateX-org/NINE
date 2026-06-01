@@ -1,0 +1,56 @@
+// Das sind Adressen, im Sinne von Value Objects, die in den verschiedenen Domänen verwendet werden können. 
+// Sie sind nicht vollständig, sondern dienen nur als Beispiele. 
+// Sie können jederzeit erweitert oder geändert werden, um den Bedürfnissen der Anwendung gerecht zu werden.
+{
+    "subject_identifier" : {
+        "institution_id": "HM",
+        "organiser_id": "FK 09",
+        "catalog_id": "WIB_T",
+        "module_id": "GDI",
+        "version_suffix": "v001",
+        "subject_id": "VO"
+    },
+    "curriculum_identifier": {
+        "institution_id": "HM",
+        "organiser_id": "FK 10",
+        "curriculum_id": "BWB",
+        "amendment_id": "2022-05-22"
+    },
+    "unit_identifier": {
+        "institution_id": "HM",
+        "organiser_id": "FK 10",
+        "curriculum_id": "BWB",
+        "amendment_id": "2022-05-22",
+        "theme_id": "GS",
+        "option_id": "PM",
+        "slot_id": "G12"
+    },
+    "member_identifier": {
+        "institution_id": "HM",
+        "organiser_id": "FK 09",
+        "member_id": "HINZ"
+    },
+    "room_identifier": {
+        "institution_id": "HM",
+        "room_id": "R 1.083"
+    },
+    "term_identifier": {
+        "institution_id": "HM",
+        "term_id": "SoSe 2026"
+    },
+    "cohort_identifier": {
+        "institution_id": "HM",
+        "organiser_id": "FK 09",
+        "curriculum_id": "WIB",
+        "labels": [ "1A", "CIE" ]
+    },
+    "course_identifier": {
+        "institution_id": "HM",
+        "organiser_id": "FK 09",
+        "term_id": "SoSe 2026",
+        "course_id": "701",
+        "cohorts": [],
+        "subjects": [],
+        "quotas": []
+    }
+}
