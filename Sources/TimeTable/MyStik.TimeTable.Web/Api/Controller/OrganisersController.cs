@@ -102,7 +102,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 response.Add(new OrganiserCurriculumApiContract
                 {
-                    Curriculum_Id = curr.ID,
+                    Curriculum_Id = curr.Tag,
                     Name = curr.Name,
                     ShortName = curr.ShortName
                 });

@@ -524,6 +524,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 .OrderBy(x => x.ShortName)
                 .ToList();
 
+            var allCurrs = Db.Curricula.Where(x => x.LabelSet != null).Include(curriculum => curriculum.LabelSet).ToList();
+
+            var labelSets = Db.Activities.OfType<Course>()
+                .Where(x =>
+                    x.Semester.Id == semId &&
+                    x.Organiser.Id == orgId &&
+                    x.LabelSet != null)
+                .Select(x => x.LabelSet).Include(itemLabelSet => itemLabelSet.ItemLabels)
+                .ToList();
+
+            var allLabels = labelSets.SelectMany(labelSet => labelSet.ItemLabels).Distinct().ToList();
+
+            var selectedCurrs = (from label in allLabels from curr in allCurrs where curr.LabelSet.ItemLabels.Contains(label) select curr).Distinct().ToList();
+
+            var exportCurrs = selectedCurrs.Where(x => x.Organiser.Id != orgId).ToList();
+
+            model.AddRange(exportCurrs);
+
             return PartialView("_CurriculaSelectList", model);
         }
 

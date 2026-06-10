@@ -153,8 +153,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CurriculumArea> Areas { get; set; }
 
-        public string ID => StatuteTakeEffect.HasValue ? $"{Tag}_{StatuteTakeEffect.Value:yyyyMMdd}" : $"{Tag}";
-        public string Alias => StatuteTakeEffect.HasValue ? $"{ShortName} | {StatuteTakeEffect.Value.ToShortDateString()}" : $"{ShortName}";
+        public string Alias => ShortName;
 
         public string SPO => StatuteTakeEffect.HasValue ? $"{Tag} | {StatuteTakeEffect.Value.ToShortDateString()}" : $"{Tag} | ohne Datum";
     }

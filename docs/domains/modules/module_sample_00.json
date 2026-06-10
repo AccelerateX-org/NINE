@@ -1,14 +1,22 @@
 {
-    "_id": "",
-    "catalog_id": "HM:FK 09:WIB_T:GDI",
+    "_id": null,
+    "module_id": "HM:FK 09:WIB_T:GDI_v1.0",
+    "context": {
+        "institution_Id": "HM",
+        "organiser_id": "FK 09",
+        "catalog_id": "WIB_T",
+        "topic_id": "GDI_v01"
+    },
     "identifiers": [
         {
             "language": "de",
-            "title": "Grundlagen der Informatik"
+            "title": "Grundlagen der Informatik",
+            "summary": ""
         },
         {
             "language": "en",
-            "title": "Fundamentals of Computer Science"
+            "title": "Fundamentals of Computer Science",
+            "summary": ""
         }
     ],
     "editors": null,

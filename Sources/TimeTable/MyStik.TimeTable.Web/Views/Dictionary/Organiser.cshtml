@@ -4,7 +4,6 @@
 @{
     ViewBag.Title = "Vorlesungsverzeichnis";
 
-    /*
     var db = new TimeTableDbContext();
 
     var allCurrs = db.Curricula.Where(x => x.LabelSet != null).Include(curriculum => curriculum.LabelSet).ToList();
@@ -20,8 +19,8 @@
     var allLabels = labelSets.SelectMany(labelSet => labelSet.ItemLabels).Distinct().ToList();
 
     var selectedCurrs = (from label in allLabels from curr in allCurrs where curr.LabelSet.ItemLabels.Contains(label) select curr).Distinct().ToList();
-    */
 
+    var exportCurrs = selectedCurrs.Where(x => x.Organiser.Id != Model.Organiser.Id).ToList();
 }
 
 
@@ -81,6 +80,12 @@
                         {
                             <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
                                 <strong>@curr.Alias</strong>: @curr.Name
+                            </a>
+                        }
+                        @foreach (var curr in exportCurrs.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
+                        {
+                            <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
+                                <strong>@curr.Alias</strong>: @curr.Name <span class="badge bg-secondary">@curr.Organiser.ShortName</span>
                             </a>
                         }
                     </div>
@@ -150,17 +155,3 @@
         </div>
     </div>
 </div>
-@*
-<div class="row">
-    <div class="col-md-12">
-        <ul>
-            @foreach (var c in selectedCurrs)
-            {
-                <li>@c.ShortName | @c.Name</li>
-            }
-        </ul>
-    </div>
-
-</div>
-    *@
-

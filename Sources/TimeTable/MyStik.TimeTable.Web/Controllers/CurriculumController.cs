@@ -995,7 +995,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CurriculumEditModel
             {
-                ID = curr.ID,
+                ID = curr.Tag,
                 CurriculumId = curr.Id,
                 OrgId = curr.Organiser.Id,
                 Tag = curr.Tag,
@@ -1093,7 +1093,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CurriculumEditModel
             {
-                ID = curr.ID,
+                ID = curr.Tag,
                 CurriculumId = curr.Id,
                 OrgId = curr.Organiser.Id,
                 Tag = curr.Tag,

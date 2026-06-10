@@ -217,7 +217,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 {
                     var cohort = new CourseApiCohortContract
                     {
-                        CurriculumId = curr.ID,
+                        CurriculumId = curr.Tag,
                         CurriculumAlias = curr.ShortName,
                         Label = label.Name,
                     };
