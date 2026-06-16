@@ -21,6 +21,7 @@
             "slotId": "G12",
             "name": "Praktikum",
             "semester": 4,
+            "type": "PM | WPM | AW | TS | PRA",
             "creditPoints": 6,
             "loadings": [
                 {

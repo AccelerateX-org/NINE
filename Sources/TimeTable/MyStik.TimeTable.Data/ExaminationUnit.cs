@@ -113,6 +113,8 @@ namespace MyStik.TimeTable.Data
             }
         }
 
+        public string FullTag => $"{Module.FullTag}|{Name}";
+
     }
 
     public class ExaminationFraction

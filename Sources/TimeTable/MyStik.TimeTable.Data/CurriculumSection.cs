@@ -115,7 +115,7 @@ namespace MyStik.TimeTable.Data
             {
                 if (CurriculumSection == null && AreaOption != null)
                 {
-                    return $"{AreaOption.Area.Tag}#{AreaOption.Tag}#{Tag}";
+                    return $"{AreaOption.Area.Curriculum.FullTag}|{AreaOption.Area.Tag}|{AreaOption.Tag}|{Tag}";
                 }
                 else if (CurriculumSection != null && AreaOption == null)
                 {

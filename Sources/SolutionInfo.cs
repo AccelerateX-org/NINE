@@ -18,8 +18,8 @@ using System.Reflection;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers
+// You can specify all the values, or you can default the Revision and Build Numbers
 // by using the '*' as shown below:0
-[assembly: AssemblyVersion("0.29.1.0")]
-[assembly: AssemblyFileVersion("0.29.1.0")]
-[assembly: AssemblyInformationalVersion("0.29.1")]
+[assembly: AssemblyVersion("0.29.3.0")]
+[assembly: AssemblyFileVersion("0.29.3.0")]
+[assembly: AssemblyInformationalVersion("0.29.3")]
