@@ -1,18 +1,45 @@
 {
     "_id": "",
-    "module_id": "",
+    "catalog_id": null,
     "identifiers": null,
+    "context": null,
     "editors": null,
     "usages": null,
-    "subjects":  null,
-    "examinations": null,
-    "objectives": [
+    "subjects": null,
+    "examinations": [
         {
-            "target": "",
-            "category": "knowledge",
-            "frame": "Bloom",
-            "level": 1
+            "option_id": "A",
+            "hasBonus": true,
+            "fractions": [
+                {
+                    "fraction_id": "A1",
+                    "type": "schrP",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "option_id": "B",
+            "hasBonus": false,
+            "fractions": [
+                {
+                    "fraction_id": "B1",
+                    "type": "schrP",
+                    "weight": 0.5
+                },
+                {
+                    "fraction_id": "B2",
+                    "type": "ModA",
+                    "weight": 0.5
+                }
+            ]
+        },
+        {
+            "option_id": "C",
+            "hasBonus": false,
+            "isCertificate": true,
+            "fractions": null
         }
-    ]
-
+    ],
+    "objectives": null
 }

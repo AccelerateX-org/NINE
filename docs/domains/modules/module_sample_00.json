@@ -4,13 +4,18 @@
     "identifiers": [
         {
             "language": "de",
-            "title": "Grundlagen der Informatik"
+            "title": "Grundlagen der Informatik",
+            "summary": "In diesem Modul werden die grundlegenden Konzepte der Informatik vermittelt, einschließlich Algorithmen, Datenstrukturen und Softwareentwicklung."
         },
         {
             "language": "en",
-            "title": "Fundamentals of Computer Science"
+            "title": "Fundamentals of Computer Science",
+            "summary": "This module imparts the fundamental concepts of computer science, including algorithms, data structures, and software development."
         }
     ],
+    "context": {
+        "language": "de"
+    },
     "editors": null,
     "usages": null,
     "subjects":  null,

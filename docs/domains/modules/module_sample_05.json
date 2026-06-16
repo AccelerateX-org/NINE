@@ -1,0 +1,18 @@
+{
+    "_id": "",
+    "cartalog_id": null,
+    "identifiers": null,
+    "editors": null,
+    "usages": null,
+    "subjects":  null,
+    "examinations": null,
+    "objectives": [
+        {
+            "target": "",
+            "category": "knowledge",
+            "frame": "Bloom",
+            "level": 1
+        }
+    ]
+
+}

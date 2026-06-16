@@ -1,7 +1,9 @@
 {
     "_id": "",
+    "catalog_id": null,
     "identifiers": null,
     "context": null,
+    "editors": null,
     "usages": [
         {
             "subject_id": "VO",
