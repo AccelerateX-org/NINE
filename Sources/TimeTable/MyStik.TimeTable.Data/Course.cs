@@ -57,6 +57,18 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<SubjectTeaching> SubjectTeachings { get; set; }
 
-
+        public string FullTag {
+            get
+            {
+                if (Organiser != null && Semester != null)
+                {
+                    return $"{Organiser.Institution.Tag}|{Organiser.ShortName}|{Semester.Name}|{ShortName}";
+                }
+                else
+                {
+                    return $"xxx:{ShortName}";
+                }
+            }
+        }
     }
 }

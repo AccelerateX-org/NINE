@@ -36,70 +36,48 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("")]
         [ResponseType(typeof(List<CourseApiContract>))]
 
-        public IHttpActionResult GetCourses(string institutionId, string organiserId = "", string curriculumId = "", string semesterId = "")
+        public IHttpActionResult GetCourses(string institution, string organiser = "", string code = "", string semester = "")
         {
             var list = new List<CourseApiContract>();
             Semester sem = null;
-            sem = string.IsNullOrEmpty(semesterId) ? 
+            sem = string.IsNullOrEmpty(semester) ? 
                 new SemesterService().GetSemester(DateTime.Today) : 
-                Db.Semesters.SingleOrDefault(x => x.Name.Equals(semesterId));
+                Db.Semesters.SingleOrDefault(x => x.Name.Equals(semester));
             if (sem == null)
                 return Ok(list);
 
-            var inst = Db.Institutions.FirstOrDefault(x => x.Tag.ToUpper().Equals(institutionId.ToUpper()));
+            var inst = Db.Institutions.FirstOrDefault(x => x.Tag.ToUpper().Equals(institution.ToUpper()));
             if (inst == null)
                 return Ok(list);
 
 
             const bool isAuth = true;
             var converter = new CourseConverter(Db, UserManager, isAuth);
-            var courses = new List<Course>();
+            List<Course> courses;
 
-            if (string.IsNullOrEmpty(organiserId) && string.IsNullOrEmpty(curriculumId))
+            if (string.IsNullOrEmpty(organiser))
             {
                 courses = Db.Activities.OfType<Course>()
                     .Where(x =>
                         x.Organiser != null && x.Organiser.Institution.Id == inst.Id &&
-                        x.Semester != null && x.Semester.Id == sem.Id)
+                        x.Semester != null && x.Semester.Id == sem.Id &&
+                        (string.IsNullOrEmpty(code) || x.ShortName.Equals(code)))
                     .ToList();
             }
             else
             {
-                if (!string.IsNullOrEmpty(organiserId) && string.IsNullOrEmpty(curriculumId))
-                {
-                    var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(organiserId));
-                    if (org == null)
-                        return Ok(list);
-                    courses = Db.Activities.OfType<Course>().Where(x =>
-                        x.Semester != null &&
-                        x.Organiser != null &&
-                        x.Semester.Id == sem.Id &&
-                        x.Organiser.Id == org.Id).ToList();
-                }
-                if (!string.IsNullOrEmpty(curriculumId))
-                {
-                    var curr = Db.Curricula.Include(curriculum => curriculum.LabelSet.ItemLabels).FirstOrDefault(x => x.Tag.Equals(curriculumId));
-                    if (curr == null)
-                        return Ok(list);
-                    foreach (var label in curr.LabelSet.ItemLabels.ToList())
-                    {
-                        var labeledCourses = Db.Activities.OfType<Course>()
-                            .Where(x =>
-                                x.Semester != null &&
-                                x.Semester.Id == sem.Id &&
-                                x.LabelSet != null &&
-                                x.LabelSet.ItemLabels.Any(l => l.Id == label.Id))
-                            .ToList();
-                        courses.AddRange(labeledCourses);
-                    }
-                    courses = courses.Distinct().ToList();
-                }
+                var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(organiser));
+                if (org == null)
+                    return Ok(list);
+
+                courses = Db.Activities.OfType<Course>().Where(x =>
+                    x.Semester != null && x.Organiser != null &&
+                    x.Semester.Id == sem.Id && x.Organiser.Id == org.Id &&
+                    (string.IsNullOrEmpty(code) || x.ShortName.Equals(code))).ToList();
             }
 
-            foreach (var course in courses)
-            {
-                list.Add(converter.Convert_new(course));
-            }
+            list.AddRange(courses.Select(course => converter.Convert_new(course)));
+            
             return Ok(list);
         }
 
@@ -107,11 +85,11 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// 
         /// </summary>
         [HttpGet]
-        [Route("{courseId}")]
+        [Route("{id}")]
         [ResponseType(typeof(CourseApiContract))]
-        public async Task<IHttpActionResult> GetCourse(Guid courseId)
+        public async Task<IHttpActionResult> GetCourse(Guid id)
         {
-            if (!(await Db.Activities.FindAsync(courseId) is Course course))
+            if (!(await Db.Activities.FindAsync(id) is Course course))
             {
                 return NotFound();
             }

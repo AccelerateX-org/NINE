@@ -426,7 +426,6 @@
     <Compile Include="Api\Contracts\EventContracts.cs" />
     <Compile Include="Api\Contracts\LecturerContracts.cs" />
     <Compile Include="Api\Contracts\NotificationContracts.cs" />
-    <Compile Include="Api\Contracts\OrganisersContracts.cs" />
     <Compile Include="Api\Contracts\QuestionContracts.cs" />
     <Compile Include="Api\Contracts\RoomContracts.cs" />
     <Compile Include="Api\Contracts\ScimContracts.cs" />
@@ -437,6 +436,7 @@
     <Compile Include="Api\Controller\CalendarController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
     <Compile Include="Api\Controller\CieHomeController.cs" />
+    <Compile Include="Api\Controller\CohortsController.cs" />
     <Compile Include="Api\Controller\ConsultationsController.cs" />
     <Compile Include="Api\Controller\CoursesController.cs" />
     <Compile Include="Api\Controller\CurriculaController.cs" />

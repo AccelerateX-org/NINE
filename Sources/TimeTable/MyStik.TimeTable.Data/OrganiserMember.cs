@@ -213,7 +213,7 @@ namespace MyStik.TimeTable.Data
         }
 
 
-        public string FullTag => $"{Organiser.Tag}#{ShortName}";
+        public string FullTag => $"{Organiser.Institution.Tag}|{Organiser.ShortName}|{ShortName}";
 
         public string Tag => ShortName;
     }

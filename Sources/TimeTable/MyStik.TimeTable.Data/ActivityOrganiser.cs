@@ -72,6 +72,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual Institution Institution { get; set; }
 
+        public string FullTag => $"{Institution.Tag}|{ShortName}";
+
         /*
         public virtual ICollection<Institution> Institution { get; set; }
         public virtual ActivityOrganiser ParentOrganiser { get; set; }

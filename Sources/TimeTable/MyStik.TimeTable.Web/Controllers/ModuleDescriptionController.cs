@@ -23,7 +23,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Details(Guid id)
         {
 
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            var module = Db.CurriculumModules.Include(curriculumModule => curriculumModule.Catalog.Organiser).SingleOrDefault(x => x.Id == id);
             var semester = SemesterService.GetSemester(DateTime.Today);
             var nextSemester = SemesterService.GetNextSemester(semester);
             var prevSemester = SemesterService.GetPreviousSemester(semester);

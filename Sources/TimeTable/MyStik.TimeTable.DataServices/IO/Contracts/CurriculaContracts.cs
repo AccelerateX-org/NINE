@@ -6,22 +6,32 @@ using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.DataServices.IO.Contracts
 {
-    public class CurriculumApiContract
+
+    #region Entity Contracts
+    public class CurriculumContextApiContract
+    {
+        public string Institution { get; set; }
+        public string Organiser { get; set; }
+        public string Program { get; set; }
+        /// <summary>
+        /// yyyy-MM-dd
+        /// </summary>
+        public string Amendment { get; set; }
+    }
+
+
+    public class CurriculumEntityApiContract
     {
         public Guid Id { get; set; }
+        public string Key { get; set; }
+        public CurriculumContextApiContract Context { get; set; }    
+}
 
-        public string InstitutionId { get; set; }
-
-        public string OrganiserId { get; set; }
-
-        /// <summary>
-        /// Das ist der Tag, d.h. der primuss code
-        /// </summary>
-        public string CurriculumId { get; set; }
-        // Es sollte ein Versionsdatum geben, wenn Id angegeben ist
-        public string AmendmentId { get; set; }
-
-        // Altrnative zu Id und Version
+    #endregion
+    #region Details
+    public class CurriculumDetailsApiContract : CurriculumEntityApiContract
+    {
+        // Alternative zu Id und Version
         public string Alias { get; set; }
 
         public string Name { get; set; }
@@ -80,18 +90,41 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
         /// </summary>
         public Guid Id { get; set; }
         
-        public string ThemeId { get; set; }
-
-        public string OptionId { get; set; }
-
         public string SlotId { get; set; }
 
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         public int Semester { get; set; }
 
         public double CreditPoints { get; set; }
     }
+    #endregion
+
+    public class CurriculumUnitDetailsApiContract
+    {
+        public Guid Id { get; set; }
+        public string Key { get; set; }
+        public string Title { get; set; } 
+        public string Description { get; set; }
+
+        public List<CurriculumChipApiContract> Alternatives { get; set; }
+    }
+
+    public class CurriculumInstanceApiContract
+    {
+        public string CurriculumKey { get; set; }
+        public string SemesterKey { get; set; }
+        public string Description { get; set; }
+
+        public List<CurriculumModuleApiContract> Modules { get; set; }
+    }
+
+    public class CurriculumModuleApiContract
+    {
+        public string ModuleKey { get; set; }
+    }
+
+
 
     public class CurriculumLoadingApiContract
     {
@@ -103,7 +136,9 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
 
     public class CurriculumChipApiContract
     {
-        public string SubjectId { get; set; }
+        public string ChipKey { get; set; }
+
+        public string SubjectKey { get; set; }
 
         public double CreditPoints { get; set; }
     }

@@ -1,14 +1,17 @@
-﻿using MyStik.TimeTable.Data;
+﻿using Antlr.Runtime.Misc;
+using Microsoft.AspNet.SignalR.Messaging;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.IO.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Services;
+using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using MyStik.TimeTable.DataServices.IO.Contracts;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -19,444 +22,328 @@ namespace MyStik.TimeTable.Web.Api.Controller
     [RoutePrefix("api/v2/modules")]
     public class ModulesController : ApiBaseController
     {
-        [System.Web.Http.Route("{institutionId}/{organiserId}/{catalogId}")]
-        [ResponseType(typeof(List<ModuleApiContract>))]
 
-        public IHttpActionResult GetModules(string institutionId, string organiserId = "", string catalogId = "")
+        [Route("")]
+        [ResponseType(typeof(List<ModuleEntityApiContract>))]
+
+        public IHttpActionResult GetModules(string institution, string organiser = "", string catalog = "", string topic = "")
         {
-            var list = new List<ModuleApiContract>();
+            var modules = Db.CurriculumModules.Where(x =>
+                x.Catalog != null && x.Catalog.Organiser.Institution.Tag.Equals(institution) &&
+                (string.IsNullOrEmpty(organiser) || x.Catalog.Organiser.ShortName.Equals(organiser)) &&
+                (string.IsNullOrEmpty(catalog) || x.Catalog.Tag.Equals(catalog)) && 
+                (string.IsNullOrEmpty(topic) || x.Tag.Equals(topic))).Include(curriculumModule => curriculumModule.Catalog.Organiser.Institution)
+                .ToList();
 
-            var modules = Db.CurriculumModules.Where(x => 
-                x.Catalog.Organiser.Institution.Tag.Equals(institutionId) &&
-                (string.IsNullOrEmpty(organiserId) || x.Catalog.Organiser.ShortName.Equals(organiserId)) &&
-                (string.IsNullOrEmpty(catalogId) || x.Catalog.Tag.Equals(catalogId)) && 
-                x.Catalog != null).Include(curriculumModule => curriculumModule.Catalog.Organiser.Institution).ToList();
+            var list = new List<ModuleEntityApiContract>();
 
-            foreach (var curriculumModule in modules)
+            foreach (var module in modules)
             {
-
-                var dto = new ModuleApiContract
+                var context = new ModuleContextApiContract
                 {
-                    InstitutionId = curriculumModule.Catalog.Organiser.Institution.Tag,
-                    OrganiserId = curriculumModule.Catalog.Organiser.ShortName,
-                    CatalogId = curriculumModule.Tag,
-                    ModuleId = curriculumModule.Tag,
-                    Title = curriculumModule.Name,
+                    Institution = module.Catalog.Organiser.Institution.Tag,
+                    Organiser = module.Catalog.Organiser.ShortName,
+                    Catalog = module.Catalog.Tag,
+                    Topic = module.Tag
                 };
 
-                list.Add(dto);
+
+                list.Add(new ModuleEntityApiContract
+                {
+                    Id = module.Id,
+                    Key = module.FullTag,
+                    Context = context
+                });
             }
 
             return Ok(list);
         }
 
-        /// <summary>
-        /// Suche nache Modulesn
-        /// </summary>
-        [Route("{id}/description/{semester}")]
-        public ModuleDescriptionDto GetModuleDescription(Guid id, string semester)
+        [Route("{key}/blueprint")]
+        [ResponseType(typeof(List<ModuleDetailsApiContract>))]
+
+        public IHttpActionResult GetModuleByContext(string key)
         {
-            var model = new ModuleDescriptionDto();
+            var words = key.Split('|');
+            var institutionId = words.Length > 0 ? words[0] : string.Empty;
+            var organiserId = words.Length > 1 ? words[1] : string.Empty;
+            var catalogId = words.Length > 2 ? words[2] : string.Empty;
+            var topicId = words.Length > 3 ? words[3] : string.Empty;
 
+            var dbModules = Db.CurriculumModules.Where(x =>
+                x.Catalog != null && x.Catalog.Organiser.Institution.Tag.Equals(institutionId) &&
+                (string.IsNullOrEmpty(organiserId) || x.Catalog.Organiser.ShortName.Equals(organiserId)) &&
+                (string.IsNullOrEmpty(catalogId) || x.Catalog.Tag.Equals(catalogId)) &&
+                (string.IsNullOrEmpty(topicId) || x.Tag.Equals(topicId))).Include(curriculumModule =>
+                curriculumModule.Catalog.Organiser.Institution).ToList();
 
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-            if (module == null)
+            var list = new List<ModuleDetailsApiContract>();
+
+            foreach (var dbModule in dbModules)
             {
-                model.DescriptionDe = "Modul nicht gefunden";
-                return model;
+                var context = new ModuleContextApiContract
+                {
+                    Institution = dbModule.Catalog.Organiser.Institution.Tag,
+                    Organiser = dbModule.Catalog.Organiser.ShortName,
+                    Catalog = dbModule.Catalog.Tag,
+                    Topic = dbModule.Tag
+                };
+
+                var module = TransformModule(dbModule, context);
+
+                list.Add(module);
             }
 
+
+            return Ok(list);
+        }
+
+
+        /// <summary>
+        /// Modulbeschreibung nach Semester
+        /// </summary>
+        [Route("{key}/instance/{semester}")]
+        [ResponseType(typeof(List<ModuleDescriptionApiContract>))]
+
+        public IHttpActionResult GetModuleImplementation(string key, string semester)
+        {
             var sem = Db.Semesters.SingleOrDefault(x => x.Name.ToLower().Equals(semester.ToLower()));
             if (sem == null)
             {
-                model.DescriptionDe = "Semester nicht gefunden";
-                return model;
+                return NotFound();
             }
 
-            var desc = module.Descriptions
-                .Where(x => x.Semester.Id == sem.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
-                .OrderByDescending(x => x.ChangeLog.Approved.Value)
-                .FirstOrDefault();
-            if (desc == null)
+            var words = key.Split('|');
+            var institutionId = words.Length > 0 ? words[0] : string.Empty;
+            var organiserId = words.Length > 1 ? words[1] : string.Empty;
+            var catalogId = words.Length > 2 ? words[2] : string.Empty;
+            var topicId = words.Length > 3 ? words[3] : string.Empty;
+
+            var dbModules = Db.CurriculumModules.Where(x =>
+                x.Catalog != null && x.Catalog.Organiser.Institution.Tag.Equals(institutionId) &&
+                (string.IsNullOrEmpty(organiserId) || x.Catalog.Organiser.ShortName.Equals(organiserId)) &&
+                (string.IsNullOrEmpty(catalogId) || x.Catalog.Tag.Equals(catalogId)) &&
+                (string.IsNullOrEmpty(topicId) || x.Tag.Equals(topicId))).Include(curriculumModule =>
+                curriculumModule.Catalog.Organiser.Institution).Include(curriculumModule1 => curriculumModule1.Descriptions.Select(moduleDescription => moduleDescription.Semester)).Include(curriculumModule => curriculumModule.Descriptions.Select(moduleDescription1 => moduleDescription1.ChangeLog)).Include(curriculumModule1 => curriculumModule1.ModuleSubjects.Select(moduleSubject => moduleSubject.SubjectTeachings.Select(subjectTeaching =>
+                subjectTeaching.Course.Semester))).ToList();
+
+            var list = new List<ModuleDescriptionApiContract>();
+
+            foreach (var dbModule in dbModules)
             {
-                model.DescriptionDe = "Beschreibung nicht gefunden";
-                return model;
+                var context = new ModuleContextApiContract
+                {
+                    Institution = dbModule.Catalog.Organiser.Institution.Tag,
+                    Organiser = dbModule.Catalog.Organiser.ShortName,
+                    Catalog = dbModule.Catalog.Tag,
+                    Topic = dbModule.Tag
+                };
+
+
+                var model = new ModuleDescriptionApiContract
+                {
+                    ModuleKey = dbModule.FullTag,
+                    SemesterKey = sem.Name,
+                    Teachings = new List<ModuleTeachingApiContract>(),
+                    Examinations = new List<ModuleExaminationApiContract>(),
+                    Achievements = new List<ModuleAchievementApiContract>()
+                };
+
+                // Kurse
+                foreach (var subject in dbModule.ModuleSubjects.ToList())
+                {
+                    var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == sem.Id).ToList();
+
+                    foreach (var teaching in teachings)
+                    {
+                        model.Teachings.Add(new ModuleTeachingApiContract
+                        {
+                            InstructionKey = subject.FullTag,
+                            CourseKey = teaching.Course.FullTag
+                        });
+                    }
+                }
+
+
+                // Prüfungen
+                var exams = Db.ExaminationDescriptions.Where(x => x.Semester.Id == sem.Id &&
+                                                                  x.ExaminationOption.Module.Id == dbModule.Id)
+                    .Include(examinationDescription => examinationDescription.ExaminationOption)
+                    .Include(examinationDescription1 => examinationDescription1.FirstExminer)
+                    .Include(examinationDescription2 => examinationDescription2.SecondExaminer).ToList();
+
+                foreach (var examinationDescription in exams)
+                {
+                    var firstExaminer = examinationDescription.FirstExminer != null ? examinationDescription.FirstExminer.FullName : string.Empty;
+                    var secondExaminer = examinationDescription.SecondExaminer != null ? examinationDescription.SecondExaminer.FullName : string.Empty;
+
+                    var examiners = $"{firstExaminer} | {secondExaminer}";
+
+                    model.Examinations.Add(new ModuleExaminationApiContract
+                    {
+                        ChallengeKey = examinationDescription.ExaminationOption.FullTag,
+                        ExamKey = "Exxx",
+                        Description = $"{examinationDescription.Description} | {examinationDescription.Conditions} | {examinationDescription.Utilities} | {examiners}"
+                    });
+
+                }
+
+                // Beschreibung
+                var desc = dbModule.Descriptions
+                    .Where(x => x.Semester.Id == sem.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                    .OrderByDescending(x => x.ChangeLog.Approved.Value)
+                    .FirstOrDefault();
+
+                if (desc != null)
+                {
+                    model.Achievements.Add(new ModuleAchievementApiContract
+                    {
+                        Description = desc.Description,
+                        MaterialKey = "Mxxx",
+                        ObjectiveKey = "Oxxx"
+                    });
+                }
+
+
+                list.Add(model);
             }
-
-            model.Id = desc.Id;
-            model.DescriptionDe = desc.Description;
-            model.DescriptionEn = desc.DescriptionEn;
-
-            /*
-            foreach (var accreditation in module.Accreditations)
-            {
-                var exams = accreditation.ExaminationDescriptions
-                    .Where(x => x.Semester.Id == sem.Id && x.ChangeLog.Approved != null).ToList();
-
-
-            }
-            */
             
-
-
-
-
-            return model;
+            return Ok(list);
         }
 
-        [Route("{curriculum}/{stage}/{semester}")]
-        public List<ModuleSlotDto> GetModuleByStages(string curriculum, int stage, string semester)
+
+        private ModuleDetailsApiContract TransformModule(CurriculumModule dbModule, ModuleContextApiContract context)
         {
-            var curr = Db.Curricula.Include(curriculum1 => curriculum1.Areas)
-                .FirstOrDefault(x => x.ShortName.Equals(curriculum));
-            var sem = new SemesterService().GetSemester(semester);
-
-            if (curr == null || sem == null || !curr.Areas.Any())
+            var module = new ModuleDetailsApiContract
             {
-                return new List<ModuleSlotDto>();
-            }
-
-            var converter = new CourseConverter(Db);
-            var model = new List<ModuleSlotDto>();
-
-            var semSlots = Db.CurriculumSlots.Where(x =>
-                x.AreaOption.Area.Curriculum.Id == curr.Id && x.Semester == stage).OrderBy(x => x.Tag).ToList();
-
-            foreach (var slot in semSlots)
-            {
-                foreach (var module in slot.SubjectAccreditations.Select(x => x.Subject.Module).Distinct().ToList())
+                Id = dbModule.Id,
+                Key = dbModule.FullTag,
+                Context = context,
+                Identifiers = new List<ModuleIdentifierApiContract>
                 {
-                    foreach (var subject in module.ModuleSubjects.ToList())
+                    new ModuleIdentifierApiContract
                     {
-                        var slotModel = new ModuleSlotDto
-                        {
-                            ModuleTag = module.Tag,
-                            ModuleName = module.Name,
-                            SubjectTag = subject.Tag,
-                            SubjectName = subject.Name,
-                            Courses = new List<CourseSummaryDto>(),
-                            Exams = new List<ExamSummaryDto>()
-                        };
-
-
-                        var teachings = subject.SubjectTeachings.Where(x => x.Course.Semester.Id == sem.Id).ToList();
-                        foreach (var teaching in teachings)
-                        {
-                            slotModel.Courses.Add(converter.ConvertSummary(teaching.Course));
-                        }
-
-                        foreach (var examOption in module.ExaminationOptions.ToList())
-                        {
-                            var exams = examOption.ExaminationDescriptions.Where(x => x.Semester.Id == sem.Id).ToList();
-
-                            foreach (var exam in exams)
-                            {
-                                slotModel.Exams.Add(converter.ConvertExam(exam));
-                            }
-                        }
-
-                        model.Add(slotModel);
+                        Language = "de",
+                        Title = dbModule.Name,
+                        Summary = string.Empty
+                    },
+                    new ModuleIdentifierApiContract
+                    {
+                        Language = "en",
+                        Title = dbModule.NameEn,
+                        Summary = string.Empty
                     }
-
-
-                }
-            }
-
-            return model;
-        }
-
-
-        /*
-        [Route("{id}/details/{semester}")]
-        public ModuleDto GetModuleDetails(Guid id, string semester)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-            if (module == null)
-                return null;
-
-            var model = new ModuleDto
-            {
-                Name = module.Name,
-                ShortName = module.ShortName,
+                },
+                Editors = new List<ModuleEditorApiContract>(),
+                Usages = new List<ModuleUsageApiContract>(),
+                Instructions = new List<ModuleInstructionApiContract>(),
+                Challenges = new List<ModuleChallengeApiContract>(),
+                Objectives = new List<ModuleObjectiveApiContract>()
             };
 
-            //module.ModuleResponsibilities
+            foreach (var moduleResponsibility in dbModule.ModuleResponsibilities.ToList())
+            {
+                module.Editors.Add(new ModuleEditorApiContract
+                {
+                    Name = moduleResponsibility.Member.PersonName,
+                    MemberKey = moduleResponsibility.Member.FullTag
+                });
+            }
 
-            return model;
+            // todo: das Einhängen in den chips
+            var slots = (from subject in dbModule.ModuleSubjects.ToList() from subjectAccreditation in subject.SubjectAccreditations.ToList() select subjectAccreditation.Slot)
+                .Distinct()
+                .ToList();
+
+            foreach (var slot in slots)
+            {
+                module.Usages.Add(new ModuleUsageApiContract
+                {
+                    ChipKey = slot.FullTag,
+                    InstructionKey = ""
+                });
+            }
+
+
+            foreach (var moduleSubject in dbModule.ModuleSubjects.ToList())
+            {
+                module.Instructions.Add(new ModuleInstructionApiContract
+                {
+                    InstructionKey = moduleSubject.FullTag,
+                    Title = moduleSubject.Name,
+                    Format = moduleSubject.TeachingFormat.Tag,
+                    ContactHours = moduleSubject.SWS
+                });
+            }
+
+            foreach (var examinationOption in dbModule.ExaminationOptions.ToList())
+            {
+                var option = new ModuleChallengeApiContract
+                {
+                    ChallengeKey = examinationOption.FullTag,
+                    Title = examinationOption.Name,
+                    Fractions = new List<ModuleChallengeFractionApiContract>()
+                };
+
+                foreach (var examinationFraction in examinationOption.Fractions.ToList())
+                {
+                    var fraction = new ModuleChallengeFractionApiContract
+                    {
+                        Weight = examinationFraction.Weight,
+                        Format = examinationFraction.Form.ShortName
+                    };
+                    option.Fractions.Add(fraction);
+                }
+                module.Challenges.Add(option);
+            }
+
+            // Dummy für die Objectives
+            module.Objectives.Add(new ModuleObjectiveApiContract
+            {
+                ObjectiveKey = $"{dbModule.FullTag}|O1",
+                Target = "Ziel 1",
+                Description = "Beschreibung zum Ziel 1",
+                Competence = "Kompetenz 1",
+                Taxonomy = "Taxonomie 1",
+                Level = 1
+            });
+
+            return module;
         }
 
-        [Route("{id}/courses/{semester}")]
-        public ModuleDto GetModuleCourses(Guid id, string semester)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-            if (module == null)
-                return null;
 
-            var model = new ModuleDto
+
+        /// <summary>
+        /// Suche nache Modulesn
+        /// </summary>
+        [Route("{id}")]
+        [ResponseType(typeof(ModuleDetailsApiContract))]
+        public IHttpActionResult GetModuleById(Guid id)
+        {
+            var dbModule = Db.CurriculumModules
+                .Include(curriculumModule =>
+                    curriculumModule.ModuleResponsibilities.Select(moduleResponsibility => moduleResponsibility.Member)).Include(curriculumModule1 =>
+                    curriculumModule1.ModuleSubjects.Select(moduleSubject => moduleSubject.TeachingFormat)).Include(curriculumModule => curriculumModule.ExaminationOptions.Select(examinationOption =>
+                    examinationOption.Fractions.Select(examinationFraction => examinationFraction.Form))).Include(curriculumModule1 =>
+                    curriculumModule1.Catalog.Organiser.Institution)
+                .SingleOrDefault(x => x.Id == id);
+
+            if (dbModule == null)
+                return NotFound();
+
+            var context = new ModuleContextApiContract
             {
-                Name = module.Name,
-                ShortName = module.ShortName,
+                Institution = dbModule.Catalog.Organiser.Institution.Tag,
+                Organiser = dbModule.Catalog.Organiser.ShortName,
+                Catalog = dbModule.Catalog.Tag,
+                Topic = dbModule.Tag
             };
 
-            //module.ModuleResponsibilities
 
-            return model;
+            var module = TransformModule(dbModule, context);
+
+            return Ok(module);
         }
-
-        [Route("{tag}")]
-        public IQueryable<ModuleDescriptionDto> GetModuleDescriptions(string tag)
-        {
-            var list = new List<ModuleDescriptionDto>();
-
-            var orgTag = "";
-            var catTag = "";
-            var moduleTag = "";
-
-            if (!tag.Contains('#'))
-            {
-                orgTag = tag;
-            }
-            else
-            {
-                var words = tag.Split('#');
-                orgTag = words[0];
-                if (words.Length > 1)
-                    catTag = words[1];
-                if (words.Length > 2)
-                    moduleTag = words[2];
-            }
-
-            var org = Db.Organisers.FirstOrDefault(x =>
-                !string.IsNullOrEmpty(x.Tag) &&
-                x.Tag.ToUpper().Equals(orgTag.ToUpper()));
-
-            List<CurriculumModule> modules = new List<CurriculumModule>();
-            if (!string.IsNullOrEmpty(moduleTag))
-            {
-                var cat = org.ModuleCatalogs.FirstOrDefault(x => x.Tag.Equals(catTag));
-                // nur das eine Modul
-                if (cat != null)
-                {
-                    var m = cat.Modules.FirstOrDefault(x => x.Tag.Equals(moduleTag));
-
-                    modules.Add(m);
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(catTag))
-                {
-                    // alle Module des Katalogs
-                    var cat = org.ModuleCatalogs.FirstOrDefault(x => x.Tag.Equals(catTag));
-                    if (cat != null)
-                    {
-                        modules.AddRange(cat.Modules.ToList());
-                    }
-
-                }
-                else
-                {
-                    // alle Kataloge der org
-                    modules.AddRange(Db.CurriculumModules.Where(x => x.Catalog.Organiser.Id == org.Id).ToList());
-                }
-            }
-
-            // das Semester, um das es geht
-            var semesterService = new SemesterService(Db);
-
-            var semesterList = new List<Semester>();
-            var currentSemester = semesterService.GetSemester(DateTime.Today);
-            semesterList.Add(currentSemester);
-            semesterList.Add(semesterService.GetNextSemester(currentSemester));
-
-
-            foreach (var module in modules)
-            {
-                var moduleDto = new ModuleDescriptionDto
-                {
-                    tag = module.FullTag,
-                    name = module.Name,
-                    responsible = new List<ModuleDescriptionRespDto>(),
-                    slots = new List<ModuleDescriptionSlotDto>(),
-                    instances = new List<ModuleDescriptionInstanceDto>()
-                };
-
-                foreach (var responsibility in module.ModuleResponsibilities)
-                {
-                    var respDto = new ModuleDescriptionRespDto
-                    {
-                        tag = responsibility.Member.FullTag
-                    };
-
-                    moduleDto.responsible.Add(respDto);
-                }
-
-                foreach (var accreditation in module.Accreditations)
-                {
-                    var slotDto = new ModuleDescriptionSlotDto
-                    {
-                        tag = accreditation.Slot.FullTag,
-                    };
-
-                    moduleDto.slots.Add(slotDto);
-                }
-
-                foreach (var semester in semesterList)
-                {
-                    var instanceDto = new ModuleDescriptionInstanceDto
-                    {
-                        semster = semester.Name,
-                        description = "",
-                        exams = new List<ModuleDescriptionExamDto>(),
-                        teaching = new List<ModuleDescriptionTeachingDto>()
-                    };
-
-                    var description = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
-
-                    if (description != null)
-                    {
-                        instanceDto.description = description.Description;
-                    }
-
-                    foreach (var moduleAccreditation in module.Accreditations)
-                    {
-                        var exam = moduleAccreditation.ExaminationDescriptions.FirstOrDefault(x =>
-                            x.Semester.Id == semester.Id);
-
-                        if (exam != null)
-                        {
-                            var examDto = new ModuleDescriptionExamDto
-                            {
-                                first = exam.FirstExminer != null ? exam.FirstExminer.FullTag : string.Empty,
-                                second = exam.SecondExaminer != null ? exam.SecondExaminer.FullTag : string.Empty,
-                                conditions = exam.Conditions,
-                                utilities = exam.Utilities,
-                                fractions = new List<ModuleDescriptionExamFractionDto>()
-                            };
-
-                            foreach (var examinationFraction in exam.ExaminationOption.Fractions)
-                            {
-                                var fractDto = new ModuleDescriptionExamFractionDto
-                                {
-                                    tag = examinationFraction.Form.ShortName,
-                                    weight = examinationFraction.Weight
-                                };
-
-                                examDto.fractions.Add(fractDto);
-                            }
-
-                            instanceDto.exams.Add(examDto);
-                        }
-                    }
-
-                    moduleDto.instances.Add(instanceDto);
-                }
-
-                list.Add(moduleDto);
-            }
-
-            return list.AsQueryable();
-        }
-
-        [Route("{id}/details")]
-        public ModuleDescriptionDto GetModuleDescriptions(Guid id)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-
-            // das Semester, um das es geht
-            var semesterService = new SemesterService(Db);
-
-            var semesterList = new List<Semester>();
-            var currentSemester = semesterService.GetSemester(DateTime.Today);
-            semesterList.Add(currentSemester);
-            semesterList.Add(semesterService.GetNextSemester(currentSemester));
-
-
-            var moduleDto = new ModuleDescriptionDto
-                {
-                    id = module.Id,
-                    tag = module.FullTag,
-                    name = module.Name,
-                    responsible = new List<ModuleDescriptionRespDto>(),
-                    slots = new List<ModuleDescriptionSlotDto>(),
-                    instances = new List<ModuleDescriptionInstanceDto>()
-                };
-
-                foreach (var responsibility in module.ModuleResponsibilities)
-                {
-                    var respDto = new ModuleDescriptionRespDto
-                    {
-                        tag = responsibility.Member.FullTag
-                    };
-
-                    moduleDto.responsible.Add(respDto);
-                }
-
-                foreach (var accreditation in module.Accreditations)
-                {
-                    var slotDto = new ModuleDescriptionSlotDto
-                    {
-                        tag = accreditation.Slot.FullTag,
-                    };
-
-                    moduleDto.slots.Add(slotDto);
-                }
-
-                foreach (var semester in semesterList)
-                {
-                    var instanceDto = new ModuleDescriptionInstanceDto
-                    {
-                        semster = semester.Name,
-                        description = "",
-                        exams = new List<ModuleDescriptionExamDto>(),
-                        teaching = new List<ModuleDescriptionTeachingDto>()
-                    };
-
-                    var description = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
-
-                    if (description != null)
-                    {
-                        instanceDto.description = description.Description;
-                    }
-
-                    foreach (var moduleAccreditation in module.Accreditations)
-                    {
-                        var exam = moduleAccreditation.ExaminationDescriptions.FirstOrDefault(x =>
-                            x.Semester.Id == semester.Id);
-
-                        if (exam != null)
-                        {
-                            var examDto = new ModuleDescriptionExamDto
-                            {
-                                first = exam.FirstExminer != null ? exam.FirstExminer.FullTag : string.Empty,
-                                second = exam.SecondExaminer != null ? exam.SecondExaminer.FullTag : string.Empty,
-                                conditions = exam.Conditions,
-                                utilities = exam.Utilities,
-                                fractions = new List<ModuleDescriptionExamFractionDto>()
-                            };
-
-                            foreach (var examinationFraction in exam.ExaminationOption.Fractions)
-                            {
-                                var fractDto = new ModuleDescriptionExamFractionDto
-                                {
-                                    tag = examinationFraction.Form.ShortName,
-                                    weight = examinationFraction.Weight
-                                };
-
-                                examDto.fractions.Add(fractDto);
-                            }
-
-                            instanceDto.exams.Add(examDto);
-                        }
-                    }
-
-                    moduleDto.instances.Add(instanceDto);
-                }
-
-
-            return moduleDto;
-        }
-*/
 
     }
-    }
+}

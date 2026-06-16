@@ -1,11 +1,11 @@
 {
-    "_id": null,
-    "module_id": "HM:FK 09:WIB_T:GDI_v1.0",
+    "id": null,
+    "moduleId": "HM:FK 09:WIB_T:GDI_v1.0",
     "context": {
-        "institution_Id": "HM",
-        "organiser_id": "FK 09",
-        "catalog_id": "WIB_T",
-        "topic_id": "GDI_v01"
+        "institutionId": "HM",
+        "organiserId": "FK 09",
+        "catalogId": "WIB_T",
+        "topicId": "GDI_v01"
     },
     "identifiers": [
         {
@@ -21,7 +21,7 @@
     ],
     "editors": null,
     "usages": null,
-    "subjects":  null,
-    "examinations": null,
+    "instructions":  null,
+    "challenges": null,
     "objectives": null
 }

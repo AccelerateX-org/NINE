@@ -1,4 +1,7 @@
-﻿using MyStik.TimeTable.Web.Api.Contracts;
+﻿using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.IO.Contracts;
+using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using System;
 using System.Collections.Generic;
@@ -6,7 +9,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using MyStik.TimeTable.DataServices.IO.Contracts;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -21,41 +23,36 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         [HttpGet]
         [Route("")]
-        [ResponseType(typeof(List<CurriculumApiContract>))]
+        [ResponseType(typeof(List<CurriculumEntityApiContract>))]
 
-        public IHttpActionResult GetCurricula(string institutionId, string organiserId = "", string curriculumId = "", string amendmentId = "")
+        public IHttpActionResult GetCurricula(string institution, string organiser = "", string program = "", string amendment = "")
         {
-            var list = new List<CurriculumApiContract>();
+            var list = new List<CurriculumEntityApiContract>();
             var curricula = Db.Curricula.Where(x =>
-                x.Organiser.Institution.Tag.Equals(institutionId) &&
-                (string.IsNullOrEmpty(organiserId) || x.Organiser.ShortName.Equals(organiserId)) &&
-                (string.IsNullOrEmpty(curriculumId) || x.Tag.Equals(curriculumId)) &&
+                x.Organiser.Institution.Tag.Equals(institution) &&
+                (string.IsNullOrEmpty(organiser) || x.Organiser.ShortName.Equals(organiser)) &&
+                (string.IsNullOrEmpty(program) || x.Tag.Equals(program)) &&
                 !x.IsDeprecated).Include(curriculum => curriculum.Degree).Include(curriculum1 =>
                 curriculum1.Organiser.Institution).ToList();
 
             foreach (var curriculum in curricula)
             {
-                // TO-DO: nur die jeweils aktuelle version
+                var am = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd") ?? string.Empty;
 
-                var dto = new CurriculumApiContract
+                if (!string.IsNullOrEmpty(am) || !string.IsNullOrEmpty(amendment) || am.Equals(amendment)) 
+                    continue;
+                
+                var dto = new CurriculumEntityApiContract
                 {
                     Id = curriculum.Id,
-                    InstitutionId = curriculum.Organiser?.Institution?.Tag,
-                    OrganiserId = curriculum.Organiser?.ShortName,
-                    CurriculumId = curriculum.Tag,
-                    AmendmentId = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd"),
-                    Alias = curriculum.ShortName,
-                    Name = curriculum.Name,
-                    Degree = curriculum.Degree?.Name,
-                    Level = curriculum.Degree?.Level.ToString(),
-                    CreditPoints = curriculum.EctsTarget,
-                    Duration = 3.5, // curriculum.DurationTarget,
-                    AsDual = curriculum.AsDual,
-                    AsPartTime = curriculum.AsPartTime,
-                    IsQualification = curriculum.IsQualification,
-                    InSummerTerm = curriculum.InSummerTerm,
-                    InWinterTerm = curriculum.InWinterTerm,
-                    Language = "de" // curriculum.Language,
+                    Key = curriculum.FullTag,
+                    Context = new CurriculumContextApiContract
+                    {
+                        Institution = curriculum.Organiser.Institution.Tag,
+                        Organiser = curriculum.Organiser.ShortName,
+                        Program = curriculum.Tag,
+                        Amendment = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd")
+                    }
                 };
 
                 list.Add(dto);
@@ -64,42 +61,92 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return Ok(list);
         }
 
-        [HttpGet]
-        [Route("{institutionId}/{organiserId}/{curriculumId}")]
-        [ResponseType(typeof(List<CurriculumApiContract>))]
 
-        public IHttpActionResult GetCurriculaVersions(string institutionId, string organiserId, string curriculumId)
+        [HttpGet]
+        [Route("{key}/structure")]
+        [ResponseType(typeof(List<CurriculumDetailsApiContract>))]
+
+        public IHttpActionResult GetCurriculumStructure(string key)
         {
-            var list = new List<CurriculumApiContract>();
+            var words = key.Split('|');
+            var institution = words.Length > 0 ? words[0] : string.Empty;
+            var organiser = words.Length > 1 ? words[1] : string.Empty;
+            var program = words.Length > 2 ? words[2] : string.Empty;
+            var amendment = words.Length > 3 ? words[3] : string.Empty;
+
             var curricula = Db.Curricula.Where(x =>
-                x.Organiser.Institution.Tag.Equals(institutionId) &&
-                (string.IsNullOrEmpty(organiserId) || x.Organiser.ShortName.Equals(organiserId)) &&
-                (string.IsNullOrEmpty(curriculumId) || x.Tag.Equals(curriculumId)) &&
+                x.Organiser.Institution.Tag.Equals(institution) &&
+                (string.IsNullOrEmpty(organiser) || x.Organiser.ShortName.Equals(organiser)) &&
+                (string.IsNullOrEmpty(program) || x.Tag.Equals(program)) &&
                 !x.IsDeprecated).Include(curriculum => curriculum.Degree).Include(curriculum1 =>
                 curriculum1.Organiser.Institution).ToList();
 
+
+            var list = new List<CurriculumDetailsApiContract>();
+
             foreach (var curriculum in curricula)
             {
-                var dto = new CurriculumApiContract
+                var am = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd") ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(am) || !string.IsNullOrEmpty(amendment) || am.Equals(amendment))
+                    continue;
+
+                var context = new CurriculumContextApiContract
                 {
-                    Id = curriculum.Id,
-                    InstitutionId = curriculum.Organiser?.Institution?.Tag,
-                    OrganiserId = curriculum.Organiser?.ShortName,
-                    CurriculumId = curriculum.Tag,
-                    AmendmentId = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd"),
-                    Alias = curriculum.ShortName,
-                    Name = curriculum.Name,
-                    Degree = curriculum.Degree?.Name,
-                    Level = curriculum.Degree?.Level.ToString(),
-                    CreditPoints = curriculum.EctsTarget,
-                    Duration = 3.5, // curriculum.DurationTarget,
-                    AsDual = curriculum.AsDual,
-                    AsPartTime = curriculum.AsPartTime,
-                    IsQualification = curriculum.IsQualification,
-                    InSummerTerm = curriculum.InSummerTerm,
-                    InWinterTerm = curriculum.InWinterTerm,
-                    Language = "de" // curriculum.Language,
+                    Institution = curriculum.Organiser.Institution.Tag,
+                    Organiser = curriculum.Organiser.ShortName,
+                    Program = curriculum.Tag,
+                    Amendment = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd")
                 };
+
+
+                var dto = TransformCurriculum(curriculum, context);
+
+                list.Add(dto);
+            }
+
+            return Ok(list);
+        }
+
+        [HttpGet]
+        [Route("{key}/cohorts")]
+        [ResponseType(typeof(List<CurriculumDetailsApiContract>))]
+
+        public IHttpActionResult GetCurriculumCohorts(string key)
+        {
+            var words = key.Split('|');
+            var institution = words.Length > 0 ? words[0] : string.Empty;
+            var organiser = words.Length > 1 ? words[1] : string.Empty;
+            var program = words.Length > 2 ? words[2] : string.Empty;
+            var amendment = words.Length > 3 ? words[3] : string.Empty;
+
+            var curricula = Db.Curricula.Where(x =>
+                x.Organiser.Institution.Tag.Equals(institution) &&
+                (string.IsNullOrEmpty(organiser) || x.Organiser.ShortName.Equals(organiser)) &&
+                (string.IsNullOrEmpty(program) || x.Tag.Equals(program)) &&
+                !x.IsDeprecated).Include(curriculum => curriculum.Degree).Include(curriculum1 =>
+                curriculum1.Organiser.Institution).ToList();
+
+
+            var list = new List<CurriculumDetailsApiContract>();
+
+            foreach (var curriculum in curricula)
+            {
+                var am = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd") ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(am) || !string.IsNullOrEmpty(amendment) || am.Equals(amendment))
+                    continue;
+
+                var context = new CurriculumContextApiContract
+                {
+                    Institution = curriculum.Organiser.Institution.Tag,
+                    Organiser = curriculum.Organiser.ShortName,
+                    Program = curriculum.Tag,
+                    Amendment = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd")
+                };
+
+
+                var dto = TransformCurriculum(curriculum, context);
 
                 list.Add(dto);
             }
@@ -110,9 +157,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
         [HttpGet]
         [Route("{id}")]
-        [ResponseType(typeof(CurriculumApiContract))]
+        [ResponseType(typeof(CurriculumDetailsApiContract))]
 
-        public IHttpActionResult GetCurriculum(Guid id)
+        public IHttpActionResult GetCurriculumById(Guid id)
         {
             var curriculum = Db.Curricula.Include(curriculum1 => curriculum1.Degree).Include(curriculum2 =>
                 curriculum2.Organiser.Institution).SingleOrDefault(x => x.Id == id);
@@ -122,14 +169,150 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return NotFound();
             }
 
+            var context = new CurriculumContextApiContract
+            {
+                Institution = curriculum.Organiser.Institution.Tag,
+                Organiser = curriculum.Organiser.ShortName,
+                Program = curriculum.Tag,
+                Amendment = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd")
+            };
 
-            var dto = new CurriculumApiContract
+            var dto = TransformCurriculum(curriculum, context);
+
+            return Ok(dto);
+        }
+
+
+        [HttpGet]
+        [Route("{key}/alternatives/{slot}")]
+        [ResponseType(typeof(CurriculumUnitDetailsApiContract))]
+
+        public IHttpActionResult GetCurriculumUnitById(Guid curriculumId, Guid unitId)
+        {
+            var curriculum = Db.Curricula.Include(curriculum1 => curriculum1.Degree).Include(curriculum2 =>
+                curriculum2.Organiser.Institution).SingleOrDefault(x => x.Id == curriculumId);
+
+            if (curriculum == null)
+            {
+                return NotFound();
+            }
+
+            var slot = Db.CurriculumSlots.Include(curriculumSlot =>
+                    curriculumSlot.SubjectAccreditations.Select(subjectAccreditation => subjectAccreditation.Subject))
+                .SingleOrDefault(x => x.Id == unitId && x.AreaOption.Area.Curriculum.Id == curriculumId);
+
+            if (slot == null)
+            {
+                return NotFound();
+            }
+
+            var dto = new CurriculumUnitDetailsApiContract
+            {
+                Id = slot.Id,
+                Key = slot.FullTag,
+                Title = slot.Name,
+                Description = slot.Description,
+                Alternatives = new List<CurriculumChipApiContract>()
+            };
+
+            // old
+            foreach (var accr in slot.SubjectAccreditations)
+            {
+                var chip = new CurriculumChipApiContract
+                {
+                    CreditPoints = slot.ECTS,
+                    ChipKey = slot.FullTag,
+                    SubjectKey = accr.Subject.FullTag
+                };
+
+                dto.Alternatives.Add(chip);
+            }
+
+
+            return Ok(dto);
+        }
+
+        [HttpGet]
+        [Route("{key}/instances/{semester}")]
+        [ResponseType(typeof(List<CurriculumInstanceApiContract>))]
+
+        public IHttpActionResult GetCurriculumInstance(string key, string semester)
+        {
+            var words = key.Split('|');
+            var institution = words.Length > 0 ? words[0] : string.Empty;
+            var organiser = words.Length > 1 ? words[1] : string.Empty;
+            var program = words.Length > 2 ? words[2] : string.Empty;
+            var amendment = words.Length > 3 ? words[3] : string.Empty;
+
+            var curricula = Db.Curricula.Where(x =>
+                x.Organiser.Institution.Tag.Equals(institution) &&
+                (string.IsNullOrEmpty(organiser) || x.Organiser.ShortName.Equals(organiser)) &&
+                (string.IsNullOrEmpty(program) || x.Tag.Equals(program)) &&
+                !x.IsDeprecated).Include(curriculum => curriculum.Degree).Include(curriculum1 =>
+                curriculum1.Organiser.Institution).ToList();
+
+
+            var sem = Db.Semesters.SingleOrDefault(x => x.Name.Equals(semester));
+            if (sem == null)
+            {
+                return NotFound();
+            }
+
+            var list = new List<CurriculumInstanceApiContract>();
+
+            foreach (var curriculum in curricula)
+            {
+                var am = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd") ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(am) || !string.IsNullOrEmpty(amendment) || am.Equals(amendment))
+                    continue;
+
+                var context = new CurriculumContextApiContract
+                {
+                    Institution = curriculum.Organiser.Institution.Tag,
+                    Organiser = curriculum.Organiser.ShortName,
+                    Program = curriculum.Tag,
+                    Amendment = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd")
+                };
+
+
+                var subjects = Db.ModuleCourses.Where(x =>
+                    x.SubjectAccreditations.Any(c =>
+                        c.Slot != null &&
+                        c.Slot.AreaOption != null &&
+                        c.Slot.AreaOption.Area.Curriculum.Id == curriculum.Id)).Include(moduleSubject => moduleSubject.Module).ToList();
+
+                var modules = subjects.Select(x => x.Module).Distinct().ToList();
+
+                var dto = new CurriculumInstanceApiContract
+                {
+                    CurriculumKey = curriculum.FullTag,
+                    SemesterKey = sem.Name,
+                    Modules = new List<CurriculumModuleApiContract>()
+                };
+
+                foreach (var module in modules)
+                {
+                    dto.Modules.Add(new CurriculumModuleApiContract
+                    {
+                        ModuleKey = module.FullTag
+                    });
+                }
+
+                list.Add(dto);
+            }
+
+            return Ok(list);
+        }
+
+
+        private CurriculumDetailsApiContract TransformCurriculum(Curriculum curriculum, CurriculumContextApiContract context)
+        {
+            var dto = new CurriculumDetailsApiContract()
             {
                 Id = curriculum.Id,
-                InstitutionId = curriculum.Organiser?.Institution?.Tag,
-                OrganiserId = curriculum.Organiser?.ShortName,
-                CurriculumId = curriculum.Tag,
-                AmendmentId = curriculum.StatuteTakeEffect?.ToString("yyyy-MM-dd"),
+                Key = curriculum.FullTag,
+                Context = context,
                 Alias = curriculum.ShortName,
                 Name = curriculum.Name,
                 Degree = curriculum.Degree?.Name,
@@ -141,118 +324,34 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 IsQualification = curriculum.IsQualification,
                 InSummerTerm = curriculum.InSummerTerm,
                 InWinterTerm = curriculum.InWinterTerm,
-                Language = "de" // curriculum.Language,
+                Language = "de", // curriculum.Language,
+                Units = new List<CurriculumUnitApiContract>()
             };
-
-            return Ok(dto);
-        }
-
-
-
-        [HttpGet]
-        [Route("{institutionId}/{organiserId}/{curriculumId}/{version}/modules")]
-        [ResponseType(typeof(List<CurriculumSlotDto>))]
-
-        public IHttpActionResult GetCurriculumPlan(string institutionId, string organiserId, string curriculumId, DateTime? version = null)
-        {
-            var list = new List<CurriculumSlotDto>();
-
-            // TODO: split curriculum_id into tag and date
-            var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculumId);
-            if (curr == null)
-                return NotFound();
 
             var allSlots = Db.CurriculumSlots
                 .Where(x => x.AreaOption != null &&
-                            x.AreaOption.Area.Curriculum.Id == curr.Id).Include(curriculumSlot =>
+                            x.AreaOption.Area.Curriculum.Id == curriculum.Id).Include(curriculumSlot =>
                     curriculumSlot.SubjectAccreditations.Select(subjectAccreditation => subjectAccreditation.Subject)).ToList();
 
             foreach (var slot in allSlots)
             {
-                var slotDto = new CurriculumSlotDto
+                var slotDto = new CurriculumUnitApiContract
                 {
-                    id = slot.Id,
-                    semester = slot.Semester,
-                    ects = slot.ECTS,
-                    name = slot.Name,
-                    tag = slot.FullTag,
-                    modules = new List<ModuleDto>()
+                    Id = slot.Id,
+                    Semester = slot.Semester,
+                    CreditPoints = slot.ECTS,
+                    Title = slot.Name,
+                    SlotId = slot.FullTag,
                 };
 
-                foreach (var accreditation in slot.SubjectAccreditations)
-                {
-                    var moduleDto = new ModuleDto
-                    {
-                        Id = accreditation.Subject.Id,
-                        Name = accreditation.Subject.Name,
-                        Tag = accreditation.Subject.Tag
-                    };
-
-                    slotDto.modules.Add(moduleDto);
-                }
-
-                list.Add(slotDto);
+                dto.Units.Add(slotDto);
             }
 
-            return Ok(list);
+            return dto;
         }
 
 
-        [HttpGet]
-        [Route("{curriculum_id}/cohortes")]
-        [ResponseType(typeof(List<CourseApiCohortContract>))]
-
-        public IHttpActionResult GetCohortes(string curriculum_id)
-        {
-            var list = new List<CourseApiCohortContract>();
-
-            // TODO: split curriculum_id into tag and date
-            var curr = Db.Curricula.FirstOrDefault(x => x.Tag == curriculum_id);
-            if (curr == null)
-                return NotFound();
-
-            if (curr.LabelSet != null)
-            {
-                foreach (var label in curr.LabelSet.ItemLabels)
-                {
-                    var cohort = new CourseApiCohortContract
-                    {
-                        CurriculumId = curr.Tag,
-                        CurriculumAlias = curr.ShortName,
-                        Label = label.Name,
-                    };
-                    list.Add(cohort);
-                }
-            }
-
-            if (curr.Organiser.LabelSet != null)
-            {
-                foreach (var label in curr.Organiser.LabelSet.ItemLabels)
-                {
-                    var cohort = new CourseApiCohortContract
-                    {
-                        OrganiserId = curr.Organiser.ShortName,
-                        Label = label.Name,
-                    };
-                    list.Add(cohort);
-                }
-            }
-
-            if (curr.Organiser.Institution.LabelSet != null)
-            {
-                foreach (var label in curr.Organiser.Institution.LabelSet.ItemLabels)
-                {
-                    var cohort = new CourseApiCohortContract
-                    {
-                        InstitutionId = curr.Organiser.Institution.Tag,
-                        Label = label.Name,
-                    };
-                    list.Add(cohort);
-                }
-            }
 
 
-            return Ok(list);
-        }
     }
 }

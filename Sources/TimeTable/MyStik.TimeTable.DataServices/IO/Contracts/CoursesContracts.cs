@@ -67,11 +67,10 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
         {
             if (string.IsNullOrEmpty(CurriculumAlias))
             {
-                return $"{InstitutionId}:{OrganiserId}:{CurriculumId}:{CurriculumDate}:{Label}";
+                return $"{InstitutionId}|{OrganiserId}|{CurriculumId}|{CurriculumDate}|{Label}";
             }
-            return $"{InstitutionId}:{OrganiserId}:{CurriculumAlias}:{Label}";
+            return $"{InstitutionId}|{OrganiserId}|{CurriculumAlias}|{Label}";
         }
-
     }
 
     public class CourseApiQuotaContract
