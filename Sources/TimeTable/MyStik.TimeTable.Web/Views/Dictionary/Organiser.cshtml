@@ -21,6 +21,18 @@
     var selectedCurrs = (from label in allLabels from curr in allCurrs where curr.LabelSet.ItemLabels.Contains(label) select curr).Distinct().ToList();
 
     var exportCurrs = selectedCurrs.Where(x => x.Organiser.Id != Model.Organiser.Id).ToList();
+
+
+    var org = db.Organisers.Include(activityOrganiser => activityOrganiser.Institution).SingleOrDefault(x => x.Id == Model.Organiser.Id);
+    if (org != null && org.Institution == null)
+    {
+        var hm = db.Institutions.SingleOrDefault(x => x.Tag.Equals("HM"));
+        if (hm != null)
+        {
+            org.Institution = hm;
+            db.SaveChanges();
+        }
+    }
 }
 
 
@@ -29,7 +41,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Lehrveranstaltungen</a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
             <li class="breadcrumb-item active" aria-current="page">
                 <div class="btn-group">
@@ -61,7 +73,7 @@
             <div class="accordion-item">
                 <div class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                        <span><i class="bi bi-mortarboard"></i></span>&nbsp; Nach Studienangeboten (Studiengänge, Zertifikate)
+                        <span><i class="bi bi-award"></i></span>&nbsp; Nach Studienangeboten (Studiengänge, Zertifikate)
                     </button>
                     <!--
                     <div class="btn-group w-100">
@@ -79,13 +91,21 @@
                         @foreach (var curr in Model.Curricula.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
                         {
                             <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
-                                <strong>@curr.Alias</strong>: @curr.Name
+                                @curr.Title
+                                @*
+                                <small>@curr.FullTag</small>
+                                *@
+                                @if (curr.Organiser.Institution != null)
+                                {
+                                    <small>@curr.FullTag</small>
+                                }
                             </a>
                         }
                         @foreach (var curr in exportCurrs.OrderBy(x => x.Name).ThenBy(x => x.ShortName))
                         {
                             <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id })" class="list-group-item list-group-item-action">
-                                <strong>@curr.Alias</strong>: @curr.Name <span class="badge bg-secondary">@curr.Organiser.ShortName</span>
+                                @curr.Title <span class="badge bg-secondary">@curr.Organiser.ShortName</span>
+                                <small>@curr.FullTag</small>
                             </a>
                         }
                     </div>
@@ -94,7 +114,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        <span><i class="bi bi-ticket"></i></span>&nbsp;Wahlverfahren
+                        <span><i class="bi bi-signpost-2"></i></span>&nbsp;Wahlverfahren
                     </button>
                 </h2>
                 <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">

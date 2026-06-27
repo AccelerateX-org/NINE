@@ -46,7 +46,7 @@
                 @foreach (var curr in Model.Organiser.Curricula.Where(x => !x.IsDeprecated))
                 {
                     <a class="list-group-item" href="@Url.Action("Admin", new {currId = curr.Id, semId = Model.Semester.Id})">
-                        @curr.Name (@curr.ShortName)
+                        @curr.Title
                     </a>
                 }
             </div>

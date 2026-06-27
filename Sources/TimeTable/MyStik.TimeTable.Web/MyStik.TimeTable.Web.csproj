@@ -516,6 +516,7 @@
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
     <Compile Include="Controllers\InfoscreensController.cs" />
     <Compile Include="Helpers\OAuthHelpers.cs" />
+    <Compile Include="Hubs\FollowUpOrgHub.cs" />
     <Compile Include="Jobs\AccountJob.cs" />
     <Compile Include="Jobs\LoggingJob.cs" />
     <Compile Include="Areas\Fillter\Controllers\HomeController.cs" />
@@ -4900,6 +4901,10 @@
     <Content Include="Views\StudyPlan\Organiser.cshtml" />
     <Content Include="Views\Semester\Courses.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Double.cshtml" />
+    <Content Include="Views\Person\Report.cshtml" />
+    <Content Include="Views\Semester\Cohorts.cshtml" />
+    <Content Include="Views\Semester\ForwardOrg.cshtml" />
+    <Content Include="Views\University\Modules.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

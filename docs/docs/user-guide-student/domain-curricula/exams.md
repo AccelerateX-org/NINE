@@ -2,6 +2,6 @@
 sidebarposition: 1
 ---
 
-# Blackboard
+# Exams
 
-Thesis and more
+The activity

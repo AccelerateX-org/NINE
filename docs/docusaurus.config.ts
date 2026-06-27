@@ -46,7 +46,8 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-  
+
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [

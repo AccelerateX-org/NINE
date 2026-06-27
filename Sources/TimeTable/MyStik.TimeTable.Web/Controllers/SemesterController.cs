@@ -92,6 +92,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Cohorts(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = semester
+            };
+
+            model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
+            model.NextSemester = SemesterService.GetNextSemester(semester);
+
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.CurrentSemester = semester;
+            ViewBag.NextSemester = model.NextSemester;
+            ViewBag.PrevSemester = model.PreviousSemester;
+
+            return View(model);
+        }
+
+
         public ActionResult Forward(Guid orgId, Guid semId)
         {
             var org = GetOrganiser(orgId);
@@ -103,10 +126,34 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = sem
             };
 
+            var nextSemester = SemesterService.GetNextSemester(sem);
+            var nextYear = SemesterService.GetNextSemester(nextSemester);
+
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.NextSemester = nextSemester;
+            ViewBag.NextYear = nextYear;
+
+            return View(model);
+        }
+
+        public ActionResult ForwardOrg(Guid orgId, Guid sourceSemId, Guid targetSemId)
+        {
+            var org = GetOrganiser(orgId);
+            var semSource = SemesterService.GetSemester(sourceSemId);
+            var semTarget = SemesterService.GetSemester(targetSemId);
+
+            var model = new SemesterViewModel()
+            {
+                Organiser = org,
+                Semester = semSource,
+                NextSemester = semTarget
+            };
+
             ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
+
 
         public ActionResult Conflicts(Guid orgId, Guid semId)
         {

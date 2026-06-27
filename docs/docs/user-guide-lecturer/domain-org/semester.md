@@ -1,8 +1,4 @@
----
-sidebar_position: 2
----
-
-# Time boxing
+# Update the time boxes
 
 Semester und Segments.
 
@@ -32,4 +28,4 @@ Segments are defined by its
 
 For generating dates segments may be flaged as "holiday". 
 
-Segments can be defined on instiution level ("hochschulweit") and organiser level ("fakultätsweit").
+Segments can be defined on instiution level ("hochschulweit") and department level ("fakultätsweit").

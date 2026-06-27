@@ -1,8 +1,9 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Lehrangebot";
+    ViewBag.Title = "Lehrplan";
 
 
     var db = new TimeTableDbContext();
@@ -11,7 +12,7 @@
         (Model.Semester.Name == "WiSe 2025" || Model.Semester.Name == "SoSe 2026"))
     {
         var fk11 = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("FK 11"));
-        var mucHealth = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("MUC.HEALTH"));
+        var mucHealth = db.Organisers.Include(activityOrganiser => activityOrganiser.Members).SingleOrDefault(x => x.ShortName.Equals("MUC.HEALTH"));
 
         if (fk11 != null && mucHealth != null)
         {
@@ -36,7 +37,7 @@
                         {
                             if (lecturer.Organiser.Id == fk11.Id && !string.IsNullOrEmpty(lecturer.UserId))
                             {
-                                var correspondingLecturer = mucHealth.Members.FirstOrDefault(x => x.UserId.Equals(lecturer.UserId));
+                                var correspondingLecturer = mucHealth.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.UserId) && x.UserId.Equals(lecturer.UserId));
                                 if (correspondingLecturer != null)
                                 {
                                     var dd = db.ActivityDates.SingleOrDefault(x => x.Id == date.Id);
@@ -237,7 +238,7 @@
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Semester", new {orgId=Model.Organiser.Id, semId=ViewBag.CurrentSemester.Id })">Semesterplanung</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Angebot</li>
+                <li class="breadcrumb-item active" aria-current="page">Lehrplan</li>
                 <li class="breadcrumb-item active" aria-current="page">
                     <div class="btn-group">
                         @if (ViewBag.PrevSemester != null)
@@ -299,9 +300,6 @@
                         <th>Kurzname</th>
                         <th>Titel</th>
                         <th>Kohorten</th>
-                        <th>Abschnitt</th>
-                        <th>Zeitraum</th>
-                        <th>Raumangabe(n)</th>
                         <th>Lehrende</th>
                         <th>Platzkontingente</th>
                     </tr>
@@ -403,21 +401,6 @@
                                     }
                                 </td>
                                 <td>
-                                    @if (c.Course.Segment != null)
-                                    {
-                                        <div>@c.Course.Segment.Description</div>
-                                    }
-                                </td>
-                                <td>
-                                    @Html.DateList(c.Dates)
-                                </td>
-                                <td>
-                                    @Html.RoomList(c.Rooms)
-                                </td>
-                                <td>
-                                    @*
-                                        @Html.LecturerList(c.Lecturers)
-                                    *@
                                     @foreach (var l in c.Lecturers)
                                     {
                                         <div>@l.FullName | @l.Organiser.ShortName</div>

@@ -1,8 +1,4 @@
----
-sidebar_position: 1
----
-
-# Locations
+# Configure locations
 
 Where activities take place.
 

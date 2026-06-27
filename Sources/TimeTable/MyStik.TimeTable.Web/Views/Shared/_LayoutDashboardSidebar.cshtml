@@ -27,7 +27,14 @@
         <link rel="stylesheet" href="@Url.Content("~/Assets/areas/admin/styles.css")" />
     *@
     @RenderSection("styles", required: false)
-    <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/img/cap/broadcast.ico")" />
+    @if (Request.IsAuthenticated)
+    {
+        <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/img/cap/broadcast.ico")" />
+    }
+    else
+    {
+        <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/img/cap/CAP_Hamster_bw.ico")" />
+    }
 
     @*
         @if (!Request.IsLocal)
@@ -157,7 +164,14 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel"><i class="bi bi-broadcast"></i> HM<i>ster</i> Grapevine</h5>
+        @if (Request.IsAuthenticated)
+        {
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel"><i class="bi bi-broadcast"></i> hamSTER.grapevine</h5>
+        }
+        else
+        {
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">hamSTER</h5>
+        }
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="list-group">
@@ -196,13 +210,13 @@
         else
         {
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
-                <i class="bi bi-house"></i> Startseite
+                <i class="bi bi-house"></i> hamSTER.home
             </a>
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
-                <i class="bi bi-building"></i> Campus
+                <i class="bi bi-broadcast"></i> hamSTER.grapevine
             </a>
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new { @area = "Gym" })">
-                <i class="bi bi-controller"></i> Gym
+                <i class="bi bi-controller"></i> hamSTER.gym
             </a>
         }
         @*

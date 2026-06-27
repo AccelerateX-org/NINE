@@ -130,7 +130,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 response.Add(new OrganiserCurriculumApiContract
                 {
                     CurriculumKey = curr.FullTag,
-                    Name = curr.Name,
+                    Name = curr.Title,
                     Alias = curr.Alias
                 });
             }
@@ -175,7 +175,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("{key}/courses/{semester}")]
         [HttpGet]
         [ResponseType(typeof(List<OrganiserCourseApiContract>))]
-        public IHttpActionResult GetModules(string key, string semester)
+        public IHttpActionResult GetCourses(string key, string semester)
         {
             var words = key.Split('|');
             var institutionId = words.Length > 0 ? words[0] : string.Empty;

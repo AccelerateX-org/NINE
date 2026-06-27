@@ -7,39 +7,39 @@
 @{
     ViewBag.Title = "Lehrende";
 
-    @*
     var db = new TimeTableDbContext();
-    var orgFK11 = db.Organisers.Include(activityOrganiser => activityOrganiser.Members).FirstOrDefault(x => x.ShortName == "FK 11");
+    @*
+        var orgFK11 = db.Organisers.Include(activityOrganiser => activityOrganiser.Members).FirstOrDefault(x => x.ShortName == "FK 11");
 
-    if (orgFK11 != null && Model.Organiser.ShortName.Equals("MUC.HEALTH"))
-    {
-        var orgMucHealth = Model.Organiser;
-
-        foreach (var memberFK11 in orgFK11.Members.Where(x => !string.IsNullOrEmpty(x.UserId)).ToList())
+        if (orgFK11 != null && Model.Organiser.ShortName.Equals("MUC.HEALTH"))
         {
-            // Prüfen, ob der Lehrende auch in MUC.HEALTH Mitglied ist
-            var memberMucHealth = orgMucHealth.Members.FirstOrDefault(x => x.UserId.Equals(memberFK11.UserId));
+            var orgMucHealth = Model.Organiser;
 
-            if (memberMucHealth == null)
+            foreach (var memberFK11 in orgFK11.Members.Where(x => !string.IsNullOrEmpty(x.UserId)).ToList())
             {
-                // Lehrender ist nicht Mitglied in MUC.HEALTH, also hinzufügen
-                var newMember = new OrganiserMember
+                // Prüfen, ob der Lehrende auch in MUC.HEALTH Mitglied ist
+                var memberMucHealth = orgMucHealth.Members.FirstOrDefault(x => x.UserId.Equals(memberFK11.UserId));
+
+                if (memberMucHealth == null)
                 {
-                    Name = memberFK11.Name,
-                    FirstName = memberFK11.FirstName,
-                    Title = memberFK11.Title,
-                    ShortName = memberFK11.ShortName,
-                    UserId = memberFK11.UserId,
-                    IsAssociated = true
-                };
-                orgMucHealth.Members.Add(newMember);
+                    // Lehrender ist nicht Mitglied in MUC.HEALTH, also hinzufügen
+                    var newMember = new OrganiserMember
+                    {
+                        Name = memberFK11.Name,
+                        FirstName = memberFK11.FirstName,
+                        Title = memberFK11.Title,
+                        ShortName = memberFK11.ShortName,
+                        UserId = memberFK11.UserId,
+                        IsAssociated = true
+                    };
+                    orgMucHealth.Members.Add(newMember);
+                }
             }
         }
-    }
 
 
-    db.SaveChanges();
-*@
+        db.SaveChanges();
+    *@
 
 
 
@@ -108,11 +108,10 @@
                 <table id="tabMembers" class="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Titel</th>
-                            <th>Kurzbezeichnung</th>
-                            <th>Account</th>
+                            <th>Anzeigename</th>
+                            <th>Schnittstelle (lang)</th>
+                            <th>Schnittstelle (kurz)</th>
+                            <th>Benutzerkonto</th>
                             @if (ViewBag.UserRight.IsMemberAdmin)
                             {
                                 <th></th>
@@ -122,23 +121,34 @@
                     <tbody>
                         @foreach (var member in memberList)
                         {
+                            var nDates = db.ActivityDates.Count(x => x.Hosts.Any(m => m.Id == member.Id));
                             <tr>
                                 <td>
                                     <a href="@Url.Action("Card", "Person", new { memberId = member.Id })">
-                                        @member.Name
+                                        @member.FullName
                                     </a>
                                 </td>
-                                <td>@member.FirstName</td>
-                                <td>@member.Title</td>
+                                <td>@member.PersonName</td>
                                 <td>@member.ShortName</td>
-                                @if (string.IsNullOrEmpty(member.UserId))
+                                @if (ViewBag.UserRight.IsOrgAdmin)
                                 {
-                                    <td>Kein Account</td>
+
+                                    <td>
+                                        @nDates 
+                                       @* @member.ApiKey*@
+                                    </td>
+                            }
+                            else
+                            {
+                                if (string.IsNullOrEmpty(member.UserId))
+                                {
+                                    <td>nicht vorhanden und/oder verknüpft</td>
                                 }
                                 else
                                 {
                                     <td></td>
                                 }
+                            }
 
                                 @if (ViewBag.UserRight.IsMemberAdmin)
                                 {
@@ -146,6 +156,14 @@
                                         <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("MemberAdmin", "Organiser", new { id = member.Id })">
                                             <i class="bi bi-gear"></i> Verwaltung
                                         </a>
+                                        @if (ViewBag.UserRight.IsOrgAdmin && nDates == 0)
+                                        {
+                                            <a href="@Url.Action("DeleteMember", "Organiser", new {id = member.Id})" class="btn btn-danger">
+                                                <i class="bi bi-trash"></i> Lehrenden löschen
+                                            </a>
+
+                                        }
+
                                     </td>
                                 }
                             </tr>

@@ -65,6 +65,16 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(orgs);
         }
 
+        public ActionResult Modules()
+        {
+            var orgs = Db.Organisers
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return View(orgs);
+        }
+
+
         public ActionResult Members()
         {
             var memberships = Db.Members

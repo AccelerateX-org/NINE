@@ -4517,6 +4517,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     UrlMoodleCourse = course.UrlMoodleCourse,
                     IsInternal = true,
                     IsProjected = true,
+                    ExternalSource = "FollowUp",
                     Occurrence = new Occurrence()
                     {
                         Capacity = course.Occurrence.Capacity,

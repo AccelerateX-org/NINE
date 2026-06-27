@@ -27,7 +27,7 @@
                     @foreach (var curr in Model.Organiser.Curricula.OrderBy(x => x.Name))
                     {
                         <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
+                            <h5 class="list-group-item-heading">@curr.Title</h5>
                         </a>
                     }
                 </div>

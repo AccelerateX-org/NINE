@@ -97,8 +97,8 @@
                             @foreach (var curr in Model.Curricula)
                             {
                                 <tr>
-                                    <td>@curr.ShortName</td>
-                                    <td>@curr.Name</td>
+                                    <td>@curr.FullTag</td>
+                                    <td>@curr.Title</td>
                                     <td>
                                         <a href="@Url.Action("EditCurriculum", new {id = curr.Id})" class="btn btn-default btn-xs"><i class="fa fa-edit"></i> ändern</a>
                                     </td>

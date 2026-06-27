@@ -1,0 +1,8 @@
+{
+  "label": "Get informed about content",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Modules and more."
+  }
+}

@@ -15,7 +15,7 @@
                     @foreach (var curr in Model.Curricula)
                     {
                         <a href="@Url.Action("Dictionary", new {semId=Model.Semester.Id, currId=curr.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@Html.FacultyLabel(curr.Organiser) @curr.Name (@curr.ShortName)</h5>
+                            <h5 class="list-group-item-heading">@Html.FacultyLabel(curr.Organiser) @curr.Title</h5>
                         </a>
                     }
                 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -56,7 +57,7 @@ namespace MyStik.TimeTable.Web.Helpers
 
             foreach (var host in hosts)
             {
-                var lecName = string.IsNullOrEmpty(host.Name) ? "N.N." : host.Name;
+                var lecName = string.IsNullOrEmpty(host.Name) ? "N.N." : host.FullName;
                 if (showLinks)
                 {
                     sb.Append(htmlHelper.ActionLink(lecName, "Card", "Person",
@@ -591,7 +592,7 @@ namespace MyStik.TimeTable.Web.Helpers
 
                 if (curr != null)
                 {
-                    sb.AppendFormat("{0}:{1}", curr.ShortName, label.Name);
+                    sb.AppendFormat("{0}:{1}", curr.Tag, label.Name);
                 }
 
                 var inst = db.Institutions.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
@@ -621,13 +622,13 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<div>");
 
-                var curr = db.Curricula.FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
+                var curr = db.Curricula.Include(curriculum => curriculum.Organiser).FirstOrDefault(x => x.LabelSet.ItemLabels.Any(l => l.Id == label.Id));
 
 
 
                 if (curr != null)
                 {
-                    var linkName = $"{curr.Alias}:{label.Name}";
+                    var linkName = $"{curr.Tag}:{label.Name}";
                     sb.Append(htmlHelper.ActionLink(linkName, "Label", "Dictionary", new { semId = sem.Id, orgId = curr.Organiser.Id, currId = curr.Id, labelId = label.Id}, null));
                 }
 

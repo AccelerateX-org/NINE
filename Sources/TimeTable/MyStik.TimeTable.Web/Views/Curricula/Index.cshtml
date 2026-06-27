@@ -121,8 +121,8 @@
             <table id="tabCurricula" class="table">
                 <thead>
                     <tr>
-                        <th>Alias</th>
-                        <th>SPO-Version</th>
+                        <th>Programm</th>
+                        <th>Fassung</th>
                         <th>Titel</th>
                         <th>Abschluss</th>
                         <th>Level</th>
@@ -154,11 +154,11 @@
                             if (isMember || (!isMember && !curr.IsDeprecated))
                             {
                                 <tr class="@rowClass">
-                                    <td>@curr.ShortName</td>
-                                    <td>@curr.SPO</td>
+                                    <td>@curr.Tag</td>
+                                    <td>@curr.Amendment</td>
                                     <td>
                                         <a href="@Url.Action("Details", "Curriculum", new { id = curr.Id })">
-                                            @curr.Name
+                                            @curr.Title
                                         </a>
                                     </td>
                                     @if (curr.Degree != null)

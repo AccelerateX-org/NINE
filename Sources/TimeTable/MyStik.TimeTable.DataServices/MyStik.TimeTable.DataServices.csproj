@@ -155,6 +155,8 @@
     <Compile Include="ListExtensions.cs" />
     <Compile Include="OfficeHourCreateRequest.cs" />
     <Compile Include="OrganizerService.cs" />
+    <Compile Include="Planning\CourseFollowUpService.cs" />
+    <Compile Include="Planning\DateListService.cs" />
     <Compile Include="RoomService.cs" />
     <Compile Include="SemesterService.cs" />
     <Compile Include="CourseSubscriptionTicket.cs" />

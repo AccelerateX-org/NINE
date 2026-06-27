@@ -6,8 +6,71 @@
 
 <div class="row">
     <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Semester", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">Semesterplanung @Model.Semester.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Fortschreibung</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
         <div class="card">
-            <h5 class="card-title">Fortschreibung</h5>
+            <div class="card-body">
+                <h5 class="card-title">Fortschreibung von Lehrveranstaltungen</h5>
+                <div class="alert alert-info">
+                    <strong><i class="bi bi-info-square"></i> Hinweise</strong>
+                    <ul>
+                        <li>Fortschreibung ist ein <i>Kopieren in die Zukunft</i>.</li>
+                        <li>Grundidee: Lehrveranstaltungen werden einzeln von den Dozierenden und/oder Modulverantwortlichen kopiert.</li>
+                        <li>Die Fortschreibung hier ist für zentrale Ansätze gedacht: pro Studiengang und/oder Einrichtung.</li>
+                        <li><strong>Wichtig:</strong> Lehrveranstaltungen können beliebig oft kopiert werden.</li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Für die gesamte Einrichtung</h6>
+                                <div class="alert alert-light">
+                                    <p>Es werden alle Lehrveranstaltungen kopiert, die die Einrichtung anbietet.</p>
+                                    <ul>
+                                        <li>Lehrveranstaltungen für eigene Studienangebote</li>
+                                        <li>Lehrveranstaltungen für Studienangebote anderer Einrichtungen (Export)</li>
+                                    </ul>
+                                    <p>Lehrveranstaltungen anderer Einrichtungen werden nicht kopiert (Import).</p>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="@Url.Action("ForwardOrg", new {orgId = Model.Organiser.Id, sourceSemId = Model.Semester.Id, targetSemId=ViewBag.NextSemester.Id})" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i> <i class="bi bi-1-square"></i> nächstes Semester (@ViewBag.NextSemester.Name)</a>
+                                    <a href="@Url.Action("ForwardOrg", new {orgId = Model.Organiser.Id, sourceSemId = Model.Semester.Id, targetSemId=ViewBag.NextYear.Id})" class="btn btn-outline-success"><i class="bi bi-plus-lg"></i><i class="bi bi-plus-lg"></i><i class="bi bi-2-square"></i> übernächstes Semester (@ViewBag.NextYear.Name)</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Für einzelne Studiengänge</h6>
+                                <div class="alert alert-light">
+                                    <p>Folgende Lehrveranstaltungen werden kopiert:</p>
+                                    <ul>
+                                        <li>Eigene Lehrveranstaltung UND</li>
+                                        <li>Mindestens eine Kohorte des jeweiligen Studienangebots</li>
+                                    </ul>
+                                    <p>Importierte Lehrveranstaltungen werden nicht kopiert.</p>
+                                    <p><strong>Achtung:</strong> Lehrveranstaltungen, die mehreren Studienangeboten zugeordnet sind, werden bei diesem Vorgehen ggf. mehrfach kopiert. Es entstehen Duplikate, die manuell bereinigt werden müssen.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

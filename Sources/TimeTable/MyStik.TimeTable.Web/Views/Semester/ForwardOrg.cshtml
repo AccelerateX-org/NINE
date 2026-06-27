@@ -1,0 +1,211 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterViewModel
+
+@{
+    ViewBag.Title = "Fortschreibung";
+
+    var db = new TimeTableDbContext();
+
+    var sourceCourses = db.Activities.OfType<Course>().Where(x =>
+        x.Organiser != null && x.Organiser.Id == Model.Organiser.Id &&
+        x.Semester != null && x.Semester.Id == Model.Semester.Id
+        ).ToList();
+
+    var targetCourses = db.Activities.OfType<Course>().Where(x =>
+        x.Organiser != null && x.Organiser.Id == Model.Organiser.Id &&
+        x.Semester != null && x.Semester.Id == Model.NextSemester.Id
+    ).ToList();
+
+    var followUpCourses = targetCourses.Where(x =>
+        !string.IsNullOrEmpty(x.ExternalSource) && x.ExternalSource.Equals("FollowUp")).ToList();
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/signalr")
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var t1 = $('#tabSource').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+
+            var t2 = $('#tabTarget').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+
+            $("#btnImport").hide();
+
+            var connection = $.connection.followUpCoursesHub;
+
+            connection.client.updateProgress = function (message, perc1) {
+
+                $("#pogresslabel").html("<p>" + message + "</p>");
+                $("#progressbar1").html(perc1 + "%");
+                $("#progressbar1").css("width", perc1 + "%");
+            };
+
+
+            $("#btnImport").click(function () {
+                var orgId = "@Model.Organiser.Id.ToString()";
+                var sourceSemId = "@Model.Semester.Id.ToString()";
+                var targetSemId = "@Model.NextSemester.Id.ToString()";
+
+                connection.server.copyCoursesOrg(orgId, sourceSemId, targetSemId).done(function (result) {
+                    $("#btnImport").hide();
+                });
+            });
+
+            $.connection.hub.start().done(function () {
+                $("#btnImport").show();
+            });;
+
+
+        });
+    </script>
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Semester", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })">Semesterplanung @Model.Semester.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Fortschreibung</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Fortschreibung von Lehrveranstaltungen für @Model.Organiser.ShortName von @Model.Semester.Name nach @Model.NextSemester.Name</h5>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5>Von @Model.Semester.Name</h5>
+                                        <div class="row">
+                                            <div class="col-8">Anzahl LVs</div>
+                                            <div class="col-4">@sourceCourses.Count</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h5>Nach @Model.NextSemester.Name</h5>
+                                        <div class="row">
+                                            <div class="col-8">Anzahl LVs (gesamt)</div>
+                                            <div class="col-4">@targetCourses.Count</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-8">Anzahl LVs (Fortschreibung)</div>
+                                            <div class="col-4">@followUpCourses.Count</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div id="pogresslabel"><i>noch nicht gestartet</i></div>
+                                    <div class="progress">
+                                        <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+                                            0%
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="#" id="btnImport" class="btn btn-outline-danger" disabled><i class="bi bi-fast-forward"></i> Fortschreibung starten</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <table id="tabSource" class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Title</th>
+                                            <th>Kohorten</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach (var c in sourceCourses)
+                                        {
+                                            <tr>
+                                                <td>@c.ShortName</td>
+                                                <td>@c.Name</td>
+                                                <td>@Html.LabelList(c)</td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <table id="tabTarget" class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Title</th>
+                                            <th>Kohorten</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach (var c in targetCourses)
+                                        {
+                                            <tr>
+                                                <td>@c.ShortName</td>
+                                                <td>@c.Name</td>
+                                                <td>@Html.LabelList(c)</td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

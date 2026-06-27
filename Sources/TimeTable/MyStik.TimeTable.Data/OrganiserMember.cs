@@ -205,7 +205,7 @@ namespace MyStik.TimeTable.Data
 
                 if (!string.IsNullOrEmpty(FirstName))
                 {
-                    sb.AppendFormat(" {0}", FirstName);
+                    sb.AppendFormat(", {0}", FirstName);
                 }
 
                 return sb.ToString();

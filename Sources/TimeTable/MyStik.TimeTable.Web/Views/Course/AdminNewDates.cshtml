@@ -1,8 +1,23 @@
-﻿@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+﻿@using MyStik.TimeTable.DataServices.Planning
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
 
 
 @{
     ViewBag.Title = "Termine";
+
+    var scheduleService = new CourseScheduleService();
+
+    var blocks = 
+        Model.Course.Segment != null ?
+        scheduleService.GetBlocks(Model.Course.Dates, Model.Course.Segment.From, Model.Course.Segment.To) :
+        scheduleService.GetBlocks(Model.Course.Dates, Model.Course.Semester.StartCourses, Model.Course.Semester.EndCourses);
+
+    var sequences = 
+        Model.Course.Segment != null ?
+            scheduleService.GetSequences(Model.Course.Dates, Model.Course.Segment.From, Model.Course.Segment.To) :
+            scheduleService.GetSequences(Model.Course.Dates, Model.Course.Semester.StartCourses, Model.Course.Semester.EndCourses);
+
 }
 
 <div class="row">
@@ -80,6 +95,74 @@
             </div>
             <div id="dateTable">
                 @Html.Partial("_DateTable", Model.Course)
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Blöcke</h5>
+                                <table class="table table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th>Offset</th>
+                                        <th>Termine</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var block in blocks)
+                                    {
+                                        <tr>
+                                            <td>@block.OffsetWeekday</td>
+                                            <td>
+                                                @foreach (var date in block.Dates)
+                                                {
+                                                    <div>@Html.TimeSpanWithDate(date)</div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Sequenzen</h5>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Offset</th>
+                                            <th>Wochentag</th>
+                                            <th>Beginn</th>
+                                            <th>Ende</th>
+                                            <th>Termine</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var sequence in sequences)
+                                        {
+                                            <tr>
+                                                <td>@sequence.OffsetWeekday</td>
+                                                <td>@sequence.Day</td>
+                                                <td>@sequence.Begin</td>
+                                                <td>@sequence.End</td>
+                                                <td>
+                                                    @foreach (var date in sequence.Dates)
+                                                    {
+                                                        <div>@Html.TimeSpanWithDate(date)</div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

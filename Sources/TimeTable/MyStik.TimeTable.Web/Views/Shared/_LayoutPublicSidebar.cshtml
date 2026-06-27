@@ -18,7 +18,7 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>grapevine | @ViewBag.Title</title>
+    <title>hamSTER.grapevine | @ViewBag.Title</title>
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/jquery/jquery-ui.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/font/bootstrap-icons.css")" />
@@ -159,7 +159,7 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel"><i class="bi bi-broadcast"></i> HM<i>ster</i> Grapevine</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel"><i class="bi bi-broadcast"></i> hamSTER.grapevine</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="list-group">
@@ -195,13 +195,13 @@
         else
         {
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home")">
-                <i class="bi bi-house"></i> Startseite
+                <i class="bi bi-house"></i> hamSTER.home
             </a>
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "University")">
-                <i class="bi bi-building"></i> Campus
+                <i class="bi bi-building"></i> hamSTER.grapevine
             </a>
             <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Home", new { @area = "Gym" })">
-                <i class="bi bi-controller"></i> Gym
+                <i class="bi bi-controller"></i> hamSTER.gym
             </a>
         }
         @*
