@@ -209,6 +209,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             }
 
             Course course = null;
+            var warnings = new List<string>();
 
             try
             {
@@ -265,12 +266,14 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     {
                         var currLabel = GetLabel(cohort);
 
-                        if (currLabel == null || currLabel.Label == null)
+                        if (currLabel?.Label != null)
                         {
-                            return BadRequest($"invalid cohort {cohort}");
+                            course.LabelSet.ItemLabels.Add(currLabel.Label);
                         }
-
-                        course.LabelSet.ItemLabels.Add(currLabel.Label);
+                        else
+                        {
+                            warnings.Add($"invalid cohort {cohort}");
+                        }
                     }
                 }
 
@@ -301,15 +304,17 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                 var currLabel = GetLabel(cohort);
                                 if (currLabel == null || currLabel.Label == null)
                                 {
-                                    return BadRequest($"invalid cohort {cohort}");
+                                    warnings.Add($"invalid cohort {cohort}");
                                 }
+                                else
+                                {
+                                    quotaFraction.ItemLabelSet.ItemLabels.Add(currLabel.Label);
+                                    quotaFraction.Curriculum = currLabel.Curriculum;
+                                    seatQuota.Fractions.Add(quotaFraction);
 
-                                quotaFraction.ItemLabelSet.ItemLabels.Add(currLabel.Label);
-                                quotaFraction.Curriculum = currLabel.Curriculum;
-                                seatQuota.Fractions.Add(quotaFraction);
-
-                                Db.ItemLabelSets.Add(quotaFraction.ItemLabelSet);
-                                Db.SeatQuotaFractions.Add(quotaFraction);
+                                    Db.ItemLabelSets.Add(quotaFraction.ItemLabelSet);
+                                    Db.SeatQuotaFractions.Add(quotaFraction);
+                                }
                             }
                         }
                         Db.SeatQuotas.Add(seatQuota);
@@ -366,15 +371,23 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                 var room = Db.Rooms.Include(room1 =>
                                     room1.Assignments.Select(roomAssignment => roomAssignment.Organiser)).SingleOrDefault(x => x.Number.Equals(roomNumber));
                                 if (room == null)
-                                    return BadRequest($"unknown room: {roomNumber}");
+                                {
+                                    warnings.Add($"unknown room: {roomNumber}");
+                                }
+                                else
+                                {
+                                    var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
 
-                                var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
-
-                                if (assignment == null)
-                                    return BadRequest($"room: {roomNumber} not available for organiser: {org.ShortName}");
-
-                                // Raumbuchung ergänzen!
-                                courseDate.Rooms.Add(room);
+                                    if (assignment != null)
+                                    {
+                                        // Raumbuchung ergänzen!
+                                        courseDate.Rooms.Add(room);
+                                    }
+                                    else
+                                    {
+                                        warnings.Add($"Room {roomNumber} is not assigned to organiser: {org.ShortName}");
+                                    }
+                                }
                             }
                         }
 
@@ -387,10 +400,20 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                 var lecturer = org.Members
                                     .FirstOrDefault(x => x.FullName.Equals(host) ||
                                                          x.ShortName.Equals(host));
+                                /*
                                 if (lecturer == null)
                                     return BadRequest($"lecturer: {host} not available for organiser: {org.ShortName}");
 
                                 courseDate.Hosts.Add(lecturer);
+                                */
+                                if (lecturer != null)
+                                {
+                                    courseDate.Hosts.Add(lecturer);
+                                }
+                                else
+                                {
+                                    warnings.Add($"lecturer: {host} not available for organiser: {org.ShortName}");
+                                }
                             }
                         }
 
@@ -457,19 +480,24 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                 {
                                     var roomNumber = rrr.Trim();
                                     var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
-                                    if (room != null)
+                                    if (room == null)
                                     {
-                                        courseDate.Rooms.Add(room);
-                                        // Raumbuchungen ergänzen!
+                                        warnings.Add($"unknown room: {roomNumber}");
                                     }
-                                    /*
                                     else
                                     {
-                                        // warum muss der Raum vorhanden sein? 
-                                        // es handelt sich im Infrastruktur, die sich nicht beliebig erweitern lässt.
-                                        return BadRequest($"Invalid room: {roomNumber}");
+                                        var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
+
+                                        if (assignment != null)
+                                        {
+                                            // Raumbuchung ergänzen!
+                                            courseDate.Rooms.Add(room);
+                                        }
+                                        else
+                                        {
+                                            warnings.Add($"Room {roomNumber} is not assigned to organiser: {org.ShortName}");
+                                        }
                                     }
-                                    */
                                 }
                             }
 
@@ -488,6 +516,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                     }
                                     else
                                     {
+                                        warnings.Add($"lecturer: {host} not available for organiser: {org.ShortName}");
+                                        /*
                                         // warum Lehrende anlegen? Es könnte sich um einen Gastdozenten handeln, der nicht in der Einrichtung verankert ist.
                                         // In diesem Fall könnte man den Lehrenden anlegen und mit einem speziellen Flag versehen,
                                         // damit er später identifiziert und ggf. gelöscht werden kann.
@@ -501,6 +531,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                         Db.Members.Add(lecturer);
 
                                         // return BadRequest($"Invalid lecturer: {host}");
+                                        */
                                     }
                                 }
                             }
@@ -531,7 +562,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     var response = new CourseApiResponseModel
                     {
                         CourseId = course.Id,
-                        Message = "Course created successfully"
+                        Message = "Course created successfully",
+                        Warnings = warnings.ToList()
                     };
 
                     return Ok(response);

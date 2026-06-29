@@ -7,6 +7,48 @@ using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.DataServices.Planning
 {
+    public class CourseSchedule
+    {
+        public CourseSchedule(ICollection<ActivityDate> dates, DateTime begin, DateTime end)
+        {
+            Dates = dates;
+            Begin = begin;
+            End = end;
+        }
+
+        public void Init()
+        {
+            var service = new CourseScheduleService();
+            Blocks = service.GetBlocks(Dates, Begin, End);
+            Sequences = service.GetSequences(Dates, Begin, End);
+        }
+
+
+        /// <summary>
+        /// Großer Schalter, wie kopiert werden soll
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFrequent()
+        {
+            // Sequenzen mit mehr als einem Termin
+            return Sequences.Count(x => x.Dates.Count > 1) > 0;
+        }
+
+        public DateTime FirstBegin { get; set; }
+
+        public DateTime LastEnd { get; set; }
+
+        public DateTime Begin { get; }
+        public DateTime End { get; }
+
+        public ICollection<ActivityDate> Dates { get; }
+
+        public ICollection<CourseScheduleBlock> Blocks { get; set; }
+
+        public ICollection<CourseScheduleSequence> Sequences { get; set; } 
+    }
+
+
     public class CourseScheduleBlock
     {
         /// <summary>
@@ -18,6 +60,11 @@ namespace MyStik.TimeTable.DataServices.Planning
         /// Die Tage in dem Block
         /// </summary>
         public List<ActivityDate> Dates { get; set; }
+
+        public ActivityDate GetAnchor()
+        {
+            return Dates.OrderBy(x => x.Begin).FirstOrDefault();
+        }
     }
 
     public class CourseScheduleSequence
@@ -91,7 +138,7 @@ namespace MyStik.TimeTable.DataServices.Planning
                 // Check if there's a gap between the previous and current date
                 // a gap == 0 means "same day"
                 // we do not check the time
-                if ((current.Begin - previous.Begin).Days <= 1)
+                if ((current.Begin.Date - previous.Begin.Date).Days <= 1)
                 {
                     // No gap, add to current block
                     currentBlock.Dates.Add(current);
@@ -161,6 +208,55 @@ namespace MyStik.TimeTable.DataServices.Planning
             }
 
             return sequences;
+        }
+
+        public ICollection<ActivityDate> CopySchedule(CourseSchedule schedule, DateTime begin, DateTime end)
+        {
+            var isFrequent = schedule.IsFrequent();
+            var dates = new List<ActivityDate>();
+
+            if (isFrequent)
+            {
+
+            }
+            else
+            {
+                foreach (var scheduleBlock in schedule.Blocks)
+                {
+                    // finde den startpunkt
+                    var anchor = scheduleBlock.GetAnchor();
+                    if (anchor == null)
+                        continue;
+
+                    var dayOfWeek = anchor.Begin.Date.DayOfWeek;
+
+                    var offsetWeekdayBegin = dayOfWeek - begin.DayOfWeek;
+                    if (offsetWeekdayBegin < 0)
+                    {
+                        offsetWeekdayBegin += 7;
+                    }
+
+                    var offsetDaysSegment = offsetWeekdayBegin + (scheduleBlock.OffsetWeekday - 1) * 7;
+
+                    foreach (var blockDate in scheduleBlock.Dates)
+                    {
+                        // der offset innerhalb des Blocks
+                        var offsetDaysBlock = (blockDate.Begin.Date - begin.Date).Days;
+
+                        var date = new ActivityDate
+                        {
+                            Begin = begin.AddDays(offsetDaysSegment + offsetDaysBlock)
+                                .Add(blockDate.Begin.TimeOfDay),
+                            End = begin.AddDays(offsetDaysSegment + offsetDaysBlock)
+                                .Add(blockDate.End.TimeOfDay)
+                        };
+                        dates.Add(date);
+                    }
+                }    
+            }
+
+
+            return dates;
         }
     }
 }
