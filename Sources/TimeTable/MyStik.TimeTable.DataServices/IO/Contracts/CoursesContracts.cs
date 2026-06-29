@@ -161,6 +161,7 @@ namespace MyStik.TimeTable.DataServices.IO.Contracts
         public Guid DateId { get; set; }
 
         public string Message { get; set; }
+        public List<string> Warnings { get; set; }
     }
 
 

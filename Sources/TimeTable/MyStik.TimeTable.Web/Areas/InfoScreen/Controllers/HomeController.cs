@@ -27,7 +27,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// <returns></returns>
         public ActionResult Index(string id)
         {
-            var screen = Db.Infoscreens.SingleOrDefault(x => x.Tag.Equals(id));
+            var screen = Db.Infoscreens.FirstOrDefault(x => x.Tag.Equals(id));
             if (screen == null)
             {
                 return HttpNotFound("Kein Infoscreen mit dem Tag " + id + " gefunden");

@@ -400,20 +400,23 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                 var lecturer = org.Members
                                     .FirstOrDefault(x => x.FullName.Equals(host) ||
                                                          x.ShortName.Equals(host));
-                                /*
                                 if (lecturer == null)
-                                    return BadRequest($"lecturer: {host} not available for organiser: {org.ShortName}");
+                                {
+                                    warnings.Add($"added lecturer: {host} for organiser: {org.ShortName}");
+                                    // warum Lehrende anlegen? Es könnte sich um einen Gastdozenten handeln, der nicht in der Einrichtung verankert ist.
+                                    // In diesem Fall könnte man den Lehrenden anlegen und mit einem speziellen Flag versehen,
+                                    // damit er später identifiziert und ggf. gelöscht werden kann.
+                                    lecturer = new OrganiserMember()
+                                    {
+                                        Name = host,
+                                        ShortName = host,
+                                        Organiser = course.Organiser,
+                                    };
+                                    org.Members.Add(lecturer);
+                                    Db.Members.Add(lecturer);
+                                }
 
                                 courseDate.Hosts.Add(lecturer);
-                                */
-                                if (lecturer != null)
-                                {
-                                    courseDate.Hosts.Add(lecturer);
-                                }
-                                else
-                                {
-                                    warnings.Add($"lecturer: {host} not available for organiser: {org.ShortName}");
-                                }
                             }
                         }
 
@@ -479,7 +482,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                 foreach (var rrr in sequence.RoomIds)
                                 {
                                     var roomNumber = rrr.Trim();
-                                    var room = Db.Rooms.SingleOrDefault(x => x.Number.Equals(roomNumber));
+                                    var room = Db.Rooms.Include(room1 =>
+                                        room1.Assignments.Select(roomAssignment => roomAssignment.Organiser)).SingleOrDefault(x => x.Number.Equals(roomNumber));
                                     if (room == null)
                                     {
                                         warnings.Add($"unknown room: {roomNumber}");
@@ -510,14 +514,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                     var lecturer = org.Members
                                         .FirstOrDefault(x => x.ShortName.Equals(host) ||
                                                              x.Name.Equals(host));
-                                    if (lecturer != null)
+                                    if (lecturer == null)
                                     {
-                                        courseDate.Hosts.Add(lecturer);
-                                    }
-                                    else
-                                    {
-                                        warnings.Add($"lecturer: {host} not available for organiser: {org.ShortName}");
-                                        /*
+                                        warnings.Add($"added lecturer: {host} for organiser: {org.ShortName}");
                                         // warum Lehrende anlegen? Es könnte sich um einen Gastdozenten handeln, der nicht in der Einrichtung verankert ist.
                                         // In diesem Fall könnte man den Lehrenden anlegen und mit einem speziellen Flag versehen,
                                         // damit er später identifiziert und ggf. gelöscht werden kann.
@@ -529,10 +528,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
                                         };
                                         org.Members.Add(lecturer);
                                         Db.Members.Add(lecturer);
-
-                                        // return BadRequest($"Invalid lecturer: {host}");
-                                        */
                                     }
+
+                                    courseDate.Hosts.Add(lecturer);
                                 }
                             }
 
@@ -673,6 +671,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return BadRequest("Course date already exists");
             }
 
+            var warnings = new List<string>();
+
+
             // Eine Prüfung auf Vorlesungszeiten findet hier nicht statt
             // Das wird nur bei Sequenzen gemacht
             // Grund: es soll der spezifische Termin angelegt werden!
@@ -707,15 +708,23 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     var room = Db.Rooms.Include(room1 =>
                         room1.Assignments.Select(roomAssignment => roomAssignment.Organiser)).SingleOrDefault(x => x.Number.Equals(roomNumber));
                     if (room == null)
-                        return BadRequest($"unknown room: {roomNumber}");
+                    {
+                        warnings.Add($"unknown room: {roomNumber}");
+                    }
+                    else
+                    {
+                        var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
 
-                    var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
-
-                    if (assignment == null)
-                        return BadRequest($"room: {roomNumber} not available for organiser: {org.ShortName}");
-
-                    // Raumbuchung ergänzen!
-                    courseDate.Rooms.Add(room);
+                        if (assignment != null)
+                        {
+                            // Raumbuchung ergänzen!
+                            courseDate.Rooms.Add(room);
+                        }
+                        else
+                        {
+                            warnings.Add($"Room {roomNumber} is not assigned to organiser: {org.ShortName}");
+                        }
+                    }
                 }
             }
 
@@ -729,7 +738,20 @@ namespace MyStik.TimeTable.Web.Api.Controller
                         .FirstOrDefault(x => x.FullName.Equals(host) ||
                                              x.ShortName.Equals(host));
                     if (lecturer == null)
-                        return BadRequest($"lecturer: {host} not available for organiser: {org.ShortName}");
+                    {
+                        warnings.Add($"added lecturer: {host} for organiser: {org.ShortName}");
+                        // warum Lehrende anlegen? Es könnte sich um einen Gastdozenten handeln, der nicht in der Einrichtung verankert ist.
+                        // In diesem Fall könnte man den Lehrenden anlegen und mit einem speziellen Flag versehen,
+                        // damit er später identifiziert und ggf. gelöscht werden kann.
+                        lecturer = new OrganiserMember()
+                        {
+                            Name = host,
+                            ShortName = host,
+                            Organiser = course.Organiser,
+                        };
+                        org.Members.Add(lecturer);
+                        Db.Members.Add(lecturer);
+                    }
 
                     courseDate.Hosts.Add(lecturer);
                 }
@@ -745,7 +767,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 CourseId = courseId,
                 DateId = courseDate.Id,
-                Message = "Course date created successfully"
+                Message = "Course date created successfully",
+                Warnings = warnings.ToList()
             };
 
             return Ok(response);

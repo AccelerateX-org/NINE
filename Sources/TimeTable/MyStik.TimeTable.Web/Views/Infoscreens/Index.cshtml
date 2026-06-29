@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Data
+﻿@using System.Data.Entity
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
 
@@ -14,6 +15,7 @@
         myOrg = Model.First();
         txtMenu = Model.First().Name + " (" + Model.First().ShortName + ")";
     }
+
 }
 
 
@@ -52,44 +54,44 @@
             }
             <table id="tabCurricula" class="table">
                 <thead>
-                    <tr>
-                        <th><i class="bi bi-box-arrow-up-right"></i></th>
-                        <th>ID</th>
-                        <th>Bezeichnung</th>
-                        <th>Einrichtungen</th>
-                        <th>Raumgruppen</th>
-                        <th>ÖPNV</th>
-                    </tr>
+                <tr>
+                    <th><i class="bi bi-box-arrow-up-right"></i></th>
+                    <th>ID</th>
+                    <th>Bezeichnung</th>
+                    <th>Einrichtungen</th>
+                    <th>Raumgruppen</th>
+                    <th>ÖPNV</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var org in Model.OrderBy(x => x.ShortName))
+                @foreach (var org in Model.OrderBy(x => x.ShortName))
+                {
+                    foreach (var curr in org.Infoscreens.OrderBy(x => x.Name))
                     {
-                        foreach (var curr in org.Infoscreens.OrderBy(x => x.Name))
-                        {
-                            <tr>
-                                <td><a href="@Url.Action("Index", "Home", new {area="Infoscreen", id=curr.Tag})" target="_blank"><i class="bi bi-box-arrow-up-right"></i></a></td>
-                                <td>@curr.Tag</td>
-                                <td>@curr.Name</td>
-                                <td>
-                                    @foreach (var o in curr.Organisers)
-                                    {
-                                        <span>@Html.FacultyLabel(o)</span>
-                                    }
-                                </td>
-                                <td>
-                                    @foreach(var page in curr.Pages.OrderBy(x => x.Index))
-                                    {
-                                        <div>
-                                            Seite @page.Index: @page.Name (@page.RoomAllocationGroup.RoomAllocations.Count() Räume)
-                                        </div>
-                                    }
-                                </td>
-                                <td>
-                                    @curr.PublicTransporrtInfo
-                                </td>
-                            </tr>
-                        }
+                        <tr>
+                            <td><a href="@Url.Action("Index", "Home", new {area="Infoscreen", id=curr.Tag})" target="_blank"><i class="bi bi-box-arrow-up-right"></i></a></td>
+                            <td>@curr.Tag</td>
+                            <td>@curr.Name</td>
+                            <td>
+                                @foreach (var o in curr.Organisers)
+                                {
+                                    <span>@Html.FacultyLabel(o)</span>
+                                }
+                            </td>
+                            <td>
+                                @foreach(var page in curr.Pages.OrderBy(x => x.Index))
+                                {
+                                    <div>
+                                        Seite @page.Index: @page.Name (@page.RoomAllocationGroup.RoomAllocations.Count() Räume)
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @curr.PublicTransporrtInfo
+                            </td>
+                        </tr>
                     }
+                }
                 </tbody>
             </table>
         </div>
